@@ -1,0 +1,45 @@
+<?xml version='1.0'?>
+<list>
+    <option name="GLSL.TYPE_SPECIFIER">
+        <value>
+            <option name="FOREGROUND" value="008080"/>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+    <option name="GLSL.QUALIFIER_TOKENS">
+        <value>
+            <option name="FOREGROUND" value="0080FF"/>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+    <option name="GLSL.FLOW_KEYWORDS">
+        <value>
+            <option name="FOREGROUND" value="FF8000"/>
+            <option name="FONT_TYPE" value="0"/>
+        </value>
+    </option>
+    <option name="GLSL.IDENTIFIER">
+        <value>
+            <option name="FOREGROUND" value="000000"/>
+            <option name="FONT_TYPE" value="0"/>
+        </value>
+    </option>
+    <option name="GLSL.COMPILER_DIRECTIVE">
+        <value>
+            <option name="FOREGROUND" value="005000"/>
+            <option name="FONT_TYPE" value="0"/>
+        </value>
+    </option>
+    <option name="GLSL.TEXT">
+        <value>
+            <option name="FOREGROUND" value="000000"/>
+            <option name="FONT_TYPE" value="0"/>
+        </value>
+    </option>
+    <option name="GLSL.UNKNOWN">
+        <value>
+            <option name="FOREGROUND" value="FF0000"/>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+</list>

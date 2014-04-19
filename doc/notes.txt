@@ -1,0 +1,31 @@
+idea.jar necessary in IDEA JDK for PSI Elements (ASTWrapper...) to work correctly.
+
+Notes on the Spec
+=================
+* The general rule is that everything gets hidden by everything when declared in different scopes.
+  Defining the same name twice in the same scope results in a redeclaration error,
+  regardless of declaration type (that is; structs, functions and variables).
+
+  Exceptions: A variable declared with the same name as a function does not hide the function.
+  The opposite is true for user defined types (structs). For example:
+    float sin = sin(x); // is perfectly legal ...
+    struct S { int x };
+    S S = S(1.0);       // ... is not
+
+Declarations
+============
+* Variables can be declared in:
+  - the global scope
+  - a parameter declaration
+  - compound statements
+  - for statements
+
+Finding Declarations of Identifiers
+===================================
+Identifiers are found in three or four different places in the Psi not counting the declarations.
+All these cases needs to be handled separately.
+* identifier-expression (variable reference)
+* function-call-expression (function reference)
+* member-selection-expression (member reference)
+* method-call-expression (method reference) <- currently only arrays have a length method
+

@@ -1,0 +1,78 @@
+<!--
+  ~ Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
+  ~
+  ~     This file is part of glsl4idea.
+  ~
+  ~     Glsl4idea is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Lesser General Public License as
+  ~     published by the Free Software Foundation, either version 3 of
+  ~     the License, or (at your option) any later version.
+  ~
+  ~     Glsl4idea is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Lesser General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with glsl4idea.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd" >
+<idea-plugin>
+    <actions>
+        <action id="GLSL_DEDUCE_EXPRESSION_TYPE"
+                class="glslplugin.actions.GLSLDeduceExpressionTypeAction"
+                text="Deduce Expression Type"
+                description="Tries to deduce the type of the expression in the selection.">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt T"
+                               second-keystroke="shift ctrl alt D"/>
+        </action>
+    </actions>
+    <name>GLSL Support</name>
+
+
+    <id>GLSL</id>
+    <description>Support for the OpenGL Shading Language</description>
+    <version>1.0</version>
+    <vendor>Foundation</vendor>
+    <idea-version since-build="8000"/>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+        <fileTypeFactory implementation="glslplugin.GLSLSupportLoader"/>
+        <colorSettingsPage implementation="glslplugin.GLSLColorAndFontsPage"/>
+        <lang.syntaxHighlighterFactory key="GLSL" implementationClass="glslplugin.GLSLHighlighterFactory"/>
+        <lang.braceMatcher language="GLSL" implementationClass="glslplugin.GLSLPairedBraceMatcher"/>
+        <lang.parserDefinition language="GLSL" implementationClass="glslplugin.lang.GLSLParserDefinition"/>
+        <lang.foldingBuilder language="GLSL" implementationClass="glslplugin.GLSLFoldingBuilder"/>
+        <lang.psiStructureViewFactory language="GLSL"
+                                      implementationClass="glslplugin.structureview.GLSLStructureViewFactory"/>
+        <annotator language="GLSL" implementationClass="glslplugin.annotation.GLSLAnnotator"/>
+
+        <intentionAction>
+            <className>glslplugin.intentions.vectorcomponents.VectorComponentsIntention</className>
+            <category>GLSL</category>
+        </intentionAction>
+        <codeInsight.lineMarkerProvider language="GLSL" implementationClass="glslplugin.extensions.GLSLLineMarkerProvider"/>
+        <additionalTextAttributes scheme="Default" file="colorSchemes/GLSLDefault.xml"/>
+    </extensions>
+
+    <application-components>
+
+        <!--<component>
+            <implementation-class>glslplugin.GLSLSupportLoader</implementation-class>
+        </component>-->
+
+        <!--todo:Loading the templates component causes a memory leak?-->
+        <component>
+            <implementation-class>glslplugin.components.GLSLTemplatesLoader</implementation-class>
+        </component>
+    </application-components>
+
+    <project-components>
+        <component>
+            <implementation-class>glslplugin.components.GLSLCompilerManager</implementation-class>
+        </component>
+    </project-components>
+</idea-plugin>
