@@ -1,0 +1,6 @@
+void main() {
+    vec4 var1 = vec4(1.0, 2.0, 3.0, 4.0);
+    
+    vec4 var2 = var1.<spot>xxyy</spot>;
+    vec2 var3 = var1.<spot>zw</spot>;
+}

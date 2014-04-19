@@ -1,0 +1,11 @@
+* text=auto
+
+*.java text
+*.xml text
+*.glsl text
+*.flex text
+
+*.png binary
+
+# never bother trying to diff generated files:
+GLSLFlexLexer.java text -diff
