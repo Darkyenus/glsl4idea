@@ -22,8 +22,9 @@ package glslplugin.lang.parser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import static glslplugin.lang.elements.GLSLElementTypes.*;
 import glslplugin.lang.elements.GLSLTokenTypes;
+
+import static glslplugin.lang.elements.GLSLElementTypes.*;
 import static glslplugin.lang.elements.GLSLTokenTypes.*;
 
 /**
@@ -886,7 +887,7 @@ public class GLSLParsing {
                     } while(tryMatch(OPERATORS));
                 } else {
                     operatorMark.drop();
-                    mark.error(String.format("Expected a(n) %0s expression.", operatorLevel.getPartName()));
+                    mark.error(String.format("Expected a(n) %s expression.", operatorLevel.getPartName()));
                     return false;
                 }
             }

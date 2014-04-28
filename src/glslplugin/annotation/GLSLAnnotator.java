@@ -42,10 +42,10 @@ import java.util.List;
  * @see glslplugin.annotation.impl
  */
 public class GLSLAnnotator implements com.intellij.lang.annotation.Annotator {
-    private final static List<Annotator<GLSLAssignmentExpression>> assignmentExpressionAnnotators = new ArrayList<>();
-    private final static List<Annotator<GLSLBinaryOperatorExpression>> binaryOperatorExpressionAnnotators = new ArrayList<>();
-    private final static List<Annotator<GLSLFieldSelectionExpression>> fieldSelectionExpressionAnnotators = new ArrayList<>();
-    private final static List<Annotator<GLSLStatement>> statementAnnotators = new ArrayList<>();
+    private final static List<Annotator<GLSLAssignmentExpression>> assignmentExpressionAnnotators = new ArrayList<Annotator<GLSLAssignmentExpression>>();
+    private final static List<Annotator<GLSLBinaryOperatorExpression>> binaryOperatorExpressionAnnotators = new ArrayList<Annotator<GLSLBinaryOperatorExpression>>();
+    private final static List<Annotator<GLSLFieldSelectionExpression>> fieldSelectionExpressionAnnotators = new ArrayList<Annotator<GLSLFieldSelectionExpression>>();
+    private final static List<Annotator<GLSLStatement>> statementAnnotators = new ArrayList<Annotator<GLSLStatement>>();
 
     static {
         assignmentExpressionAnnotators.add(new LValueAnnotator());

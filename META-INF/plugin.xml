@@ -34,7 +34,7 @@
 
     <id>GLSL</id>
     <description>Support for the OpenGL Shading Language</description>
-    <version>1.0</version>
+    <version>1.1</version>
     <vendor>Foundation</vendor>
     <idea-version since-build="8000"/>
 
@@ -69,10 +69,4 @@
             <implementation-class>glslplugin.components.GLSLTemplatesLoader</implementation-class>
         </component>
     </application-components>
-
-    <project-components>
-        <component>
-            <implementation-class>glslplugin.components.GLSLCompilerManager</implementation-class>
-        </component>
-    </project-components>
 </idea-plugin>
