@@ -84,7 +84,7 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
 
     private GLSLElement[] findFunctionDeclarations() {
         GLSLFunctionType[] declarations = findFunctionTypes();
-        List<GLSLElement> realDeclarations = new ArrayList<>();
+        List<GLSLElement> realDeclarations = new ArrayList<GLSLElement>();
         for (int i = 0; i < declarations.length; i++) {
             GLSLElement element = declarations[i].getDefinition();
             if (element != null) {
@@ -95,7 +95,7 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
     }
 
     public GLSLFunctionType[] findFunctionTypes() {
-        List<GLSLFunctionType> compatibleDeclarations = new ArrayList<>();
+        List<GLSLFunctionType> compatibleDeclarations = new ArrayList<GLSLFunctionType>();
 
         PsiElement current = findParentByClass(GLSLFunctionDefinition.class);
 

@@ -60,6 +60,9 @@ EXPONENT_PART       = [Ee]["+""-"]?({DIGIT})*
 LINE_COMMENT        = "//"[^\r\n]*
 BLOCK_COMMENT       = "/*"([^"*"]|("*"+[^"*""/"]))*("*"+"/")?
 
+GLSL_ES_TYPE = void|float|(u?int)|bool|((i|b|u)?vec([2-4]))|(mat[2-4](x[2-4])?)|(samplerCubeShadow|sampler2DShadow|sampler2DArrayShadow)|((i|u)?sampler(2D|3D|Cube|2DArray))
+GLSL_ES_TYPE_MODIFIER = (high|medium|low)p
+
 %%
 /**
  * LEXICAL RULES:
@@ -133,6 +136,9 @@ struct                  {return STRUCT; }
 /* GLSL SELECTION FLOW_KEYWORDS */
 if                      {return IF_KEYWORD; }
 else                    {return ELSE_KEYWORD; }
+
+/* GLSL ES PRECISION */
+precision{WHITE_SPACE}+{GLSL_ES_TYPE_MODIFIER}{WHITE_SPACE}+{GLSL_ES_TYPE}";"  {return GLES_PRECISION; }
 
 
 /* GLSL Symbols */

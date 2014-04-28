@@ -32,6 +32,6 @@ public class GLSLSupportLoader extends FileTypeFactory {
     public static final LanguageFileType GLSL = new GLSLFileType();
 
     public void createFileTypes(@NotNull FileTypeConsumer consumer) {
-        consumer.consume(GLSL,"glsl");
+        consumer.consume(GLSL,"glsl"+FileTypeConsumer.EXTENSION_DELIMITER+"frag"+FileTypeConsumer.EXTENSION_DELIMITER+"vert");
     }
 }
