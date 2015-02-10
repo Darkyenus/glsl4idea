@@ -36,7 +36,7 @@ import glslplugin.lang.scanner.GLSLFlexAdapter;
 import org.jetbrains.annotations.NotNull;
 
 public class GLSLParserDefinition implements ParserDefinition {
-    private static final GLSLPsiElementFactory psiFactory = new GLSLPsiElementFactoryImpl();
+    private static final GLSLPsiElementFactory psiFactory = new GLSLPsiElementFactory();
 
     @NotNull
     public Lexer createLexer(Project project) {

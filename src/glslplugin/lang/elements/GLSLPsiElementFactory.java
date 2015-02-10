@@ -20,6 +20,10 @@
 package glslplugin.lang.elements;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.IElementType;
+import glslplugin.lang.elements.declarations.*;
+import glslplugin.lang.elements.expressions.*;
+import glslplugin.lang.elements.statements.*;
 
 /**
  * GLSLPsiElementFactory defines the interface for the GLSLElement factory.
@@ -27,14 +31,96 @@ import com.intellij.lang.ASTNode;
  * @author Yngve Devik Hammersland
  *         Date: Jan 28, 2009
  *         Time: 11:12:19 AM
- * @see GLSLPsiElementFactoryImpl
  */
-public interface GLSLPsiElementFactory {
+public class GLSLPsiElementFactory {
     /**
      * Creates a GLSLElement from the given ast node.
      *
      * @param node the source node.
      * @return the resulting GLSLElement, may be null.
      */
-    public GLSLElement create(ASTNode node);
+    public GLSLElement create(ASTNode node) {
+        if (node == null) {
+            return null;
+        }
+        IElementType type = node.getElementType();
+
+        // translation unit
+        if (type == GLSLElementTypes.TRANSLATION_UNIT) return new GLSLTranslationUnit(node);
+
+        // primary expressions
+        if (type == GLSLElementTypes.VARIABLE_NAME_EXPRESSION) return new GLSLIdentifierExpression(node);
+        if (type == GLSLElementTypes.CONSTANT_EXPRESSION) return new GLSLLiteral(node);
+        if (type == GLSLElementTypes.GROUPED_EXPRESSION) return new GLSLGroupedExpression(node);
+
+        // postfix expressions
+
+        // unary operators
+        if (type == GLSLElementTypes.POSTFIX_OPERATOR_EXPRESSION) return new GLSLPostfixExpression(node);
+        if (type == GLSLElementTypes.PREFIX_OPERATOR_EXPRESSION) return new GLSLPrefixOperatorExpression(node);
+        if (type == GLSLElementTypes.SUBSCRIPT_EXPRESSION) return new GLSLSubscriptExpression(node);
+
+        // binary operators
+        if (type == GLSLElementTypes.ADDITIVE_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
+        if (type == GLSLElementTypes.MULTIPLICATIVE_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
+        if (type == GLSLElementTypes.RELATIONAL_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
+        if (type == GLSLElementTypes.EQUALITY_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
+        if (type == GLSLElementTypes.LOGICAL_AND_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
+        if (type == GLSLElementTypes.LOGICAL_OR_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
+        if (type == GLSLElementTypes.LOGICAL_XOR_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
+        if (type == GLSLElementTypes.ASSIGNMENT_EXPRESSION) return new GLSLAssignmentExpression(node);
+        if (type == GLSLElementTypes.ADDITIVE_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
+        if (type == GLSLElementTypes.CONDITION) return new GLSLCondition(node);
+
+        if (type == GLSLElementTypes.FIELD_SELECTION_EXPRESSION) return new GLSLFieldSelectionExpression(node);
+        if (type == GLSLElementTypes.FUNCTION_CALL_EXPRESSION) return new GLSLFunctionCallExpression(node);
+        if (type == GLSLElementTypes.METHOD_CALL_EXPRESSION) return new GLSLMethodCallExpression(node);
+        if (type == GLSLElementTypes.FUNCTION_NAME) return new GLSLIdentifier(node);
+        if (type == GLSLElementTypes.PARAMETER_LIST) return new GLSLParameterList(node);
+        if (type == GLSLElementTypes.METHOD_NAME) return new GLSLIdentifier(node);
+        if (type == GLSLElementTypes.FIELD_NAME) return new GLSLIdentifier(node);
+        if (type == GLSLElementTypes.VARIABLE_NAME) return new GLSLIdentifier(node);
+
+        if (type == GLSLElementTypes.FUNCTION_DEFINITION) return new GLSLFunctionDefinitionImpl(node);
+        if (type == GLSLElementTypes.FUNCTION_DECLARATION) return new GLSLFunctionDeclarationImpl(node);
+        if (type == GLSLElementTypes.PARAMETER_DECLARATION_LIST) return new GLSLDeclarationList(node);
+        if (type == GLSLElementTypes.PARAMETER_DECLARATION) return new GLSLParameterDeclaration(node);
+        if (type == GLSLElementTypes.PARAMETER_DECLARATOR) return new GLSLDeclarator(node);
+
+        // statements:
+        if (type == GLSLElementTypes.EXPRESSION_STATEMENT) return new GLSLExpressionStatement(node);
+        if (type == GLSLElementTypes.COMPOUND_STATEMENT) return new GLSLCompoundStatement(node);
+        if (type == GLSLElementTypes.DECLARATION_STATEMENT) return new GLSLDeclarationStatement(node);
+        if (type == GLSLElementTypes.IF_STATEMENT) return new GLSLIfStatement(node);
+        if (type == GLSLElementTypes.FOR_STATEMENT) return new GLSLForStatement(node);
+        if (type == GLSLElementTypes.WHILE_STATEMENT) return new GLSLWhileStatement(node);
+        if (type == GLSLElementTypes.DO_STATEMENT) return new GLSLDoStatement(node);
+
+        if (type == GLSLElementTypes.DECLARATION_STATEMENT) return new GLSLDeclarationStatement(node);
+        if (type == GLSLElementTypes.VARIABLE_DECLARATION) return new GLSLVariableDeclaration(node);
+        if (type == GLSLElementTypes.DECLARATOR_LIST) return new GLSLDeclaratorList(node);
+        if (type == GLSLElementTypes.DECLARATOR) return new GLSLDeclarator(node);
+        if (type == GLSLElementTypes.INITIALIZER) return new GLSLInitializer(node);
+        if (type == GLSLElementTypes.ARRAY_DECLARATOR) return new GLSLArraySpecifier(node);
+
+        if (type == GLSLElementTypes.BREAK_STATEMENT) return new GLSLBreakStatement(node);
+        if (type == GLSLElementTypes.CONTINUE_STATEMENT) return new GLSLContinueStatement(node);
+        if (type == GLSLElementTypes.RETURN_STATEMENT) return new GLSLReturnStatement(node);
+        if (type == GLSLElementTypes.DISCARD_STATEMENT) return new GLSLDiscardStatement(node);
+
+        // types and structs
+        if (type == GLSLElementTypes.QUALIFIER) return new GLSLQualifier(node);
+        if (type == GLSLElementTypes.QUALIFIER_LIST) return new GLSLQualifierList(node);
+        if (type == GLSLElementTypes.TYPE_SPECIFIER) return new GLSLTypeSpecifier(node);
+        if (type == GLSLElementTypes.TYPE_SPECIFIER_PRIMITIVE) return new GLSLTypename(node);
+        if (type == GLSLElementTypes.TYPE_SPECIFIER_STRUCT_REFERENCE) return new GLSLTypename(node);
+        if (type == GLSLElementTypes.TYPE_SPECIFIER_STRUCT) return new GLSLTypeDefinition(node);
+
+        if (type == GLSLElementTypes.STRUCT_DECLARATION_LIST) return new GLSLDeclarationList(node);
+        if (type == GLSLElementTypes.STRUCT_DECLARATION) return new GLSLStructDeclaration(node);
+        if (type == GLSLElementTypes.STRUCT_DECLARATOR_LIST) return new GLSLDeclaratorList(node);
+        if (type == GLSLElementTypes.STRUCT_DECLARATOR) return new GLSLDeclarator(node);
+
+        return null;
+    }
 }
