@@ -28,6 +28,6 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
  */
 public class GLSLLanguage extends Language {
     public GLSLLanguage() {
-        super("GLSL");
+        super("GLSL", "x-shader/x-vertex", "x-shader/x-fragment");
     }
 }
