@@ -35,6 +35,7 @@ import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -94,14 +95,17 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
         return realDeclarations.toArray(new GLSLElement[realDeclarations.size()]);
     }
 
+    private final GLSLFunctionType[] NO_FUNCTION_TYPES = new GLSLFunctionType[0];
     public GLSLFunctionType[] findFunctionTypes() {
         List<GLSLFunctionType> compatibleDeclarations = new ArrayList<GLSLFunctionType>();
 
         PsiElement current = findParentByClass(GLSLFunctionDefinition.class);
 
+        if(current == null) return NO_FUNCTION_TYPES; //For the time being, see below
+
         //todo: fails on vec3 and such...
         // todo: also fails for function calls in initializers of global variables (can only be vec3 and such there...)
-        assert current != null : "GLSLFunctionDeclaration for '" + getFunctionName() + "' not found.";
+        //assert current != null : "GLSLFunctionDeclaration for '" + getFunctionName() + "' not found.";
 
         // Is this a constructor for one of the built-in types?
         GLSLType builtInType = GLSLTypes.getTypeFromName(getFunctionName());

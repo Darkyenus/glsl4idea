@@ -140,6 +140,9 @@ public class GLSLParsing {
         return match;
     }
 
+    /**
+     * Entry for parser. Tries to parse whole shader file.
+     */
     public void parseTranslationUnit() {
         // translation_unit: external_declaration+
 
@@ -154,6 +157,9 @@ public class GLSLParsing {
         unit.done(TRANSLATION_UNIT);
     }
 
+    /**
+     * Parse whatever can be at the top of the file hierarchy
+     */
     private boolean parseExternalDeclaration() {
         // external_declaration: function_definition
         //                     | declaration
