@@ -34,7 +34,7 @@
 
     <id>GLSL</id>
     <description>Support for the OpenGL Shading Language</description>
-    <version>1.1</version>
+    <version>1.2</version>
     <vendor>Foundation</vendor>
     <idea-version since-build="8000"/>
 
