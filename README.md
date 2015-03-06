@@ -16,7 +16,7 @@ Changes made with permissions from original authors by Jan Polák (Darkyen).
 Licensed under GNU LGPL, see license file.
 
 # How to use
-1. Download plugin .jar from here or compile it yourself (see below)
+1. Download plugin .jar from [here](https://github.com/Darkyenus/glsl4idea/releases) or compile it yourself (see below)
 2. Install plugin (Tested on IntelliJ CE 14, similar versions may work) (Preferences -> Plugins -> Install plugin from disk)
 3. Create .glsl file and enjoy
 
