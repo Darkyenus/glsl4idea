@@ -21,7 +21,7 @@ package glslplugin.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -30,11 +30,11 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiUtil;
 import com.intellij.ui.awt.RelativePoint;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -46,7 +46,7 @@ import javax.swing.*;
  *         Time: 12:24:02 AM
  */
 public class GLSLDeduceExpressionTypeAction extends AnAction {
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         // Got no time to implement this. Hopefully I have more time in the future.
 
         PsiElement element = getPsiElementEnclosingSelection(e);
@@ -77,7 +77,7 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
     }
 
     private void showBalloon(AnActionEvent e, String html) {
-        final Editor editor = e.getData(DataKeys.EDITOR_EVEN_IF_INACTIVE);
+        final Editor editor = e.getData(CommonDataKeys.EDITOR_EVEN_IF_INACTIVE);
         final JBPopupFactory factory = JBPopupFactory.getInstance();
         final BalloonBuilder builder = factory.createBalloonBuilder(new JLabel(html));
         Balloon balloon = builder.createBalloon();
@@ -116,8 +116,8 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
     }
 
     private PsiElement getPsiElementEnclosingSelection(AnActionEvent e) {
-        final PsiFile file = e.getData(DataKeys.PSI_FILE);
-        final Editor editor = e.getData(DataKeys.EDITOR_EVEN_IF_INACTIVE);
+        final PsiFile file = e.getData(CommonDataKeys.PSI_FILE);
+        final Editor editor = e.getData(CommonDataKeys.EDITOR_EVEN_IF_INACTIVE);
 
         assert file != null;
         assert editor != null;
@@ -126,8 +126,18 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
         final int start = selectionModel.getSelectionStart();
         final int end = selectionModel.getSelectionEnd();
 
-        PsiElement elt = PsiUtil.getElementInclusiveRange(file, new TextRange(start, end));
+        PsiElement elt = getElementInclusiveRange(file, new TextRange(start, end));
         assert elt != null;
         return elt;
+    }
+
+    // From https://github.com/JetBrains/intellij-community/blob/master/java/java-psi-api/src/com/intellij/psi/util/PsiUtil.java#L399
+    private static PsiElement getElementInclusiveRange(PsiElement scope, TextRange range) {
+        PsiElement psiElement = scope.findElementAt(range.getStartOffset());
+        while (psiElement != null && !psiElement.getTextRange().contains(range)) {
+            if (psiElement == scope) return null;
+            psiElement = psiElement.getParent();
+        }
+        return psiElement;
     }
 }

@@ -19,24 +19,20 @@
 
 package glslplugin.annotation.impl;
 
-import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotation;
-import com.intellij.psi.PsiElement;
-import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.editor.markup.EffectType;
+import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.psi.PsiElement;
 import glslplugin.annotation.Annotator;
-import glslplugin.lang.elements.statements.*;
 import glslplugin.lang.elements.GLSLElement;
-
-import java.awt.*;
+import glslplugin.lang.elements.statements.*;
 
 public class UnreachableAnnotation implements Annotator<GLSLStatement> {
     private TextAttributesKey strikeThrough;
 
     public UnreachableAnnotation() {
-        TextAttributes textAttributes = new TextAttributes(Color.GRAY, null, Color.RED, EffectType.STRIKEOUT, Font.ITALIC);
-        strikeThrough = TextAttributesKey.createTextAttributesKey("Unreachable", textAttributes);
+        strikeThrough = TextAttributesKey.createTextAttributesKey("GLSL.UNREACHABLE", DefaultLanguageHighlighterColors.BLOCK_COMMENT);
     }
 
     public void annotate(GLSLStatement expr, AnnotationHolder holder) {
