@@ -79,7 +79,7 @@ public class GLSLVectorType extends GLSLType {
         }
     }
 
-    private static enum BaseType {
+    private enum BaseType {
         INT(GLSLPrimitiveType.INT, "ivec"), BOOL(GLSLPrimitiveType.BOOL, "bvec"), FLOAT(GLSLPrimitiveType.FLOAT, "vec");
 
         final GLSLType type;

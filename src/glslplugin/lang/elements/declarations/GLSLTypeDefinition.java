@@ -28,6 +28,7 @@ import glslplugin.lang.elements.types.GLSLStructType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -90,9 +91,7 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
     public GLSLDeclarator[] getDeclarators() {
         List<GLSLDeclarator> declarators = new ArrayList<GLSLDeclarator>();
         for (GLSLDeclaration declaration : getDeclarations()) {
-            for (GLSLDeclarator declarator : declaration.getDeclarators()) {
-                declarators.add(declarator);
-            }
+            Collections.addAll(declarators, declaration.getDeclarators());
         }
         return declarators.toArray(new GLSLDeclarator[declarators.size()]);
     }

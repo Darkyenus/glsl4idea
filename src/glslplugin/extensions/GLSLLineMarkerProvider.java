@@ -26,6 +26,7 @@ import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.PsiElement;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclarationImpl;
 import glslplugin.lang.elements.declarations.GLSLFunctionDefinitionImpl;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -42,7 +43,7 @@ public class GLSLLineMarkerProvider implements LineMarkerProvider {
 
     }
 
-    public LineMarkerInfo getLineMarkerInfo(PsiElement expr) {
+    public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement expr) {
         //todo: add navigation support for guttericons and tooltips
         if (expr instanceof GLSLFunctionDefinitionImpl) {
             //todo: check if a prototype exists
@@ -54,7 +55,7 @@ public class GLSLLineMarkerProvider implements LineMarkerProvider {
         return null;
     }
 
-    public void collectSlowLineMarkers(List<PsiElement> psiElements, Collection<LineMarkerInfo> lineMarkerInfos) {
+    public void collectSlowLineMarkers(@NotNull List<PsiElement> psiElements, @NotNull Collection<LineMarkerInfo> lineMarkerInfos) {
         //not sure about the difference
 
     }

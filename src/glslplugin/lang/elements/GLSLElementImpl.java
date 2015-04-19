@@ -41,6 +41,7 @@ public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement
     // Utility methods.
 
     public <T extends GLSLElement> T findParentByClass(Class<T> clazz) {
+        //noinspection unchecked
         return clazz.cast(findParentByClasses(clazz));
     }
 
@@ -58,6 +59,7 @@ public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement
     }
 
     public <T extends GLSLElement> T findPrevSiblingByClass(Class<T> clazz) {
+        //noinspection unchecked
         return clazz.cast(findPrevSiblingByClasses(clazz));
     }
 

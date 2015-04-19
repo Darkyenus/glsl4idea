@@ -38,6 +38,7 @@ public class UnreachableAnnotation implements Annotator<GLSLStatement> {
     public void annotate(GLSLStatement expr, AnnotationHolder holder) {
         //todo: not unreachables...
         if (expr instanceof GLSLBreakStatement || expr instanceof GLSLContinueStatement) {
+            //noinspection unchecked
             GLSLElement parent = expr.findParentByClasses(GLSLDoStatement.class, GLSLForStatement.class, GLSLWhileStatement.class);
             if(parent == null) {
                 holder.createErrorAnnotation(expr, "Must be in a loop!");

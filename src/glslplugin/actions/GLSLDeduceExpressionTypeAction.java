@@ -78,6 +78,7 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
 
     private void showBalloon(AnActionEvent e, String html) {
         final Editor editor = e.getData(CommonDataKeys.EDITOR_EVEN_IF_INACTIVE);
+        if(editor == null) return;
         final JBPopupFactory factory = JBPopupFactory.getInstance();
         final BalloonBuilder builder = factory.createBalloonBuilder(new JLabel(html));
         Balloon balloon = builder.createBalloon();

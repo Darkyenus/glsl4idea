@@ -234,7 +234,7 @@ public enum GLSLOperator {
     // This is needed because it is not possible to subclass an enum
     // Alternatively this can be implemented as a class hierarchy.
     /////////////////////////////////////////////////////////////////////////
-    private static interface FunctionTypeAlternativesDelegate {
+    private interface FunctionTypeAlternativesDelegate {
         GLSLFunctionType[] getFunctionTypeAlternatives(GLSLType[] types);
     }
 

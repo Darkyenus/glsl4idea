@@ -23,7 +23,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLTokenTypes;
-import glslplugin.lang.elements.statements.GLSLStatement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
