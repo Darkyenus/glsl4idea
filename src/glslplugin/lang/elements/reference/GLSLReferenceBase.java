@@ -56,6 +56,7 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
         return target;
     }
 
+    @NotNull
     public String getCanonicalText() {
         return target.getText();
     }
@@ -72,6 +73,7 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
         return false;
     }
 
+    @NotNull
     public Object[] getVariants() {
         return new Object[]{target};
     }

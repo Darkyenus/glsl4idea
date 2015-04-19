@@ -39,10 +39,9 @@ import org.jetbrains.annotations.NotNull;
  *         Time: 9:34:12 AM
  */
 public class GLSLQualifier extends GLSLElementImpl {
-    public static final GLSLQualifier[] EMPTY_ARRAY = {};
 
 
-    public static enum Qualifier {
+    public enum Qualifier {
         // Invariant Qualifier
         INVARIANT(GLSLTypeQualifier.INVARIANT_QUALIFIER, "invariant", GLSLTokenTypes.INVARIANT_KEYWORD),
 

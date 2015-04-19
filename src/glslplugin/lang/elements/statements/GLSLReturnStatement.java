@@ -20,7 +20,6 @@
 package glslplugin.lang.elements.statements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
@@ -47,12 +46,10 @@ public class GLSLReturnStatement extends GLSLStatement {
     }
 
     public GLSLType getReturnType() {
-        PsiElement child = findChildByClass(GLSLExpression.class);
-        if (child != null && child instanceof GLSLExpression) {
-            GLSLExpression expr = (GLSLExpression) child;
-            return expr.getType(); //todo: problem with function calls...
+        GLSLExpression child = findChildByClass(GLSLExpression.class);
+        if (child != null) {
+            return child.getType(); //todo: problem with function calls...
         } else {
-            //return;
             return GLSLTypes.VOID;
         }
     }

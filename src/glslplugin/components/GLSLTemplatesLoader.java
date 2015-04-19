@@ -25,7 +25,7 @@ import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
 
 public class GLSLTemplatesLoader implements ApplicationComponent {
-    private String templateText = "#version 120\n\nvoid main() {\n\n}";
+    private final static String TEMPLATE_TEXT = "#version 120\n\nvoid main() {\n\n}";
 
     public GLSLTemplatesLoader() {
     }
@@ -41,7 +41,7 @@ public class GLSLTemplatesLoader implements ApplicationComponent {
         if (fileTemplateManager.getTemplate("GLSL Shader") == null) {
             final FileTemplate template = fileTemplateManager.addTemplate("GLSL Shader", "glsl");
 
-            template.setText(templateText);
+            template.setText(TEMPLATE_TEXT);
         }
     }
 

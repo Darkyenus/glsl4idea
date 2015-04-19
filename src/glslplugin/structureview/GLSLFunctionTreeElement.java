@@ -19,7 +19,6 @@
 
 package glslplugin.structureview;
 
-import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclarationImpl;
 import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
 

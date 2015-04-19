@@ -24,6 +24,7 @@ import com.intellij.lang.folding.FoldingBuilder;
 import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.editor.Document;
 import glslplugin.lang.elements.GLSLTokenTypes;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +32,14 @@ import java.util.List;
 
 // Todo: Blocks. Must have a PSI tree implemented...
 public class GLSLFoldingBuilder implements FoldingBuilder {
-    public FoldingDescriptor[] buildFoldRegions(ASTNode node, Document document) {
+    @NotNull
+    public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
         List<FoldingDescriptor> descriptors = new ArrayList<FoldingDescriptor>();
-        appendDescriptors(node, document, descriptors);
+        appendDescriptors(node, descriptors);
         return descriptors.toArray(new FoldingDescriptor[descriptors.size()]);
     }
 
-    private void appendDescriptors(final ASTNode node, final Document document, final List<FoldingDescriptor> descriptors) {
+    private void appendDescriptors(final ASTNode node, final List<FoldingDescriptor> descriptors) {
         if (node.getElementType() == GLSLTokenTypes.COMMENT_BLOCK) {
             //todo: check if inside or outside method
             descriptors.add(new FoldingDescriptor(node, node.getTextRange()));
@@ -45,19 +47,19 @@ public class GLSLFoldingBuilder implements FoldingBuilder {
 
         ASTNode child = node.getFirstChildNode();
         while (child != null) {
-            appendDescriptors(child, document, descriptors);
+            appendDescriptors(child, descriptors);
             child = child.getTreeNext();
         }
     }
 
-    public String getPlaceholderText(ASTNode node) {
+    public String getPlaceholderText(@NotNull ASTNode node) {
         if (node.getElementType() == GLSLTokenTypes.COMMENT_BLOCK) {
             return "/*...*/";
         }
         return null;
     }
 
-    public boolean isCollapsedByDefault(ASTNode astNode) {
+    public boolean isCollapsedByDefault(@NotNull ASTNode astNode) {
         return false;
     }
 }

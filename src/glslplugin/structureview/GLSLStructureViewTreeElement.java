@@ -24,6 +24,7 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,10 +49,12 @@ abstract class GLSLStructureViewTreeElement<T extends PsiElement> implements Str
         return element;
     }
 
+    @NotNull
     public ItemPresentation getPresentation() {
         return createPresentation(element);
     }
 
+    @NotNull
     public TreeElement[] getChildren() {
         children.clear();
         createChildren(element);

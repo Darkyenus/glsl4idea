@@ -696,6 +696,7 @@ public class GLSLParsing {
         if (!parseTypeSpecifier()) {
             return false;
         }
+        //noinspection RedundantIfStatement
         if (tryMatch(IDENTIFIER) || tryMatch(SEMICOLON)) {
             return true;
         }

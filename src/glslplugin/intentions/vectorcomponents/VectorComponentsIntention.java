@@ -24,14 +24,12 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiModificationTrackerImpl;
+import com.intellij.ui.components.JBList;
 import glslplugin.intentions.Intentions;
-import static glslplugin.intentions.vectorcomponents.VectorComponentsPredicate.*;
 import glslplugin.lang.elements.GLSLIdentifier;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import static glslplugin.intentions.vectorcomponents.VectorComponentsPredicate.*;
 
 public class VectorComponentsIntention extends Intentions {
 
@@ -44,11 +42,6 @@ public class VectorComponentsIntention extends Intentions {
 
         Components(String components) {
             this.components = components;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString();
         }
 
         public String getComponent(int i) {
@@ -80,14 +73,14 @@ public class VectorComponentsIntention extends Intentions {
 
         String[] variants = new String[]{components + " -> " + results[0], components + " -> " + results[1]};
         //http://www.jetbrains.net/devnet/message/5208622#5208622
-        final JList list = new JList(variants);
+        final JBList list = new JBList(variants);
         PopupChooserBuilder builder = new PopupChooserBuilder(list);
         builder.setTitle("Select Variant");
         builder.setItemChoosenCallback(new Runnable() {
             public void run() {
                 WriteCommandAction writeAction = new WriteCommandAction(element.getProject(), element.getContainingFile()) {
                     @Override
-                    protected void run(Result result) throws Throwable {
+                    protected void run(@NotNull Result result) throws Throwable {
                         replaceIdentifierElement((GLSLIdentifier) element, results[list.getSelectedIndex()]);
                     }
                 };
@@ -122,10 +115,10 @@ public class VectorComponentsIntention extends Intentions {
     }
 
     private String toNumbers(String components) {
-        String results = components.replaceAll("[r|s|x]", "1");
-        results = results.replaceAll("[g|t|y]", "2");
-        results = results.replaceAll("[b|p|z]", "3");
-        results = results.replaceAll("[a|q|w]", "4");
+        String results = components.replaceAll("[rsx]", "1");
+        results = results.replaceAll("[gty]", "2");
+        results = results.replaceAll("[bpz]", "3");
+        results = results.replaceAll("[aqw]", "4");
         return results;
     }
 
