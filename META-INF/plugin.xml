@@ -17,6 +17,16 @@
   ~     along with glsl4idea.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <idea-plugin version="2">
+
+    <name>GLSL Support</name>
+    <category>Custom Languages</category>
+    <id>GLSL</id>
+    <description>Support for the OpenGL Shading Language</description>
+    <version>1.3</version>
+    <vendor>Foundation</vendor>
+    <idea-version since-build="139.1117"/>
+    <depends>com.intellij.modules.lang</depends>
+
     <actions>
         <action id="GLSL_DEDUCE_EXPRESSION_TYPE"
                 class="glslplugin.actions.GLSLDeduceExpressionTypeAction"
@@ -27,16 +37,6 @@
                                second-keystroke="shift ctrl alt D"/>
         </action>
     </actions>
-
-    <name>GLSL Support</name>
-    <category>Custom Languages</category>
-
-    <id>GLSL</id>
-    <description>Support for the OpenGL Shading Language</description>
-    <version>1.2</version>
-    <vendor>Foundation</vendor>
-    <idea-version since-build="139.1117"/>
-    <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
@@ -54,21 +54,18 @@
             <className>glslplugin.intentions.vectorcomponents.VectorComponentsIntention</className>
             <category>GLSL</category>
         </intentionAction>
-        <codeInsight.lineMarkerProvider language="GLSL" implementationClass="glslplugin.extensions.GLSLLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="GLSL"
+                                        implementationClass="glslplugin.extensions.GLSLLineMarkerProvider"/>
         <additionalTextAttributes scheme="Default" file="colorSchemes/GLSLDefault.xml"/>
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/GLSLDefault.xml"/>
         <lang.commenter language="GLSL" implementationClass="glslplugin.GLSLCommenter"/>
     </extensions>
 
     <application-components>
-
-        <!--<component>
-            <implementation-class>glslplugin.GLSLSupportLoader</implementation-class>
-        </component>-->
-
         <!--todo:Loading the templates component causes a memory leak?-->
         <component>
             <implementation-class>glslplugin.components.GLSLTemplatesLoader</implementation-class>
         </component>
     </application-components>
+
 </idea-plugin>
