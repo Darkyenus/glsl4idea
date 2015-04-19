@@ -20,7 +20,6 @@
 package glslplugin.structureview;
 
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.util.PlatformIcons;
 import glslplugin.GLSLSupportLoader;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
@@ -30,8 +29,6 @@ import glslplugin.lang.elements.types.GLSLTypeQualifier;
 import javax.swing.*;
 
 class GLSLPresentation implements ItemPresentation {
-    public static final Icon FOLDER_OPEN = PlatformIcons.DIRECTORY_OPEN_ICON;
-    public static final Icon FOLDER_CLOSED = PlatformIcons.DIRECTORY_CLOSED_ICON;
     public static final Icon FIELD = PlatformIcons.FIELD_ICON;
     public static final Icon PROTOTYPE = PlatformIcons.ABSTRACT_METHOD_ICON;
     public static final Icon FUNCTION = PlatformIcons.METHOD_ICON;
@@ -61,14 +58,6 @@ class GLSLPresentation implements ItemPresentation {
         return icon;
     }
 
-    public TextAttributesKey getTextAttributesKey() {
-        return null;
-    }
-
-    private void setOpenIcon(Icon icon) {
-        this.openIcon = icon;
-    }
-
     private void setIcon(Icon icon) {
         this.icon = icon;
     }
@@ -76,13 +65,6 @@ class GLSLPresentation implements ItemPresentation {
     public static GLSLPresentation createMethodPresentation(String name, String... parameters) {
         GLSLPresentation presentation = new GLSLPresentation(name + " " + prettyPrint(parameters));
         presentation.setIcon(FUNCTION);
-        return presentation;
-    }
-
-    public static GLSLPresentation createFolderPresentation(String name) {
-        GLSLPresentation presentation = new GLSLPresentation(name);
-        presentation.setIcon(FOLDER_CLOSED);
-        presentation.setOpenIcon(FOLDER_OPEN);
         return presentation;
     }
 

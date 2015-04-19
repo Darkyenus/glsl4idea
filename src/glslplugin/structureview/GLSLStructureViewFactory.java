@@ -22,18 +22,18 @@ package glslplugin.structureview;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
-import com.intellij.ide.structureView.StructureView;
 import com.intellij.lang.PsiStructureViewFactory;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class GLSLStructureViewFactory implements PsiStructureViewFactory {
     public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
         return new TreeBasedStructureViewBuilder() {
+
             @NotNull
-            public StructureViewModel createStructureViewModel() {
+            @Override
+            public StructureViewModel createStructureViewModel(Editor editor) {
                 return new GLSLStructureViewModel(psiFile);
             }
         };
