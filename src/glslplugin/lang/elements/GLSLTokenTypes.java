@@ -71,6 +71,8 @@ public class GLSLTokenTypes {
     public static final IElementType CENTROID_KEYWORD = new GLSLElementType("CENTROID_KEYWORD");
     public static final IElementType INVARIANT_KEYWORD = new GLSLElementType("INVARIANT_KEYWORD");
 
+    public static final IElementType PRECISION_KEYWORD = new GLSLElementType("PRECISION_KEYWORD");
+
     public static final IElementType IN_KEYWORD = new GLSLElementType("IN_KEYWORD");
     public static final IElementType OUT_KEYWORD = new GLSLElementType("OUT_KEYWORD");
     public static final IElementType INOUT_KEYWORD = new GLSLElementType("INOUT_KEYWORD");
@@ -130,7 +132,7 @@ public class GLSLTokenTypes {
     public static final IElementType WHITE_SPACE = TokenType.WHITE_SPACE;
     public static final IElementType UNKNOWN = new GLSLElementType("UNKNOWN");
 
-    public static final IElementType GLES_PRECISION = new GLSLElementType("PRECISION");
+    public static final IElementType PRECISION_STATEMENT = new GLSLElementType("PRECISION_STATEMENT");
 
     public static final IElementType COMPILER_DIRECTIVE_VERSION = new GLSLElementType("COMPILER_DIRECTIVE_VERSION");
     public static final IElementType COMPILER_DIRECTIVE_EXTENSION = new GLSLElementType("COMPILER_DIRECTIVE_EXTENSION");
@@ -149,9 +151,9 @@ public class GLSLTokenTypes {
             TEXTURE_TYPE_SPECIFIER_NONARRAY, TokenSet.create(STRUCT, NAMED_TYPE));
 
     public static final TokenSet QUALIFIER_TOKENS = TokenSet.create(CONST_KEYWORD, ATTRIBUTE_KEYWORD, VARYING_KEYWORD,
-            UNIFORM_KEYWORD, CENTROID_KEYWORD, INVARIANT_KEYWORD, IN_KEYWORD, OUT_KEYWORD, INOUT_KEYWORD);
+            UNIFORM_KEYWORD, CENTROID_KEYWORD, INVARIANT_KEYWORD, IN_KEYWORD, OUT_KEYWORD, INOUT_KEYWORD, PRECISION_KEYWORD);
 
-    public static final TokenSet COMMENTS = TokenSet.create(COMMENT_BLOCK, COMMENT_LINE, COMPILER_DIRECTIVE_VERSION, COMPILER_DIRECTIVE_EXTENSION, COMPILER_DIRECTIVE_PRAGMA, COMPILER_DIRECTIVE_OTHER,GLES_PRECISION);
+    public static final TokenSet COMMENTS = TokenSet.create(COMMENT_BLOCK, COMMENT_LINE, COMPILER_DIRECTIVE_VERSION, COMPILER_DIRECTIVE_EXTENSION, COMPILER_DIRECTIVE_PRAGMA, COMPILER_DIRECTIVE_OTHER, PRECISION_STATEMENT);
 
     public static final TokenSet ITERATION_KEYWORDS = TokenSet.create(WHILE_KEYWORD, DO_KEYWORD, FOR_KEYWORD);
     public static final TokenSet JUMP_KEYWORDS = TokenSet.create(BREAK_JUMP_STATEMENT, CONTINUE_JUMP_STATEMENT, RETURN_JUMP_STATEMENT, DISCARD_JUMP_STATEMENT);
