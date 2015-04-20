@@ -42,8 +42,22 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
     //        { TextAttributesKey.createTextAttributesKey("GLSL.PARAMETER_QUALIFIERS", DefaultLanguageHighlighterColors.KEYWORD) };
     static final TextAttributesKey[] GLSL_FLOW_KEYWORDS =
             { TextAttributesKey.createTextAttributesKey("GLSL.FLOW_KEYWORDS", DefaultLanguageHighlighterColors.KEYWORD) };
-    static final TextAttributesKey[] GLSL_COMMENT =
-            { TextAttributesKey.createTextAttributesKey("GLSL.COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT) };
+    static final TextAttributesKey[] GLSL_BLOCK_COMMENT =
+            { TextAttributesKey.createTextAttributesKey("GLSL.BLOCK_COMMENT", DefaultLanguageHighlighterColors.BLOCK_COMMENT) };
+    static final TextAttributesKey[] GLSL_LINE_COMMENT =
+            { TextAttributesKey.createTextAttributesKey("GLSL.LINE_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT) };
+    static final TextAttributesKey[] GLSL_BRACES =
+            { TextAttributesKey.createTextAttributesKey("GLSL.BRACES", DefaultLanguageHighlighterColors.BRACES) };
+    static final TextAttributesKey[] GLSL_DOT =
+            { TextAttributesKey.createTextAttributesKey("GLSL.DOT", DefaultLanguageHighlighterColors.DOT) };
+    static final TextAttributesKey[] GLSL_SEMICOLON =
+            { TextAttributesKey.createTextAttributesKey("GLSL.SEMICOLON", DefaultLanguageHighlighterColors.SEMICOLON) };
+    static final TextAttributesKey[] GLSL_COMMA =
+            { TextAttributesKey.createTextAttributesKey("GLSL.COMMA", DefaultLanguageHighlighterColors.COMMA) };
+    static final TextAttributesKey[] GLSL_PARENS =
+            { TextAttributesKey.createTextAttributesKey("GLSL.PARENS", DefaultLanguageHighlighterColors.PARENTHESES) };
+    static final TextAttributesKey[] GLSL_BRACKETS =
+            { TextAttributesKey.createTextAttributesKey("GLSL.BRACKETS", DefaultLanguageHighlighterColors.BRACKETS) };
     static final TextAttributesKey[] GLSL_IDENTIFIER =
             { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER) };
     static final TextAttributesKey[] GLSL_COMPILER_DIRECTIVE =
@@ -61,7 +75,7 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
     static final TextAttributesKey[] GLSL_UNKNOWN =
             { TextAttributesKey.createTextAttributesKey("GLSL.UNKNOWN", HighlighterColors.BAD_CHARACTER) };
     static final TextAttributesKey[] GLSL_TEXT =
-            { TextAttributesKey.createTextAttributesKey("GLSL.TEXT", DefaultLanguageHighlighterColors.DOT) };
+            { TextAttributesKey.createTextAttributesKey("GLSL.TEXT", HighlighterColors.TEXT) };
 
     @NotNull
     public Lexer getHighlightingLexer() {
@@ -71,8 +85,15 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
     @NotNull
     public TextAttributesKey[] getTokenHighlights(IElementType type) {
         if (type == INTEGER_CONSTANT || type == FLOAT_CONSTANT || type == BOOL_CONSTANT) return GLSL_NUMBER;
-        if (type == COMMENT_BLOCK || type == COMMENT_LINE) return GLSL_COMMENT;
+        if (type == COMMENT_BLOCK) return GLSL_BLOCK_COMMENT;
+        if (type == COMMENT_LINE) return GLSL_LINE_COMMENT;
         if (type == IDENTIFIER) return GLSL_IDENTIFIER;
+        if (type == LEFT_BRACE || type == RIGHT_BRACE) return GLSL_BRACES;
+        if (type == DOT) return GLSL_DOT;
+        if (type == SEMICOLON) return GLSL_SEMICOLON;
+        if (type == COMMA) return GLSL_COMMA;
+        if (type == LEFT_PAREN || type == RIGHT_PAREN) return GLSL_PARENS;
+        if (type == LEFT_BRACKET || type == RIGHT_BRACKET) return GLSL_BRACKETS;
         if (type == COMPILER_DIRECTIVE_VERSION) return GLSL_COMPILER_DIRECTIVE_VERSION;
         if (type == COMPILER_DIRECTIVE_EXTENSION) return GLSL_COMPILER_DIRECTIVE_EXTENSION;
         if (type == COMPILER_DIRECTIVE_PRAGMA) return GLSL_COMPILER_DIRECTIVE_PRAGMA;
