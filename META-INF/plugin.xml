@@ -22,10 +22,17 @@
     <category>Custom Languages</category>
     <id>GLSL</id>
     <description>Support for the OpenGL Shading Language</description>
-    <version>1.3</version>
+    <version>1.4</version>
     <vendor>Foundation</vendor>
     <idea-version since-build="139.1117"/>
     <depends>com.intellij.modules.lang</depends>
+
+    <change-notes><![CDATA[
+        1.4 - Added support for GL ES precision modifiers and statements
+
+        1.3 - Fixed compatibility with CLion
+            - Fix minor bugs
+    ]]></change-notes>
 
     <actions>
         <action id="GLSL_DEDUCE_EXPRESSION_TYPE"
