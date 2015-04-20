@@ -61,7 +61,7 @@ LINE_COMMENT        = "//"[^\r\n]*
 BLOCK_COMMENT       = "/*"([^"*"]|("*"+[^"*""/"]))*("*"+"/")?
 
 GLSL_ES_TYPE = void|float|(u?int)|bool|((i|b|u)?vec([2-4]))|(mat[2-4](x[2-4])?)|(samplerCubeShadow|sampler2DShadow|sampler2DArrayShadow)|((i|u)?sampler(2D|3D|Cube|2DArray))
-GLSL_ES_TYPE_MODIFIER = (high|medium|low)p
+GLSL_ES_PRECISION_MODIFIER = (high|medium|low)p
 
 %%
 /**
@@ -113,7 +113,10 @@ attribute               {return ATTRIBUTE_KEYWORD; }
 uniform                 {return UNIFORM_KEYWORD; }
 varying                 {return VARYING_KEYWORD; }
 centroid                {return CENTROID_KEYWORD; }
-invariant               {return INVARIANT_KEYWORD;}
+invariant               {return INVARIANT_KEYWORD; }
+
+/* GLSL ES STORAGE QUALIFIERS */
+{GLSL_ES_PRECISION_MODIFIER}	{return PRECISION_KEYWORD; }
 
 /* GLSL PARAMETER QUALIFIER */
 in                      {return IN_KEYWORD; }
@@ -138,7 +141,7 @@ if                      {return IF_KEYWORD; }
 else                    {return ELSE_KEYWORD; }
 
 /* GLSL ES PRECISION */
-precision{WHITE_SPACE}+{GLSL_ES_TYPE_MODIFIER}{WHITE_SPACE}+{GLSL_ES_TYPE}";"  {return GLES_PRECISION; }
+precision{WHITE_SPACE}+{GLSL_ES_PRECISION_MODIFIER}{WHITE_SPACE}+{GLSL_ES_TYPE}";"  {return PRECISION_STATEMENT; }
 
 
 /* GLSL Symbols */

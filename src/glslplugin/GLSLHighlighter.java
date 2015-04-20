@@ -32,37 +32,31 @@ import static glslplugin.lang.elements.GLSLTokenTypes.*;
 
 public class GLSLHighlighter extends SyntaxHighlighterBase {
     static final TextAttributesKey GLSL_NUMBER = TextAttributesKey.createTextAttributesKey("GLSL.NUMBER", DefaultLanguageHighlighterColors.NUMBER);
-    //static final TextAttributesKey GLSL_NUMBER = TextAttributesKey.createTextAttributesKey("GLSL.NUMBER", SyntaxHighlighterColors.NUMBER.getDefaultAttributes());
 
     static final TextAttributesKey GLSL_TYPE_SPECIFIER = TextAttributesKey.createTextAttributesKey("GLSL.TYPE_SPECIFIER", DefaultLanguageHighlighterColors.CLASS_REFERENCE);
-    //static final TextAttributesKey GLSL_TYPE_SPECIFIER = TextAttributesKey.createTextAttributesKey("GLSL.TYPE_SPECIFIER", new TextAttributes(new Color(0, 128, 128), null, null, null, Font.BOLD));
 
     static final TextAttributesKey GLSL_TYPE_QUALIFIERS = TextAttributesKey.createTextAttributesKey("GLSL.QUALIFIER_TOKENS", DefaultLanguageHighlighterColors.KEYWORD);
-    //static final TextAttributesKey GLSL_TYPE_QUALIFIERS = TextAttributesKey.createTextAttributesKey("GLSL.QUALIFIER_TOKENS", new TextAttributes(new Color(0, 128, 255), null, null, null, Font.BOLD));
 
     //static final TextAttributesKey GLSL_PARAMETER_QUALIFIERS = TextAttributesKey.createTextAttributesKey("GLSL.PARAMETER_QUALIFIERS", DefaultLanguageHighlighterColors.KEYWORD);
     //static final TextAttributesKey GLSL_PARAMETER_QUALIFIERS = TextAttributesKey.createTextAttributesKey("GLSL.PARAMETER_QUALIFIERS", new TextAttributes(new Color(128, 255, 0), null, null, null, Font.ITALIC));
 
     static final TextAttributesKey GLSL_FLOW_KEYWORDS = TextAttributesKey.createTextAttributesKey("GLSL.FLOW_KEYWORDS", DefaultLanguageHighlighterColors.KEYWORD);
-    //static final TextAttributesKey GLSL_FLOW_KEYWORDS = TextAttributesKey.createTextAttributesKey("GLSL.FLOW_KEYWORDS", new TextAttributes(new Color(255, 128, 0), null, null, null, Font.PLAIN));
 
     static final TextAttributesKey GLSL_COMMENT = TextAttributesKey.createTextAttributesKey("GLSL.COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT);
-    //static final TextAttributesKey GLSL_COMMENT = TextAttributesKey.createTextAttributesKey("GLSL.COMMENT", SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes());
 
     static final TextAttributesKey GLSL_IDENTIFIER = TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER);
-    //static final TextAttributesKey GLSL_IDENTIFIER = TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER", new TextAttributes(Color.BLACK, null, null, null, Font.PLAIN));
 
     static final TextAttributesKey GLSL_COMPILER_DIRECTIVE = TextAttributesKey.createTextAttributesKey("GLSL.COMPILER_DIRECTIVE",DefaultLanguageHighlighterColors.DOC_COMMENT_MARKUP);
-    //new TextAttributes(Color.GREEN.darker().darker(), null, null, null, Font.ITALIC)
     static final TextAttributesKey GLSL_COMPILER_DIRECTIVE_VERSION = TextAttributesKey.createTextAttributesKey("GLSL.COMPILER_DIRECTIVE_VERSION", GLSL_COMPILER_DIRECTIVE);
     static final TextAttributesKey GLSL_COMPILER_DIRECTIVE_EXTENSION = TextAttributesKey.createTextAttributesKey("GLSL.COMPILER_DIRECTIVE_EXTENSION", GLSL_COMPILER_DIRECTIVE);
     static final TextAttributesKey GLSL_COMPILER_DIRECTIVE_PRAGMA = TextAttributesKey.createTextAttributesKey("GLSL.COMPILER_DIRECTIVE_PRAGMA", GLSL_COMPILER_DIRECTIVE);
     static final TextAttributesKey GLSL_COMPILER_DIRECTIVE_OTHER = TextAttributesKey.createTextAttributesKey("GLSL.COMPILER_DIRECTIVE_OTHER", GLSL_COMPILER_DIRECTIVE);
+
+    static final TextAttributesKey GLSL_PRECISION_STATEMENT = TextAttributesKey.createTextAttributesKey("GLSL.PRECISION_STATEMENT", GLSL_COMPILER_DIRECTIVE);
+
     static final TextAttributesKey GLSL_UNKNOWN = TextAttributesKey.createTextAttributesKey("GLSL.UNKNOWN", HighlighterColors.BAD_CHARACTER);
-    //static final TextAttributesKey GLSL_UNKNOWN = TextAttributesKey.createTextAttributesKey("GLSL.UNKNOWN", new TextAttributes(Color.RED, null, null, null, Font.BOLD));
 
     static final TextAttributesKey GLSL_TEXT = TextAttributesKey.createTextAttributesKey("GLSL.TEXT", DefaultLanguageHighlighterColors.DOT);
-    //static final TextAttributesKey GLSL_TEXT = TextAttributesKey.createTextAttributesKey("GLSL.TEXT", new TextAttributes(Color.BLACK, null, null, null, Font.PLAIN));
 
     public GLSLHighlighter() {
         super();
@@ -98,6 +92,8 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
             return new TextAttributesKey[]{GLSL_FLOW_KEYWORDS};
         } else if (type == UNKNOWN) {
             return new TextAttributesKey[]{GLSL_UNKNOWN};
+        }else if (type == PRECISION_STATEMENT){
+            return new TextAttributesKey[]{GLSL_PRECISION_STATEMENT};
         }
         return new TextAttributesKey[]{GLSL_TEXT};
     }
