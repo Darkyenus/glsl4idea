@@ -168,7 +168,7 @@ public class GLSLParsing {
         // external_declaration: qualifier-list type-specifier declarator-list ';'
         //                     | qualifier-list type-specifier prototype ';'
         //                     | qualifier-list type-specifier prototype compound-statement
-        // Note: after type specifier, we only need to look up IDENTIfIER '(' to determine
+        // Note: after type-specifier, we only need to look up IDENTIfIER '(' to determine
         //       whether or not it is a prototype or a declarator-list.
 
         PsiBuilder.Marker mark = b.mark();
@@ -276,7 +276,10 @@ public class GLSLParsing {
             postType.drop();
             mark.rollbackTo();
             mark = b.mark();
-            parseExpression();
+            if(!parseExpression()){
+                //There is no expression! Consume what triggered me. (Would lead to infinite loop otherwise)
+                b.advanceLexer();
+            }
             tryMatch(SEMICOLON);
             mark.error("Expression not allowed here.");
             return true;
