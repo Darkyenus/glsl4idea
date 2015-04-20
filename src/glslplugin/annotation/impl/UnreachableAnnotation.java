@@ -26,6 +26,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.GLSLElement;
+import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.statements.*;
 
 public class UnreachableAnnotation implements Annotator<GLSLStatement> {
@@ -47,6 +48,10 @@ public class UnreachableAnnotation implements Annotator<GLSLStatement> {
         }
 
         if (expr instanceof GLSLBreakStatement || expr instanceof GLSLContinueStatement || expr instanceof GLSLDiscardStatement || expr instanceof GLSLReturnStatement) {
+            if (expr.getParent() == null
+                    || expr.getParent().getNode().getElementType() != GLSLElementTypes.COMPOUND_STATEMENT) {
+                return;
+            }
 
             PsiElement element = expr.getNextSibling();
             while(element != null) {
