@@ -118,7 +118,6 @@ public class GLSLElementTypes {
     public static final IElementType RETURN_STATEMENT = new GLSLElementType("RETURN_STATEMENT");
 
     public static final IElementType IF_STATEMENT = new GLSLElementType("IF_STATEMENT");
-    public static final IElementType ELSE_STATEMENT = new GLSLElementType("ELSE_STATEMENT");
     public static final IElementType FOR_STATEMENT = new GLSLElementType("FOR_STATEMENT");
     public static final IElementType DO_STATEMENT = new GLSLElementType("DO_STATEMENT");
     public static final IElementType WHILE_STATEMENT = new GLSLElementType("WHILE_STATEMENT");
