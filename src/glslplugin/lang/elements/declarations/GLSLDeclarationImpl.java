@@ -40,6 +40,15 @@ public class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclarat
     }
 
     /**
+     * Same as {@link GLSLDeclarationImpl#getTypeSpecifierNode()} but may return null.
+     * (getTypeSpecifierNode will crash instead)
+     * @return type specifier or null
+     */
+    public GLSLTypeSpecifier findTypeSpecifierNode(){
+        return findChildByClass(GLSLTypeSpecifier.class);
+    }
+
+    /**
      * Returns the type specifier Psi element for this declaration.
      * <p/>
      * <b>WARNING!</b>
@@ -50,7 +59,7 @@ public class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclarat
      * @return the type specifier.
      */
     public GLSLTypeSpecifier getTypeSpecifierNode() {
-        GLSLTypeSpecifier typeSpecifier = findChildByClass(GLSLTypeSpecifier.class);
+        final GLSLTypeSpecifier typeSpecifier = findTypeSpecifierNode();
         assert typeSpecifier != null;
         return typeSpecifier;
     }

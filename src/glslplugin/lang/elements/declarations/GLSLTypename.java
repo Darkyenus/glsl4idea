@@ -194,7 +194,9 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
     }
 
     private GLSLTypeDefinition checkDeclarationForType(GLSLDeclaration declaration) {
-        GLSLTypedElement definition = declaration.getTypeSpecifierNode().getTypeDefinition();
+        final GLSLTypeSpecifier specifier = declaration.getTypeSpecifierNode();
+        if(specifier == null)return null;
+        GLSLTypedElement definition = specifier.getTypeDefinition();
         if (definition instanceof GLSLTypeDefinition) {
             GLSLTypeDefinition typedef = (GLSLTypeDefinition) definition;
             if (typedef.isNamed() && typedef.getTypeName().equals(getTypename())) {
