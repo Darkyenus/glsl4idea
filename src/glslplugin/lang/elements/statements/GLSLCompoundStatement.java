@@ -68,13 +68,12 @@ public class GLSLCompoundStatement extends GLSLStatement {
     @NotNull
     @Override
     public TerminatorScope getTerminatorScope() {
-        // The terminator scope of a compound statement is the maximum of the statements inside it.
+        // The terminator scope of a compound statement is scope of the first terminating statement inside it.
 
-        TerminatorScope maxScope = TerminatorScope.NONE;
         for (GLSLStatement statement : getStatements()) {
             TerminatorScope childScope = statement.getTerminatorScope();
-            maxScope = maxScope.compareTo(childScope) > 0 ? maxScope : childScope;
+            if (childScope != TerminatorScope.NONE) return childScope;
         }
-        return maxScope;
+        return TerminatorScope.NONE;
     }
 }
