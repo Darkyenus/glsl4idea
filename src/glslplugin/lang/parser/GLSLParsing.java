@@ -636,12 +636,8 @@ public class GLSLParsing {
 
     private void tryParseElsePart() {
         // else_part: (nothing) | 'else' statement
-        PsiBuilder.Marker mark = b.mark();
         if (tryMatch(ELSE_KEYWORD)) {
             parseStatement();
-            mark.done(ELSE_STATEMENT);
-        } else {
-            mark.drop();
         }
     }
 

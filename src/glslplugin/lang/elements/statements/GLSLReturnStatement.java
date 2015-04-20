@@ -53,4 +53,10 @@ public class GLSLReturnStatement extends GLSLStatement {
             return GLSLTypes.VOID;
         }
     }
+
+    @NotNull
+    @Override
+    public TerminatorScope getTerminatorScope() {
+        return TerminatorScope.FUNCTION;
+    }
 }

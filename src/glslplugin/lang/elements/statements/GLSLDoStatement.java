@@ -19,6 +19,7 @@
 
 package glslplugin.lang.elements.statements;
 
+import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.expressions.GLSLCondition;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
@@ -46,5 +47,18 @@ public class GLSLDoStatement extends GLSLStatement implements ConditionStatement
     @Override
     public String toString() {
         return "Do-While Loop";
+    }
+
+    @NotNull
+    @Override
+    public TerminatorScope getTerminatorScope() {
+        // The terminator scope of a do-while loop is the scope of its inner statement, unless its scope is LOOP
+        // (which would be breaking out of this loop, and so wouldn't affect any outer loop)
+        GLSLStatement statement = PsiTreeUtil.getChildOfType(this, GLSLStatement.class);
+        if (statement == null) return TerminatorScope.NONE;
+
+        TerminatorScope scope = statement.getTerminatorScope();
+        if (scope == TerminatorScope.LOOP) scope = TerminatorScope.NONE;
+        return scope;
     }
 }

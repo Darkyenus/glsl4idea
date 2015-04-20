@@ -49,4 +49,6 @@ public class GLSLWhileStatement extends GLSLStatement implements ConditionStatem
     public String toString() {
         return "While Loop";
     }
+
+    // TODO some while statements can be terminating if their condition can be constant-analyzed as true
 }
