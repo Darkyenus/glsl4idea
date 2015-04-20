@@ -2,15 +2,7 @@
 <list>
     <!--
         Available options:
-            FOREGROUND - RRGGBB hex color
-            BACKGROUND - RRGGBB hex color
-            EFFECT_COLOR - RRGGBB hex color
-            EFFECT_TYPE - number
-                3 = strikethrough
-            FONT_TYPE - number
-                0 = normal
-                1 = bold
-                2 = italic
+            See GLSLDefault.xml
     -->
     <option name="GLSL.TYPE_SPECIFIER"><!-- int, vec4, sampler2D... -->
         <value>
@@ -26,13 +18,13 @@
     </option>
     <option name="GLSL.COMPILER_DIRECTIVE"><!-- #version 120 -->
         <value>
-            <option name="FOREGROUND" value="005000"/>
+            <option name="FOREGROUND" value="108010"/>
             <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
     <option name="GLSL.PRECISION_STATEMENT"><!-- precision mediump float; -->
         <value>
-            <option name="FOREGROUND" value="004070"/>
+            <option name="FOREGROUND" value="0080D0"/>
             <option name="FONT_TYPE" value="2"/>
         </value>
     </option>
