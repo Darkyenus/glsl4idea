@@ -22,6 +22,7 @@ package glslplugin.extensions;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.PsiElement;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclarationImpl;
@@ -36,8 +37,8 @@ import java.util.List;
  * This annotation will show gutter icons for prototypes that are implemented and implementations of prototypes.
  */
 public class GLSLLineMarkerProvider implements LineMarkerProvider {
-    private static final Icon implemented = IconLoader.getIcon("/icons/implementedMethod.png");
-    private static final Icon implementing = IconLoader.getIcon("/icons/implementingMethod.png");
+    private static final Icon implemented = AllIcons.Gutter.ImplementedMethod;
+    private static final Icon implementing = AllIcons.Gutter.ImplementingMethod;
 
     public GLSLLineMarkerProvider() {
 
