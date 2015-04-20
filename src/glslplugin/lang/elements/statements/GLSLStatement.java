@@ -20,6 +20,7 @@
 package glslplugin.lang.elements.statements;
 
 import com.intellij.lang.ASTNode;
+import glslplugin.annotation.impl.UnreachableAnnotation;
 import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,4 +35,14 @@ public abstract class GLSLStatement extends GLSLElementImpl {
     public GLSLStatement(@NotNull ASTNode astNode) {
         super(astNode);
     }
+
+    public enum TerminatorScope {
+        NONE, // This statement does not terminate any scope
+        LOOP, // A loop terminator terminates the innermost loop (eg. break, continue)
+        FUNCTION, // A function terminator terminates the current function (eg. return)
+        SHADER, // A shader terminator terminates the entire shader (eg. discard)
+    }
+
+    @NotNull
+    public TerminatorScope getTerminatorScope() { return TerminatorScope.NONE; }
 }

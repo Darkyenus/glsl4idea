@@ -19,6 +19,7 @@
 
 package glslplugin.lang.elements.statements;
 
+import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.expressions.GLSLCondition;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
@@ -46,5 +47,21 @@ public class GLSLIfStatement extends GLSLStatement implements ConditionStatement
         GLSLCondition condition = findChildByClass(GLSLCondition.class);
         assert condition != null;
         return condition;
+    }
+
+    @NotNull
+    @Override
+    public TerminatorScope getTerminatorScope() {
+        // The terminator scope of an if statement is NONE if it only has one branch, otherwise it's the minimum
+        // terminator scope of its two branches.
+        GLSLStatement[] branches = PsiTreeUtil.getChildrenOfType(this, GLSLStatement.class);
+        if (branches == null || branches.length < 2) return TerminatorScope.NONE;
+
+        TerminatorScope minScope = TerminatorScope.SHADER;
+        for (GLSLStatement statement : branches) {
+            TerminatorScope childScope = statement.getTerminatorScope();
+            minScope = minScope.compareTo(childScope) < 0 ? minScope : childScope;
+        }
+        return minScope;
     }
 }

@@ -47,4 +47,6 @@ public class GLSLExpressionStatement extends GLSLStatement {
     public String toString() {
         return "Expression Statement";
     }
+
+    // TODO some expressions can be terminating (eg. a call to a function which discards)
 }

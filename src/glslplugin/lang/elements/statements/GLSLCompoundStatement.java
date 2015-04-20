@@ -40,6 +40,7 @@ public class GLSLCompoundStatement extends GLSLStatement {
         super(astNode);
     }
 
+    @NotNull
     public GLSLStatement[] getStatements() {
         // convert the list of children to a list of GLSLStatement objects while performing sanity check.
         PsiElement[] children = getChildren();
@@ -62,5 +63,18 @@ public class GLSLCompoundStatement extends GLSLStatement {
 
     public String toString() {
         return "Compound Statement (" + getStatements().length + " statements)";
+    }
+
+    @NotNull
+    @Override
+    public TerminatorScope getTerminatorScope() {
+        // The terminator scope of a compound statement is the maximum of the statements inside it.
+
+        TerminatorScope maxScope = TerminatorScope.NONE;
+        for (GLSLStatement statement : getStatements()) {
+            TerminatorScope childScope = statement.getTerminatorScope();
+            maxScope = maxScope.compareTo(childScope) > 0 ? maxScope : childScope;
+        }
+        return maxScope;
     }
 }
