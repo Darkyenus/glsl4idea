@@ -104,6 +104,7 @@ samplerCube             {return SAMPLERCUBE_TYPE; }
 sampler1DShadow         {return SAMPLER1DSHADOW_TYPE; }
 sampler2DShadow         {return SAMPLER2DSHADOW_TYPE; }
 
+
 /* GLSL STORAGE QUALIFIERS */
 //note: these are declared separately to better support error handling
 //      for example swapping varying and centroid should not cause lexer failure.
@@ -132,7 +133,6 @@ smooth                  {return SMOOTH_KEYWORD; }
 flat                    {return FLAT_KEYWORD; }
 noperspective           {return NOPERSPECTIVE_KEYWORD; }
 
-
 /* GLSL ES STORAGE QUALIFIERS */
 {GLSL_ES_PRECISION_MODIFIER}	{return PRECISION_KEYWORD; }
 
@@ -140,6 +140,7 @@ noperspective           {return NOPERSPECTIVE_KEYWORD; }
 in                      {return IN_KEYWORD; }
 out                     {return OUT_KEYWORD; }
 inout                   {return INOUT_KEYWORD; }
+
 
 /* GLSL ITERATION FLOW_KEYWORDS */
 while                   {return WHILE_KEYWORD; }

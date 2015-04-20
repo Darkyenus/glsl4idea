@@ -153,22 +153,56 @@ public class GLSLTokenTypes {
     public static final IElementType COMPILER_DIRECTIVE_PRAGMA = new GLSLElementType("COMPILER_DIRECTIVE_PRAGMA");
     public static final IElementType COMPILER_DIRECTIVE_OTHER = new GLSLElementType("COMPILER_DIRECTIVE_OTHER");
 
+    // Type specifiers
     public static final TokenSet FLOAT_TYPE_SPECIFIER_NONARRAY = TokenSet.create(FLOAT_TYPE, VEC2_TYPE, VEC3_TYPE, VEC4_TYPE);
-    public static final TokenSet INTEGER_TYPE_SPECIFIER_NONARRAY = TokenSet.create(INT_TYPE, IVEC2_TYPE, IVEC3_TYPE, IVEC4_TYPE);
-    public static final TokenSet BOOL_TYPE_SPECIFIER_NONARRAY = TokenSet.create(BOOL_TYPE, BVEC2_TYPE, BVEC3_TYPE, BVEC4_TYPE);
-    public static final TokenSet MATRIX_TYPE_SPECIFIER_NONARRAY = TokenSet.create(MAT2_TYPE, MAT3_TYPE, MAT4_TYPE,
-            MAT2X2_TYPE, MAT2X3_TYPE, MAT2X4_TYPE, MAT3X2_TYPE, MAT3X3_TYPE, MAT3X4_TYPE, MAT4X2_TYPE, MAT4X3_TYPE, MAT4X4_TYPE);
-    public static final TokenSet TEXTURE_TYPE_SPECIFIER_NONARRAY = TokenSet.create(SAMPLER1D_TYPE, SAMPLER2D_TYPE,
-            SAMPLER3D_TYPE, SAMPLERCUBE_TYPE, SAMPLER1DSHADOW_TYPE, SAMPLER2DSHADOW_TYPE);
-    public static final TokenSet TYPE_SPECIFIER_NONARRAY_TOKENS = merge(TokenSet.create(VOID_TYPE), FLOAT_TYPE_SPECIFIER_NONARRAY,
-            INTEGER_TYPE_SPECIFIER_NONARRAY, BOOL_TYPE_SPECIFIER_NONARRAY, MATRIX_TYPE_SPECIFIER_NONARRAY,
-            TEXTURE_TYPE_SPECIFIER_NONARRAY, TokenSet.create(STRUCT, NAMED_TYPE));
 
-    public static final TokenSet QUALIFIER_TOKENS = TokenSet.create(CONST_KEYWORD, ATTRIBUTE_KEYWORD, VARYING_KEYWORD,
-            UNIFORM_KEYWORD, CENTROID_KEYWORD, INVARIANT_KEYWORD, IN_KEYWORD, OUT_KEYWORD, INOUT_KEYWORD, PRECISION_KEYWORD,
-            PATCH_KEYWORD, SAMPLE_KEYWORD, BUFFER_KEYWORD, SHARED_KEYWORD, COHERENT_KEYWORD, VOLATILE_KEYWORD,
-            RESTRICT_KEYWORD, READONLY_KEYWORD, WRITEONLY_KEYWORD, SUBROUTINE_KEYWORD, INVARIANT_KEYWORD,
-            SMOOTH_KEYWORD, FLAT_KEYWORD, NOPERSPECTIVE_KEYWORD, INVARIANT_KEYWORD, PRECISE_KEYWORD);
+    public static final TokenSet INTEGER_TYPE_SPECIFIER_NONARRAY = TokenSet.create(INT_TYPE, IVEC2_TYPE, IVEC3_TYPE, IVEC4_TYPE);
+
+    public static final TokenSet BOOL_TYPE_SPECIFIER_NONARRAY = TokenSet.create(BOOL_TYPE, BVEC2_TYPE, BVEC3_TYPE, BVEC4_TYPE);
+
+    public static final TokenSet MATRIX_TYPE_SPECIFIER_NONARRAY =
+            TokenSet.create(MAT2_TYPE, MAT3_TYPE, MAT4_TYPE, MAT2X2_TYPE, MAT2X3_TYPE, MAT2X4_TYPE, MAT3X2_TYPE,
+                    MAT3X3_TYPE, MAT3X4_TYPE, MAT4X2_TYPE, MAT4X3_TYPE, MAT4X4_TYPE);
+
+    public static final TokenSet TEXTURE_TYPE_SPECIFIER_NONARRAY =
+            TokenSet.create(SAMPLER1D_TYPE, SAMPLER2D_TYPE, SAMPLER3D_TYPE, SAMPLERCUBE_TYPE, SAMPLER1DSHADOW_TYPE,
+                    SAMPLER2DSHADOW_TYPE);
+
+    public static final TokenSet TYPE_SPECIFIER_NONARRAY_TOKENS =
+            merge(TokenSet.create(VOID_TYPE), FLOAT_TYPE_SPECIFIER_NONARRAY, INTEGER_TYPE_SPECIFIER_NONARRAY,
+                    BOOL_TYPE_SPECIFIER_NONARRAY, MATRIX_TYPE_SPECIFIER_NONARRAY, TEXTURE_TYPE_SPECIFIER_NONARRAY,
+                    TokenSet.create(STRUCT, NAMED_TYPE));
+    //
+
+    public static final TokenSet QUALIFIER_TOKENS = TokenSet.create(
+            //GLSL Storage qualifiers
+            CONST_KEYWORD,
+            ATTRIBUTE_KEYWORD,
+            UNIFORM_KEYWORD,
+            VARYING_KEYWORD,
+            CENTROID_KEYWORD,
+            INVARIANT_KEYWORD,
+            PATCH_KEYWORD,
+            SAMPLE_KEYWORD,
+            BUFFER_KEYWORD,
+            SHARED_KEYWORD,
+            COHERENT_KEYWORD,
+            VOLATILE_KEYWORD,
+            RESTRICT_KEYWORD,
+            READONLY_KEYWORD,
+            WRITEONLY_KEYWORD,
+            SUBROUTINE_KEYWORD,
+            PRECISE_KEYWORD,
+            //GLSL ES Storage qualifiers
+            PRECISION_KEYWORD,
+            //GLSL Parameter modifiers
+            IN_KEYWORD,
+            OUT_KEYWORD,
+            INOUT_KEYWORD,
+            //GLSL Interpolation modifiers
+            SMOOTH_KEYWORD,
+            FLAT_KEYWORD,
+            NOPERSPECTIVE_KEYWORD);
 
     public static final TokenSet COMMENTS = TokenSet.create(COMMENT_BLOCK, COMMENT_LINE, COMPILER_DIRECTIVE_VERSION, COMPILER_DIRECTIVE_EXTENSION, COMPILER_DIRECTIVE_PRAGMA, COMPILER_DIRECTIVE_OTHER, PRECISION_STATEMENT);
 
@@ -190,20 +224,20 @@ public class GLSLTokenTypes {
     public static final TokenSet CONSTANT_TOKENS = TokenSet.create(BOOL_CONSTANT, INTEGER_CONSTANT, FLOAT_CONSTANT);
 
     public static final TokenSet EXPRESSION_FIRST_SET = merge(TokenSet.create(
-            INTEGER_CONSTANT, FLOAT_CONSTANT, BOOL_CONSTANT, // constants
-            INC_OP, DEC_OP, PLUS, DASH, BANG, // unary operators
-            IDENTIFIER, // function call, variable name, typename
-            LEFT_PAREN, // group
-            SEMICOLON // empty statement
-    ),
+                    INTEGER_CONSTANT, FLOAT_CONSTANT, BOOL_CONSTANT, // constants
+                    INC_OP, DEC_OP, PLUS, DASH, BANG, // unary operators
+                    IDENTIFIER, // function call, variable name, typename
+                    LEFT_PAREN, // group
+                    SEMICOLON // empty statement
+            ),
             TYPE_SPECIFIER_NONARRAY_TOKENS
     );
     public static final TokenSet STATEMENT_FIRST_SET = merge(TokenSet.create(
-            LEFT_BRACE, // compound_statement
-            BREAK_JUMP_STATEMENT, CONTINUE_JUMP_STATEMENT, RETURN_JUMP_STATEMENT,
-            DISCARD_JUMP_STATEMENT, IF_KEYWORD,
-            DO_KEYWORD, FOR_KEYWORD, WHILE_KEYWORD // flow control
-    ),
+                    LEFT_BRACE, // compound_statement
+                    BREAK_JUMP_STATEMENT, CONTINUE_JUMP_STATEMENT, RETURN_JUMP_STATEMENT,
+                    DISCARD_JUMP_STATEMENT, IF_KEYWORD,
+                    DO_KEYWORD, FOR_KEYWORD, WHILE_KEYWORD // flow control
+            ),
             QUALIFIER_TOKENS,
             EXPRESSION_FIRST_SET
     );
