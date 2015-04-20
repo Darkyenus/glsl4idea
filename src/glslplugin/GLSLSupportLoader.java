@@ -31,7 +31,15 @@ import glslplugin.lang.GLSLFileType;
 public class GLSLSupportLoader extends FileTypeFactory {
     public static final LanguageFileType GLSL = new GLSLFileType();
 
+    private static final String FILETYPES = "glsl" + FileTypeConsumer.EXTENSION_DELIMITER
+                                          + "frag" + FileTypeConsumer.EXTENSION_DELIMITER
+                                          + "vert" + FileTypeConsumer.EXTENSION_DELIMITER
+                                          + "tesc" + FileTypeConsumer.EXTENSION_DELIMITER
+                                          + "tese" + FileTypeConsumer.EXTENSION_DELIMITER
+                                          + "geom" + FileTypeConsumer.EXTENSION_DELIMITER
+                                          + "comp";
+
     public void createFileTypes(@NotNull FileTypeConsumer consumer) {
-        consumer.consume(GLSL,"glsl"+FileTypeConsumer.EXTENSION_DELIMITER+"frag"+FileTypeConsumer.EXTENSION_DELIMITER+"vert");
+        consumer.consume(GLSL, FILETYPES);
     }
 }
