@@ -37,8 +37,10 @@ public class UnreachableAnnotation implements Annotator<GLSLStatement> {
     }
 
     public void annotate(GLSLStatement expr, AnnotationHolder holder) {
-        //todo: not unreachables...
-        if (expr instanceof GLSLBreakStatement || expr instanceof GLSLContinueStatement) {
+        GLSLStatement.TerminatorScope scope = expr.getTerminatorScope();
+        if (scope == GLSLStatement.TerminatorScope.NONE) return;
+
+        if (scope == GLSLStatement.TerminatorScope.LOOP) {
             //noinspection unchecked
             GLSLElement parent = expr.findParentByClasses(GLSLDoStatement.class, GLSLForStatement.class, GLSLWhileStatement.class);
             if(parent == null) {
@@ -47,23 +49,18 @@ public class UnreachableAnnotation implements Annotator<GLSLStatement> {
             }
         }
 
-        if (expr instanceof GLSLBreakStatement || expr instanceof GLSLContinueStatement || expr instanceof GLSLDiscardStatement || expr instanceof GLSLReturnStatement) {
-            if (expr.getParent() == null
-                    || expr.getParent().getNode().getElementType() != GLSLElementTypes.COMPOUND_STATEMENT) {
-                return;
-            }
-
-            PsiElement element = expr.getNextSibling();
-            while(element != null) {
-                if(element instanceof GLSLElement) {
-                    Annotation annotation = holder.createWarningAnnotation(element, "Unreachable expression");
-                    annotation.setTextAttributes(strikeThrough);
-                }
-
-                element = element.getNextSibling();
-            }
-
+        if (expr.getParent() == null
+                || expr.getParent().getNode().getElementType() != GLSLElementTypes.COMPOUND_STATEMENT) {
+            return;
         }
 
+        PsiElement element = expr.getNextSibling();
+        while (element != null) {
+            if (element instanceof GLSLElement) {
+                Annotation annotation = holder.createWarningAnnotation(element, "Unreachable expression");
+                annotation.setTextAttributes(strikeThrough);
+            }
+            element = element.getNextSibling();
+        }
     }
 }
