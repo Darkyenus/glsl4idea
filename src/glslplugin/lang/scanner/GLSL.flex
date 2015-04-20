@@ -114,6 +114,24 @@ uniform                 {return UNIFORM_KEYWORD; }
 varying                 {return VARYING_KEYWORD; }
 centroid                {return CENTROID_KEYWORD; }
 invariant               {return INVARIANT_KEYWORD; }
+patch                   {return PATCH_KEYWORD; }
+sample                  {return SAMPLE_KEYWORD; }
+buffer                  {return BUFFER_KEYWORD; }
+shared                  {return SHARED_KEYWORD; }
+coherent                {return COHERENT_KEYWORD; }
+volatile                {return VOLATILE_KEYWORD; }
+restrict                {return RESTRICT_KEYWORD; }
+readonly                {return READONLY_KEYWORD; }
+writeonly               {return WRITEONLY_KEYWORD; }
+subroutine              {return SUBROUTINE_KEYWORD; }
+precise                 {return PRECISE_KEYWORD; }
+
+/* GLSL INTERPOLATION QUALIFIERS */
+
+smooth                  {return SMOOTH_KEYWORD; }
+flat                    {return FLAT_KEYWORD; }
+noperspective           {return NOPERSPECTIVE_KEYWORD; }
+
 
 /* GLSL ES STORAGE QUALIFIERS */
 {GLSL_ES_PRECISION_MODIFIER}	{return PRECISION_KEYWORD; }
