@@ -23,11 +23,14 @@ package glslplugin.lang.elements.types;
  * The qualifier types as specified in the spec.
  */
 public enum GLSLTypeQualifier {
-    INVARIANT_QUALIFIER(1, "invariant qualifier"),
-    STORAGE_QUALIFIER(2, "storage qualifier"),
-    PARAMETER_QUALIFIER(3, "parameter qualifier"),
-    //reserved for futuer specs: PRECISION_QUALIFIER
-    ;
+    STORAGE_QUALIFIER       (0, "storage qualifier"),
+    MEMORY_QUALIFIER        (1, "memory qualifier"),
+    INVARIANT_QUALIFIER     (2, "invariant qualifier"),
+    SUBROUTINE_QUALIFIER    (3, "subroutine qualifier"),
+    PRECISE_QUALIFIER       (4, "precise qualifier"),
+    ES_STORAGE_QUALIFIER    (5, "ES storage qualifier"),
+    PARAMETER_MODIFIER      (6, "parameter modifier"),
+    INTERPOLATION_MODIFIER  (7, "interpolation modifier");
     public final int order;
     private final String textRepresentation;
 

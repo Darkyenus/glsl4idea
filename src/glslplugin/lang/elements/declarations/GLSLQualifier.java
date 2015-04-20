@@ -28,7 +28,7 @@ import glslplugin.lang.elements.types.GLSLTypeQualifier;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * NewQualifier is all kinds of qualifiers combined into a single class.
+ * GLSLQualifier is all kinds of qualifiers combined into a single class.
  * <p/>
  * The qualifiers are associated with a qualifier type which are ordered by an integer value.
  * Qualifiers needs to appear in increasing order. Some storage qualifiers may be combined,
@@ -40,22 +40,49 @@ import org.jetbrains.annotations.NotNull;
  */
 public class GLSLQualifier extends GLSLElementImpl {
 
-
+    @SuppressWarnings("unused") //It is used, as .values()
     public enum Qualifier {
-        // Invariant Qualifier
-        INVARIANT(GLSLTypeQualifier.INVARIANT_QUALIFIER, "invariant", GLSLTokenTypes.INVARIANT_KEYWORD),
-
         // Storage Qualifiers
         CONST(GLSLTypeQualifier.STORAGE_QUALIFIER, "const", GLSLTokenTypes.CONST_KEYWORD),
         ATTRIBUTE(GLSLTypeQualifier.STORAGE_QUALIFIER, "attribute", GLSLTokenTypes.ATTRIBUTE_KEYWORD),
         UNIFORM(GLSLTypeQualifier.STORAGE_QUALIFIER, "uniform", GLSLTokenTypes.UNIFORM_KEYWORD),
         VARYING(GLSLTypeQualifier.STORAGE_QUALIFIER, "varying", GLSLTokenTypes.VARYING_KEYWORD),
         CENTROID(GLSLTypeQualifier.STORAGE_QUALIFIER, "centroid", GLSLTokenTypes.CENTROID_KEYWORD),
+        PATCH(GLSLTypeQualifier.STORAGE_QUALIFIER, "patch", GLSLTokenTypes.PATCH_KEYWORD),
+        SAMPLE(GLSLTypeQualifier.STORAGE_QUALIFIER, "sample", GLSLTokenTypes.SAMPLE_KEYWORD),
+        BUFFER(GLSLTypeQualifier.STORAGE_QUALIFIER, "buffer", GLSLTokenTypes.BUFFER_KEYWORD),
+        SHARED(GLSLTypeQualifier.STORAGE_QUALIFIER, "shared", GLSLTokenTypes.SHARED_KEYWORD),
 
-        // Parameter Qualifiers
-        IN(GLSLTypeQualifier.PARAMETER_QUALIFIER, "in", GLSLTokenTypes.IN_KEYWORD),
-        OUT(GLSLTypeQualifier.PARAMETER_QUALIFIER, "out", GLSLTokenTypes.OUT_KEYWORD),
-        INOUT(GLSLTypeQualifier.PARAMETER_QUALIFIER, "inout", GLSLTokenTypes.INOUT_KEYWORD);
+        // Memory Qualifiers
+        COHERENT(GLSLTypeQualifier.MEMORY_QUALIFIER,"coherent",GLSLTokenTypes.COHERENT_KEYWORD),
+        VOLATILE(GLSLTypeQualifier.MEMORY_QUALIFIER,"volatile",GLSLTokenTypes.VOLATILE_KEYWORD),
+        RESTRICT(GLSLTypeQualifier.MEMORY_QUALIFIER,"restrict",GLSLTokenTypes.RESTRICT_KEYWORD),
+        READONLY(GLSLTypeQualifier.MEMORY_QUALIFIER,"readonly",GLSLTokenTypes.READONLY_KEYWORD),
+        WRITEONLY(GLSLTypeQualifier.MEMORY_QUALIFIER,"writeonly",GLSLTokenTypes.WRITEONLY_KEYWORD),
+
+        // Invariant Qualifier
+        INVARIANT(GLSLTypeQualifier.INVARIANT_QUALIFIER, "invariant", GLSLTokenTypes.INVARIANT_KEYWORD),
+
+        // Subroutine Qualifier
+        SUBROUTINE(GLSLTypeQualifier.SUBROUTINE_QUALIFIER, "subroutine", GLSLTokenTypes.SUBROUTINE_KEYWORD),
+
+        // Precise Qualifier
+        PRECISE(GLSLTypeQualifier.PRECISE_QUALIFIER, "precise", GLSLTokenTypes.PRECISE_KEYWORD),
+
+        // ES Storage Qualifiers
+        PRECISION(GLSLTypeQualifier.ES_STORAGE_QUALIFIER,"lowp|mediump|highp",GLSLTokenTypes.PRECISION_KEYWORD),
+
+        // Parameter Modifiers
+        IN(GLSLTypeQualifier.PARAMETER_MODIFIER , "in", GLSLTokenTypes.IN_KEYWORD),
+        OUT(GLSLTypeQualifier.PARAMETER_MODIFIER, "out", GLSLTokenTypes.OUT_KEYWORD),
+        INOUT(GLSLTypeQualifier.PARAMETER_MODIFIER, "inout", GLSLTokenTypes.INOUT_KEYWORD),
+
+        // Interpolation modifiers
+        SMOOTH(GLSLTypeQualifier.INTERPOLATION_MODIFIER, "smooth", GLSLTokenTypes.SMOOTH_KEYWORD),
+        FLAT(GLSLTypeQualifier.INTERPOLATION_MODIFIER, "flat", GLSLTokenTypes.FLAT_KEYWORD),
+        NOPERSPECTIVE(GLSLTypeQualifier.INTERPOLATION_MODIFIER, "noperspective", GLSLTokenTypes.NOPERSPECTIVE_KEYWORD)
+        ;
+
         private final GLSLTypeQualifier type;
         private final String textRepresentation;
         private final IElementType correspondingElement;
