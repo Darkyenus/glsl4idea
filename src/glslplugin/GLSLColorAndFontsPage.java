@@ -37,15 +37,22 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
 
     static {
         ATTIBUTES = new AttributesDescriptor[]{
-            new AttributesDescriptor("Numbers",GLSLHighlighter.GLSL_NUMBER),
-            new AttributesDescriptor("Types",GLSLHighlighter.GLSL_TYPE_SPECIFIER),
-            new AttributesDescriptor("Type qualifiers",GLSLHighlighter.GLSL_TYPE_QUALIFIERS),
+            new AttributesDescriptor("Numbers",GLSLHighlighter.GLSL_NUMBER[0]),
+            new AttributesDescriptor("Types",GLSLHighlighter.GLSL_TYPE_SPECIFIER[0]),
+            new AttributesDescriptor("Type qualifiers",GLSLHighlighter.GLSL_TYPE_QUALIFIERS[0]),
             //new AttributesDescriptor("Parameter qualifiers",GLSLHighlighter.GLSL_PARAMETER_QUALIFIERS),//Useless
-            new AttributesDescriptor("Flow keywords",GLSLHighlighter.GLSL_FLOW_KEYWORDS),
-            new AttributesDescriptor("Comments",GLSLHighlighter.GLSL_COMMENT),
-            new AttributesDescriptor("Identifiers",GLSLHighlighter.GLSL_IDENTIFIER),
-            new AttributesDescriptor("Text",GLSLHighlighter.GLSL_TEXT),
-            new AttributesDescriptor("Directives",GLSLHighlighter.GLSL_COMPILER_DIRECTIVE)
+            new AttributesDescriptor("Flow keywords",GLSLHighlighter.GLSL_FLOW_KEYWORDS[0]),
+            new AttributesDescriptor("Block comments",GLSLHighlighter.GLSL_BLOCK_COMMENT[0]),
+            new AttributesDescriptor("Line comments",GLSLHighlighter.GLSL_LINE_COMMENT[0]),
+            new AttributesDescriptor("Braces", GLSLHighlighter.GLSL_BRACES[0]),
+            new AttributesDescriptor("Dot", GLSLHighlighter.GLSL_DOT[0]),
+            new AttributesDescriptor("Semicolon", GLSLHighlighter.GLSL_SEMICOLON[0]),
+            new AttributesDescriptor("Comma", GLSLHighlighter.GLSL_COMMA[0]),
+            new AttributesDescriptor("Parentheses", GLSLHighlighter.GLSL_PARENS[0]),
+            new AttributesDescriptor("Brackets", GLSLHighlighter.GLSL_BRACKETS[0]),
+            new AttributesDescriptor("Identifiers",GLSLHighlighter.GLSL_IDENTIFIER[0]),
+            new AttributesDescriptor("Text",GLSLHighlighter.GLSL_TEXT[0]),
+            new AttributesDescriptor("Directives",GLSLHighlighter.GLSL_COMPILER_DIRECTIVE[0])
 
                 /*new AttributesDescriptor("Numbers", GLSLHighlighter.GLSL_NUMBER),
                 new AttributesDescriptor("Type specifiers", GLSLHighlighter.GLSL_TYPE_SPECIFIER),
