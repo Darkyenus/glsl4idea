@@ -35,7 +35,6 @@ import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -86,8 +85,8 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
     private GLSLElement[] findFunctionDeclarations() {
         GLSLFunctionType[] declarations = findFunctionTypes();
         List<GLSLElement> realDeclarations = new ArrayList<GLSLElement>();
-        for (int i = 0; i < declarations.length; i++) {
-            GLSLElement element = declarations[i].getDefinition();
+        for (GLSLFunctionType declaration : declarations) {
+            GLSLElement element = declaration.getDefinition();
             if (element != null) {
                 realDeclarations.add(element);
             }
@@ -110,7 +109,12 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
         // Is this a constructor for one of the built-in types?
         GLSLType builtInType = GLSLTypes.getTypeFromName(getFunctionName());
         if (builtInType != null) {
-            return GLSLFunctionType.findApplicableTypes(builtInType.getConstructors(), getParameterList().getParameterTypes());
+            final GLSLParameterList parameterList = getParameterList();
+            if(parameterList != null){
+                return GLSLFunctionType.findApplicableTypes(builtInType.getConstructors(), parameterList.getParameterTypes());
+            }else{
+                return NO_FUNCTION_TYPES;
+            }
         }
 
         while (current != null) {
