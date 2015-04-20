@@ -174,6 +174,7 @@ public class GLSLTokenTypes {
                     TokenSet.create(STRUCT, NAMED_TYPE));
     //
 
+    //When modifying, don't forget to modify GLSLQualifier as well
     public static final TokenSet QUALIFIER_TOKENS = TokenSet.create(
             //GLSL Storage qualifiers
             CONST_KEYWORD,
@@ -181,17 +182,21 @@ public class GLSLTokenTypes {
             UNIFORM_KEYWORD,
             VARYING_KEYWORD,
             CENTROID_KEYWORD,
-            INVARIANT_KEYWORD,
             PATCH_KEYWORD,
             SAMPLE_KEYWORD,
             BUFFER_KEYWORD,
             SHARED_KEYWORD,
+            //GLSL Memory qualifiers
             COHERENT_KEYWORD,
             VOLATILE_KEYWORD,
             RESTRICT_KEYWORD,
             READONLY_KEYWORD,
             WRITEONLY_KEYWORD,
+            //GLSL Invariant qualifier
+            INVARIANT_KEYWORD,
+            //GLSL Subroutine qualifier
             SUBROUTINE_KEYWORD,
+            //GLSL Precise qualifier
             PRECISE_KEYWORD,
             //GLSL ES Storage qualifiers
             PRECISION_KEYWORD,
