@@ -64,7 +64,7 @@
         <codeInsight.lineMarkerProvider language="GLSL"
                                         implementationClass="glslplugin.extensions.GLSLLineMarkerProvider"/>
         <additionalTextAttributes scheme="Default" file="colorSchemes/GLSLDefault.xml"/>
-        <additionalTextAttributes scheme="Darcula" file="colorSchemes/GLSLDefault.xml"/>
+        <additionalTextAttributes scheme="Darcula" file="colorSchemes/GLSLDarcula.xml"/>
         <lang.commenter language="GLSL" implementationClass="glslplugin.GLSLCommenter"/>
     </extensions>
 
