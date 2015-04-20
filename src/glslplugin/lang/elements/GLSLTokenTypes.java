@@ -70,6 +70,20 @@ public class GLSLTokenTypes {
     public static final IElementType VARYING_KEYWORD = new GLSLElementType("VARYING_KEYWORD");
     public static final IElementType CENTROID_KEYWORD = new GLSLElementType("CENTROID_KEYWORD");
     public static final IElementType INVARIANT_KEYWORD = new GLSLElementType("INVARIANT_KEYWORD");
+    public static final IElementType PATCH_KEYWORD = new GLSLElementType("PATCH_KEYWORD");
+    public static final IElementType SAMPLE_KEYWORD = new GLSLElementType("SAMPLE_KEYWORD");
+    public static final IElementType BUFFER_KEYWORD = new GLSLElementType("BUFFER_KEYWORD");
+    public static final IElementType SHARED_KEYWORD = new GLSLElementType("SHARED_KEYWORD");
+    public static final IElementType COHERENT_KEYWORD = new GLSLElementType("COHERENT_KEYWORD");
+    public static final IElementType VOLATILE_KEYWORD = new GLSLElementType("VOLATILE_KEYWORD");
+    public static final IElementType RESTRICT_KEYWORD = new GLSLElementType("RESTRICT_KEYWORD");
+    public static final IElementType READONLY_KEYWORD = new GLSLElementType("READONLY_KEYWORD");
+    public static final IElementType WRITEONLY_KEYWORD = new GLSLElementType("WRITEONLY_KEYWORD");
+    public static final IElementType SUBROUTINE_KEYWORD = new GLSLElementType("SUBROUTINE_KEYWORD");
+    public static final IElementType PRECISE_KEYWORD = new GLSLElementType("PRECISE_KEYWORD");
+    public static final IElementType SMOOTH_KEYWORD = new GLSLElementType("SMOOTH_KEYWORD");
+    public static final IElementType FLAT_KEYWORD = new GLSLElementType("FLAT_KEYWORD");
+    public static final IElementType NOPERSPECTIVE_KEYWORD = new GLSLElementType("NOPERSPECTIVE_KEYWORD");
 
     public static final IElementType PRECISION_KEYWORD = new GLSLElementType("PRECISION_KEYWORD");
 
@@ -151,7 +165,10 @@ public class GLSLTokenTypes {
             TEXTURE_TYPE_SPECIFIER_NONARRAY, TokenSet.create(STRUCT, NAMED_TYPE));
 
     public static final TokenSet QUALIFIER_TOKENS = TokenSet.create(CONST_KEYWORD, ATTRIBUTE_KEYWORD, VARYING_KEYWORD,
-            UNIFORM_KEYWORD, CENTROID_KEYWORD, INVARIANT_KEYWORD, IN_KEYWORD, OUT_KEYWORD, INOUT_KEYWORD, PRECISION_KEYWORD);
+            UNIFORM_KEYWORD, CENTROID_KEYWORD, INVARIANT_KEYWORD, IN_KEYWORD, OUT_KEYWORD, INOUT_KEYWORD, PRECISION_KEYWORD,
+            PATCH_KEYWORD, SAMPLE_KEYWORD, BUFFER_KEYWORD, SHARED_KEYWORD, COHERENT_KEYWORD, VOLATILE_KEYWORD,
+            RESTRICT_KEYWORD, READONLY_KEYWORD, WRITEONLY_KEYWORD, SUBROUTINE_KEYWORD, INVARIANT_KEYWORD,
+            SMOOTH_KEYWORD, FLAT_KEYWORD, NOPERSPECTIVE_KEYWORD, INVARIANT_KEYWORD, PRECISE_KEYWORD);
 
     public static final TokenSet COMMENTS = TokenSet.create(COMMENT_BLOCK, COMMENT_LINE, COMPILER_DIRECTIVE_VERSION, COMPILER_DIRECTIVE_EXTENSION, COMPILER_DIRECTIVE_PRAGMA, COMPILER_DIRECTIVE_OTHER, PRECISION_STATEMENT);
 
