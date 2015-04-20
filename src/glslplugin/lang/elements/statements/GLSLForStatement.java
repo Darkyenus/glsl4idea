@@ -113,4 +113,6 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
     public String toString() {
         return "For Loop";
     }
+
+    // TODO some for statements can be terminating if their condition can be constant-analyzed as true
 }
