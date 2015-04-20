@@ -23,6 +23,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.FoldingBuilder;
 import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.editor.Document;
+import com.intellij.psi.tree.IElementType;
+import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,10 +42,13 @@ public class GLSLFoldingBuilder implements FoldingBuilder {
     }
 
     private void appendDescriptors(final ASTNode node, final List<FoldingDescriptor> descriptors) {
-        if (node.getElementType() == GLSLTokenTypes.COMMENT_BLOCK) {
+        IElementType type = node.getElementType();
+        if (type == GLSLTokenTypes.COMMENT_BLOCK) {
             //todo: check if inside or outside method
             descriptors.add(new FoldingDescriptor(node, node.getTextRange()));
-        } 
+        } else if(type == GLSLElementTypes.COMPOUND_STATEMENT) {
+            descriptors.add(new FoldingDescriptor(node, node.getTextRange()));
+        }
 
         ASTNode child = node.getFirstChildNode();
         while (child != null) {
@@ -55,6 +60,9 @@ public class GLSLFoldingBuilder implements FoldingBuilder {
     public String getPlaceholderText(@NotNull ASTNode node) {
         if (node.getElementType() == GLSLTokenTypes.COMMENT_BLOCK) {
             return "/*...*/";
+        }
+        if (node.getElementType() == GLSLElementTypes.COMPOUND_STATEMENT) {
+            return "{...}";
         }
         return null;
     }
