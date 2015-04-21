@@ -29,6 +29,8 @@ public class GLSLElementTypes {
     public static final IElementType TRANSLATION_UNIT = new GLSLElementType("TRANSLATION_UNIT");
     public static final IElementType BLOCK = new GLSLElementType("BLOCK");
 
+    public static final IElementType PREPROCESSOR_DIRECTIVE = new GLSLElementType("PREPROCESSOR_DIRECTIVE");
+
     public static final IElementType EMPTY_STATEMENT = new GLSLElementType("EMPTY_STATEMENT");
     public static final IElementType JUMP_STATEMENT = new GLSLElementType("JUMP_STATEMENT");
 
