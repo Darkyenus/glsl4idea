@@ -52,20 +52,7 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
             new AttributesDescriptor("Brackets", GLSLHighlighter.GLSL_BRACKETS[0]),
             new AttributesDescriptor("Identifiers",GLSLHighlighter.GLSL_IDENTIFIER[0]),
             new AttributesDescriptor("Text",GLSLHighlighter.GLSL_TEXT[0]),
-            new AttributesDescriptor("Directives",GLSLHighlighter.GLSL_COMPILER_DIRECTIVE[0])
-
-                /*new AttributesDescriptor("Numbers", GLSLHighlighter.GLSL_NUMBER),
-                new AttributesDescriptor("Type specifiers", GLSLHighlighter.GLSL_TYPE_SPECIFIER),
-                new AttributesDescriptor("Comments", GLSLHighlighter.GLSL_COMMENT),
-                new AttributesDescriptor("Version specification", GLSLHighlighter.GLSL_COMPILER_DIRECTIVE_VERSION),
-                new AttributesDescriptor("Extension specification", GLSLHighlighter.GLSL_COMPILER_DIRECTIVE_EXTENSION),
-                new AttributesDescriptor("Compiler pragma", GLSLHighlighter.GLSL_COMPILER_DIRECTIVE_PRAGMA),
-                new AttributesDescriptor("Compiler directives", GLSLHighlighter.GLSL_COMPILER_DIRECTIVE_OTHER),
-                new AttributesDescriptor("Selection and flow", GLSLHighlighter.GLSL_FLOW_KEYWORDS),
-                new AttributesDescriptor("Identifiers", GLSLHighlighter.GLSL_IDENTIFIER),
-                new AttributesDescriptor("Parameter qualifiers", GLSLHighlighter.GLSL_PARAMETER_QUALIFIERS),
-                new AttributesDescriptor("Type qualifiers", GLSLHighlighter.GLSL_TYPE_QUALIFIERS)*/
-
+            new AttributesDescriptor("Directives",GLSLHighlighter.GLSL_PREPROCESSOR_DIRECTIVE[0])
         };
     }
 
@@ -98,6 +85,7 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
     @NotNull
     public String getDemoText() {
         return "#version 120\n" +
+                "precision lowp int;\n" +
                 "uniform vec3 normal; // surface normal\n" +
                 "const vec3 light = vec3(5.0, 0.5, 1.0);\n" +
                 "\n" +
@@ -110,7 +98,9 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
                 "\n" +
                 "/* Fragment shader */\n" +
                 "void main() {\n" +
+                "#ifdef TEXTURED\n" +
                 "    vec2 tex = gl_TexCoord[0].xy;\n" +
+                "#endif\n" +
                 "    float diffuse = dot(normal, light);\n" +
                 "    if(diffuse < 0) {\n" +
                 "        diffuse = -diffuse;\n" +

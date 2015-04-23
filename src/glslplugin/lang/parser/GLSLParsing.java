@@ -69,7 +69,7 @@ public class GLSLParsing {
      */
     private void skipTo(TokenSet set) {
         while (b.getTokenType() != null && set.contains(b.getTokenType())) {
-            b.advanceLexer();
+            advanceLexer();
         }
     }
 
@@ -82,7 +82,7 @@ public class GLSLParsing {
      */
     private void skipTo(IElementType type) {
         while (b.getTokenType() != null && b.getTokenType() != type) {
-            b.advanceLexer();
+            advanceLexer();
         }
     }
 
@@ -99,7 +99,7 @@ public class GLSLParsing {
         }
         boolean match = b.getTokenType() == type;
         if (match) {
-            b.advanceLexer();
+            advanceLexer();
         } else {
             b.error(error);
         }
@@ -121,7 +121,7 @@ public class GLSLParsing {
             match |= b.getTokenType() == type;
         }
         if (match) {
-            b.advanceLexer();
+            advanceLexer();
         }
         return match;
     }
@@ -135,9 +135,34 @@ public class GLSLParsing {
     private boolean tryMatch(TokenSet types) {
         boolean match = types.contains(b.getTokenType());
         if (match) {
-            b.advanceLexer();
+            advanceLexer();
         }
         return match;
+    }
+
+    private void advanceLexer() {
+        b.advanceLexer();
+        if (b.getTokenType() == PREPROCESSOR_BEGIN) {
+            parsePreprocessor();
+        }
+    }
+
+    private void parsePreprocessor() {
+        // We can't use tryMatch etc. in here because we'll end up
+        // potentially parsing a preprocessor directive inside this one.
+        PsiBuilder.Marker preprocessor = b.mark();
+        while (!b.eof()) {
+            b.advanceLexer();
+            if (b.getTokenType() == PREPROCESSOR_END) {
+                b.advanceLexer();
+                break;
+            }
+        }
+        preprocessor.done(PREPROCESSOR_DIRECTIVE);
+
+        if (b.getTokenType() == PREPROCESSOR_BEGIN) {
+            parsePreprocessor();
+        }
     }
 
     /**
@@ -147,9 +172,16 @@ public class GLSLParsing {
         // translation_unit: external_declaration+
 
         PsiBuilder.Marker unit = b.mark();
+
+        // We normally parse preprocessor directives whenever we advance the lexer - which means that if the first
+        // token is a preprocessor directive we won't catch it, so we just parse them all at the beginning here.
+        while (b.getTokenType() == PREPROCESSOR_BEGIN) {
+            parsePreprocessor();
+        }
+
         do {
             if (!parseExternalDeclaration()) {
-                b.advanceLexer();
+                advanceLexer();
                 b.error("Unable to parse external declaration.");
             }
         }
@@ -278,7 +310,7 @@ public class GLSLParsing {
             mark = b.mark();
             if(!parseExpression()){
                 //There is no expression! Consume what triggered me. (Would lead to infinite loop otherwise)
-                b.advanceLexer();
+                advanceLexer();
             }
             tryMatch(SEMICOLON);
             mark.error("Expression not allowed here.");
@@ -287,7 +319,7 @@ public class GLSLParsing {
                 GLSLTokenTypes.CONSTANT_TOKENS.contains(b.getTokenType())) {
             postType.drop();
             text = b.getTokenText();
-            b.advanceLexer();
+            advanceLexer();
             mark.error("Unexpected '" + text + "'");
             return true;
         } else if (TYPE_SPECIFIER_NONARRAY_TOKENS.contains(b.getTokenType())) {
@@ -404,7 +436,7 @@ public class GLSLParsing {
         PsiBuilder.Marker mark = b.mark();
         while (OPERATORS.contains(b.getTokenType())) {
             String operator = b.getTokenText();
-            b.advanceLexer();
+            advanceLexer();
             mark.error("Unexpected operator '" + operator + "'.");
             mark = b.mark();
         }
@@ -557,7 +589,7 @@ public class GLSLParsing {
         if (b.getTokenType() == IDENTIFIER) {
             // needs lookahead
             PsiBuilder.Marker rollback = b.mark();
-            b.advanceLexer();
+            advanceLexer();
             if (b.getTokenType() == IDENTIFIER) {
                 // IDENTIFIER IDENTIFIER means declaration statement
                 // where the first is the type specifier
@@ -1066,7 +1098,7 @@ public class GLSLParsing {
         PsiBuilder.Marker mark = b.mark();
 
         if (b.getTokenType() == VOID_TYPE) {
-            b.advanceLexer();
+            advanceLexer();
         } else if (b.getTokenType() == RIGHT_PAREN) {
             // do nothing
         } else if (parseAssignmentExpression()) {
@@ -1094,16 +1126,16 @@ public class GLSLParsing {
         final IElementType type = b.getTokenType();
         if (type == IDENTIFIER) {
             final PsiBuilder.Marker mark2 = b.mark();
-            b.advanceLexer();
+            advanceLexer();
             mark2.done(VARIABLE_NAME);
             mark.done(VARIABLE_NAME_EXPRESSION);
             return true;
         } else if (type == INTEGER_CONSTANT || type == FLOAT_CONSTANT || type == BOOL_CONSTANT) {
-            b.advanceLexer();
+            advanceLexer();
             mark.done(CONSTANT_EXPRESSION);
             return true;
         } else if (type == LEFT_PAREN) {
-            b.advanceLexer();
+            advanceLexer();
             if (!parseExpression()) {
                 if (b.getTokenType() == RIGHT_PAREN) {
                     b.error("Expected expression after '('");
@@ -1126,7 +1158,7 @@ public class GLSLParsing {
         boolean success = b.getTokenType() == IDENTIFIER;
         if (success) {
             String name = b.getTokenText();
-            b.advanceLexer();
+            advanceLexer();
             mark.done(VARIABLE_NAME);
             return name;
         } else {
@@ -1140,7 +1172,7 @@ public class GLSLParsing {
         boolean success = b.getTokenType() == IDENTIFIER;
         if (success) {
             String name = b.getTokenText();
-            b.advanceLexer();
+            advanceLexer();
             mark.done(FIELD_NAME);
             return name;
         } else {
@@ -1185,7 +1217,7 @@ public class GLSLParsing {
             parseStructSpecifier();
             mark.done(TYPE_SPECIFIER_STRUCT);
         } else if (TYPE_SPECIFIER_NONARRAY_TOKENS.contains(b.getTokenType())) {
-            b.advanceLexer();
+            advanceLexer();
             mark.done(TYPE_SPECIFIER_PRIMITIVE);
         } else if (b.getTokenType() == IDENTIFIER) {
             parseIdentifier();
@@ -1275,7 +1307,7 @@ public class GLSLParsing {
         parseIdentifier();
 
         if (b.getTokenType() == LEFT_BRACKET) {
-            b.advanceLexer();
+            advanceLexer();
             parseConstantExpression();
             match(RIGHT_BRACKET, "Expected ']' after constant expression.");
         }
@@ -1297,7 +1329,7 @@ public class GLSLParsing {
         while (QUALIFIER_TOKENS.contains(b.getTokenType())) {
             final PsiBuilder.Marker mark2 = b.mark();
 
-            b.advanceLexer();
+            advanceLexer();
 
             if(validPlacement)
                 mark2.done(QUALIFIER);

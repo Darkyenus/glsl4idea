@@ -60,18 +60,10 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
             { TextAttributesKey.createTextAttributesKey("GLSL.BRACKETS", DefaultLanguageHighlighterColors.BRACKETS) };
     static final TextAttributesKey[] GLSL_IDENTIFIER =
             { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER) };
-    static final TextAttributesKey[] GLSL_COMPILER_DIRECTIVE =
-            { TextAttributesKey.createTextAttributesKey("GLSL.COMPILER_DIRECTIVE",DefaultLanguageHighlighterColors.DOC_COMMENT_MARKUP) };
-    static final TextAttributesKey[] GLSL_COMPILER_DIRECTIVE_VERSION =
-            { TextAttributesKey.createTextAttributesKey("GLSL.COMPILER_DIRECTIVE_VERSION", GLSL_COMPILER_DIRECTIVE[0]) };
-    static final TextAttributesKey[] GLSL_COMPILER_DIRECTIVE_EXTENSION =
-            { TextAttributesKey.createTextAttributesKey("GLSL.COMPILER_DIRECTIVE_EXTENSION", GLSL_COMPILER_DIRECTIVE[0]) };
-    static final TextAttributesKey[] GLSL_COMPILER_DIRECTIVE_PRAGMA =
-            { TextAttributesKey.createTextAttributesKey("GLSL.COMPILER_DIRECTIVE_PRAGMA", GLSL_COMPILER_DIRECTIVE[0]) };
-    static final TextAttributesKey[] GLSL_COMPILER_DIRECTIVE_OTHER =
-            { TextAttributesKey.createTextAttributesKey("GLSL.COMPILER_DIRECTIVE_OTHER", GLSL_COMPILER_DIRECTIVE[0]) };
+    static final TextAttributesKey[] GLSL_PREPROCESSOR_DIRECTIVE =
+            { TextAttributesKey.createTextAttributesKey("GLSL.PREPROCESSOR_DIRECTIVE", DefaultLanguageHighlighterColors.METADATA) };
     static final TextAttributesKey[] GLSL_PRECISION_STATEMENT =
-            { TextAttributesKey.createTextAttributesKey("GLSL.PRECISION_STATEMENT", GLSL_COMPILER_DIRECTIVE[0]) };
+            { TextAttributesKey.createTextAttributesKey("GLSL.PRECISION_STATEMENT", DefaultLanguageHighlighterColors.METADATA) };
     static final TextAttributesKey[] GLSL_UNKNOWN =
             { TextAttributesKey.createTextAttributesKey("GLSL.UNKNOWN", HighlighterColors.BAD_CHARACTER) };
     static final TextAttributesKey[] GLSL_TEXT =
@@ -94,10 +86,7 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
         if (type == COMMA) return GLSL_COMMA;
         if (type == LEFT_PAREN || type == RIGHT_PAREN) return GLSL_PARENS;
         if (type == LEFT_BRACKET || type == RIGHT_BRACKET) return GLSL_BRACKETS;
-        if (type == COMPILER_DIRECTIVE_VERSION) return GLSL_COMPILER_DIRECTIVE_VERSION;
-        if (type == COMPILER_DIRECTIVE_EXTENSION) return GLSL_COMPILER_DIRECTIVE_EXTENSION;
-        if (type == COMPILER_DIRECTIVE_PRAGMA) return GLSL_COMPILER_DIRECTIVE_PRAGMA;
-        if (type == COMPILER_DIRECTIVE_OTHER) return GLSL_COMPILER_DIRECTIVE_OTHER;
+        if (PREPROCESSOR_DIRECTIVES.contains(type)) return GLSL_PREPROCESSOR_DIRECTIVE;
         if (TYPE_SPECIFIER_NONARRAY_TOKENS.contains(type)) return GLSL_TYPE_SPECIFIER;
         if (QUALIFIER_TOKENS.contains(type)) return GLSL_TYPE_QUALIFIERS;
         if (FLOW_KEYWORDS.contains(type)) return GLSL_FLOW_KEYWORDS;
