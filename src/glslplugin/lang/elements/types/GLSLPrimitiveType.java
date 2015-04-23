@@ -36,9 +36,10 @@ public class GLSLPrimitiveType extends GLSLType {
 
     // scalars
     public static final GLSLPrimitiveType BOOL = new GLSLPrimitiveType("bool");
-    public static final GLSLPrimitiveType FLOAT = new GLSLPrimitiveType("float");
-    public static final GLSLPrimitiveType UINT = new GLSLPrimitiveType("uint", FLOAT);
-    public static final GLSLPrimitiveType INT = new GLSLPrimitiveType("int", UINT, FLOAT);
+    public static final GLSLPrimitiveType DOUBLE = new GLSLPrimitiveType("double");
+    public static final GLSLPrimitiveType FLOAT = new GLSLPrimitiveType("float", DOUBLE);
+    public static final GLSLPrimitiveType UINT = new GLSLPrimitiveType("uint", FLOAT, DOUBLE);
+    public static final GLSLPrimitiveType INT = new GLSLPrimitiveType("int", UINT, FLOAT, DOUBLE);
 
     // samplers
     public static final GLSLPrimitiveType SAMPLER1D = new GLSLPrimitiveType("sampler1D");

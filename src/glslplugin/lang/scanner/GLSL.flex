@@ -54,7 +54,9 @@ DECIMAL_CONSTANT    = (0|([1-9]({DIGIT})*))
 HEX_CONSTANT        = 0[Xx]({HEX_DIGIT})*
 OCTAL_CONSTANT      = 0({OCTAL_DIGIT})*
 
-FLOATING_CONSTANT   = (({FLOATING_CONSTANT1})|({FLOATING_CONSTANT2})|({FLOATING_CONSTANT3})|({FLOATING_CONSTANT4})) ([fF])?
+DOUBLE_SUFFIX = (lf|LF)
+FLOAT_SUFFIX = [fF]
+FLOATING_CONSTANT   = (({FLOATING_CONSTANT1})|({FLOATING_CONSTANT2})|({FLOATING_CONSTANT3})|({FLOATING_CONSTANT4}))
 FLOATING_CONSTANT1  = ({DIGIT})+"."({DIGIT})*({EXPONENT_PART})?
 FLOATING_CONSTANT2  = "."({DIGIT})+({EXPONENT_PART})?
 FLOATING_CONSTANT3  = ({DIGIT})+({EXPONENT_PART})
@@ -108,6 +110,7 @@ false                   {return BOOL_CONSTANT; }
 /* GLSL types */
 void                    {return VOID_TYPE; }
 float                   {return FLOAT_TYPE; }
+double                  {return DOUBLE_TYPE; }
 int                     {return INT_TYPE; }
 uint                    {return UINT_TYPE; }
 bool                    {return BOOL_TYPE; }
@@ -240,7 +243,8 @@ precision{WHITE_SPACE}+{GLSL_ES_PRECISION_MODIFIER}{WHITE_SPACE}+{GLSL_ES_TYPE}"
 
 {INTEGER_CONSTANT}{UINT_SUFFIX} {return UINT_CONSTANT; }
 {INTEGER_CONSTANT}      {return INTEGER_CONSTANT; }
-{FLOATING_CONSTANT}     {return FLOAT_CONSTANT; }
+{FLOATING_CONSTANT}{DOUBLE_SUFFIX}     {return DOUBLE_CONSTANT; }
+{FLOATING_CONSTANT}{FLOAT_SUFFIX}?     {return FLOAT_CONSTANT; }
 {LINE_COMMENT}          {return COMMENT_LINE; }
 {BLOCK_COMMENT}         {return COMMENT_BLOCK; }
 .                       {return UNKNOWN; }
