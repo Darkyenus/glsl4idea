@@ -42,9 +42,15 @@ public class GLSLTokenTypes {
     public static final IElementType VEC2_TYPE = new GLSLElementType("VEC2_TYPE");
     public static final IElementType VEC3_TYPE = new GLSLElementType("VEC3_TYPE");
     public static final IElementType VEC4_TYPE = new GLSLElementType("VEC4_TYPE");
+    public static final IElementType DVEC2_TYPE = new GLSLElementType("DVEC2_TYPE");
+    public static final IElementType DVEC3_TYPE = new GLSLElementType("DVEC3_TYPE");
+    public static final IElementType DVEC4_TYPE = new GLSLElementType("DVEC4_TYPE");
     public static final IElementType IVEC2_TYPE = new GLSLElementType("IVEC2_TYPE");
     public static final IElementType IVEC3_TYPE = new GLSLElementType("IVEC3_TYPE");
     public static final IElementType IVEC4_TYPE = new GLSLElementType("IVEC4_TYPE");
+    public static final IElementType UVEC2_TYPE = new GLSLElementType("UVEC2_TYPE");
+    public static final IElementType UVEC3_TYPE = new GLSLElementType("UVEC3_TYPE");
+    public static final IElementType UVEC4_TYPE = new GLSLElementType("UVEC4_TYPE");
     public static final IElementType BVEC2_TYPE = new GLSLElementType("BVEC2_TYPE");
     public static final IElementType BVEC3_TYPE = new GLSLElementType("BVEC3_TYPE");
     public static final IElementType BVEC4_TYPE = new GLSLElementType("BVEC4_TYPE");
@@ -192,11 +198,11 @@ public class GLSLTokenTypes {
     // Type specifiers
     public static final TokenSet FLOAT_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
             FLOAT_TYPE, VEC2_TYPE, VEC3_TYPE, VEC4_TYPE,
-            DOUBLE_TYPE);
+            DOUBLE_TYPE, DVEC2_TYPE, DVEC3_TYPE, DVEC4_TYPE);
 
     public static final TokenSet INTEGER_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
             INT_TYPE, IVEC2_TYPE, IVEC3_TYPE, IVEC4_TYPE,
-            UINT_TYPE);
+            UINT_TYPE, UVEC2_TYPE, UVEC3_TYPE, UVEC4_TYPE);
 
     public static final TokenSet BOOL_TYPE_SPECIFIER_NONARRAY = TokenSet.create(BOOL_TYPE, BVEC2_TYPE, BVEC3_TYPE, BVEC4_TYPE);
 

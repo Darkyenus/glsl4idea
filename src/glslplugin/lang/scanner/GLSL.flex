@@ -117,9 +117,15 @@ bool                    {return BOOL_TYPE; }
 vec2                    {return VEC2_TYPE; }
 vec3                    {return VEC3_TYPE; }
 vec4                    {return VEC4_TYPE; }
+dvec2                   {return DVEC2_TYPE; }
+dvec3                   {return DVEC3_TYPE; }
+dvec4                   {return DVEC4_TYPE; }
 ivec2                   {return IVEC2_TYPE; }
 ivec3                   {return IVEC3_TYPE; }
 ivec4                   {return IVEC4_TYPE; }
+uvec2                   {return UVEC2_TYPE; }
+uvec3                   {return UVEC3_TYPE; }
+uvec4                   {return UVEC4_TYPE; }
 bvec2                   {return BVEC2_TYPE; }
 bvec3                   {return BVEC3_TYPE; }
 bvec4                   {return BVEC4_TYPE; }
