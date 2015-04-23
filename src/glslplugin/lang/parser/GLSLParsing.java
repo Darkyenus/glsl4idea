@@ -1118,9 +1118,7 @@ public class GLSLParsing {
 
     private boolean parsePrimaryExpression() {
         // primary_expression: variable_identifier
-        //                   | INTCONSTANT
-        //                   | FLOATCONSTANT
-        //                   | BOOLCONSTANT
+        //                   | CONSTANT
         //                   | '(' expression ')'
         final PsiBuilder.Marker mark = b.mark();
         final IElementType type = b.getTokenType();
@@ -1130,8 +1128,7 @@ public class GLSLParsing {
             mark2.done(VARIABLE_NAME);
             mark.done(VARIABLE_NAME_EXPRESSION);
             return true;
-        } else if (type == INTEGER_CONSTANT || type == FLOAT_CONSTANT || type == BOOL_CONSTANT) {
-            advanceLexer();
+        } else if (tryMatch(CONSTANT_TOKENS)) {
             mark.done(CONSTANT_EXPRESSION);
             return true;
         } else if (type == LEFT_PAREN) {

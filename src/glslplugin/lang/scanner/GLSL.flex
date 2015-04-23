@@ -48,7 +48,8 @@ WHITE_SPACE         = [ \t\f]
 
 IDENTIFIER          = {NON_DIGIT}({NON_DIGIT} | {DIGIT})*
 
-INTEGER_CONSTANT    = {DECIMAL_CONSTANT} | {HEX_CONSTANT} | {OCTAL_CONSTANT}
+UINT_SUFFIX      = [Uu]
+INTEGER_CONSTANT    = ({DECIMAL_CONSTANT} | {HEX_CONSTANT} | {OCTAL_CONSTANT})
 DECIMAL_CONSTANT    = (0|([1-9]({DIGIT})*))
 HEX_CONSTANT        = 0[Xx]({HEX_DIGIT})*
 OCTAL_CONSTANT      = 0({OCTAL_DIGIT})*
@@ -108,6 +109,7 @@ false                   {return BOOL_CONSTANT; }
 void                    {return VOID_TYPE; }
 float                   {return FLOAT_TYPE; }
 int                     {return INT_TYPE; }
+uint                    {return UINT_TYPE; }
 bool                    {return BOOL_TYPE; }
 vec2                    {return VEC2_TYPE; }
 vec3                    {return VEC3_TYPE; }
@@ -236,6 +238,7 @@ precision{WHITE_SPACE}+{GLSL_ES_PRECISION_MODIFIER}{WHITE_SPACE}+{GLSL_ES_TYPE}"
 
 {IDENTIFIER}            {return IDENTIFIER;}
 
+{INTEGER_CONSTANT}{UINT_SUFFIX} {return UINT_CONSTANT; }
 {INTEGER_CONSTANT}      {return INTEGER_CONSTANT; }
 {FLOATING_CONSTANT}     {return FLOAT_CONSTANT; }
 {LINE_COMMENT}          {return COMMENT_LINE; }

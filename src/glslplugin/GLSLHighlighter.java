@@ -74,7 +74,7 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
 
     @NotNull
     public TextAttributesKey[] getTokenHighlights(IElementType type) {
-        if (type == INTEGER_CONSTANT || type == FLOAT_CONSTANT || type == BOOL_CONSTANT) return GLSL_NUMBER;
+        if (CONSTANT_TOKENS.contains(type)) return GLSL_NUMBER;
         if (type == COMMENT_BLOCK) return GLSL_BLOCK_COMMENT;
         if (type == COMMENT_LINE) return GLSL_LINE_COMMENT;
         if (type == IDENTIFIER) return GLSL_IDENTIFIER;
