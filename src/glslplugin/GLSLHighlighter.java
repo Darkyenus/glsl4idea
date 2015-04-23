@@ -38,8 +38,6 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
             { TextAttributesKey.createTextAttributesKey("GLSL.TYPE_SPECIFIER", DefaultLanguageHighlighterColors.CLASS_REFERENCE) };
     static final TextAttributesKey[] GLSL_TYPE_QUALIFIERS =
             { TextAttributesKey.createTextAttributesKey("GLSL.QUALIFIER_TOKENS", DefaultLanguageHighlighterColors.KEYWORD) };
-    //static final TextAttributesKey[] GLSL_PARAMETER_QUALIFIERS = {
-    //        { TextAttributesKey.createTextAttributesKey("GLSL.PARAMETER_QUALIFIERS", DefaultLanguageHighlighterColors.KEYWORD) };
     static final TextAttributesKey[] GLSL_FLOW_KEYWORDS =
             { TextAttributesKey.createTextAttributesKey("GLSL.FLOW_KEYWORDS", DefaultLanguageHighlighterColors.KEYWORD) };
     static final TextAttributesKey[] GLSL_BLOCK_COMMENT =

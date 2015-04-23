@@ -16,12 +16,6 @@
             <option name="FONT_TYPE" value="1"/>
         </value>
     </option>
-    <option name="GLSL.COMPILER_DIRECTIVE"><!-- #version 120 -->
-        <value>
-            <option name="FOREGROUND" value="108010"/>
-            <option name="FONT_TYPE" value="0"/>
-        </value>
-    </option>
     <option name="GLSL.PRECISION_STATEMENT"><!-- precision mediump float; -->
         <value>
             <option name="FOREGROUND" value="0080D0"/>
