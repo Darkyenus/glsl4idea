@@ -66,6 +66,18 @@ public class GLSLTokenTypes {
     public static final IElementType MAT4X2_TYPE = new GLSLElementType("MAT4X2_TYPE");
     public static final IElementType MAT4X3_TYPE = new GLSLElementType("MAT4X3_TYPE");
     public static final IElementType MAT4X4_TYPE = new GLSLElementType("MAT4X4_TYPE");
+    public static final IElementType DMAT2_TYPE = new GLSLElementType("DMAT2_TYPE");
+    public static final IElementType DMAT3_TYPE = new GLSLElementType("DMAT3_TYPE");
+    public static final IElementType DMAT4_TYPE = new GLSLElementType("DMAT4_TYPE");
+    public static final IElementType DMAT2X2_TYPE = new GLSLElementType("DMAT2X2_TYPE");
+    public static final IElementType DMAT2X3_TYPE = new GLSLElementType("DMAT2X3_TYPE");
+    public static final IElementType DMAT2X4_TYPE = new GLSLElementType("DMAT2X4_TYPE");
+    public static final IElementType DMAT3X2_TYPE = new GLSLElementType("DMAT3X2_TYPE");
+    public static final IElementType DMAT3X3_TYPE = new GLSLElementType("DMAT3X3_TYPE");
+    public static final IElementType DMAT3X4_TYPE = new GLSLElementType("DMAT3X4_TYPE");
+    public static final IElementType DMAT4X2_TYPE = new GLSLElementType("DMAT4X2_TYPE");
+    public static final IElementType DMAT4X3_TYPE = new GLSLElementType("DMAT4X3_TYPE");
+    public static final IElementType DMAT4X4_TYPE = new GLSLElementType("DMAT4X4_TYPE");
     public static final IElementType SAMPLER1D_TYPE = new GLSLElementType("SAMPLER1D_TYPE");
     public static final IElementType SAMPLER2D_TYPE = new GLSLElementType("SAMPLER2D_TYPE");
     public static final IElementType SAMPLER3D_TYPE = new GLSLElementType("SAMPLER3D_TYPE");
@@ -206,9 +218,15 @@ public class GLSLTokenTypes {
 
     public static final TokenSet BOOL_TYPE_SPECIFIER_NONARRAY = TokenSet.create(BOOL_TYPE, BVEC2_TYPE, BVEC3_TYPE, BVEC4_TYPE);
 
-    public static final TokenSet MATRIX_TYPE_SPECIFIER_NONARRAY =
-            TokenSet.create(MAT2_TYPE, MAT3_TYPE, MAT4_TYPE, MAT2X2_TYPE, MAT2X3_TYPE, MAT2X4_TYPE, MAT3X2_TYPE,
-                    MAT3X3_TYPE, MAT3X4_TYPE, MAT4X2_TYPE, MAT4X3_TYPE, MAT4X4_TYPE);
+    public static final TokenSet MATRIX_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
+            MAT2_TYPE, MAT3_TYPE, MAT4_TYPE,
+            MAT2X2_TYPE, MAT2X3_TYPE, MAT2X4_TYPE,
+            MAT3X2_TYPE, MAT3X3_TYPE, MAT3X4_TYPE,
+            MAT4X2_TYPE, MAT4X3_TYPE, MAT4X4_TYPE,
+            DMAT2_TYPE, DMAT3_TYPE, DMAT4_TYPE,
+            DMAT2X2_TYPE, DMAT2X3_TYPE, DMAT2X4_TYPE,
+            DMAT3X2_TYPE, DMAT3X3_TYPE, DMAT3X4_TYPE,
+            DMAT4X2_TYPE, DMAT4X3_TYPE, DMAT4X4_TYPE);
 
     public static final TokenSet TEXTURE_TYPE_SPECIFIER_NONARRAY =
             TokenSet.create(SAMPLER1D_TYPE, SAMPLER2D_TYPE, SAMPLER3D_TYPE, SAMPLERCUBE_TYPE, SAMPLER1DSHADOW_TYPE,

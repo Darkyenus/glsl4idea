@@ -111,6 +111,18 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
             if (childType == GLSLTokenTypes.MAT4X2_TYPE) return GLSLTypes.MAT4x2;
             if (childType == GLSLTokenTypes.MAT4X3_TYPE) return GLSLTypes.MAT4x3;
             if (childType == GLSLTokenTypes.MAT4X4_TYPE) return GLSLTypes.MAT4x4;
+            if (childType == GLSLTokenTypes.DMAT2_TYPE) return GLSLTypes.DMAT2;
+            if (childType == GLSLTokenTypes.DMAT3_TYPE) return GLSLTypes.DMAT3;
+            if (childType == GLSLTokenTypes.DMAT4_TYPE) return GLSLTypes.DMAT4;
+            if (childType == GLSLTokenTypes.DMAT2X2_TYPE) return GLSLTypes.DMAT2x2;
+            if (childType == GLSLTokenTypes.DMAT2X3_TYPE) return GLSLTypes.DMAT2x3;
+            if (childType == GLSLTokenTypes.DMAT2X4_TYPE) return GLSLTypes.DMAT2x4;
+            if (childType == GLSLTokenTypes.DMAT3X2_TYPE) return GLSLTypes.DMAT3x2;
+            if (childType == GLSLTokenTypes.DMAT3X3_TYPE) return GLSLTypes.DMAT3x3;
+            if (childType == GLSLTokenTypes.DMAT3X4_TYPE) return GLSLTypes.DMAT3x4;
+            if (childType == GLSLTokenTypes.DMAT4X2_TYPE) return GLSLTypes.DMAT4x2;
+            if (childType == GLSLTokenTypes.DMAT4X3_TYPE) return GLSLTypes.DMAT4x3;
+            if (childType == GLSLTokenTypes.DMAT4X4_TYPE) return GLSLTypes.DMAT4x4;
 
             if (childType == GLSLTokenTypes.SAMPLER1D_TYPE) return GLSLTypes.SAMPLER1D;
             if (childType == GLSLTokenTypes.SAMPLER2D_TYPE) return GLSLTypes.SAMPLER2D;
