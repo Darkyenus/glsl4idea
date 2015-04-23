@@ -86,9 +86,15 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
             if (childType == GLSLTokenTypes.VEC2_TYPE) return GLSLTypes.VEC2;
             if (childType == GLSLTokenTypes.VEC3_TYPE) return GLSLTypes.VEC3;
             if (childType == GLSLTokenTypes.VEC4_TYPE) return GLSLTypes.VEC4;
+            if (childType == GLSLTokenTypes.DVEC2_TYPE) return GLSLTypes.DVEC2;
+            if (childType == GLSLTokenTypes.DVEC3_TYPE) return GLSLTypes.DVEC3;
+            if (childType == GLSLTokenTypes.DVEC4_TYPE) return GLSLTypes.DVEC4;
             if (childType == GLSLTokenTypes.IVEC2_TYPE) return GLSLTypes.IVEC2;
             if (childType == GLSLTokenTypes.IVEC3_TYPE) return GLSLTypes.IVEC3;
             if (childType == GLSLTokenTypes.IVEC4_TYPE) return GLSLTypes.IVEC4;
+            if (childType == GLSLTokenTypes.UVEC2_TYPE) return GLSLTypes.UVEC2;
+            if (childType == GLSLTokenTypes.UVEC3_TYPE) return GLSLTypes.UVEC3;
+            if (childType == GLSLTokenTypes.UVEC4_TYPE) return GLSLTypes.UVEC4;
             if (childType == GLSLTokenTypes.BVEC2_TYPE) return GLSLTypes.BVEC2;
             if (childType == GLSLTokenTypes.BVEC3_TYPE) return GLSLTypes.BVEC3;
             if (childType == GLSLTokenTypes.BVEC4_TYPE) return GLSLTypes.BVEC4;

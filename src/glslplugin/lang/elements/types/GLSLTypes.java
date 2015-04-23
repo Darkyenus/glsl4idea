@@ -42,9 +42,15 @@ public class GLSLTypes {
     public static final GLSLVectorType VEC2 = register(GLSLVectorType.VEC2);
     public static final GLSLVectorType VEC3 = register(GLSLVectorType.VEC3);
     public static final GLSLVectorType VEC4 = register(GLSLVectorType.VEC4);
+    public static final GLSLVectorType DVEC2 = register(GLSLVectorType.DVEC2);
+    public static final GLSLVectorType DVEC3 = register(GLSLVectorType.DVEC3);
+    public static final GLSLVectorType DVEC4 = register(GLSLVectorType.DVEC4);
     public static final GLSLVectorType IVEC2 = register(GLSLVectorType.IVEC2);
     public static final GLSLVectorType IVEC3 = register(GLSLVectorType.IVEC3);
     public static final GLSLVectorType IVEC4 = register(GLSLVectorType.IVEC4);
+    public static final GLSLVectorType UVEC2 = register(GLSLVectorType.UVEC2);
+    public static final GLSLVectorType UVEC3 = register(GLSLVectorType.UVEC3);
+    public static final GLSLVectorType UVEC4 = register(GLSLVectorType.UVEC4);
     public static final GLSLVectorType BVEC2 = register(GLSLVectorType.BVEC2);
     public static final GLSLVectorType BVEC3 = register(GLSLVectorType.BVEC3);
     public static final GLSLVectorType BVEC4 = register(GLSLVectorType.BVEC4);
