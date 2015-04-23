@@ -30,10 +30,12 @@ public class GLSLTokenTypes {
     public static final IElementType INTEGER_CONSTANT = new GLSLElementType("INTEGER_CONSTANT");
     public static final IElementType UINT_CONSTANT = new GLSLElementType("UINT_CONSTANT");
     public static final IElementType FLOAT_CONSTANT = new GLSLElementType("FLOAT_CONSTANT");
+    public static final IElementType DOUBLE_CONSTANT = new GLSLElementType("DOUBLE_CONSTANT");
     public static final IElementType BOOL_CONSTANT = new GLSLElementType("BOOL_CONSTANT");
 
     public static final IElementType VOID_TYPE = new GLSLElementType("VOID_TYPE");
     public static final IElementType FLOAT_TYPE = new GLSLElementType("FLOAT_TYPE");
+    public static final IElementType DOUBLE_TYPE = new GLSLElementType("DOUBLE_TYPE");
     public static final IElementType INT_TYPE = new GLSLElementType("INT_TYPE");
     public static final IElementType UINT_TYPE = new GLSLElementType("UINT_TYPE");
     public static final IElementType BOOL_TYPE = new GLSLElementType("BOOL_TYPE");
@@ -188,7 +190,9 @@ public class GLSLTokenTypes {
             PREPROCESSOR_CONCAT);
 
     // Type specifiers
-    public static final TokenSet FLOAT_TYPE_SPECIFIER_NONARRAY = TokenSet.create(FLOAT_TYPE, VEC2_TYPE, VEC3_TYPE, VEC4_TYPE);
+    public static final TokenSet FLOAT_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
+            FLOAT_TYPE, VEC2_TYPE, VEC3_TYPE, VEC4_TYPE,
+            DOUBLE_TYPE);
 
     public static final TokenSet INTEGER_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
             INT_TYPE, IVEC2_TYPE, IVEC3_TYPE, IVEC4_TYPE,
@@ -263,7 +267,7 @@ public class GLSLTokenTypes {
     public static final TokenSet OPERATORS = merge(ASSIGNMENT_OPERATORS, UNARY_OPERATORS, EQUALITY_OPERATORS,
             RELATIONAL_OPERATORS, ADDITIVE_OPERATORS, MULTIPLICATIVE_OPERATORS, LOGICAL_OPERATORS);
     public static final TokenSet CONSTANT_TOKENS = TokenSet.create(
-            BOOL_CONSTANT, INTEGER_CONSTANT, UINT_CONSTANT, FLOAT_CONSTANT);
+            BOOL_CONSTANT, INTEGER_CONSTANT, UINT_CONSTANT, FLOAT_CONSTANT, DOUBLE_CONSTANT);
 
     public static final TokenSet EXPRESSION_FIRST_SET = merge(TokenSet.create(
                     INTEGER_CONSTANT, FLOAT_CONSTANT, BOOL_CONSTANT, // constants

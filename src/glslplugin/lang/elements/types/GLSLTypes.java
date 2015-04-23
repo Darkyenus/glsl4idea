@@ -35,6 +35,7 @@ public class GLSLTypes {
     public static final GLSLPrimitiveType INT = register(GLSLPrimitiveType.INT);
     public static final GLSLPrimitiveType UINT = register(GLSLPrimitiveType.UINT);
     public static final GLSLPrimitiveType FLOAT = register(GLSLPrimitiveType.FLOAT);
+    public static final GLSLPrimitiveType DOUBLE = register(GLSLPrimitiveType.DOUBLE);
     public static final GLSLPrimitiveType BOOL = register(GLSLPrimitiveType.BOOL);
 
     // Vectors

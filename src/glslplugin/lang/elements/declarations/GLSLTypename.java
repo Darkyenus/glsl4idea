@@ -80,6 +80,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
             if (childType == GLSLTokenTypes.INT_TYPE) return GLSLTypes.INT;
             if (childType == GLSLTokenTypes.UINT_TYPE) return GLSLTypes.UINT;
             if (childType == GLSLTokenTypes.FLOAT_TYPE) return GLSLTypes.FLOAT;
+            if (childType == GLSLTokenTypes.DOUBLE_TYPE) return GLSLTypes.DOUBLE;
             if (childType == GLSLTokenTypes.BOOL_TYPE) return GLSLTypes.BOOL;
 
             if (childType == GLSLTokenTypes.VEC2_TYPE) return GLSLTypes.VEC2;
