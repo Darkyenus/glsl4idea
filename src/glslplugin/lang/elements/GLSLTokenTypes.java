@@ -148,10 +148,42 @@ public class GLSLTokenTypes {
 
     public static final IElementType PRECISION_STATEMENT = new GLSLElementType("PRECISION_STATEMENT");
 
-    public static final IElementType COMPILER_DIRECTIVE_VERSION = new GLSLElementType("COMPILER_DIRECTIVE_VERSION");
-    public static final IElementType COMPILER_DIRECTIVE_EXTENSION = new GLSLElementType("COMPILER_DIRECTIVE_EXTENSION");
-    public static final IElementType COMPILER_DIRECTIVE_PRAGMA = new GLSLElementType("COMPILER_DIRECTIVE_PRAGMA");
-    public static final IElementType COMPILER_DIRECTIVE_OTHER = new GLSLElementType("COMPILER_DIRECTIVE_OTHER");
+    public static final IElementType PREPROCESSOR_BEGIN = new GLSLElementType("PREPROCESSOR_BEGIN");
+    public static final IElementType PREPROCESSOR_END = new GLSLElementType("PREPROCESSOR_END");
+    public static final IElementType PREPROCESSOR_DEFINE = new GLSLElementType("PREPROCESSOR_DEFINE");
+    public static final IElementType PREPROCESSOR_UNDEF = new GLSLElementType("PREPROCESSOR_UNDEF");
+    public static final IElementType PREPROCESSOR_IF = new GLSLElementType("PREPROCESSOR_IF");
+    public static final IElementType PREPROCESSOR_IFDEF = new GLSLElementType("PREPROCESSOR_IFDEF");
+    public static final IElementType PREPROCESSOR_IFNDEF = new GLSLElementType("PREPROCESSOR_IFNDEF");
+    public static final IElementType PREPROCESSOR_ELSE = new GLSLElementType("PREPROCESSOR_ELSE");
+    public static final IElementType PREPROCESSOR_ELIF = new GLSLElementType("PREPROCESSOR_ELIF");
+    public static final IElementType PREPROCESSOR_ENDIF = new GLSLElementType("PREPROCESSOR_ENDIF");
+    public static final IElementType PREPROCESSOR_ERROR = new GLSLElementType("PREPROCESSOR_ERROR");
+    public static final IElementType PREPROCESSOR_PRAGMA = new GLSLElementType("PREPROCESSOR_PRAGMA");
+    public static final IElementType PREPROCESSOR_EXTENSION = new GLSLElementType("PREPROCESSOR_EXTENSION");
+    public static final IElementType PREPROCESSOR_VERSION = new GLSLElementType("PREPROCESSOR_VERSION");
+    public static final IElementType PREPROCESSOR_LINE = new GLSLElementType("PREPROCESSOR_LINE");
+    public static final IElementType PREPROCESSOR_DEFINED = new GLSLElementType("PREPROCESSOR_DEFINED");
+    public static final IElementType PREPROCESSOR_CONCAT = new GLSLElementType("PREPROCESSOR_CONCAT");
+
+    public static final TokenSet PREPROCESSOR_DIRECTIVES = TokenSet.create(
+            PREPROCESSOR_BEGIN,
+            PREPROCESSOR_END,
+            PREPROCESSOR_DEFINE,
+            PREPROCESSOR_UNDEF,
+            PREPROCESSOR_IF,
+            PREPROCESSOR_IFDEF,
+            PREPROCESSOR_IFNDEF,
+            PREPROCESSOR_ELSE,
+            PREPROCESSOR_ELIF,
+            PREPROCESSOR_ENDIF,
+            PREPROCESSOR_ERROR,
+            PREPROCESSOR_PRAGMA,
+            PREPROCESSOR_EXTENSION,
+            PREPROCESSOR_VERSION,
+            PREPROCESSOR_LINE,
+            PREPROCESSOR_DEFINED,
+            PREPROCESSOR_CONCAT);
 
     // Type specifiers
     public static final TokenSet FLOAT_TYPE_SPECIFIER_NONARRAY = TokenSet.create(FLOAT_TYPE, VEC2_TYPE, VEC3_TYPE, VEC4_TYPE);
@@ -209,7 +241,7 @@ public class GLSLTokenTypes {
             FLAT_KEYWORD,
             NOPERSPECTIVE_KEYWORD);
 
-    public static final TokenSet COMMENTS = TokenSet.create(COMMENT_BLOCK, COMMENT_LINE, COMPILER_DIRECTIVE_VERSION, COMPILER_DIRECTIVE_EXTENSION, COMPILER_DIRECTIVE_PRAGMA, COMPILER_DIRECTIVE_OTHER, PRECISION_STATEMENT);
+    public static final TokenSet COMMENTS = TokenSet.create(COMMENT_BLOCK, COMMENT_LINE, PRECISION_STATEMENT);
 
     public static final TokenSet ITERATION_KEYWORDS = TokenSet.create(WHILE_KEYWORD, DO_KEYWORD, FOR_KEYWORD);
     public static final TokenSet JUMP_KEYWORDS = TokenSet.create(BREAK_JUMP_STATEMENT, CONTINUE_JUMP_STATEMENT, RETURN_JUMP_STATEMENT, DISCARD_JUMP_STATEMENT);

@@ -32,6 +32,8 @@ import java.util.ArrayList;
 %function advance
 %type IElementType
 
+%state PREPROCESSOR
+
 %{
 %}
 
@@ -41,7 +43,8 @@ OCTAL_DIGIT         = [0-7]
 HEX_DIGIT           = [0-9A-Fa-f]
 NON_DIGIT           = [_a-zA-Z]
 
-WHITE_SPACE         = [ \n\r\t\f]
+LINE_TERMINATOR     = \r|\n|\r\n
+WHITE_SPACE         = [ \t\f]
 
 IDENTIFIER          = {NON_DIGIT}({NON_DIGIT} | {DIGIT})*
 
@@ -64,9 +67,39 @@ GLSL_ES_TYPE = void|float|(u?int)|bool|((i|b|u)?vec([2-4]))|(mat[2-4](x[2-4])?)|
 GLSL_ES_PRECISION_MODIFIER = (high|medium|low)p
 
 %%
+
+
 /**
  * LEXICAL RULES:
  */
+
+\\{LINE_TERMINATOR}     { return WHITE_SPACE; }
+
+ /* Preprocessor rules */
+<PREPROCESSOR> {
+  {WHITE_SPACE}+        { return WHITE_SPACE; }
+  {LINE_TERMINATOR}     { yybegin(YYINITIAL); return PREPROCESSOR_END; }
+  define                { return PREPROCESSOR_DEFINE; }
+  undef                 { return PREPROCESSOR_UNDEF; }
+  if                    { return PREPROCESSOR_IF; }
+  ifdef                 { return PREPROCESSOR_IFDEF; }
+  ifndef                { return PREPROCESSOR_IFNDEF; }
+  else                  { return PREPROCESSOR_ELSE; }
+  elif                  { return PREPROCESSOR_ELIF; }
+  endif                 { return PREPROCESSOR_ENDIF; }
+  error                 { return PREPROCESSOR_ERROR; }
+  pragma                { return PREPROCESSOR_PRAGMA; }
+  extension             { return PREPROCESSOR_EXTENSION; }
+  version               { return PREPROCESSOR_VERSION; }
+  line                  { return PREPROCESSOR_LINE; }
+  defined               { return PREPROCESSOR_DEFINED; }
+  ##                    { return PREPROCESSOR_CONCAT; }
+}
+
+<YYINITIAL> {
+  #                     { yybegin(PREPROCESSOR); return PREPROCESSOR_BEGIN; }
+  ({WHITE_SPACE}|{LINE_TERMINATOR})+ {return WHITE_SPACE;}
+}
 
 true                    {return BOOL_CONSTANT; }
 false                   {return BOOL_CONSTANT; }
@@ -200,13 +233,6 @@ precision{WHITE_SPACE}+{GLSL_ES_PRECISION_MODIFIER}{WHITE_SPACE}+{GLSL_ES_TYPE}"
 "."                     {return DOT; }
 ";"                     {return SEMICOLON; }
 ","                     {return COMMA; }
-
-{WHITE_SPACE}+          {return WHITE_SPACE;}
-
-#{WHITE_SPACE}*version[^\n\r]* {return COMPILER_DIRECTIVE_VERSION;}
-#{WHITE_SPACE}*extension[^\n\r]* {return COMPILER_DIRECTIVE_EXTENSION;}
-#{WHITE_SPACE}*pragma[^\n\r]* {return COMPILER_DIRECTIVE_PRAGMA;}
-#{WHITE_SPACE}*[^\n\r]* {return COMPILER_DIRECTIVE_OTHER;}
 
 {IDENTIFIER}            {return IDENTIFIER;}
 

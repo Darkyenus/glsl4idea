@@ -22,6 +22,7 @@ package glslplugin.lang.elements.statements;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,23 +43,8 @@ public class GLSLCompoundStatement extends GLSLStatement {
 
     @NotNull
     public GLSLStatement[] getStatements() {
-        // convert the list of children to a list of GLSLStatement objects while performing sanity check.
-        PsiElement[] children = getChildren();
-        List<GLSLStatement> result = new ArrayList<GLSLStatement>(children.length);
-        for (PsiElement child : children) {
-            if (child instanceof GLSLStatement) {
-                result.add((GLSLStatement) child);
-            } else {
-                final ASTNode node = child.getNode();
-                if (node != null) {
-                    final IElementType type = node.getElementType();
-                    if (!GLSLTokenTypes.COMMENTS.contains(type)) {
-                        throw new RuntimeException("Compound statement contains non-comment, non-statement element.");
-                    }
-                }
-            }
-        }
-        return result.toArray(new GLSLStatement[result.size()]);
+        GLSLStatement[] statements = PsiTreeUtil.getChildrenOfType(this, GLSLStatement.class);
+        return (statements == null) ? new GLSLStatement[0] : statements;
     }
 
     public String toString() {
