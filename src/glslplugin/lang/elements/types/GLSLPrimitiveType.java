@@ -19,6 +19,9 @@
 
 package glslplugin.lang.elements.types;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 /**
  * GLSLPrimitiveType represents a primitive type,
  * and includes, bool, float, int, vectors, matrices and samplers.
@@ -33,21 +36,9 @@ public class GLSLPrimitiveType extends GLSLType {
 
     // scalars
     public static final GLSLPrimitiveType BOOL = new GLSLPrimitiveType("bool");
-    public static final GLSLPrimitiveType INT = new GLSLPrimitiveType("int");
     public static final GLSLPrimitiveType FLOAT = new GLSLPrimitiveType("float");
-
-    // matrices
-    public static final GLSLPrimitiveType MAT2 = new GLSLPrimitiveType("mat2");
-    public static final GLSLPrimitiveType MAT3 = new GLSLPrimitiveType("mat3");
-    public static final GLSLPrimitiveType MAT4 = new GLSLPrimitiveType("mat4");
-
-    // non-square matrices
-    public static final GLSLPrimitiveType MAT2X3 = new GLSLPrimitiveType("mat2x3");
-    public static final GLSLPrimitiveType MAT2X4 = new GLSLPrimitiveType("mat2x4");
-    public static final GLSLPrimitiveType MAT3X2 = new GLSLPrimitiveType("mat3x2");
-    public static final GLSLPrimitiveType MAT3X4 = new GLSLPrimitiveType("mat3x4");
-    public static final GLSLPrimitiveType MAT4X2 = new GLSLPrimitiveType("mat4x2");
-    public static final GLSLPrimitiveType MAT4X3 = new GLSLPrimitiveType("mat4x3");
+    public static final GLSLPrimitiveType UINT = new GLSLPrimitiveType("uint", FLOAT);
+    public static final GLSLPrimitiveType INT = new GLSLPrimitiveType("int", UINT, FLOAT);
 
     // samplers
     public static final GLSLPrimitiveType SAMPLER1D = new GLSLPrimitiveType("sampler1D");
@@ -58,9 +49,11 @@ public class GLSLPrimitiveType extends GLSLType {
     public static final GLSLPrimitiveType SAMPLER_CUBE = new GLSLPrimitiveType("samplerCube");
 
     private final String typename;
+    private final Collection<GLSLType> implicitConversions;
 
-    private GLSLPrimitiveType(String typename) {
+    private GLSLPrimitiveType(String typename, GLSLType... implicitConversions) {
         this.typename = typename;
+        this.implicitConversions = Arrays.asList(implicitConversions);
     }
 
     public String getTypename() {
@@ -79,19 +72,8 @@ public class GLSLPrimitiveType extends GLSLType {
     }
 
     public boolean isConvertibleTo(GLSLType otherType) {
-        if (!otherType.isValidType()) return true;
-        if (otherType instanceof GLSLPrimitiveType) {
-            GLSLPrimitiveType otherPrimitiveType = (GLSLPrimitiveType) otherType;
-            if (typeEquals(otherPrimitiveType)) {
-                // equal types are assignable
-                return true;
-            } else if (this == INT && otherPrimitiveType == FLOAT) {
-                // int -> float conversion is allowed
-                return true;
-            }
-        }
-
-        return false;
+        return otherType.isValidType() &&
+                (typeEquals(otherType) || implicitConversions.contains(otherType));
     }
 
     @Override
