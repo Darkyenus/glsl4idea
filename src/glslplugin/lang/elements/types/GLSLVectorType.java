@@ -80,7 +80,11 @@ public class GLSLVectorType extends GLSLType {
     }
 
     private enum BaseType {
-        INT(GLSLPrimitiveType.INT, "ivec"), BOOL(GLSLPrimitiveType.BOOL, "bvec"), FLOAT(GLSLPrimitiveType.FLOAT, "vec");
+        INT(GLSLPrimitiveType.INT, "ivec"),
+        UINT(GLSLPrimitiveType.UINT, "uvec"),
+        BOOL(GLSLPrimitiveType.BOOL, "bvec"),
+        FLOAT(GLSLPrimitiveType.FLOAT, "vec"),
+        DOUBLE(GLSLPrimitiveType.DOUBLE, "dvec");
 
         final GLSLType type;
         final String name;
@@ -92,7 +96,9 @@ public class GLSLVectorType extends GLSLType {
 
         static BaseType fromType(GLSLType type) {
             if (type == GLSLTypes.INT) return INT;
+            if (type == GLSLTypes.UINT) return UINT;
             if (type == GLSLTypes.FLOAT) return FLOAT;
+            if (type == GLSLTypes.DOUBLE) return DOUBLE;
             if (type == GLSLTypes.BOOL) return BOOL;
             throw new RuntimeException("Unsupported vector base type: '" + type.getTypename() + "'");
         }
@@ -113,9 +119,15 @@ public class GLSLVectorType extends GLSLType {
         IVEC2 = getTypeFromName("ivec2");
         IVEC3 = getTypeFromName("ivec3");
         IVEC4 = getTypeFromName("ivec4");
+        UVEC2 = getTypeFromName("uvec2");
+        UVEC3 = getTypeFromName("uvec3");
+        UVEC4 = getTypeFromName("uvec4");
         VEC2 = getTypeFromName("vec2");
         VEC3 = getTypeFromName("vec3");
         VEC4 = getTypeFromName("vec4");
+        DVEC2 = getTypeFromName("dvec2");
+        DVEC3 = getTypeFromName("dvec3");
+        DVEC4 = getTypeFromName("dvec4");
     }
 
     private static final StringBuilder createMemberStringBuilder;
@@ -131,9 +143,15 @@ public class GLSLVectorType extends GLSLType {
     public static final GLSLVectorType IVEC2;
     public static final GLSLVectorType IVEC3;
     public static final GLSLVectorType IVEC4;
+    public static final GLSLVectorType UVEC2;
+    public static final GLSLVectorType UVEC3;
+    public static final GLSLVectorType UVEC4;
     public static final GLSLVectorType VEC2;
     public static final GLSLVectorType VEC3;
     public static final GLSLVectorType VEC4;
+    public static final GLSLVectorType DVEC2;
+    public static final GLSLVectorType DVEC3;
+    public static final GLSLVectorType DVEC4;
 
 
     private static HashMap<String, GLSLVectorType> createVectorTypes() {
@@ -251,5 +269,14 @@ public class GLSLVectorType extends GLSLType {
 
     public int getNumComponents() {
         return numComponents;
+    }
+
+    @Override
+    public boolean isConvertibleTo(GLSLType otherType) {
+        if (!(otherType instanceof GLSLVectorType)) return false;
+        GLSLVectorType other = (GLSLVectorType) otherType;
+
+        return other.getNumComponents() == getNumComponents()
+                && getBaseType().isConvertibleTo(other.getBaseType());
     }
 }

@@ -37,7 +37,10 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
     private enum Type {
         BOOL("Bool", GLSLTypes.BOOL),
         FLOAT("Float", GLSLTypes.FLOAT),
-        INTEGER("Integer", GLSLTypes.INT);
+        DOUBLE("Double", GLSLTypes.DOUBLE),
+        INTEGER("Integer", GLSLTypes.INT),
+        UINT("Unsigned integer", GLSLTypes.UINT);
+
 
         Type(String name, GLSLType type) {
             this.textRepresentation = name;
@@ -56,7 +59,10 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
         IElementType type = getNode().getFirstChildNode().getElementType();
         if (type == GLSLTokenTypes.BOOL_CONSTANT) return Type.BOOL;
         if (type == GLSLTokenTypes.INTEGER_CONSTANT) return Type.INTEGER;
+        if (type == GLSLTokenTypes.UINT_CONSTANT) return Type.UINT;
         if (type == GLSLTokenTypes.FLOAT_CONSTANT) return Type.FLOAT;
+        if (type == GLSLTokenTypes.DOUBLE_CONSTANT) return Type.DOUBLE;
+
         throw new RuntimeException("Unsupported literal type.");
     }
 
