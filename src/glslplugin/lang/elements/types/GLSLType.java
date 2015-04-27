@@ -174,7 +174,7 @@ public abstract class GLSLType {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName().substring(4) + ": " + getTypename();
+        return getClass().getSimpleName() + ": " + getTypename();
     }
 
     /**
