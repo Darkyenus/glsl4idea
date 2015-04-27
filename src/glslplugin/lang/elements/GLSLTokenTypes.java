@@ -28,19 +28,29 @@ public class GLSLTokenTypes {
 //    public static final IElementType FIELD_SELECTION = new GLSLElementType("FIELD_SELECTION");
 
     public static final IElementType INTEGER_CONSTANT = new GLSLElementType("INTEGER_CONSTANT");
+    public static final IElementType UINT_CONSTANT = new GLSLElementType("UINT_CONSTANT");
     public static final IElementType FLOAT_CONSTANT = new GLSLElementType("FLOAT_CONSTANT");
+    public static final IElementType DOUBLE_CONSTANT = new GLSLElementType("DOUBLE_CONSTANT");
     public static final IElementType BOOL_CONSTANT = new GLSLElementType("BOOL_CONSTANT");
 
     public static final IElementType VOID_TYPE = new GLSLElementType("VOID_TYPE");
     public static final IElementType FLOAT_TYPE = new GLSLElementType("FLOAT_TYPE");
+    public static final IElementType DOUBLE_TYPE = new GLSLElementType("DOUBLE_TYPE");
     public static final IElementType INT_TYPE = new GLSLElementType("INT_TYPE");
+    public static final IElementType UINT_TYPE = new GLSLElementType("UINT_TYPE");
     public static final IElementType BOOL_TYPE = new GLSLElementType("BOOL_TYPE");
     public static final IElementType VEC2_TYPE = new GLSLElementType("VEC2_TYPE");
     public static final IElementType VEC3_TYPE = new GLSLElementType("VEC3_TYPE");
     public static final IElementType VEC4_TYPE = new GLSLElementType("VEC4_TYPE");
+    public static final IElementType DVEC2_TYPE = new GLSLElementType("DVEC2_TYPE");
+    public static final IElementType DVEC3_TYPE = new GLSLElementType("DVEC3_TYPE");
+    public static final IElementType DVEC4_TYPE = new GLSLElementType("DVEC4_TYPE");
     public static final IElementType IVEC2_TYPE = new GLSLElementType("IVEC2_TYPE");
     public static final IElementType IVEC3_TYPE = new GLSLElementType("IVEC3_TYPE");
     public static final IElementType IVEC4_TYPE = new GLSLElementType("IVEC4_TYPE");
+    public static final IElementType UVEC2_TYPE = new GLSLElementType("UVEC2_TYPE");
+    public static final IElementType UVEC3_TYPE = new GLSLElementType("UVEC3_TYPE");
+    public static final IElementType UVEC4_TYPE = new GLSLElementType("UVEC4_TYPE");
     public static final IElementType BVEC2_TYPE = new GLSLElementType("BVEC2_TYPE");
     public static final IElementType BVEC3_TYPE = new GLSLElementType("BVEC3_TYPE");
     public static final IElementType BVEC4_TYPE = new GLSLElementType("BVEC4_TYPE");
@@ -56,6 +66,18 @@ public class GLSLTokenTypes {
     public static final IElementType MAT4X2_TYPE = new GLSLElementType("MAT4X2_TYPE");
     public static final IElementType MAT4X3_TYPE = new GLSLElementType("MAT4X3_TYPE");
     public static final IElementType MAT4X4_TYPE = new GLSLElementType("MAT4X4_TYPE");
+    public static final IElementType DMAT2_TYPE = new GLSLElementType("DMAT2_TYPE");
+    public static final IElementType DMAT3_TYPE = new GLSLElementType("DMAT3_TYPE");
+    public static final IElementType DMAT4_TYPE = new GLSLElementType("DMAT4_TYPE");
+    public static final IElementType DMAT2X2_TYPE = new GLSLElementType("DMAT2X2_TYPE");
+    public static final IElementType DMAT2X3_TYPE = new GLSLElementType("DMAT2X3_TYPE");
+    public static final IElementType DMAT2X4_TYPE = new GLSLElementType("DMAT2X4_TYPE");
+    public static final IElementType DMAT3X2_TYPE = new GLSLElementType("DMAT3X2_TYPE");
+    public static final IElementType DMAT3X3_TYPE = new GLSLElementType("DMAT3X3_TYPE");
+    public static final IElementType DMAT3X4_TYPE = new GLSLElementType("DMAT3X4_TYPE");
+    public static final IElementType DMAT4X2_TYPE = new GLSLElementType("DMAT4X2_TYPE");
+    public static final IElementType DMAT4X3_TYPE = new GLSLElementType("DMAT4X3_TYPE");
+    public static final IElementType DMAT4X4_TYPE = new GLSLElementType("DMAT4X4_TYPE");
     public static final IElementType SAMPLER1D_TYPE = new GLSLElementType("SAMPLER1D_TYPE");
     public static final IElementType SAMPLER2D_TYPE = new GLSLElementType("SAMPLER2D_TYPE");
     public static final IElementType SAMPLER3D_TYPE = new GLSLElementType("SAMPLER3D_TYPE");
@@ -186,15 +208,25 @@ public class GLSLTokenTypes {
             PREPROCESSOR_CONCAT);
 
     // Type specifiers
-    public static final TokenSet FLOAT_TYPE_SPECIFIER_NONARRAY = TokenSet.create(FLOAT_TYPE, VEC2_TYPE, VEC3_TYPE, VEC4_TYPE);
+    public static final TokenSet FLOAT_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
+            FLOAT_TYPE, VEC2_TYPE, VEC3_TYPE, VEC4_TYPE,
+            DOUBLE_TYPE, DVEC2_TYPE, DVEC3_TYPE, DVEC4_TYPE);
 
-    public static final TokenSet INTEGER_TYPE_SPECIFIER_NONARRAY = TokenSet.create(INT_TYPE, IVEC2_TYPE, IVEC3_TYPE, IVEC4_TYPE);
+    public static final TokenSet INTEGER_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
+            INT_TYPE, IVEC2_TYPE, IVEC3_TYPE, IVEC4_TYPE,
+            UINT_TYPE, UVEC2_TYPE, UVEC3_TYPE, UVEC4_TYPE);
 
     public static final TokenSet BOOL_TYPE_SPECIFIER_NONARRAY = TokenSet.create(BOOL_TYPE, BVEC2_TYPE, BVEC3_TYPE, BVEC4_TYPE);
 
-    public static final TokenSet MATRIX_TYPE_SPECIFIER_NONARRAY =
-            TokenSet.create(MAT2_TYPE, MAT3_TYPE, MAT4_TYPE, MAT2X2_TYPE, MAT2X3_TYPE, MAT2X4_TYPE, MAT3X2_TYPE,
-                    MAT3X3_TYPE, MAT3X4_TYPE, MAT4X2_TYPE, MAT4X3_TYPE, MAT4X4_TYPE);
+    public static final TokenSet MATRIX_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
+            MAT2_TYPE, MAT3_TYPE, MAT4_TYPE,
+            MAT2X2_TYPE, MAT2X3_TYPE, MAT2X4_TYPE,
+            MAT3X2_TYPE, MAT3X3_TYPE, MAT3X4_TYPE,
+            MAT4X2_TYPE, MAT4X3_TYPE, MAT4X4_TYPE,
+            DMAT2_TYPE, DMAT3_TYPE, DMAT4_TYPE,
+            DMAT2X2_TYPE, DMAT2X3_TYPE, DMAT2X4_TYPE,
+            DMAT3X2_TYPE, DMAT3X3_TYPE, DMAT3X4_TYPE,
+            DMAT4X2_TYPE, DMAT4X3_TYPE, DMAT4X4_TYPE);
 
     public static final TokenSet TEXTURE_TYPE_SPECIFIER_NONARRAY =
             TokenSet.create(SAMPLER1D_TYPE, SAMPLER2D_TYPE, SAMPLER3D_TYPE, SAMPLERCUBE_TYPE, SAMPLER1DSHADOW_TYPE,
@@ -258,7 +290,8 @@ public class GLSLTokenTypes {
     public static final TokenSet LOGICAL_OPERATORS = TokenSet.create(AND_OP, OR_OP, XOR_OP);
     public static final TokenSet OPERATORS = merge(ASSIGNMENT_OPERATORS, UNARY_OPERATORS, EQUALITY_OPERATORS,
             RELATIONAL_OPERATORS, ADDITIVE_OPERATORS, MULTIPLICATIVE_OPERATORS, LOGICAL_OPERATORS);
-    public static final TokenSet CONSTANT_TOKENS = TokenSet.create(BOOL_CONSTANT, INTEGER_CONSTANT, FLOAT_CONSTANT);
+    public static final TokenSet CONSTANT_TOKENS = TokenSet.create(
+            BOOL_CONSTANT, INTEGER_CONSTANT, UINT_CONSTANT, FLOAT_CONSTANT, DOUBLE_CONSTANT);
 
     public static final TokenSet EXPRESSION_FIRST_SET = merge(TokenSet.create(
                     INTEGER_CONSTANT, FLOAT_CONSTANT, BOOL_CONSTANT, // constants

@@ -103,7 +103,7 @@ public enum GLSLOperator {
         getCommonArithmeticOperatorAlternatives(name, dest);
         for (int cols = 2; cols <= 4; cols++) {
             for (int rows = 2; rows <= 4; rows++) {
-                GLSLMatrixType mat = GLSLMatrixType.getType(cols, rows);
+                GLSLMatrixType mat = GLSLMatrixType.getType(cols, rows, GLSLTypes.FLOAT);
                 dest.add(new GLSLBasicFunctionType(name, mat, mat, mat));
             }
         }
@@ -116,7 +116,7 @@ public enum GLSLOperator {
         // matrix-matrix AND matrix-vector
         for (int M = 2; M <= 4; M++) {
             for (int N = 2; N <= 4; N++) {
-                GLSLMatrixType matMxN = GLSLMatrixType.getType(M, N);
+                GLSLMatrixType matMxN = GLSLMatrixType.getType(M, N, GLSLTypes.FLOAT);
                 GLSLVectorType vecM = GLSLVectorType.getType(M, GLSLTypes.FLOAT);
                 GLSLVectorType vecN = GLSLVectorType.getType(N, GLSLTypes.FLOAT);
 
@@ -124,8 +124,8 @@ public enum GLSLOperator {
                 dest.add(new GLSLBasicFunctionType("*", vecN, vecM, matMxN));
 
                 for (int I = 2; I <= 4; I++) {
-                    GLSLMatrixType matIxM = GLSLMatrixType.getType(I, M);
-                    GLSLMatrixType matIxN = GLSLMatrixType.getType(I, N);
+                    GLSLMatrixType matIxM = GLSLMatrixType.getType(I, M, GLSLTypes.FLOAT);
+                    GLSLMatrixType matIxN = GLSLMatrixType.getType(I, N, GLSLTypes.FLOAT);
 
                     dest.add(new GLSLBasicFunctionType("*", matIxN, matMxN, matIxM));
                 }
@@ -179,7 +179,7 @@ public enum GLSLOperator {
             dest.add(new GLSLBasicFunctionType(name, vec, vec));
             dest.add(new GLSLBasicFunctionType(name, ivec, ivec));
             for (int j = 2; j <= 4; j++) {
-                GLSLType mat = GLSLMatrixType.getType(i, j);
+                GLSLType mat = GLSLMatrixType.getType(i, j, GLSLTypes.FLOAT);
                 dest.add(new GLSLBasicFunctionType(name, mat, mat));
             }
         }

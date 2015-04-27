@@ -48,12 +48,15 @@ WHITE_SPACE         = [ \t\f]
 
 IDENTIFIER          = {NON_DIGIT}({NON_DIGIT} | {DIGIT})*
 
-INTEGER_CONSTANT    = {DECIMAL_CONSTANT} | {HEX_CONSTANT} | {OCTAL_CONSTANT}
+UINT_SUFFIX      = [Uu]
+INTEGER_CONSTANT    = ({DECIMAL_CONSTANT} | {HEX_CONSTANT} | {OCTAL_CONSTANT})
 DECIMAL_CONSTANT    = (0|([1-9]({DIGIT})*))
 HEX_CONSTANT        = 0[Xx]({HEX_DIGIT})*
 OCTAL_CONSTANT      = 0({OCTAL_DIGIT})*
 
-FLOATING_CONSTANT   = (({FLOATING_CONSTANT1})|({FLOATING_CONSTANT2})|({FLOATING_CONSTANT3})|({FLOATING_CONSTANT4})) ([fF])?
+DOUBLE_SUFFIX = (lf|LF)
+FLOAT_SUFFIX = [fF]
+FLOATING_CONSTANT   = (({FLOATING_CONSTANT1})|({FLOATING_CONSTANT2})|({FLOATING_CONSTANT3})|({FLOATING_CONSTANT4}))
 FLOATING_CONSTANT1  = ({DIGIT})+"."({DIGIT})*({EXPONENT_PART})?
 FLOATING_CONSTANT2  = "."({DIGIT})+({EXPONENT_PART})?
 FLOATING_CONSTANT3  = ({DIGIT})+({EXPONENT_PART})
@@ -107,14 +110,22 @@ false                   {return BOOL_CONSTANT; }
 /* GLSL types */
 void                    {return VOID_TYPE; }
 float                   {return FLOAT_TYPE; }
+double                  {return DOUBLE_TYPE; }
 int                     {return INT_TYPE; }
+uint                    {return UINT_TYPE; }
 bool                    {return BOOL_TYPE; }
 vec2                    {return VEC2_TYPE; }
 vec3                    {return VEC3_TYPE; }
 vec4                    {return VEC4_TYPE; }
+dvec2                   {return DVEC2_TYPE; }
+dvec3                   {return DVEC3_TYPE; }
+dvec4                   {return DVEC4_TYPE; }
 ivec2                   {return IVEC2_TYPE; }
 ivec3                   {return IVEC3_TYPE; }
 ivec4                   {return IVEC4_TYPE; }
+uvec2                   {return UVEC2_TYPE; }
+uvec3                   {return UVEC3_TYPE; }
+uvec4                   {return UVEC4_TYPE; }
 bvec2                   {return BVEC2_TYPE; }
 bvec3                   {return BVEC3_TYPE; }
 bvec4                   {return BVEC4_TYPE; }
@@ -130,6 +141,18 @@ mat3x4                  {return MAT3X4_TYPE; }
 mat4x2                  {return MAT4X2_TYPE; }
 mat4x3                  {return MAT4X3_TYPE; }
 mat4x4                  {return MAT4X4_TYPE; }
+dmat2                   {return DMAT2_TYPE; }
+dmat3                   {return DMAT3_TYPE; }
+dmat4                   {return DMAT4_TYPE; }
+dmat2x2                 {return DMAT2X2_TYPE; }
+dmat2x3                 {return DMAT2X3_TYPE; }
+dmat2x4                 {return DMAT2X4_TYPE; }
+dmat3x2                 {return DMAT3X2_TYPE; }
+dmat3x3                 {return DMAT3X3_TYPE; }
+dmat3x4                 {return DMAT3X4_TYPE; }
+dmat4x2                 {return DMAT4X2_TYPE; }
+dmat4x3                 {return DMAT4X3_TYPE; }
+dmat4x4                 {return DMAT4X4_TYPE; }
 sampler1D               {return SAMPLER1D_TYPE; }
 sampler2D               {return SAMPLER2D_TYPE; }
 sampler3D               {return SAMPLER3D_TYPE; }
@@ -236,8 +259,10 @@ precision{WHITE_SPACE}+{GLSL_ES_PRECISION_MODIFIER}{WHITE_SPACE}+{GLSL_ES_TYPE}"
 
 {IDENTIFIER}            {return IDENTIFIER;}
 
+{INTEGER_CONSTANT}{UINT_SUFFIX} {return UINT_CONSTANT; }
 {INTEGER_CONSTANT}      {return INTEGER_CONSTANT; }
-{FLOATING_CONSTANT}     {return FLOAT_CONSTANT; }
+{FLOATING_CONSTANT}{DOUBLE_SUFFIX}     {return DOUBLE_CONSTANT; }
+{FLOATING_CONSTANT}{FLOAT_SUFFIX}?     {return FLOAT_CONSTANT; }
 {LINE_COMMENT}          {return COMMENT_LINE; }
 {BLOCK_COMMENT}         {return COMMENT_BLOCK; }
 .                       {return UNKNOWN; }
