@@ -25,10 +25,10 @@ import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
 import glslplugin.lang.elements.statements.GLSLReturnStatement;
 import glslplugin.lang.elements.statements.GLSLStatement;
 import glslplugin.lang.elements.types.GLSLType;
+import org.jetbrains.annotations.NotNull;
 
 // First half of function return type checking.
-// todo: Must have a separate annotation to check if a function with a return type has a return statement.
-public class CheckReturnTypeAnnotation implements Annotator<GLSLStatement> {
+public class CheckReturnTypeAnnotation extends Annotator<GLSLStatement> {
 
     public void annotate(GLSLStatement expr, AnnotationHolder holder) {
         if (expr instanceof GLSLReturnStatement) {
@@ -43,5 +43,11 @@ public class CheckReturnTypeAnnotation implements Annotator<GLSLStatement> {
                 }
             }
         }
+    }
+
+    @NotNull
+    @Override
+    public Class<GLSLStatement> getElementType() {
+        return GLSLStatement.class;
     }
 }

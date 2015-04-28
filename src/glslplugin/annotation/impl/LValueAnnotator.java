@@ -31,12 +31,17 @@ import glslplugin.lang.elements.expressions.GLSLExpression;
  *         Date: Jan 30, 2009
  *         Time: 10:46:40 AM
  */
-public class LValueAnnotator implements Annotator<GLSLAssignmentExpression> {
+public class LValueAnnotator extends Annotator<GLSLAssignmentExpression> {
 
     public void annotate(GLSLAssignmentExpression expr, AnnotationHolder holder) {
         GLSLExpression left = expr.getLeftOperand();
         if (!left.isLValue()) {
             holder.createErrorAnnotation(left, "Left operand of assignment expression is not L-Value.");
         }
+    }
+
+    @Override
+    public Class<GLSLAssignmentExpression> getElementType() {
+        return GLSLAssignmentExpression.class;
     }
 }

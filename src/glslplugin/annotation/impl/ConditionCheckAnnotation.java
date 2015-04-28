@@ -27,8 +27,9 @@ import glslplugin.lang.elements.statements.GLSLStatement;
 import glslplugin.lang.elements.statements.GLSLWhileStatement;
 import glslplugin.lang.elements.types.GLSLPrimitiveType;
 import glslplugin.lang.elements.types.GLSLType;
+import org.jetbrains.annotations.NotNull;
 
-public class ConditionCheckAnnotation implements Annotator<GLSLStatement> {
+public class ConditionCheckAnnotation extends Annotator<GLSLStatement> {
     public void annotate(GLSLStatement expr, AnnotationHolder holder) {
 
         if (expr instanceof ConditionStatement) {
@@ -49,5 +50,11 @@ public class ConditionCheckAnnotation implements Annotator<GLSLStatement> {
         }
 
 
+    }
+
+    @NotNull
+    @Override
+    public Class<GLSLStatement> getElementType() {
+        return GLSLStatement.class;
     }
 }
