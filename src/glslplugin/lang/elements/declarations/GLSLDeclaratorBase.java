@@ -47,7 +47,7 @@ public class GLSLDeclaratorBase extends GLSLElementImpl {
         if (idElement instanceof GLSLIdentifier) {
             return (GLSLIdentifier) idElement;
         } else {
-            throw new RuntimeException("First element of declarator is not identifier.");
+            throw new RuntimeException("First element of declarator is not identifier."); //TODO This may trigger on malformed code
         }
     }
 

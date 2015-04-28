@@ -59,6 +59,9 @@ public abstract class GLSLFunctionType extends GLSLType {
         return typename;
     }
 
+    /**
+     * @return The return type of the function.
+     */
     @Override
     public GLSLType getBaseType() {
         return returnType;

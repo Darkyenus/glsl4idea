@@ -28,8 +28,9 @@ import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.statements.*;
+import org.jetbrains.annotations.NotNull;
 
-public class UnreachableAnnotation implements Annotator<GLSLStatement> {
+public class UnreachableAnnotation extends Annotator<GLSLStatement> {
     private TextAttributesKey strikeThrough;
 
     public UnreachableAnnotation() {
@@ -62,5 +63,11 @@ public class UnreachableAnnotation implements Annotator<GLSLStatement> {
             }
             element = element.getNextSibling();
         }
+    }
+
+    @NotNull
+    @Override
+    public Class<GLSLStatement> getElementType() {
+        return GLSLStatement.class;
     }
 }
