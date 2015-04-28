@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
  * Checks if vector components are correct.
  * - all of the same type (no mixing)
  * - within range (<= number of components)
-*/
+ */
 public class VectorComponentsAnnotation extends Annotator<GLSLFieldSelectionExpression> {
     private static final char[] xyzw = {'x', 'y', 'z', 'w'};
     private static final char[] rgba = {'r', 'g', 'b', 'a'};
@@ -69,7 +69,7 @@ public class VectorComponentsAnnotation extends Annotator<GLSLFieldSelectionExpr
                         } else {
                             if (basePattern != pattern) {
                                 holder.createErrorAnnotation(tr, "Can not mix " + getAlternatives(pattern, numComponents) + " with " + getAlternatives(basePattern, numComponents));
-                            } else if(!checkRange(pattern, numComponents, cm)) {
+                            } else if (!checkRange(pattern, numComponents, cm)) {
                                 holder.createErrorAnnotation(tr, "'" + cm + "' is out of range of: " + getAlternatives(basePattern, numComponents));
                             }
                         }
