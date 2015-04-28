@@ -19,24 +19,42 @@
 <idea-plugin version="2">
 
     <name>GLSL Support</name>
-    <category>Custom Languages</category>
     <id>GLSL</id>
     <description>Support for the OpenGL Shading Language</description>
-    <version>1.5</version>
+
+    <category>Custom Languages</category>
     <vendor>Foundation</vendor>
     <idea-version since-build="139.1117"/>
     <depends>com.intellij.modules.lang</depends>
 
+    <version>1.6</version>
     <change-notes><![CDATA[
-        1.5 - Brace folding for compound statements
-            - Added more qualifiers from glsl 450
-            - Improved highlighting, especially on dark themes
-            - Parsing is a bit more robust
+        <p>1.6</p>
+        <ul>
+            <li>Improved unreachability analyzing</li>
+            <li>Recognize more file extensions</li>
+            <li>Improved token lexing around #if preprocessor statements</li>
+            <li>Added support for more native types (uint, double, uvec, dvec, dmat)</li>
+        </ul>
 
-        1.4 - Added support for GL ES precision modifiers and statements
+        <p>1.5</p>
+        <ul>
+            <li>Brace folding for compound statements</li>
+            <li>Added more qualifiers from glsl 450</li>
+            <li>Improved highlighting, especially on dark themes</li>
+            <li>Parsing is a bit more robust</li>
+        </ul>
 
-        1.3 - Fixed compatibility with CLion
-            - Fix minor bugs
+        <p>1.4</p>
+        <ul>
+            <li>Added support for GL ES precision modifiers and statements</li>
+        </ul>
+
+        <p>1.3</p>
+        <ul>
+            <li>Fixed compatibility with CLion</li>
+            <li>Fix minor bugs</li>
+        </ul>
     ]]></change-notes>
 
     <actions>
