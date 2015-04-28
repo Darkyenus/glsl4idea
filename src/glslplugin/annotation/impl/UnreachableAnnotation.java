@@ -27,7 +27,10 @@ import com.intellij.psi.PsiElement;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLElementTypes;
-import glslplugin.lang.elements.statements.*;
+import glslplugin.lang.elements.statements.GLSLDoStatement;
+import glslplugin.lang.elements.statements.GLSLForStatement;
+import glslplugin.lang.elements.statements.GLSLStatement;
+import glslplugin.lang.elements.statements.GLSLWhileStatement;
 import org.jetbrains.annotations.NotNull;
 
 public class UnreachableAnnotation extends Annotator<GLSLStatement> {
@@ -44,7 +47,7 @@ public class UnreachableAnnotation extends Annotator<GLSLStatement> {
         if (scope == GLSLStatement.TerminatorScope.LOOP) {
             //noinspection unchecked
             GLSLElement parent = expr.findParentByClasses(GLSLDoStatement.class, GLSLForStatement.class, GLSLWhileStatement.class);
-            if(parent == null) {
+            if (parent == null) {
                 holder.createErrorAnnotation(expr, "Must be in a loop!");
                 return;
             }

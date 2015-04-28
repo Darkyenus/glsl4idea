@@ -42,10 +42,11 @@ public class GLSLAnnotator implements com.intellij.lang.annotation.Annotator {
     private final static List<Class<? extends PsiElement>> annotationTypes = new ArrayList<Class<? extends PsiElement>>();
     private final static List<Annotator<? extends PsiElement>> annotators = new ArrayList<Annotator<? extends PsiElement>>();
 
-    private static void add(Annotator<?> annotator){
+    private static void add(Annotator<?> annotator) {
         annotationTypes.add(annotator.getElementType());
         annotators.add(annotator);
     }
+
     static {
         //Register all annotators
         add(new LValueAnnotator());

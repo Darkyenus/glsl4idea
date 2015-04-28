@@ -28,17 +28,19 @@ import glslplugin.lang.elements.types.GLSLPrimitiveType;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * Detects and annotates when non-void function lacks a return statement.
+ *
  * @author Darkyen
  */
 public class MissingReturnAnnotation extends Annotator<GLSLFunctionDefinition> {
     @Override
     public void annotate(GLSLFunctionDefinition expr, AnnotationHolder holder) {
-        if(expr.getType().getBaseType() == GLSLPrimitiveType.VOID)return;
+        if (expr.getType().getBaseType() == GLSLPrimitiveType.VOID) return;
 
         final GLSLCompoundStatement body = expr.getBody();
 
-        if(body.getTerminatorScope() == GLSLStatement.TerminatorScope.NONE){
-            holder.createErrorAnnotation(body.getLastChild(),"Missing return statement");
+        if (body.getTerminatorScope() == GLSLStatement.TerminatorScope.NONE) {
+            holder.createErrorAnnotation(body.getLastChild(), "Missing return statement");
         }
     }
 

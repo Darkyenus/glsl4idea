@@ -44,7 +44,7 @@ public class ConditionCheckAnnotation extends Annotator<GLSLStatement> {
                         holder.createErrorAnnotation(condition, "Condition must be a boolean expression.");
                     }
                 }
-            } else if (expr instanceof GLSLWhileStatement){
+            } else if (expr instanceof GLSLWhileStatement) {
                 //todo: get declaration from while statement
             }
         }
