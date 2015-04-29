@@ -1,0 +1,22 @@
+// [config]
+// expect_result: fail
+// glsl_version: 3.30
+// require_extensions: GL_ARB_compute_shader
+// [end config]
+//
+// From the ARB_compute_shader spec:
+//
+//     Compute shaders have no built-in output variables, do not
+//     support user-defined output variables and do not form a formal
+//     interface with any other shader stage.
+
+#version 330
+#extension GL_ARB_compute_shader: enable
+
+layout(local_size_x = 1) in;
+
+out int i;
+
+void main()
+{
+}

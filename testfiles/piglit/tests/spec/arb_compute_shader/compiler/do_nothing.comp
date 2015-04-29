@@ -1,0 +1,14 @@
+// [config]
+// expect_result: pass
+// glsl_version: 3.30
+// require_extensions: GL_ARB_compute_shader
+// [end config]
+
+#version 330
+#extension GL_ARB_compute_shader: enable
+
+layout(local_size_x = 1) in;
+
+void main()
+{
+}
