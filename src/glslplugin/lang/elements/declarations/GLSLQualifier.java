@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLElementImpl;
+import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.types.GLSLTypeQualifier;
 import org.jetbrains.annotations.NotNull;
@@ -80,7 +81,8 @@ public class GLSLQualifier extends GLSLElementImpl {
         // Interpolation modifiers
         SMOOTH(GLSLTypeQualifier.INTERPOLATION_MODIFIER, "smooth", GLSLTokenTypes.SMOOTH_KEYWORD),
         FLAT(GLSLTypeQualifier.INTERPOLATION_MODIFIER, "flat", GLSLTokenTypes.FLAT_KEYWORD),
-        NOPERSPECTIVE(GLSLTypeQualifier.INTERPOLATION_MODIFIER, "noperspective", GLSLTokenTypes.NOPERSPECTIVE_KEYWORD)
+        NOPERSPECTIVE(GLSLTypeQualifier.INTERPOLATION_MODIFIER, "noperspective", GLSLTokenTypes.NOPERSPECTIVE_KEYWORD),
+        LAYOUT(GLSLTypeQualifier.LAYOUT_QUALIFIER, "layout", GLSLTokenTypes.LAYOUT_KEYWORD),
         ;
 
         private final GLSLTypeQualifier type;

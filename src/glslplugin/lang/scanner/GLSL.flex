@@ -182,6 +182,7 @@ readonly                {return READONLY_KEYWORD; }
 writeonly               {return WRITEONLY_KEYWORD; }
 subroutine              {return SUBROUTINE_KEYWORD; }
 precise                 {return PRECISE_KEYWORD; }
+layout                  {return LAYOUT_KEYWORD; }
 
 /* GLSL INTERPOLATION QUALIFIERS */
 

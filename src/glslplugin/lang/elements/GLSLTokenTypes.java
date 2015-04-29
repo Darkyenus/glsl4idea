@@ -107,6 +107,8 @@ public class GLSLTokenTypes {
     public static final IElementType FLAT_KEYWORD = new GLSLElementType("FLAT_KEYWORD");
     public static final IElementType NOPERSPECTIVE_KEYWORD = new GLSLElementType("NOPERSPECTIVE_KEYWORD");
 
+    public static final IElementType LAYOUT_KEYWORD = new GLSLElementType("LAYOUT_KEYWORD");
+
     public static final IElementType PRECISION_KEYWORD = new GLSLElementType("PRECISION_KEYWORD");
 
     public static final IElementType IN_KEYWORD = new GLSLElementType("IN_KEYWORD");
@@ -271,7 +273,9 @@ public class GLSLTokenTypes {
             //GLSL Interpolation modifiers
             SMOOTH_KEYWORD,
             FLAT_KEYWORD,
-            NOPERSPECTIVE_KEYWORD);
+            NOPERSPECTIVE_KEYWORD,
+            //GLSL Layout qualifiers
+            LAYOUT_KEYWORD);
 
     public static final TokenSet COMMENTS = TokenSet.create(COMMENT_BLOCK, COMMENT_LINE, PRECISION_STATEMENT);
 
