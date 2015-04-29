@@ -42,7 +42,7 @@ public class GLSLParsing {
 
     // Traits of all binary operators.
     // They must be listed in order of precedence.
-    private OperatorLevelTraits[] operatorPrecedence = new OperatorLevelTraits[] {
+    private OperatorLevelTraits[] operatorPrecedence = new OperatorLevelTraits[]{
             new OperatorLevelTraits(TokenSet.create(OR_OP), "sub expression", LOGICAL_OR_EXPRESSION),
             new OperatorLevelTraits(TokenSet.create(XOR_OP), "sub expression", LOGICAL_XOR_EXPRESSION),
             new OperatorLevelTraits(TokenSet.create(AND_OP), "sub expression", LOGICAL_AND_EXPRESSION),
@@ -248,7 +248,7 @@ public class GLSLParsing {
             mark.done(VARIABLE_DECLARATION);
             return true;
 
-        } else if (b.getTokenType() ==  IDENTIFIER || b.getTokenType() == LEFT_PAREN) {
+        } else if (b.getTokenType() == IDENTIFIER || b.getTokenType() == LEFT_PAREN) {
             // Identifier means either declarators, or function declaration/definition
             match(IDENTIFIER, "Missing function name");
 
@@ -308,7 +308,7 @@ public class GLSLParsing {
             postType.drop();
             mark.rollbackTo();
             mark = b.mark();
-            if(!parseExpression()){
+            if (!parseExpression()) {
                 //There is no expression! Consume what triggered me. (Would lead to infinite loop otherwise)
                 advanceLexer();
             }
@@ -900,29 +900,29 @@ public class GLSLParsing {
 
     private boolean parseOperatorExpression(int level) {
         PsiBuilder.Marker mark = b.mark();
-        if (!parseOperatorExpressionLevel(level+1)) {
+        if (!parseOperatorExpressionLevel(level + 1)) {
             mark.drop();
             return false;
         }
 
         OperatorLevelTraits operatorLevel = operatorPrecedence[level];
         while (tryMatch(operatorLevel.getOperatorTokens())) {
-            if (parseOperatorExpressionLevel(level+1)) {
+            if (parseOperatorExpressionLevel(level + 1)) {
                 mark.done(operatorLevel.getElementType());
                 mark = mark.precede();
             } else {
                 PsiBuilder.Marker operatorMark = b.mark();
-                if(tryMatch(OPERATORS)) {
+                if (tryMatch(OPERATORS)) {
                     do {
                         operatorMark.error("Operator out of place.");
-                        if(parseOperatorExpressionLevel(level+1)) {
+                        if (parseOperatorExpressionLevel(level + 1)) {
                             mark.done(operatorLevel.getElementType());
                             mark = mark.precede();
                             break;
                         } else {
                             operatorMark = b.mark();
                         }
-                    } while(tryMatch(OPERATORS));
+                    } while (tryMatch(OPERATORS));
                 } else {
                     operatorMark.drop();
                     mark.error(String.format("Expected a(n) %s expression.", operatorLevel.getPartName()));
@@ -935,7 +935,7 @@ public class GLSLParsing {
     }
 
     private boolean parseOperatorExpressionLevel(int level) {
-        if(level == operatorPrecedence.length) {
+        if (level == operatorPrecedence.length) {
             return parseUnaryExpression();
         } else {
             return parseOperatorExpression(level);
@@ -1328,7 +1328,8 @@ public class GLSLParsing {
             return;
         }
 
-        while (parseQualifier()) {}
+        while (parseQualifier()) {
+        }
 
         if (validPlacement) {
             mark.done(QUALIFIER_LIST);
@@ -1340,13 +1341,13 @@ public class GLSLParsing {
     private boolean parseQualifier() {
         // qualifier: LAYOUT '(' layout_qualifier_id_list ')'
         //          | qualifier_token
-        if( QUALIFIER_TOKENS.contains(b.getTokenType()) ) {
+        if (QUALIFIER_TOKENS.contains(b.getTokenType())) {
             final PsiBuilder.Marker mark = b.mark();
 
-            if( tryMatch(LAYOUT_KEYWORD) ) {
+            if (tryMatch(LAYOUT_KEYWORD)) {
                 match(LEFT_PAREN, "Expected '('");
                 parseLayoutQualifierList();
-                match(RIGHT_PAREN, "Expected '('");
+                match(RIGHT_PAREN, "Expected ')'");
             } else {
                 advanceLexer();
             }
@@ -1370,9 +1371,9 @@ public class GLSLParsing {
         //                    | SHARED
         final PsiBuilder.Marker mark = b.mark();
 
-        if( tryMatch(IDENTIFIER) ) {
-            if( tryMatch(EQUAL) ) {
-                if (!parseConstantExpression()) b.error("Expected expression");
+        if (tryMatch(IDENTIFIER)) {
+            if (tryMatch(EQUAL)) {
+                if (!parseConstantExpression()) b.error("Expected constant expression");
             }
         } else if (!tryMatch(SHARED_KEYWORD)) {
             mark.error("Expected 'shared' or an identifier");
