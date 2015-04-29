@@ -26,6 +26,7 @@ import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.types.GLSLFunctionType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypeCompatibilityLevel;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * BinaryOperatorTypeAnnotation is ...
@@ -34,7 +35,7 @@ import glslplugin.lang.elements.types.GLSLTypeCompatibilityLevel;
  *         Date: Mar 2, 2009
  *         Time: 11:38:57 AM
  */
-public class BinaryOperatorTypeAnnotation implements Annotator<GLSLBinaryOperatorExpression> {
+public class BinaryOperatorTypeAnnotation extends Annotator<GLSLBinaryOperatorExpression> {
 
     public void annotate(GLSLBinaryOperatorExpression expr, AnnotationHolder holder) {
         final GLSLExpression left = expr.getLeftOperand();
@@ -54,5 +55,11 @@ public class BinaryOperatorTypeAnnotation implements Annotator<GLSLBinaryOperato
                         + leftType.getTypename() + "' and '" + rightType.getTypename() + "'");
             }
         }
+    }
+
+    @NotNull
+    @Override
+    public Class<GLSLBinaryOperatorExpression> getElementType() {
+        return GLSLBinaryOperatorExpression.class;
     }
 }

@@ -26,13 +26,14 @@ import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLVectorType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Checks if vector components are correct.
  * - all of the same type (no mixing)
  * - within range (<= number of components)
-*/
-public class VectorComponentsAnnotation implements Annotator<GLSLFieldSelectionExpression> {
+ */
+public class VectorComponentsAnnotation extends Annotator<GLSLFieldSelectionExpression> {
     private static final char[] xyzw = {'x', 'y', 'z', 'w'};
     private static final char[] rgba = {'r', 'g', 'b', 'a'};
     private static final char[] stpq = {'s', 't', 'p', 'q'};
@@ -68,7 +69,7 @@ public class VectorComponentsAnnotation implements Annotator<GLSLFieldSelectionE
                         } else {
                             if (basePattern != pattern) {
                                 holder.createErrorAnnotation(tr, "Can not mix " + getAlternatives(pattern, numComponents) + " with " + getAlternatives(basePattern, numComponents));
-                            } else if(!checkRange(pattern, numComponents, cm)) {
+                            } else if (!checkRange(pattern, numComponents, cm)) {
                                 holder.createErrorAnnotation(tr, "'" + cm + "' is out of range of: " + getAlternatives(basePattern, numComponents));
                             }
                         }
@@ -112,5 +113,11 @@ public class VectorComponentsAnnotation implements Annotator<GLSLFieldSelectionE
         }
 
         return null;
+    }
+
+    @NotNull
+    @Override
+    public Class<GLSLFieldSelectionExpression> getElementType() {
+        return GLSLFieldSelectionExpression.class;
     }
 }
