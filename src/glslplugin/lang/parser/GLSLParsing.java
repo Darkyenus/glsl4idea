@@ -1323,20 +1323,62 @@ public class GLSLParsing {
 
         final PsiBuilder.Marker mark = b.mark();
 
-        while (QUALIFIER_TOKENS.contains(b.getTokenType())) {
-            final PsiBuilder.Marker mark2 = b.mark();
-
-            advanceLexer();
-
-            if(validPlacement)
-                mark2.done(QUALIFIER);
-            else
-                mark2.error("Qualifier not allowed here.");
-        }
-        if (validPlacement)
-            mark.done(QUALIFIER_LIST);
-        else
+        if (!validPlacement && !parseQualifier()) {
             mark.drop();
+            return;
+        }
+
+        while (parseQualifier()) {}
+
+        if (validPlacement) {
+            mark.done(QUALIFIER_LIST);
+        } else {
+            mark.error("Qualifier not allowed here.");
+        }
+    }
+
+    private boolean parseQualifier() {
+        // qualifier: LAYOUT '(' layout_qualifier_id_list ')'
+        //          | qualifier_token
+        if( QUALIFIER_TOKENS.contains(b.getTokenType()) ) {
+            final PsiBuilder.Marker mark = b.mark();
+
+            if( tryMatch(LAYOUT_KEYWORD) ) {
+                match(LEFT_PAREN, "Expected '('");
+                parseLayoutQualifierList();
+                match(RIGHT_PAREN, "Expected '('");
+            } else {
+                advanceLexer();
+            }
+
+            mark.done(QUALIFIER);
+            return true;
+        }
+        return false;
+    }
+
+    private void parseLayoutQualifierList() {
+        // layout_qualifier_id_list: layout_qualifier_id (COMMA layout_qualifier_id)*
+        parseLayoutQualifierElement();
+        while (tryMatch(COMMA)) {
+            parseLayoutQualifierElement();
+        }
+    }
+
+    private void parseLayoutQualifierElement() {
+        // layout_qualifier_id: IDENTIFIER [ EQUAL constant_expression ]
+        //                    | SHARED
+        final PsiBuilder.Marker mark = b.mark();
+
+        if( tryMatch(IDENTIFIER) ) {
+            if( tryMatch(EQUAL) ) {
+                if (!parseConstantExpression()) b.error("Expected expression");
+            }
+        } else if (!tryMatch(SHARED_KEYWORD)) {
+            mark.error("Expected 'shared' or an identifier");
+            return;
+        }
+        mark.done(LAYOUT_QUALIFIER_ID);
     }
 
 }
