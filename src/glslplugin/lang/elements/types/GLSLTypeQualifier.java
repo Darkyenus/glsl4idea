@@ -30,7 +30,9 @@ public enum GLSLTypeQualifier {
     PRECISE_QUALIFIER       (4, "precise qualifier"),
     ES_STORAGE_QUALIFIER    (5, "ES storage qualifier"),
     PARAMETER_MODIFIER      (6, "parameter modifier"),
-    INTERPOLATION_MODIFIER  (7, "interpolation modifier");
+    INTERPOLATION_MODIFIER  (7, "interpolation modifier"),
+    LAYOUT_QUALIFIER        (8, "layout qualifier"),
+    ;
     public final int order;
     private final String textRepresentation;
 

@@ -73,7 +73,8 @@ public class GLSLElementTypes {
     public static final IElementType FUNCTION_DEFINITION = new GLSLElementType("FUNCTION_DEFINITION");
     public static final IElementType SINGLE_DECLARATION = new GLSLElementType("SINGLE_DECLARATION");
     public static final IElementType QUALIFIER = new GLSLElementType("QUALIFIER");
-    public static final IElementType QUALIFIER_LIST = new GLSLElementType("QUALIFIER");
+    public static final IElementType QUALIFIER_LIST = new GLSLElementType("QUALIFIER_LIST");
+    public static final IElementType LAYOUT_QUALIFIER_ID = new GLSLElementType("LAYOUT_QUALIFIER_ID");
     public static final IElementType TYPE_SPECIFIER = new GLSLElementType("TYPE_SPECIFIER");
 
     public static final IElementType PARAMETER_DECLARATION_LIST = new GLSLElementType("PARAMETER_DECLARATION_LIST");
