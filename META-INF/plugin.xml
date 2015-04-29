@@ -79,6 +79,7 @@
         <lang.psiStructureViewFactory language="GLSL"
                                       implementationClass="glslplugin.structureview.GLSLStructureViewFactory"/>
         <annotator language="GLSL" implementationClass="glslplugin.annotation.GLSLAnnotator"/>
+        <problemFileHighlightFilter implementation="glslplugin.extensions.GLSLProblemFileHighlightFilter" />
 
         <intentionAction>
             <className>glslplugin.intentions.vectorcomponents.VectorComponentsIntention</className>
