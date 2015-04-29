@@ -22,11 +22,6 @@ package glslplugin.annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiElement;
 import glslplugin.annotation.impl.*;
-import glslplugin.lang.elements.GLSLElementImpl;
-import glslplugin.lang.elements.expressions.GLSLAssignmentExpression;
-import glslplugin.lang.elements.expressions.GLSLBinaryOperatorExpression;
-import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
-import glslplugin.lang.elements.statements.GLSLStatement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -42,50 +37,34 @@ import java.util.List;
  * @see glslplugin.annotation.impl
  */
 public class GLSLAnnotator implements com.intellij.lang.annotation.Annotator {
-    private final static List<Annotator<GLSLAssignmentExpression>> assignmentExpressionAnnotators = new ArrayList<Annotator<GLSLAssignmentExpression>>();
-    private final static List<Annotator<GLSLBinaryOperatorExpression>> binaryOperatorExpressionAnnotators = new ArrayList<Annotator<GLSLBinaryOperatorExpression>>();
-    private final static List<Annotator<GLSLFieldSelectionExpression>> fieldSelectionExpressionAnnotators = new ArrayList<Annotator<GLSLFieldSelectionExpression>>();
-    private final static List<Annotator<GLSLStatement>> statementAnnotators = new ArrayList<Annotator<GLSLStatement>>();
+    //This is optimal for small amount of annotators, if the list grows, change to map.
+    //These two instances form something like map. Add only through add(Annotator) method.
+    private final static List<Class<? extends PsiElement>> annotationTypes = new ArrayList<Class<? extends PsiElement>>();
+    private final static List<Annotator<? extends PsiElement>> annotators = new ArrayList<Annotator<? extends PsiElement>>();
+
+    private static void add(Annotator<?> annotator) {
+        annotationTypes.add(annotator.getElementType());
+        annotators.add(annotator);
+    }
 
     static {
-        assignmentExpressionAnnotators.add(new LValueAnnotator());
-        binaryOperatorExpressionAnnotators.add(new BinaryOperatorTypeAnnotation());
-        fieldSelectionExpressionAnnotators.add(new VectorComponentsAnnotation());
-        fieldSelectionExpressionAnnotators.add(new MemberCheckAnnotation());
-        statementAnnotators.add(new UnreachableAnnotation());
-        statementAnnotators.add(new CheckReturnTypeAnnotation());
-        statementAnnotators.add(new ConditionCheckAnnotation());
+        //Register all annotators
+        add(new LValueAnnotator());
+        add(new BinaryOperatorTypeAnnotation());
+        add(new VectorComponentsAnnotation());
+        add(new MemberCheckAnnotation());
+        add(new UnreachableAnnotation());
+        add(new CheckReturnTypeAnnotation());
+        add(new ConditionCheckAnnotation());
+        add(new MissingReturnAnnotation());
     }
 
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
-        if (psiElement instanceof GLSLAssignmentExpression) {
-            annotate((GLSLAssignmentExpression) psiElement, holder, assignmentExpressionAnnotators);
-        }
-
-        if (psiElement instanceof GLSLBinaryOperatorExpression) {
-            annotate((GLSLBinaryOperatorExpression) psiElement, holder, binaryOperatorExpressionAnnotators);
-        }
-
-        if (psiElement instanceof GLSLFieldSelectionExpression) {
-            annotate((GLSLFieldSelectionExpression) psiElement, holder, fieldSelectionExpressionAnnotators);
-        }
-
-        if (psiElement instanceof GLSLStatement) {
-            annotate((GLSLStatement) psiElement, holder, statementAnnotators);
-        }
-    }
-
-    /**
-     * Calls all the given annotators with the supplied element and annotation holder.
-     *
-     * @param element    the element to annotate
-     * @param holder     the annotator holder
-     * @param annotators the annotators to call
-     * @param <T>        the GLSLElement subclass for the particular type.
-     */
-    private <T extends GLSLElementImpl> void annotate(T element, AnnotationHolder holder, Iterable<Annotator<T>> annotators) {
-        for (Annotator<T> annotation : annotators) {
-            annotation.annotate(element, holder);
+        for (int i = 0; i < annotationTypes.size(); i++) {
+            Class<? extends PsiElement> type = annotationTypes.get(i);
+            if (type.isInstance(psiElement)) {
+                annotators.get(i).annotateGeneric(type.cast(psiElement), holder);
+            }
         }
     }
 }

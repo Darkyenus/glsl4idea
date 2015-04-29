@@ -20,14 +20,29 @@
 package glslplugin.annotation;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * GLSLAssignmentExpressionAnnotator is ...
- *
- * @author Yngve Devik Hammersland
- *         Date: Jan 30, 2009
- *         Time: 10:59:28 AM
+ * Base class for all annotators.
+ * Registered in {@link glslplugin.annotation.Annotator}.
  */
-public interface Annotator<T> {
-    void annotate(T expr, AnnotationHolder holder);
+public abstract class Annotator<T extends PsiElement> {
+
+    public abstract void annotate(T expr, AnnotationHolder holder);
+
+    /**
+     * Returns class of T
+     */
+    //Circumventing type erasure. Called only once.
+    @NotNull
+    public abstract Class<T> getElementType();
+
+    /**
+     * To be called only from glslplugin.annotation.Annotator
+     */
+    final void annotateGeneric(PsiElement element, AnnotationHolder holder) {
+        //noinspection unchecked
+        annotate((T) element, holder);
+    }
 }

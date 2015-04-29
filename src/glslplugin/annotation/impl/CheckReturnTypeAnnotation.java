@@ -25,23 +25,29 @@ import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
 import glslplugin.lang.elements.statements.GLSLReturnStatement;
 import glslplugin.lang.elements.statements.GLSLStatement;
 import glslplugin.lang.elements.types.GLSLType;
+import org.jetbrains.annotations.NotNull;
 
 // First half of function return type checking.
-// todo: Must have a separate annotation to check if a function with a return type has a return statement.
-public class CheckReturnTypeAnnotation implements Annotator<GLSLStatement> {
+public class CheckReturnTypeAnnotation extends Annotator<GLSLStatement> {
 
     public void annotate(GLSLStatement expr, AnnotationHolder holder) {
         if (expr instanceof GLSLReturnStatement) {
             GLSLFunctionDefinition function = expr.findParentByClass(GLSLFunctionDefinition.class);
 
-            if(function != null) {
+            if (function != null) {
                 GLSLType functionType = function.getTypeSpecifierNode().getType();
                 GLSLType returnType = ((GLSLReturnStatement) expr).getReturnType();
 
-                if(!returnType.isValidType() || !functionType.isConvertibleTo(returnType)) {
+                if (!returnType.isValidType() || !functionType.isConvertibleTo(returnType)) {
                     holder.createErrorAnnotation(expr, "Incompatible types. Required: " + functionType.getTypename() + ", found: " + returnType.getTypename());
                 }
             }
         }
+    }
+
+    @NotNull
+    @Override
+    public Class<GLSLStatement> getElementType() {
+        return GLSLStatement.class;
     }
 }

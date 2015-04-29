@@ -20,6 +20,7 @@
 package glslplugin.lang.elements.declarations;
 
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * NewFunctionDefinition is ...
@@ -29,5 +30,6 @@ import glslplugin.lang.elements.statements.GLSLCompoundStatement;
  *         Time: 12:33:24 PM
  */
 public interface GLSLFunctionDefinition extends GLSLFunctionDeclaration {
+    @NotNull
     GLSLCompoundStatement getBody();
 }

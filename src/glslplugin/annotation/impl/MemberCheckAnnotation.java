@@ -21,12 +21,13 @@ package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import glslplugin.annotation.Annotator;
+import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
 import glslplugin.lang.elements.types.GLSLStructType;
 import glslplugin.lang.elements.types.GLSLType;
-import glslplugin.lang.elements.GLSLIdentifier;
+import org.jetbrains.annotations.NotNull;
 
-public class MemberCheckAnnotation implements Annotator<GLSLFieldSelectionExpression> {
+public class MemberCheckAnnotation extends Annotator<GLSLFieldSelectionExpression> {
     public void annotate(GLSLFieldSelectionExpression expr, AnnotationHolder holder) {
         GLSLType leftHandType = expr.getLeftHandExpression().getType();
 
@@ -39,5 +40,11 @@ public class MemberCheckAnnotation implements Annotator<GLSLFieldSelectionExpres
 
         }
 
+    }
+
+    @NotNull
+    @Override
+    public Class<GLSLFieldSelectionExpression> getElementType() {
+        return GLSLFieldSelectionExpression.class;
     }
 }
