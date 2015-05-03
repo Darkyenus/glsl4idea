@@ -67,12 +67,14 @@ public abstract class Intentions extends PsiElementBaseIntentionAction {
         return (GLSLIdentifier) replaceExpression(identifier, newIdentifier);
     }
 
+    @NotNull
     private GLSLIdentifier createIdentifierFromText(GLSLIdentifier identifier, String value) {
-
         String completeFragment = "float " + value + ";";
         PsiElement newFile = createExpressionFromText(identifier, completeFragment);
         GLSLDeclarator[] glslDeclarators = ((GLSLVariableDeclaration) newFile.getFirstChild()).getDeclarators();
-        return glslDeclarators[0].getIdentifier();
+        GLSLIdentifier result = glslDeclarators[0].getIdentifier();
+        assert result != null;
+        return result;
     }
 
     protected GLSLElement replaceExpression(GLSLElement from, GLSLElement to) {

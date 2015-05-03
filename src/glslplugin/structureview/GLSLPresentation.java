@@ -22,6 +22,7 @@ package glslplugin.structureview;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.util.PlatformIcons;
 import glslplugin.GLSLSupportLoader;
+import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.types.GLSLQualifiedType;
 import glslplugin.lang.elements.types.GLSLTypeQualifier;
@@ -83,7 +84,9 @@ class GLSLPresentation implements ItemPresentation {
     public static GLSLPresentation createFieldPresentation(String type, GLSLDeclarator[] declarators) {
         String dec = prettyPrint(stringify(declarators, new Stringifyer<GLSLDeclarator>() {
             public String stringify(GLSLDeclarator glslDeclarator) {
-                return glslDeclarator.getIdentifier().getIdentifierName();
+                GLSLIdentifier identifier = glslDeclarator.getIdentifier();
+                if(identifier == null)return "(unknown)";
+                else return identifier.getIdentifierName();
             }
         }));
         GLSLPresentation presentation = new GLSLPresentation(dec + " : " + type);

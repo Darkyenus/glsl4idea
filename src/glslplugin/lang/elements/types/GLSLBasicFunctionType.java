@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
  *         Time: 12:20:32 PM
  */
 public class GLSLBasicFunctionType extends GLSLFunctionType {
-    public static final GLSLFunctionType[] EMPTY_ARRAY = {};
 
     private final GLSLType[] parameterTypes;
 
@@ -44,7 +43,11 @@ public class GLSLBasicFunctionType extends GLSLFunctionType {
         parameterTypes = new GLSLType[parameterDeclarations.length];
         for (int i = 0; i < parameterDeclarations.length; i++) {
             GLSLDeclarator declarator = parameterDeclarations[i].getDeclarator();
-            parameterTypes[i] = declarator.getType();
+            if(declarator == null){
+                parameterTypes[i] = GLSLTypes.UNKNOWN_TYPE;
+            }else{
+                parameterTypes[i] = declarator.getType();
+            }
         }
 
         this.typename = generateTypename();

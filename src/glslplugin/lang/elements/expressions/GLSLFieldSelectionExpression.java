@@ -30,6 +30,7 @@ import glslplugin.lang.elements.reference.GLSLFieldReference;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLMemberOperator is ...
@@ -70,6 +71,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
         return null;
     }
 
+    @Nullable
     private GLSLDeclarator findDefiningDeclarator() {
         GLSLExpression left = getLeftHandExpression();
         GLSLType type = left.getType();

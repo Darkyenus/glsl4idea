@@ -21,6 +21,7 @@ package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * NewSingleDeclarationImpl is ...
@@ -34,8 +35,14 @@ public class GLSLSingleDeclarationImpl extends GLSLDeclarationImpl implements GL
         super(astNode);
     }
 
+    @NotNull
     public String getDeclaredName() {
-        return getDeclarator().getIdentifierName();
+        final GLSLDeclarator declarator = getDeclarator();
+        if(declarator == null){
+            return "(unknown)";
+        }else{
+            return declarator.getIdentifierName();
+        }
     }
 
     /**
@@ -45,14 +52,18 @@ public class GLSLSingleDeclarationImpl extends GLSLDeclarationImpl implements GL
      * @return the declarator list.
      */
     @Override
+    @NotNull
     public GLSLDeclarator[] getDeclarators() {
         return findChildrenByClass(GLSLDeclarator.class);
     }
 
-    @NotNull
+    @Nullable
     public GLSLDeclarator getDeclarator() {
         GLSLDeclarator[] declarators = getDeclarators();
-        assert declarators.length == 1;
-        return declarators[0];
+        if(declarators.length == 0){
+            return null;
+        }else{
+            return declarators[0];
+        }
     }
 }

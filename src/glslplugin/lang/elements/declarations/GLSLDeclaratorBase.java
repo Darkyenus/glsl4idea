@@ -23,10 +23,9 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLIdentifier;
-import glslplugin.lang.elements.types.GLSLArrayType;
-import glslplugin.lang.elements.types.GLSLQualifiedType;
-import glslplugin.lang.elements.types.GLSLType;
+import glslplugin.lang.elements.types.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLDeclaratorBase is ...
@@ -41,13 +40,13 @@ public class GLSLDeclaratorBase extends GLSLElementImpl {
         super(astNode);
     }
 
-    @NotNull
+    @Nullable
     public GLSLIdentifier getIdentifier() {
         PsiElement idElement = getFirstChild();
         if (idElement instanceof GLSLIdentifier) {
             return (GLSLIdentifier) idElement;
         } else {
-            throw new RuntimeException("First element of declarator is not identifier."); //TODO This may trigger on malformed code
+            return null; //May trigger on malformed code
         }
     }
 
@@ -73,6 +72,7 @@ public class GLSLDeclaratorBase extends GLSLElementImpl {
         GLSLArraySpecifier arraySpecifier = getArraySpecifier();
         GLSLDeclaration declaration = getParentDeclaration();
 
+        if(declaration == null)return GLSLTypes.UNKNOWN_TYPE;
         GLSLTypeSpecifier declarationType = declaration.getTypeSpecifierNode();
 
         if (arraySpecifier != null) {
@@ -83,8 +83,10 @@ public class GLSLDeclaratorBase extends GLSLElementImpl {
     }
 
     public GLSLQualifiedType getQualifiedType() {
-        GLSLDeclaration declaration = getParentDeclaration();
-        return new GLSLQualifiedType(getType(), declaration.getQualifierList().getQualifiers());
+        final GLSLType type = getType();
+        final GLSLDeclaration declaration = getParentDeclaration();
+        if(declaration == null || declaration.getQualifierList() == null)return new GLSLQualifiedType(type);
+        return new GLSLQualifiedType(type, declaration.getQualifierList().getQualifiers());
     }
 
     @Override

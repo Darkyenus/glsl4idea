@@ -240,12 +240,13 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
         }
     }
 
+    @NotNull
     public GLSLDeclarator[] getDeclarators() {
         final GLSLTypeDefinition definition = getTypeDefinition();
         if (definition != null) {
             return definition.getDeclarators();
         } else {
-            return null;
+            return GLSLDeclarator.NO_DECLARATORS;
         }
     }
 

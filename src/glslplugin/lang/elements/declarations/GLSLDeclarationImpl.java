@@ -21,7 +21,9 @@ package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.GLSLElementImpl;
+import glslplugin.lang.elements.GLSLIdentifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * NewDeclarationBase is ...
@@ -35,17 +37,14 @@ public class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclarat
         super(astNode);
     }
 
+    private static final GLSLQualifier[] NO_QUALIFIERS = new GLSLQualifier[0];
     public GLSLQualifier[] getQualifiers() {
-        return getQualifierList().getQualifiers();
-    }
-
-    /**
-     * Same as {@link GLSLDeclarationImpl#getTypeSpecifierNode()} but may return null.
-     * (getTypeSpecifierNode will crash instead)
-     * @return type specifier or null
-     */
-    public GLSLTypeSpecifier findTypeSpecifierNode(){
-        return findChildByClass(GLSLTypeSpecifier.class);
+        final GLSLQualifierList qualifierList = getQualifierList();
+        if(qualifierList == null){
+            return NO_QUALIFIERS;
+        }else{
+            return qualifierList.getQualifiers();
+        }
     }
 
     /**
@@ -56,27 +55,26 @@ public class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclarat
      * This is not a complete type of any variable as a declarator may contain an array specifier.
      * For the complete type use {@link glslplugin.lang.elements.declarations.GLSLDeclarator#getType()} instead.
      *
-     * @return the type specifier.
+     * @return the type specifier or null if declaration is malformed
      */
+    @Nullable
     public GLSLTypeSpecifier getTypeSpecifierNode() {
-        final GLSLTypeSpecifier typeSpecifier = findTypeSpecifierNode();
-        assert typeSpecifier != null;//TODO This assertion failed
-        return typeSpecifier;
+        return findChildByClass(GLSLTypeSpecifier.class);
+    }
+
+    @Nullable
+    public GLSLQualifierList getQualifierList() {
+        return findChildByClass(GLSLQualifierList.class);
     }
 
     @NotNull
-    public GLSLQualifierList getQualifierList() {
-        GLSLQualifierList list = findChildByClass(GLSLQualifierList.class);
-        assert list != null;
-        return list;
-    }
-
     public GLSLDeclarator[] getDeclarators() {
-        GLSLDeclaratorList list = findChildByClass(GLSLDeclaratorList.class);
-        assert list != null;
-        return list.getDeclarators();
+        final GLSLDeclaratorList list = findChildByClass(GLSLDeclaratorList.class);
+        if(list == null)return GLSLDeclarator.NO_DECLARATORS;
+        else return list.getDeclarators();
     }
 
+    @NotNull
     protected String getDeclaratorsString() {
         StringBuilder b = new StringBuilder();
         boolean first = true;
@@ -84,7 +82,12 @@ public class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclarat
             if (!first) {
                 b.append(", ");
             }
-            b.append(declarator.getIdentifier().getIdentifierName());
+            GLSLIdentifier identifier = declarator.getIdentifier();
+            if(identifier == null){
+                b.append("(unknown)");
+            } else {
+                b.append(identifier.getIdentifierName());
+            }
             first = false;
         }
         return b.toString();

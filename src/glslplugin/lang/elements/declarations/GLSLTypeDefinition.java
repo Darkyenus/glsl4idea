@@ -26,6 +26,7 @@ import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.types.GLSLStructType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,6 +89,7 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
         return getDeclarationList().getDeclarations();
     }
 
+    @NotNull
     public GLSLDeclarator[] getDeclarators() {
         List<GLSLDeclarator> declarators = new ArrayList<GLSLDeclarator>();
         for (GLSLDeclaration declaration : getDeclarations()) {
@@ -109,6 +111,7 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
         return type;
     }
 
+    @Nullable
     public GLSLDeclarator getDeclarator(@NotNull String name) {
         for (GLSLDeclarator declarator : getDeclarators()) {
             if (name.equals(declarator.getIdentifierName())) {

@@ -29,7 +29,6 @@ import static glslplugin.lang.elements.GLSLTokenTypes.*;
 
 /**
  * GLSLParsing does all the parsing. It has methods which reflects the rules of the grammar.
- * <p/>
  *
  * @author Yngve Devik Hammersland
  *         Date: Jan 19, 2009
@@ -346,6 +345,7 @@ public class GLSLParsing {
         //                           | parameter_declaration (',' parameter_declaration)*
         final PsiBuilder.Marker mark = b.mark();
 
+        //noinspection StatementWithEmptyBody
         if (tryMatch(VOID_TYPE)) {
             // Do nothing.
         } else if (b.getTokenType() != RIGHT_PAREN) {
@@ -613,7 +613,8 @@ public class GLSLParsing {
                 FUNCTION_IDENTIFIER_TOKENS.contains(b.getTokenType()) ||
                 b.getTokenType() == LEFT_PAREN) {
             parseExpression();
-        } else if (b.getTokenType() == SEMICOLON) {
+        } else //noinspection StatementWithEmptyBody
+            if (b.getTokenType() == SEMICOLON) {
             // Do nothing here
         } else {
             // Token not in first set, how did we end up here?
@@ -677,6 +678,7 @@ public class GLSLParsing {
         // expression_statement: [expression] ';'
         PsiBuilder.Marker mark = b.mark();
 
+        //noinspection StatementWithEmptyBody
         if (tryMatch(SEMICOLON)) {
             // empty statement
         } else {
@@ -1099,7 +1101,8 @@ public class GLSLParsing {
 
         if (b.getTokenType() == VOID_TYPE) {
             advanceLexer();
-        } else if (b.getTokenType() == RIGHT_PAREN) {
+        } else //noinspection StatementWithEmptyBody
+            if (b.getTokenType() == RIGHT_PAREN) {
             // do nothing
         } else if (parseAssignmentExpression()) {
             while (tryMatch(COMMA)) {
@@ -1312,7 +1315,7 @@ public class GLSLParsing {
         PsiBuilder.Marker declaratorEnd = b.mark();
         if (tryMatch(EQUAL)) {
             parseInitializer();
-            declaratorEnd.error("Initializer not allowed herer.");
+            declaratorEnd.error("Initializer not allowed here.");
         } else {
             declaratorEnd.drop();
         }
@@ -1328,6 +1331,7 @@ public class GLSLParsing {
             return;
         }
 
+        //noinspection StatementWithEmptyBody
         while (parseQualifier()) {
         }
 
