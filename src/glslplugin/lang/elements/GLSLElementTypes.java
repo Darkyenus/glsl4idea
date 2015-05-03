@@ -69,9 +69,8 @@ public class GLSLElementTypes {
 
     public static final IElementType INIT_DECLARATOR_LIST = new GLSLElementType("INIT_DECLARATOR_LIST");
     public static final IElementType VARIABLE_DECLARATION = new GLSLElementType("VARIABLE_DECLARATION");
-    public static final IElementType EXTERNAL_DECLARATION = new GLSLElementType("EXTERNAL_DECLARATION");
+    public static final IElementType INTERFACE_BLOCK = new GLSLElementType("INTERFACE_BLOCK");
     public static final IElementType FUNCTION_DEFINITION = new GLSLElementType("FUNCTION_DEFINITION");
-    public static final IElementType SINGLE_DECLARATION = new GLSLElementType("SINGLE_DECLARATION");
     public static final IElementType QUALIFIER = new GLSLElementType("QUALIFIER");
     public static final IElementType QUALIFIER_LIST = new GLSLElementType("QUALIFIER_LIST");
     public static final IElementType LAYOUT_QUALIFIER_ID = new GLSLElementType("LAYOUT_QUALIFIER_ID");

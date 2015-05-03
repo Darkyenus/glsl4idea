@@ -193,12 +193,13 @@ public class GLSLParsing {
      */
     private boolean parseExternalDeclaration() {
         // external_declaration: function_definition
-        //                     | declaration
-        // A common prefix for both: fully_specified_type
+        //                     | variable_declaration
+        //                     | interface_block
         // Expanding the rule to obtain:
-        // external_declaration: qualifier-list type-specifier declarator-list ';'
-        //                     | qualifier-list type-specifier prototype ';'
-        //                     | qualifier-list type-specifier prototype compound-statement
+        // external_declaration: qualifier-list type-specifier prototype [ ';' | compound-statement ]
+        //                     | qualifier-list type-specifier declarator-list ';'
+        //                     | qualifier-list IDENTIFIER '{' (member'}' [ IDENTIFIER array-specifier? ]';'
+        // A common prefix for all: qualifier-list
         // Note: after type-specifier, we only need to look up IDENTIfIER '(' to determine
         //       whether or not it is a prototype or a declarator-list.
 
@@ -234,8 +235,37 @@ public class GLSLParsing {
             mark = b.mark();
         }
 
-        parseQualifiedTypeSpecifier();
+        parseQualifierList(true);
 
+        if (b.getTokenType() == IDENTIFIER) { // interface block
+            parseIdentifier();
+            match(LEFT_BRACE, "Expected '{'");
+
+            if (b.getTokenType() == RIGHT_BRACE) {
+                b.error("Empty struct is not allowed.");
+            }
+
+            while (!tryMatch(RIGHT_BRACE)) {
+                final PsiBuilder.Marker member = b.mark();
+                parseQualifierList(true);
+                if (!parseTypeSpecifier()) advanceLexer();
+                parseDeclaratorList();
+                match(SEMICOLON, "Expected ';'");
+                member.done(STRUCT_DECLARATION);
+            }
+
+            if (b.getTokenType() == IDENTIFIER) {
+                parseIdentifier();
+                if (b.getTokenType() == LEFT_BRACKET) {
+                    parseArrayDeclarator();
+                }
+            }
+            match(SEMICOLON, "Expected ';'");
+            mark.done(INTERFACE_BLOCK);
+            return true;
+        }
+
+        parseTypeSpecifier();
         PsiBuilder.Marker postType = b.mark();
 
         if (b.getTokenType() == SEMICOLON) {
