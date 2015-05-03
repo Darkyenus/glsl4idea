@@ -809,7 +809,7 @@ public class GLSLParsing {
         mark.done(DECLARATOR);
     }
 
-    private void parseArrayDeclarator() {
+    private void parseArrayDeclarator() {//TODO Support multi-dimensional arrays (since 4.3)
         final PsiBuilder.Marker mark = b.mark();
 
         match(LEFT_BRACKET, "Expected '['.");
@@ -826,7 +826,7 @@ public class GLSLParsing {
                 parseConstantExpression();
                 match(RIGHT_BRACKET, "Missing closing ']' after array declarator.");
             }
-            err.error("Multiple dimensional arrays not allowed.");
+            err.error("Multi-dimensional arrays are not allowed.");
         }
     }
 
