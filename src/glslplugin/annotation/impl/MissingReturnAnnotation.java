@@ -20,7 +20,9 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.psi.PsiElement;
 import glslplugin.annotation.Annotator;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import glslplugin.lang.elements.statements.GLSLStatement;
@@ -40,7 +42,24 @@ public class MissingReturnAnnotation extends Annotator<GLSLFunctionDefinition> {
         final GLSLCompoundStatement body = expr.getBody();
 
         if (body.getTerminatorScope() == GLSLStatement.TerminatorScope.NONE) {
-            holder.createErrorAnnotation(body.getLastChild(), "Missing return statement");
+            PsiElement annotationPlace = body;
+
+            /*
+            Can't be sure that last child is },
+            because parser might have bundled some comments or preprocessor statements into GLSLCompoundStatement.
+
+            Also don't use getChildren() because it doesn't return all children for some reason and is slower anyway.
+             */
+            PsiElement e = body.getLastChild();
+            while(e != null){
+                if(e.getNode().getElementType() == GLSLTokenTypes.RIGHT_BRACE){
+                    annotationPlace = e;
+                    break;
+                }else{
+                    e = e.getPrevSibling();
+                }
+            }
+            holder.createErrorAnnotation(annotationPlace, "Missing return statement");
         }
     }
 
