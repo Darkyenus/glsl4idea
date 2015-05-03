@@ -60,7 +60,7 @@ public class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclarat
      */
     public GLSLTypeSpecifier getTypeSpecifierNode() {
         final GLSLTypeSpecifier typeSpecifier = findTypeSpecifierNode();
-        assert typeSpecifier != null;
+        assert typeSpecifier != null;//TODO This assertion failed
         return typeSpecifier;
     }
 
