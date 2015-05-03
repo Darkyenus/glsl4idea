@@ -20,6 +20,7 @@
 package glslplugin.lang.elements.declarations;
 
 import glslplugin.lang.elements.GLSLElement;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * GLSLDeclaration is a common interface for all declarations;
@@ -34,5 +35,6 @@ public interface GLSLDeclaration extends GLSLElement {
 
     GLSLQualifierList getQualifierList();
 
+    @NotNull
     GLSLDeclarator[] getDeclarators();
 }

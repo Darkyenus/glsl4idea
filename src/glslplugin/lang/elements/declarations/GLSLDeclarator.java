@@ -33,6 +33,8 @@ import org.jetbrains.annotations.NotNull;
  *         Time: 7:29:46 PM
  */
 public class GLSLDeclarator extends GLSLDeclaratorBase {
+    public static final GLSLDeclarator[] NO_DECLARATORS = new GLSLDeclarator[0];
+
     public GLSLDeclarator(@NotNull ASTNode astNode) {
         super(astNode);
     }

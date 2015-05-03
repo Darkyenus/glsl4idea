@@ -20,17 +20,20 @@
 package glslplugin.lang.elements.declarations;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * NewSingleDeclaration is ...
+ * GLSLSingleDeclaration is ...
  *
  * @author Yngve Devik Hammersland
  *         Date: Feb 2, 2009
  *         Time: 12:44:53 PM
  */
 public interface GLSLSingleDeclaration extends GLSLDeclaration {
-    String getDeclaredName();
 
     @NotNull
+    String getDeclaredName();
+
+    @Nullable
     GLSLDeclarator getDeclarator();
 }

@@ -37,6 +37,7 @@ public class GLSLDeclaratorList extends GLSLElementImpl implements Iterable<GLSL
         super(astNode);
     }
 
+    @NotNull
     public GLSLDeclarator[] getDeclarators() {
         return findChildrenByClass(GLSLDeclarator.class);
     }

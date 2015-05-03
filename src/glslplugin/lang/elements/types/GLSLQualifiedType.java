@@ -46,6 +46,13 @@ public class GLSLQualifiedType {
         this.qualifiers = convertQualifiers(qualifiers);
     }
 
+    private static final GLSLTypeQualifier[] NO_QUALIFIERS = new GLSLTypeQualifier[0];
+
+    public GLSLQualifiedType(@NotNull GLSLType type) {
+        this.type = type;
+        this.qualifiers = NO_QUALIFIERS;
+    }
+
     @NotNull
     private GLSLTypeQualifier[] convertQualifiers(@NotNull GLSLQualifier[] qualifiers) {
         GLSLTypeQualifier[] result = new GLSLTypeQualifier[qualifiers.length];

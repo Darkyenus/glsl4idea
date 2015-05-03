@@ -30,6 +30,7 @@ import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import glslplugin.lang.parser.GLSLFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLIdentifierExpression is ...
@@ -87,6 +88,7 @@ public class GLSLIdentifierExpression extends GLSLExpression implements GLSLRefe
         }
     }
 
+    @Nullable
     private GLSLDeclarator getVariableReference(PsiElement start) {
         PsiElement current = start.getPrevSibling();
         GLSLDeclarator result = null;
@@ -138,6 +140,7 @@ public class GLSLIdentifierExpression extends GLSLExpression implements GLSLRefe
         return null;
     }
 
+    @Nullable
     private GLSLDeclarator getVariableReferenceCheckDeclaration(GLSLDeclaration declaration) {
         for (GLSLDeclarator declarator : declaration.getDeclarators()) {
             if (declarator.getIdentifierName().equals(getIdentifierName())) {

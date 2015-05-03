@@ -25,15 +25,14 @@ import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.types.GLSLArrayType;
 import glslplugin.lang.elements.types.GLSLType;
+import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created by IntelliJ IDEA.
  *
  * @author Yngve Devik Hammersland
  *         Date: Jan 28, 2009
  *         Time: 11:21:30 PM
- *         To change this template use File | Settings | File Templates.
  */
 public class GLSLTypeSpecifier extends GLSLElementImpl {
     public GLSLTypeSpecifier(@NotNull ASTNode astNode) {
@@ -62,8 +61,7 @@ public class GLSLTypeSpecifier extends GLSLElementImpl {
             }
             return type;
         } else {
-            // TODO: Return the unknown type instead of throwing?
-            throw new RuntimeException("Type specifier is missing the type.");
+            return GLSLTypes.UNKNOWN_TYPE;
         }
     }
 

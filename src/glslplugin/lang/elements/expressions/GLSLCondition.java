@@ -23,16 +23,20 @@ import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
+import glslplugin.lang.elements.declarations.GLSLTypeSpecifier;
 import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
 import glslplugin.lang.elements.types.GLSLType;
+import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GLSLCondition extends GLSLElementImpl implements GLSLTypedElement {
 
     public GLSLCondition(@NotNull ASTNode astNode) {
         super(astNode);
     }
-    
+
+    @Nullable
     private GLSLDeclarator getDeclarator() {
         GLSLVariableDeclaration declaration = getVariableDeclaration();
         if(declaration != null) {
@@ -60,8 +64,11 @@ public class GLSLCondition extends GLSLElementImpl implements GLSLTypedElement {
     @Override
     public GLSLType getType() {
         GLSLVariableDeclaration declaration = getVariableDeclaration();
-        if(declaration != null)
-            return declaration.getTypeSpecifierNode().getType();
+        if(declaration != null) {
+            GLSLTypeSpecifier typeSpecifier = declaration.getTypeSpecifierNode();
+            if(typeSpecifier != null) return typeSpecifier.getType();
+            else return GLSLTypes.UNKNOWN_TYPE;
+        }
         
         return getConditionExpression().getType();
     }
