@@ -238,11 +238,12 @@ public class GLSLParsing {
         parseQualifierList(true);
 
         if (b.getTokenType() == IDENTIFIER) { // interface block
+            //TODO Make sure that this is preceded by storage_qualifier
             parseIdentifier();
             match(LEFT_BRACE, "Expected '{'");
 
             if (b.getTokenType() == RIGHT_BRACE) {
-                b.error("Empty struct is not allowed.");
+                b.error("Empty interface block is not allowed.");
             }
 
             while (!tryMatch(RIGHT_BRACE)) {
@@ -251,7 +252,7 @@ public class GLSLParsing {
                 if (!parseTypeSpecifier()) advanceLexer();
                 parseDeclaratorList();
                 match(SEMICOLON, "Expected ';'");
-                member.done(STRUCT_DECLARATION);
+                member.done(STRUCT_DECLARATION);//TODO Should we call interface block members struct members?
             }
 
             if (b.getTokenType() == IDENTIFIER) {
