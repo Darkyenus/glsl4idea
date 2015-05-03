@@ -5,6 +5,10 @@ void BinaryOperatorTypeAnnotationTest() {
     bota = vec2(0.0); //Should warn here
 }
 
+void DeclarationAssignmentTypeAnnotationTest(){
+    float foobaz = vec2(4.0); //Should warn here
+}
+
 vec2 CheckReturnTypeAnnotation(){
     return 0.0; //Should warn here
 }
