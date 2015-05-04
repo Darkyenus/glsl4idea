@@ -26,7 +26,7 @@ import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * PostfixOperator is ...
+ * GLSLBinaryOperatorExpression is an expression from two operands and one operator between them.
  *
  * @author Yngve Devik Hammersland
  *         Date: Jan 28, 2009
