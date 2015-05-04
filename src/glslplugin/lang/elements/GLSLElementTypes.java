@@ -95,14 +95,15 @@ public class GLSLElementTypes {
     //    public static final IElementType UNARY_EXPRESSION = new GLSLElementType("UNARY_EXPRESSION");
     public static final IElementType ASSIGNMENT_EXPRESSION = new GLSLElementType("ASSIGNMENT_EXPRESSION");
     public static final IElementType CONDITIONAL_EXPRESSION = new GLSLElementType("CONDITIONAL_EXPRESSION");
-    public static final IElementType LOGICAL_OR_EXPRESSION = new GLSLElementType("LOGICAL_OR_EXPRESSION");
-    public static final IElementType LOGICAL_XOR_EXPRESSION = new GLSLElementType("LOGICAL_XOR_EXPRESSION");
     public static final IElementType LOGICAL_AND_EXPRESSION = new GLSLElementType("LOGICAL_AND_EXPRESSION");
-    public static final IElementType INCLUSIVE_OR_EXPRESSION = new GLSLElementType("INCLUSIVE_OR_EXPRESSION");
-    public static final IElementType EXCLUSIVE_OR_EXPRESSION = new GLSLElementType("EXCLUSIVE_OR_EXPRESSION");
-    public static final IElementType AND_EXPRESSION = new GLSLElementType("AND_EXPRESSION");
+    public static final IElementType LOGICAL_XOR_EXPRESSION = new GLSLElementType("LOGICAL_XOR_EXPRESSION");
+    public static final IElementType LOGICAL_OR_EXPRESSION = new GLSLElementType("LOGICAL_OR_EXPRESSION");
+    public static final IElementType BINARY_AND_EXPRESSION = new GLSLElementType("BINARY_AND_EXPRESSION");
+    public static final IElementType BINARY_XOR_EXPRESSION = new GLSLElementType("BINARY_XOR_EXPRESSION");
+    public static final IElementType BINARY_OR_EXPRESSION = new GLSLElementType("BINARY_OR_EXPRESSION");
     public static final IElementType EQUALITY_EXPRESSION = new GLSLElementType("EQUALITY_EXPRESSION");
     public static final IElementType RELATIONAL_EXPRESSION = new GLSLElementType("RELATIONAL_EXPRESSION");
+    public static final IElementType BIT_SHIFT_EXPRESSION = new GLSLElementType("BIT_SHIFT_EXPRESSION");
     public static final IElementType ADDITIVE_EXPRESSION = new GLSLElementType("ADDITIVE_EXPRESSION");
     public static final IElementType MULTIPLICATIVE_EXPRESSION = new GLSLElementType("MULTIPLICATIVE_EXPRESSION");
 

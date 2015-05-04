@@ -40,13 +40,17 @@ public class GLSLParsing {
 
 
     // Traits of all binary operators.
-    // They must be listed in order of precedence.
+    // They must be listed in order of precedence. (low to high)
     private OperatorLevelTraits[] operatorPrecedence = new OperatorLevelTraits[]{
             new OperatorLevelTraits(TokenSet.create(OR_OP), "sub expression", LOGICAL_OR_EXPRESSION),
             new OperatorLevelTraits(TokenSet.create(XOR_OP), "sub expression", LOGICAL_XOR_EXPRESSION),
             new OperatorLevelTraits(TokenSet.create(AND_OP), "sub expression", LOGICAL_AND_EXPRESSION),
+            new OperatorLevelTraits(TokenSet.create(VERTICAL_BAR), "sub expression", BINARY_OR_EXPRESSION),
+            new OperatorLevelTraits(TokenSet.create(CARET), "sub expression", BINARY_XOR_EXPRESSION),
+            new OperatorLevelTraits(TokenSet.create(AMPERSAND), "sub expression", BINARY_AND_EXPRESSION),
             new OperatorLevelTraits(EQUALITY_OPERATORS, "sub expression", EQUALITY_EXPRESSION),
             new OperatorLevelTraits(RELATIONAL_OPERATORS, "sub expression", RELATIONAL_EXPRESSION),
+            new OperatorLevelTraits(BIT_SHIFT_OPERATORS, "sub expression", BIT_SHIFT_EXPRESSION),
             new OperatorLevelTraits(ADDITIVE_OPERATORS, "part", ADDITIVE_EXPRESSION),
             new OperatorLevelTraits(MULTIPLICATIVE_OPERATORS, "factor", MULTIPLICATIVE_EXPRESSION),
     };
