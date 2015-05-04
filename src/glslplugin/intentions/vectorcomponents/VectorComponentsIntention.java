@@ -21,6 +21,7 @@ package glslplugin.intentions.vectorcomponents;
 
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.psi.PsiElement;
@@ -66,7 +67,22 @@ public class VectorComponentsIntention extends Intentions {
         return "GLSL Vector Components";
     }
 
-    protected void processIntention(final PsiElement element) {
+    protected void processIntention(PsiElement psiElement) {
+        GLSLIdentifier elementTemp = null;
+        if(psiElement instanceof GLSLIdentifier){
+            elementTemp = (GLSLIdentifier) psiElement;
+        }else{
+            PsiElement parent = psiElement.getParent();
+            if(parent instanceof GLSLIdentifier){
+                elementTemp = (GLSLIdentifier) parent;
+            }
+        }
+        if(elementTemp == null){
+            Logger.getInstance(VectorComponentsIntention.class).warn("Could not find GLSLIdentifier for psiElement: "+psiElement);
+            return;
+        }
+        final GLSLIdentifier element = elementTemp;
+
         String components = element.getText();
 
         createComponentVariants(components);
@@ -81,7 +97,7 @@ public class VectorComponentsIntention extends Intentions {
                 WriteCommandAction writeAction = new WriteCommandAction(element.getProject(), element.getContainingFile()) {
                     @Override
                     protected void run(@NotNull Result result) throws Throwable {
-                        replaceIdentifierElement((GLSLIdentifier) element, results[list.getSelectedIndex()]);
+                        replaceIdentifierElement(element, results[list.getSelectedIndex()]);
                     }
                 };
                 writeAction.execute();
