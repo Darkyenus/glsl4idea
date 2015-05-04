@@ -27,8 +27,19 @@
     <idea-version since-build="139.1117"/>
     <depends>com.intellij.modules.lang</depends>
 
-    <version>1.6</version>
+    <version>1.7</version>
     <change-notes><![CDATA[
+        <p>1.7</p>
+        <ul>
+            <li>Add missing return; warning</li>
+            <li>Add support for layout qualifiers</li>
+            <li>Add support for interface blocks</li>
+            <li>Add error highligting in Project view</li>
+            <li>Add invalid initializer type warning</li>
+            <li>Add support for bitwise operators</li>
+            <li>Fix Convert Vector Components action</li>
+        </ul>
+
         <p>1.6</p>
         <ul>
             <li>Improved unreachability analyzing</li>
@@ -54,6 +65,12 @@
         <ul>
             <li>Fixed compatibility with CLion</li>
             <li>Fix minor bugs</li>
+        </ul>
+
+        <p>Notable older changes<p>
+        <ul>
+            <li>Update to support Intellij 14</li>
+            <li>Update color scheme handling</li>
         </ul>
     ]]></change-notes>
 
