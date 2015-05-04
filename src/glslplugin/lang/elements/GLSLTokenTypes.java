@@ -25,7 +25,6 @@ import com.intellij.psi.tree.TokenSet;
 
 public class GLSLTokenTypes {
     public static final IElementType IDENTIFIER = new GLSLElementType("IDENTIFIER");
-//    public static final IElementType FIELD_SELECTION = new GLSLElementType("FIELD_SELECTION");
 
     public static final IElementType INTEGER_CONSTANT = new GLSLElementType("INTEGER_CONSTANT");
     public static final IElementType UINT_CONSTANT = new GLSLElementType("UINT_CONSTANT");
@@ -140,16 +139,32 @@ public class GLSLTokenTypes {
     public static final IElementType RIGHT_BRACKET = new GLSLElementType("RIGHT_BRACKET");
 
     public static final IElementType EQUAL = new GLSLElementType("EQUAL");
+
     public static final IElementType MUL_ASSIGN = new GLSLElementType("MUL_ASSIGN");
-    public static final IElementType DIV_ASSIGN = new GLSLElementType("DIV_ASSIGN");
-    public static final IElementType ADD_ASSIGN = new GLSLElementType("ADD_ASSIGN");
-    public static final IElementType SUB_ASSIGN = new GLSLElementType("SUB_ASSIGN");
-    public static final IElementType PLUS = new GLSLElementType("UNARY_PLUS");
-    public static final IElementType DASH = new GLSLElementType("DASH");
-    public static final IElementType SLASH = new GLSLElementType("SLASH");
     public static final IElementType STAR = new GLSLElementType("STAR");
+    public static final IElementType DIV_ASSIGN = new GLSLElementType("DIV_ASSIGN");
+    public static final IElementType SLASH = new GLSLElementType("SLASH");
+    public static final IElementType ADD_ASSIGN = new GLSLElementType("ADD_ASSIGN");
+    public static final IElementType PLUS = new GLSLElementType("PLUS");
+    public static final IElementType SUB_ASSIGN = new GLSLElementType("SUB_ASSIGN");
+    public static final IElementType DASH = new GLSLElementType("DASH");
+    public static final IElementType MOD_ASSIGN = new GLSLElementType("MOD_ASSIGN");
+    public static final IElementType PERCENT = new GLSLElementType("PERCENT");
+    public static final IElementType LEFT_ASSIGN = new GLSLElementType("LEFT_ASSIGN");
+    public static final IElementType LEFT_OP = new GLSLElementType("LEFT_OP");
+    public static final IElementType RIGHT_ASSIGN = new GLSLElementType("RIGHT_ASSIGN");
+    public static final IElementType RIGHT_OP = new GLSLElementType("RIGHT_OP");
+    public static final IElementType AND_ASSIGN = new GLSLElementType("AND_ASSIGN");
+    public static final IElementType AMPERSAND = new GLSLElementType("AMPERSAND");
+    public static final IElementType XOR_ASSIGN = new GLSLElementType("XOR_ASSIGN");
+    public static final IElementType CARET = new GLSLElementType("CARET");
+    public static final IElementType OR_ASSIGN = new GLSLElementType("OR_ASSIGN");
+    public static final IElementType VERTICAL_BAR = new GLSLElementType("VERTICAL_BAR");
+
+    public static final IElementType TILDE = new GLSLElementType("TILDE");
     public static final IElementType DEC_OP = new GLSLElementType("DEC_OP");
     public static final IElementType INC_OP = new GLSLElementType("INC_OP");
+
     public static final IElementType EQ_OP = new GLSLElementType("EQ_OP");
     public static final IElementType LEFT_ANGLE = new GLSLElementType("LEFT_ANGLE");
     public static final IElementType RIGHT_ANGLE = new GLSLElementType("RIGHT_ANGLE");
@@ -285,21 +300,30 @@ public class GLSLTokenTypes {
     public static final TokenSet SELECTION_KEYWORDS = TokenSet.create(IF_KEYWORD, ELSE_KEYWORD);
     public static final TokenSet FLOW_KEYWORDS = merge(SELECTION_KEYWORDS, JUMP_KEYWORDS, ITERATION_KEYWORDS);
 
-    public static final TokenSet ASSIGNMENT_OPERATORS = TokenSet.create(EQUAL, MUL_ASSIGN, DIV_ASSIGN, ADD_ASSIGN, SUB_ASSIGN);
-    public static final TokenSet UNARY_OPERATORS = TokenSet.create(INC_OP, DEC_OP, PLUS, DASH, BANG);
-    public static final TokenSet EQUALITY_OPERATORS = TokenSet.create(EQ_OP, NE_OP);
-    public static final TokenSet RELATIONAL_OPERATORS = TokenSet.create(LEFT_ANGLE, RIGHT_ANGLE, LE_OP, GE_OP);
-    public static final TokenSet ADDITIVE_OPERATORS = TokenSet.create(PLUS, DASH);
+    //Operators in order of precedence (high to low) (Doesn't have to be here, but for clarity)
+    //(missing) postfix inc & dec
+    public static final TokenSet UNARY_OPERATORS = TokenSet.create(INC_OP, DEC_OP, PLUS, DASH, BANG, TILDE);
     public static final TokenSet MULTIPLICATIVE_OPERATORS = TokenSet.create(STAR, SLASH);
-    public static final TokenSet LOGICAL_OPERATORS = TokenSet.create(AND_OP, OR_OP, XOR_OP);
-    public static final TokenSet OPERATORS = merge(ASSIGNMENT_OPERATORS, UNARY_OPERATORS, EQUALITY_OPERATORS,
-            RELATIONAL_OPERATORS, ADDITIVE_OPERATORS, MULTIPLICATIVE_OPERATORS, LOGICAL_OPERATORS);
+    public static final TokenSet ADDITIVE_OPERATORS = TokenSet.create(PLUS, DASH);
+    public static final TokenSet BIT_SHIFT_OPERATORS = TokenSet.create(LEFT_OP, RIGHT_OP);
+    public static final TokenSet RELATIONAL_OPERATORS = TokenSet.create(LEFT_ANGLE, RIGHT_ANGLE, LE_OP, GE_OP);
+    public static final TokenSet EQUALITY_OPERATORS = TokenSet.create(EQ_OP, NE_OP);
+    public static final TokenSet BIT_WISE_OPERATORS = TokenSet.create(AMPERSAND, CARET, VERTICAL_BAR);//In this order, separately
+    public static final TokenSet LOGICAL_OPERATORS = TokenSet.create(AND_OP, XOR_OP, OR_OP);//In this order, separately
+    //(missing) selection (? :)
+    public static final TokenSet ASSIGNMENT_OPERATORS = TokenSet.create(EQUAL, MUL_ASSIGN, DIV_ASSIGN, ADD_ASSIGN, SUB_ASSIGN, MOD_ASSIGN, LEFT_ASSIGN, RIGHT_ASSIGN, AND_ASSIGN, XOR_ASSIGN, OR_ASSIGN);
+
+    public static final TokenSet OPERATORS = merge(
+            UNARY_OPERATORS, MULTIPLICATIVE_OPERATORS, ADDITIVE_OPERATORS,
+            BIT_SHIFT_OPERATORS, RELATIONAL_OPERATORS, EQUALITY_OPERATORS,
+            BIT_WISE_OPERATORS, LOGICAL_OPERATORS, ASSIGNMENT_OPERATORS);
+
     public static final TokenSet CONSTANT_TOKENS = TokenSet.create(
             BOOL_CONSTANT, INTEGER_CONSTANT, UINT_CONSTANT, FLOAT_CONSTANT, DOUBLE_CONSTANT);
 
     public static final TokenSet EXPRESSION_FIRST_SET = merge(TokenSet.create(
                     INTEGER_CONSTANT, FLOAT_CONSTANT, BOOL_CONSTANT, // constants
-                    INC_OP, DEC_OP, PLUS, DASH, BANG, // unary operators
+                    INC_OP, DEC_OP, PLUS, DASH, BANG, TILDE, // unary operators
                     IDENTIFIER, // function call, variable name, typename
                     LEFT_PAREN, // group
                     SEMICOLON // empty statement
