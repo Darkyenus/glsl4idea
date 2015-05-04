@@ -229,15 +229,29 @@ precision{WHITE_SPACE}+{GLSL_ES_PRECISION_MODIFIER}{WHITE_SPACE}+{GLSL_ES_TYPE}"
 ")"                     {return RIGHT_PAREN; }
 
 "="                     {return EQUAL; }
-"*="                    {return MUL_ASSIGN; }
-"/="                    {return DIV_ASSIGN; }
-"+="                    {return ADD_ASSIGN; }
-"-="                    {return SUB_ASSIGN; }
-"+"                     {return PLUS; }
-"-"                     {return DASH; }
-"/"                     {return SLASH; }
-"*"                     {return STAR; }
 
+"*="                    {return MUL_ASSIGN; }
+"*"                     {return STAR; }
+"/="                    {return DIV_ASSIGN; }
+"/"                     {return SLASH; }
+"+="                    {return ADD_ASSIGN; }
+"+"                     {return PLUS; }
+"-="                    {return SUB_ASSIGN; }
+"-"                     {return DASH; }
+"%="                    {return MOD_ASSIGN; }
+"%"                     {return PERCENT; }
+"<<="                   {return LEFT_ASSIGN; }
+"<<"                    {return LEFT_OP; }
+">>="                   {return RIGHT_ASSIGN; }
+">>"                    {return RIGHT_OP; }
+"&="                    {return AND_ASSIGN; }
+"&"                     {return AMPERSAND; }
+"^="                    {return XOR_ASSIGN; }
+"^"                     {return CARET; }
+"|="                    {return OR_ASSIGN; }
+"|"                     {return VERTICAL_BAR; }
+
+"~"                     {return TILDE; }
 "--"                    {return DEC_OP; }
 "++"                    {return INC_OP; }
 
