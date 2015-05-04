@@ -39,6 +39,7 @@ public enum GLSLOperator {
     SUBTRACTION("-", getBasicArithmeticOperatorAlternatives("-")),
     MULTIPLICATION("*", getMultiplicationOperatorAlternatives()),
     DIVISION("/", getBasicArithmeticOperatorAlternatives("/")),
+    MODULO("%", getBinaryOperatorAlternatives("%")),
 
     // Assignment operators
     ASSIGN("=", new AssignmentTypeAlternativesDelegate()),
@@ -47,14 +48,24 @@ public enum GLSLOperator {
     SUBTRACTION_ASSIGN("-=", getAssignmentTypeAlternatives("-=", getBasicArithmeticOperatorAlternatives("-"))),
     MULTIPLICATION_ASSIGN("*=", getAssignmentTypeAlternatives("*=", getMultiplicationOperatorAlternatives())),
     DIVISION_ASSIGN("/=", getAssignmentTypeAlternatives("/=", getBasicArithmeticOperatorAlternatives("/"))),
+    MODULO_ASSIGN("%=", getAssignmentTypeAlternatives("%=", getBasicArithmeticOperatorAlternatives("%"))),
+    LEFT_SHIFT_ASSIGN("<<=", getAssignmentTypeAlternatives("<<=", getBitShiftOperatorAlternatives("<<"))),
+    RIGHT_SHIFT_ASSIGN(">>=", getAssignmentTypeAlternatives(">>=", getBitShiftOperatorAlternatives(">>"))),
+    BINARY_AND_ASSIGN("&=", getAssignmentTypeAlternatives("&=", getBinaryOperatorAlternatives("&"))),
+    BINARY_XOR_ASSIGN("^=", getAssignmentTypeAlternatives("^=", getBinaryOperatorAlternatives("^"))),
+    BINARY_OR_ASSIGN("|=", getAssignmentTypeAlternatives("|=", getBinaryOperatorAlternatives("|"))),
 
     // Logical operators
     LOGIC_AND("&&", getLogicalOperatorAlternatives("&&")),
     LOGIC_OR("||", getLogicalOperatorAlternatives("||")),
     LOGIC_XOR("^^", getLogicalOperatorAlternatives("^^")),
-    // BINARY_AND,
-    // BINARY_OR,
-    // BINARY_XOR,
+
+    // Binary operators
+    BINARY_AND("&", getBinaryOperatorAlternatives("&")),
+    BINARY_XOR("^", getBinaryOperatorAlternatives("^")),
+    BINARY_OR("|", getBinaryOperatorAlternatives("|")),
+    BINARY_LEFT_SHIFT("<<", getBitShiftOperatorAlternatives("<<")),
+    BINARY_RIGHT_SHIFT(">>", getBitShiftOperatorAlternatives(">>")),
 
     // Relational operators
     GREATER(">", getComparisonOperatorAlternatives(">")),
@@ -72,7 +83,7 @@ public enum GLSLOperator {
     INCREMENT("++", getIncrementOperatorAlternatives("++")),
     DECREMENT("--", getIncrementOperatorAlternatives("--")),
     LOGIC_NEGATION("!", new GLSLBasicFunctionType("!", GLSLTypes.BOOL, GLSLTypes.BOOL)),
-    // BINARY_NEGATION,
+    BINARY_NEGATION("~", getBinaryNegationOperatorAlternatives("~")),
 
     MEMBER("."),;
 
@@ -190,6 +201,57 @@ public enum GLSLOperator {
         return new GLSLFunctionType[]{
                 new GLSLBasicFunctionType(name, GLSLTypes.INT, GLSLTypes.INT),
                 new GLSLBasicFunctionType(name, GLSLTypes.FLOAT, GLSLTypes.FLOAT)
+        };
+    }
+
+    private static GLSLFunctionType[] getBinaryNegationOperatorAlternatives(String name){
+        return new GLSLFunctionType[]{
+                new GLSLBasicFunctionType(name, GLSLTypes.INT, GLSLTypes.INT),
+                new GLSLBasicFunctionType(name, GLSLTypes.UINT, GLSLTypes.UINT),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC2, GLSLTypes.IVEC2),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC3, GLSLTypes.IVEC3),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC4, GLSLTypes.IVEC4),
+                new GLSLBasicFunctionType(name, GLSLTypes.UVEC2, GLSLTypes.UVEC2),
+                new GLSLBasicFunctionType(name, GLSLTypes.UVEC3, GLSLTypes.UVEC3),
+                new GLSLBasicFunctionType(name, GLSLTypes.UVEC4, GLSLTypes.UVEC4),
+        };
+    }
+
+    private static GLSLFunctionType[] getBinaryOperatorAlternatives(String name){
+        return new GLSLFunctionType[]{
+                new GLSLBasicFunctionType(name, GLSLTypes.INT, GLSLTypes.INT, GLSLTypes.INT),
+                new GLSLBasicFunctionType(name, GLSLTypes.UINT, GLSLTypes.UINT, GLSLTypes.UINT),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC2, GLSLTypes.IVEC2, GLSLTypes.IVEC2),//TODO Repeat this whole thing for UVEC
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC3, GLSLTypes.IVEC3, GLSLTypes.IVEC3),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC4, GLSLTypes.IVEC4, GLSLTypes.IVEC4),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC2, GLSLTypes.INT, GLSLTypes.IVEC2),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC3, GLSLTypes.INT, GLSLTypes.IVEC3),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC4, GLSLTypes.INT, GLSLTypes.IVEC4),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC2, GLSLTypes.UINT, GLSLTypes.IVEC2),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC3, GLSLTypes.UINT, GLSLTypes.IVEC3),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC4, GLSLTypes.UINT, GLSLTypes.IVEC4),
+                new GLSLBasicFunctionType(name, GLSLTypes.INT, GLSLTypes.IVEC2, GLSLTypes.IVEC2),
+                new GLSLBasicFunctionType(name, GLSLTypes.INT, GLSLTypes.IVEC3, GLSLTypes.IVEC3),
+                new GLSLBasicFunctionType(name, GLSLTypes.INT, GLSLTypes.IVEC4, GLSLTypes.IVEC4),
+                new GLSLBasicFunctionType(name, GLSLTypes.UINT,GLSLTypes.IVEC2,  GLSLTypes.IVEC2),
+                new GLSLBasicFunctionType(name, GLSLTypes.UINT,GLSLTypes.IVEC3,  GLSLTypes.IVEC3),
+                new GLSLBasicFunctionType(name, GLSLTypes.UINT,GLSLTypes.IVEC4,  GLSLTypes.IVEC4),
+        };
+    }
+
+    private static GLSLFunctionType[] getBitShiftOperatorAlternatives(String name){
+        return new GLSLFunctionType[]{
+                new GLSLBasicFunctionType(name, GLSLTypes.INT, GLSLTypes.INT, GLSLTypes.INT),
+                new GLSLBasicFunctionType(name, GLSLTypes.UINT, GLSLTypes.UINT, GLSLTypes.UINT),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC2, GLSLTypes.IVEC2, GLSLTypes.IVEC2),//TODO Repeat this whole thing for UVEC
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC3, GLSLTypes.IVEC3, GLSLTypes.IVEC3),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC4, GLSLTypes.IVEC4, GLSLTypes.IVEC4),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC2, GLSLTypes.INT, GLSLTypes.IVEC2),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC3, GLSLTypes.INT, GLSLTypes.IVEC3),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC4, GLSLTypes.INT, GLSLTypes.IVEC4),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC2, GLSLTypes.UINT, GLSLTypes.IVEC2),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC3, GLSLTypes.UINT, GLSLTypes.IVEC3),
+                new GLSLBasicFunctionType(name, GLSLTypes.IVEC4, GLSLTypes.UINT, GLSLTypes.IVEC4),
         };
     }
 
