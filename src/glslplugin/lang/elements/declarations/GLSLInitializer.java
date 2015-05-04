@@ -36,7 +36,7 @@ public class GLSLInitializer extends GLSLExpression {
     }
 
     GLSLExpression getInitializerExpression() {
-        return (GLSLExpression) getFirstChild();//TODO getFirstChild() may not be instanceof GLSLExpression
+        return (GLSLExpression) getFirstChild();
     }
 
     @Override

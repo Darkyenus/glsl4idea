@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
@@ -72,6 +73,7 @@ public class GLSLParserDefinition implements ParserDefinition {
         if (elt != null) {
             return elt;
         } else {
+            //Logger.getInstance(GLSLParserDefinition.class).warn("Creating default GLSLElementImpl for "+node);
             return new GLSLElementImpl(node);
         }
     }

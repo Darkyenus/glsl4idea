@@ -61,15 +61,20 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.SUBSCRIPT_EXPRESSION) return new GLSLSubscriptExpression(node);
 
         // binary operators
-        if (type == GLSLElementTypes.ADDITIVE_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
-        if (type == GLSLElementTypes.MULTIPLICATIVE_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
-        if (type == GLSLElementTypes.RELATIONAL_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
-        if (type == GLSLElementTypes.EQUALITY_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
-        if (type == GLSLElementTypes.LOGICAL_AND_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
-        if (type == GLSLElementTypes.LOGICAL_OR_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
-        if (type == GLSLElementTypes.LOGICAL_XOR_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
+        if (type == GLSLElementTypes.ADDITIVE_EXPRESSION ||
+                type == GLSLElementTypes.MULTIPLICATIVE_EXPRESSION ||
+                type == GLSLElementTypes.RELATIONAL_EXPRESSION ||
+                type == GLSLElementTypes.EQUALITY_EXPRESSION ||
+                type == GLSLElementTypes.LOGICAL_AND_EXPRESSION ||
+                type == GLSLElementTypes.LOGICAL_OR_EXPRESSION ||
+                type == GLSLElementTypes.LOGICAL_XOR_EXPRESSION ||
+                type == GLSLElementTypes.ADDITIVE_EXPRESSION ||
+                type == GLSLElementTypes.BIT_SHIFT_EXPRESSION ||
+                type == GLSLElementTypes.BINARY_AND_EXPRESSION ||
+                type == GLSLElementTypes.BINARY_XOR_EXPRESSION ||
+                type == GLSLElementTypes.BINARY_OR_EXPRESSION
+                ) return new GLSLBinaryOperatorExpression(node);
         if (type == GLSLElementTypes.ASSIGNMENT_EXPRESSION) return new GLSLAssignmentExpression(node);
-        if (type == GLSLElementTypes.ADDITIVE_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
         if (type == GLSLElementTypes.CONDITION) return new GLSLCondition(node);
 
         if (type == GLSLElementTypes.FIELD_SELECTION_EXPRESSION) return new GLSLFieldSelectionExpression(node);
