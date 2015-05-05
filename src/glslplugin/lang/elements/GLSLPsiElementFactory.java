@@ -113,6 +113,8 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.RETURN_STATEMENT) return new GLSLReturnStatement(node);
         if (type == GLSLElementTypes.DISCARD_STATEMENT) return new GLSLDiscardStatement(node);
 
+        if (type == GLSLElementTypes.PRECISION_STATEMENT) return new GLSLPrecisionStatement(node);
+
         // types and structs
         if (type == GLSLElementTypes.QUALIFIER) return new GLSLQualifier(node);
         if (type == GLSLElementTypes.QUALIFIER_LIST) return new GLSLQualifierList(node);

@@ -67,7 +67,7 @@ LINE_COMMENT        = "//"[^\r\n]*
 BLOCK_COMMENT       = "/*"([^"*"]|("*"+[^"*""/"]))*("*"+"/")?
 
 GLSL_ES_TYPE = void|float|(u?int)|bool|((i|b|u)?vec([2-4]))|(mat[2-4](x[2-4])?)|(samplerCubeShadow|sampler2DShadow|sampler2DArrayShadow)|((i|u)?sampler(2D|3D|Cube|2DArray))
-GLSL_ES_PRECISION_MODIFIER = (high|medium|low)p
+GLSL_ES_PRECISION_QUALIFIER = (high|medium|low)p
 
 %%
 
@@ -191,7 +191,7 @@ flat                    {return FLAT_KEYWORD; }
 noperspective           {return NOPERSPECTIVE_KEYWORD; }
 
 /* GLSL ES STORAGE QUALIFIERS */
-{GLSL_ES_PRECISION_MODIFIER}	{return PRECISION_KEYWORD; }
+{GLSL_ES_PRECISION_QUALIFIER}	{return PRECISION_QUALIFIER; }
 
 /* GLSL PARAMETER QUALIFIER */
 in                      {return IN_KEYWORD; }
@@ -217,7 +217,7 @@ if                      {return IF_KEYWORD; }
 else                    {return ELSE_KEYWORD; }
 
 /* GLSL ES PRECISION */
-precision{WHITE_SPACE}+{GLSL_ES_PRECISION_MODIFIER}{WHITE_SPACE}+{GLSL_ES_TYPE}";"  {return PRECISION_STATEMENT; }
+precision  {return PRECISION_KEYWORD; }
 
 
 /* GLSL Symbols */

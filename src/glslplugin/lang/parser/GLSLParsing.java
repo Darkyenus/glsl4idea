@@ -239,6 +239,11 @@ public class GLSLParsing {
             mark = b.mark();
         }
 
+        if(parsePrecisionStatement()) {
+            mark.drop();
+            return true;
+        }
+
         parseQualifierList(true);
 
         if (b.getTokenType() == IDENTIFIER) { // interface block
@@ -368,6 +373,21 @@ public class GLSLParsing {
         return false;
     }
 
+    private boolean parsePrecisionStatement(){
+        // precision_statement: PRECISION precision_qualifier type_specifier_no_precision ;
+        if(b.getTokenType() == PRECISION_KEYWORD){
+            final PsiBuilder.Marker mark = b.mark();
+            advanceLexer();
+            match(PRECISION_QUALIFIER, "Expected precision qualifier.");
+            if(!parseTypeSpecifier()){
+                b.error("Expected type specifier.");
+            }
+            match(SEMICOLON, "Expected ';'");
+            mark.done(PRECISION_STATEMENT);
+            return true;
+        }else return false;
+    }
+
     private void parseQualifiedTypeSpecifier() {
         parseQualifierList(true);
         parseTypeSpecifier();
@@ -445,7 +465,7 @@ public class GLSLParsing {
         // NOTE: terminates with '}', but we check for FirstSet(statement)
         //       instead for increased robustness
 
-        while ((STATEMENT_FIRST_SET.contains(b.getTokenType()) || OPERATORS.contains(b.getTokenType())) && !eof()) {
+        while ((STATEMENT_FIRST_SET.contains(b.getTokenType()) || OPERATORS.contains(b.getTokenType()) || b.getTokenType() == PRECISION_KEYWORD) && !eof()) {
             if (!parseStatement()) {
                 return;
             }
@@ -462,8 +482,15 @@ public class GLSLParsing {
         if (parseSimpleStatement()) {
             return true;
         } else {
-            b.error("Expected a statement.");
-            return false;
+            final PsiBuilder.Marker mark = b.mark();
+            if (parsePrecisionStatement()) {
+                mark.error("Precision statement can be only in the top level.");
+                return true;
+            } else {
+                mark.drop();
+                b.error("Expected a statement.");
+                return false;
+            }
         }
     }
 

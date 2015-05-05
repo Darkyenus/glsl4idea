@@ -125,6 +125,8 @@ public class GLSLElementTypes {
     public static final IElementType DO_STATEMENT = new GLSLElementType("DO_STATEMENT");
     public static final IElementType WHILE_STATEMENT = new GLSLElementType("WHILE_STATEMENT");
 
+    public static final IElementType PRECISION_STATEMENT = new GLSLElementType("PRECISION_STATEMENT");
+
     public static final IElementType FOR_INIT_STATEMENT = new GLSLElementType("FOR_INIT_STATEMENT");
     public static final IElementType FOR_REST_STATEMENT = new GLSLElementType("FOR_REST_STATEMENT");
     public static final IElementType CONDITION = new GLSLElementType("CONDITION");

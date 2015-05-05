@@ -60,7 +60,7 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
             { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER) };
     static final TextAttributesKey[] GLSL_PREPROCESSOR_DIRECTIVE =
             { TextAttributesKey.createTextAttributesKey("GLSL.PREPROCESSOR_DIRECTIVE", DefaultLanguageHighlighterColors.METADATA) };
-    static final TextAttributesKey[] GLSL_PRECISION_STATEMENT =
+    public static final TextAttributesKey[] GLSL_PRECISION_STATEMENT =
             { TextAttributesKey.createTextAttributesKey("GLSL.PRECISION_STATEMENT", DefaultLanguageHighlighterColors.METADATA) };
     static final TextAttributesKey[] GLSL_UNKNOWN =
             { TextAttributesKey.createTextAttributesKey("GLSL.UNKNOWN", HighlighterColors.BAD_CHARACTER) };
@@ -74,6 +74,7 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
 
     @NotNull
     public TextAttributesKey[] getTokenHighlights(IElementType type) {
+        if(type == WHITE_SPACE) return GLSL_TEXT;
         if (CONSTANT_TOKENS.contains(type)) return GLSL_NUMBER;
         if (type == COMMENT_BLOCK) return GLSL_BLOCK_COMMENT;
         if (type == COMMENT_LINE) return GLSL_LINE_COMMENT;
@@ -88,7 +89,7 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
         if (TYPE_SPECIFIER_NONARRAY_TOKENS.contains(type)) return GLSL_TYPE_SPECIFIER;
         if (QUALIFIER_TOKENS.contains(type)) return GLSL_TYPE_QUALIFIERS;
         if (FLOW_KEYWORDS.contains(type)) return GLSL_FLOW_KEYWORDS;
-        if (type == PRECISION_STATEMENT) return GLSL_PRECISION_STATEMENT;
+        if (type == PRECISION_KEYWORD) return GLSL_PRECISION_STATEMENT;
         if (type == UNKNOWN) return GLSL_UNKNOWN;
         return GLSL_TEXT;
     }
