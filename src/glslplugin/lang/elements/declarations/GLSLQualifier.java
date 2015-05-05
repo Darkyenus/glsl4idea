@@ -23,7 +23,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLElementImpl;
-import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.types.GLSLTypeQualifier;
 import org.jetbrains.annotations.NotNull;
@@ -71,7 +70,7 @@ public class GLSLQualifier extends GLSLElementImpl {
         PRECISE(GLSLTypeQualifier.PRECISE_QUALIFIER, "precise", GLSLTokenTypes.PRECISE_KEYWORD),
 
         // ES Storage Qualifiers
-        PRECISION(GLSLTypeQualifier.ES_STORAGE_QUALIFIER,"lowp|mediump|highp",GLSLTokenTypes.PRECISION_KEYWORD),
+        PRECISION(GLSLTypeQualifier.ES_STORAGE_QUALIFIER,"lowp|mediump|highp",GLSLTokenTypes.PRECISION_QUALIFIER),
 
         // Parameter Modifiers
         IN(GLSLTypeQualifier.PARAMETER_MODIFIER , "in", GLSLTokenTypes.IN_KEYWORD),

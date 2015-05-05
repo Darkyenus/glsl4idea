@@ -108,6 +108,7 @@ public class GLSLTokenTypes {
 
     public static final IElementType LAYOUT_KEYWORD = new GLSLElementType("LAYOUT_KEYWORD");
 
+    public static final IElementType PRECISION_QUALIFIER = new GLSLElementType("PRECISION_QUALIFIER");
     public static final IElementType PRECISION_KEYWORD = new GLSLElementType("PRECISION_KEYWORD");
 
     public static final IElementType IN_KEYWORD = new GLSLElementType("IN_KEYWORD");
@@ -184,8 +185,6 @@ public class GLSLTokenTypes {
 
     public static final IElementType WHITE_SPACE = TokenType.WHITE_SPACE;
     public static final IElementType UNKNOWN = new GLSLElementType("UNKNOWN");
-
-    public static final IElementType PRECISION_STATEMENT = new GLSLElementType("PRECISION_STATEMENT");
 
     public static final IElementType PREPROCESSOR_BEGIN = new GLSLElementType("PREPROCESSOR_BEGIN");
     public static final IElementType PREPROCESSOR_END = new GLSLElementType("PREPROCESSOR_END");
@@ -280,7 +279,7 @@ public class GLSLTokenTypes {
             //GLSL Precise qualifier
             PRECISE_KEYWORD,
             //GLSL ES Storage qualifiers
-            PRECISION_KEYWORD,
+            PRECISION_QUALIFIER,
             //GLSL Parameter modifiers
             IN_KEYWORD,
             OUT_KEYWORD,
@@ -292,7 +291,7 @@ public class GLSLTokenTypes {
             //GLSL Layout qualifiers
             LAYOUT_KEYWORD);
 
-    public static final TokenSet COMMENTS = TokenSet.create(COMMENT_BLOCK, COMMENT_LINE, PRECISION_STATEMENT);
+    public static final TokenSet COMMENTS = TokenSet.create(COMMENT_BLOCK, COMMENT_LINE);
 
     public static final TokenSet ITERATION_KEYWORDS = TokenSet.create(WHILE_KEYWORD, DO_KEYWORD, FOR_KEYWORD);
     public static final TokenSet JUMP_KEYWORDS = TokenSet.create(BREAK_JUMP_STATEMENT, CONTINUE_JUMP_STATEMENT, RETURN_JUMP_STATEMENT, DISCARD_JUMP_STATEMENT);
