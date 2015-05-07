@@ -254,11 +254,11 @@ public class GLSLParsing {
             if (b.getTokenType() == RIGHT_BRACE) {
                 b.error("Empty interface block is not allowed.");
             }
-
-            while (!tryMatch(RIGHT_BRACE)) {
+            
+            while (!tryMatch(RIGHT_BRACE) && !eof()) {
                 final PsiBuilder.Marker member = b.mark();
                 parseQualifierList(true);
-                if (!parseTypeSpecifier()) advanceLexer();
+                if (!parseTypeSpecifierNoArray()) advanceLexer();
                 parseDeclaratorList();
                 match(SEMICOLON, "Expected ';'");
                 member.done(STRUCT_DECLARATION);//TODO Should we call interface block members struct members?
