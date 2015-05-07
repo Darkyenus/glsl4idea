@@ -27,8 +27,14 @@
     <idea-version since-build="139.1117"/>
     <depends>com.intellij.modules.lang</depends>
 
-    <version>1.7</version>
+    <version>1.7.1</version>
     <change-notes><![CDATA[
+        <p>1.7.1</p>
+        <ul>
+            <li>Fix problem in parsing which could cause the plugin to freeze</li>
+            <li>Improve handling of GLES precision statements</li>
+        </ul>
+
         <p>1.7</p>
         <ul>
             <li>Add missing return; warning</li>
