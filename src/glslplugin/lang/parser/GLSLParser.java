@@ -31,11 +31,13 @@ public class GLSLParser implements PsiParser {
     public ASTNode parse(IElementType root, PsiBuilder builder) {
         //builder.setDebugMode(true);
         final PsiBuilder.Marker rootMarker = builder.mark();
-        final GLSLParsing theRealParser = new GLSLParsing(builder);
+        if(!builder.eof()){ //Empty file is not an error
+            final GLSLParsing theRealParser = new GLSLParsing(builder);
 
-        theRealParser.parseTranslationUnit();
-        while (!builder.eof()) // exhaust the file if unable to parse everything
-            builder.advanceLexer();
+            theRealParser.parseTranslationUnit();
+            while (!builder.eof()) // exhaust the file if unable to parse everything
+                builder.advanceLexer();
+        }
 
         rootMarker.done(root);
         return builder.getTreeBuilt();
