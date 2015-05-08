@@ -34,7 +34,7 @@ import static glslplugin.lang.elements.GLSLTokenTypes.*;
  *         Date: Jan 19, 2009
  *         Time: 3:16:56 PM
  */
-public class GLSLParsing {
+public final class GLSLParsing {
     // The general approach for error return and flagging is that an error should only be returned when not flagged.
     // So, if an error is encountered; EITHER flag it in the editor OR propagate it down the call stack.
 
@@ -51,42 +51,16 @@ public class GLSLParsing {
             new OperatorLevelTraits(EQUALITY_OPERATORS, "sub expression", EQUALITY_EXPRESSION),
             new OperatorLevelTraits(RELATIONAL_OPERATORS, "sub expression", RELATIONAL_EXPRESSION),
             new OperatorLevelTraits(BIT_SHIFT_OPERATORS, "sub expression", BIT_SHIFT_EXPRESSION),
-            new OperatorLevelTraits(ADDITIVE_OPERATORS, "part", ADDITIVE_EXPRESSION),
+            new OperatorLevelTraits(ADDITIVE_OPERATORS, "part expression", ADDITIVE_EXPRESSION),
             new OperatorLevelTraits(MULTIPLICATIVE_OPERATORS, "factor", MULTIPLICATIVE_EXPRESSION),
     };
 
 
     /* The source of operatorTokens and the target for the AST nodes. */
-    private PsiBuilder b;
+    private final PsiBuilder b;
 
     GLSLParsing(PsiBuilder builder) {
         b = builder;
-    }
-
-    /**
-     * Skips forward in the stream until a token in the given set is encountered.
-     * When the method returns the matching token will be the current if found,
-     * otherwise it will consume all remaining operatorTokens.
-     *
-     * @param set the set containing the token types to look for.
-     */
-    private void skipTo(TokenSet set) {
-        while (b.getTokenType() != null && set.contains(b.getTokenType())) {
-            advanceLexer();
-        }
-    }
-
-    /**
-     * Skips forward in the stream until a token in the given token type is encountered.
-     * When the method returns the matching token will be the current if found,
-     * otherwise it will consume all remaining operatorTokens.
-     *
-     * @param type token type to look for.
-     */
-    private void skipTo(IElementType type) {
-        while (b.getTokenType() != null && b.getTokenType() != type) {
-            advanceLexer();
-        }
     }
 
     /**
@@ -519,7 +493,7 @@ public class GLSLParsing {
         if (EXPRESSION_FIRST_SET.contains(type) || QUALIFIER_TOKENS.contains(type)) {
             // This set also includes the first set of declaration_statement
             if (lookaheadDeclarationStatement()) {
-                result = parseVariableDeclarationStatement();
+                result = parseDeclarationStatement();
             } else {
                 result = parseExpressionStatement();
             }
@@ -656,7 +630,7 @@ public class GLSLParsing {
                 // IDENTIFIER IDENTIFIER means declaration statement
                 // where the first is the type specifier
                 rollback.rollbackTo();
-                parseVariableDeclaration();
+                parseDeclaration();
             } else if (OPERATORS.contains(b.getTokenType()) ||
                     b.getTokenType() == DOT ||
                     b.getTokenType() == LEFT_BRACKET ||
@@ -670,7 +644,7 @@ public class GLSLParsing {
 
         } else if (TYPE_SPECIFIER_NONARRAY_TOKENS.contains(b.getTokenType()) ||
                 QUALIFIER_TOKENS.contains(b.getTokenType())) {
-            parseVariableDeclaration();
+            parseDeclaration();
         } else if (UNARY_OPERATORS.contains(b.getTokenType()) ||
                 FUNCTION_IDENTIFIER_TOKENS.contains(b.getTokenType()) ||
                 b.getTokenType() == LEFT_PAREN) {
@@ -754,11 +728,11 @@ public class GLSLParsing {
         return true;
     }
 
-    private boolean parseVariableDeclarationStatement() {
+    private boolean parseDeclarationStatement() {
         // declaration_statement: declaration
         PsiBuilder.Marker mark = b.mark();
 
-        if (!parseVariableDeclaration()) {
+        if (!parseDeclaration()) {
             mark.error("Expected variable declaration.");
             return false;
         } else {
@@ -777,28 +751,25 @@ public class GLSLParsing {
     private boolean lookaheadDeclarationStatement() {
         // they share type_specifier. So if found; look for the following identifier.
         PsiBuilder.Marker rollback = b.mark();
+        try{
+            if (tryMatch(QUALIFIER_TOKENS)) {
+                return true;
+            }
+            if (!parseTypeSpecifier()) {
+                return false;
+            }
+            //noinspection RedundantIfStatement
+            if (tryMatch(IDENTIFIER) || tryMatch(SEMICOLON)) {
+                return true;
+            }
 
-        boolean result = lookaheadForDeclarationStatementImpl();
-
-        rollback.rollbackTo();
-        return result;
-    }
-
-    private boolean lookaheadForDeclarationStatementImpl() {
-        if (tryMatch(QUALIFIER_TOKENS)) {
-            return true;
-        }
-        if (!parseTypeSpecifier()) {
             return false;
+        } finally {
+            rollback.rollbackTo();
         }
-        //noinspection RedundantIfStatement
-        if (tryMatch(IDENTIFIER) || tryMatch(SEMICOLON)) {
-            return true;
-        }
-        return false;
     }
 
-    private boolean parseVariableDeclaration() {
+    private boolean parseDeclaration() {
         // declaration: function_prototype SEMICOLON
         //            | init_declarator_list SEMICOLON
 
@@ -934,30 +905,6 @@ public class GLSLParsing {
         return true;
     }
 
-    private class OperatorLevelTraits {
-        private TokenSet operatorTokens;
-        private String partName;
-        private IElementType elementType;
-
-        private OperatorLevelTraits(TokenSet operatorTokens, String partName, IElementType elementType) {
-            this.operatorTokens = operatorTokens;
-            this.partName = partName;
-            this.elementType = elementType;
-        }
-
-        public TokenSet getOperatorTokens() {
-            return operatorTokens;
-        }
-
-        public String getPartName() {
-            return partName;
-        }
-
-        public IElementType getElementType() {
-            return elementType;
-        }
-    }
-
     private boolean parseOperatorExpression() {
         return parseOperatorExpressionLevel(0);
     }
@@ -989,7 +936,7 @@ public class GLSLParsing {
                     } while (tryMatch(OPERATORS));
                 } else {
                     operatorMark.drop();
-                    mark.error(String.format("Expected a(n) %s expression.", operatorLevel.getPartName()));
+                    mark.error("Expected a(n) "+operatorLevel.getPartName()+".");
                     return false;
                 }
             }
@@ -1448,4 +1395,27 @@ public class GLSLParsing {
         mark.done(LAYOUT_QUALIFIER_ID);
     }
 
+    private final static class OperatorLevelTraits {
+        private final TokenSet operatorTokens;
+        private final String partName;
+        private final IElementType elementType;
+
+        private OperatorLevelTraits(TokenSet operatorTokens, String partName, IElementType elementType) {
+            this.operatorTokens = operatorTokens;
+            this.partName = partName;
+            this.elementType = elementType;
+        }
+
+        public TokenSet getOperatorTokens() {
+            return operatorTokens;
+        }
+
+        public String getPartName() {
+            return partName;
+        }
+
+        public IElementType getElementType() {
+            return elementType;
+        }
+    }
 }
