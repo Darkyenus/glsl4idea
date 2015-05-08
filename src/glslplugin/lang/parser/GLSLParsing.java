@@ -171,7 +171,7 @@ public final class GLSLParsing {
      */
     private boolean parseExternalDeclaration() {
         // external_declaration: function_definition
-        //                     | variable_declaration
+        //                     | declaration
         //                     | interface_block
         // Expanding the rule to obtain:
         // external_declaration: qualifier-list type-specifier prototype [ ';' | compound-statement ]
@@ -362,10 +362,11 @@ public final class GLSLParsing {
         }else return false;
     }
 
-    private void parseQualifiedTypeSpecifier() {
+    private boolean parseQualifiedTypeSpecifier() {
         parseQualifierList(true);
-        parseTypeSpecifier();
+        boolean result = parseTypeSpecifier();
         parseQualifierList(false);
+        return result;
     }
 
     private void parseParameterDeclarationList() {
@@ -733,10 +734,10 @@ public final class GLSLParsing {
         PsiBuilder.Marker mark = b.mark();
 
         if (!parseDeclaration()) {
-            mark.error("Expected variable declaration.");
+            mark.error("Expected declaration.");
             return false;
         } else {
-            match(SEMICOLON, "Expected ';' after variable declaration.");
+            match(SEMICOLON, "Expected ';' after declaration.");
             mark.done(DECLARATION_STATEMENT);
             return true;
         }
@@ -775,11 +776,14 @@ public final class GLSLParsing {
 
         PsiBuilder.Marker mark = b.mark();
 
-        parseQualifiedTypeSpecifier();
-        parseDeclaratorList();
-        mark.done(VARIABLE_DECLARATION);
-
-        return true;
+        if(parseQualifiedTypeSpecifier()){
+            parseDeclaratorList();
+            mark.done(VARIABLE_DECLARATION);
+            return true;
+        }else{
+            mark.error("Qualified type specifier expected.");
+            return false;
+        }
     }
 
     private void parseDeclaratorList() {
