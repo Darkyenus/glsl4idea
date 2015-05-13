@@ -82,6 +82,7 @@ GLSL_ES_PRECISION_QUALIFIER = (high|medium|low)p
 <PREPROCESSOR> {
   {WHITE_SPACE}+        { return WHITE_SPACE; }
   {LINE_TERMINATOR}     { yybegin(YYINITIAL); return PREPROCESSOR_END; }
+  \"([^\"\r\n])*\" { return PREPROCESSOR_STRING; }
   define                { return PREPROCESSOR_DEFINE; }
   undef                 { return PREPROCESSOR_UNDEF; }
   if                    { return PREPROCESSOR_IF; }
