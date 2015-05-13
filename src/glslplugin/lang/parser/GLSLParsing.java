@@ -246,7 +246,7 @@ public class GLSLParsing {
 
         parseQualifierList(true);
 
-        if (b.getTokenType() == IDENTIFIER) { // interface block
+        if (b.getTokenType() == IDENTIFIER && b.lookAhead(1) == LEFT_BRACE) { // interface block
             //TODO Make sure that this is preceded by storage_qualifier
             parseIdentifier();
             match(LEFT_BRACE, "Expected '{'");
