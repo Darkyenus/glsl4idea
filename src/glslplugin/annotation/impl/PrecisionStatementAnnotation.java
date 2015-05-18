@@ -19,19 +19,34 @@
 
 package glslplugin.annotation.impl;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.psi.tree.TokenSet;
 import glslplugin.GLSLHighlighter;
 import glslplugin.annotation.Annotator;
+import glslplugin.lang.elements.GLSLElementTypes;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.statements.GLSLPrecisionStatement;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * Highlights whole precision statements (eg. precision mediump float;) as such.
+ * "precision" keyword is highlighted at token level.
+ *
  * @author Darkyen
  */
 public class PrecisionStatementAnnotation extends Annotator<GLSLPrecisionStatement> {
+
+    //PRECISION_KEYWORD is highlighted by default, so no need to do it again
+    private static TokenSet HIGHLIGHTED_TOKENS = TokenSet.create(GLSLTokenTypes.PRECISION_QUALIFIER, GLSLTokenTypes.SEMICOLON, GLSLElementTypes.TYPE_SPECIFIER);
+
     @Override
     public void annotate(GLSLPrecisionStatement expr, AnnotationHolder holder) {
-        holder.createInfoAnnotation(expr,null).setTextAttributes(GLSLHighlighter.GLSL_PRECISION_STATEMENT[0]);
+        //PSI does not for some reason hold all relevant Elements
+        for(ASTNode child:expr.getNode().getChildren(HIGHLIGHTED_TOKENS)){
+            //This circus is necessary, because node may contain things like comments and preprocessor directives.
+            holder.createInfoAnnotation(child,null).setTextAttributes(GLSLHighlighter.GLSL_PRECISION_STATEMENT[0]);
+        }
     }
 
     @NotNull
