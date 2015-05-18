@@ -62,6 +62,8 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
             { TextAttributesKey.createTextAttributesKey("GLSL.PREPROCESSOR_DIRECTIVE", DefaultLanguageHighlighterColors.METADATA) };
     public static final TextAttributesKey[] GLSL_PRECISION_STATEMENT =
             { TextAttributesKey.createTextAttributesKey("GLSL.PRECISION_STATEMENT", DefaultLanguageHighlighterColors.METADATA) };
+    static final TextAttributesKey[] GLSL_STRING =
+            { TextAttributesKey.createTextAttributesKey("GLSL.STRING", DefaultLanguageHighlighterColors.STRING) };
     static final TextAttributesKey[] GLSL_UNKNOWN =
             { TextAttributesKey.createTextAttributesKey("GLSL.UNKNOWN", HighlighterColors.BAD_CHARACTER) };
     static final TextAttributesKey[] GLSL_TEXT =
@@ -90,6 +92,7 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
         if (QUALIFIER_TOKENS.contains(type)) return GLSL_TYPE_QUALIFIERS;
         if (FLOW_KEYWORDS.contains(type)) return GLSL_FLOW_KEYWORDS;
         if (type == PRECISION_KEYWORD) return GLSL_PRECISION_STATEMENT;
+        if (type == PREPROCESSOR_STRING) return GLSL_STRING;
         if (type == UNKNOWN) return GLSL_UNKNOWN;
         return GLSL_TEXT;
     }
