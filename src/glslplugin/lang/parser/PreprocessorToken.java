@@ -1,5 +1,5 @@
 /*
- *     Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
+ * Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
  *
  *     This file is part of glsl4idea.
  *
@@ -17,17 +17,19 @@
  *     along with glsl4idea.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package glslplugin.lang;
+package glslplugin.lang.parser;
 
-import com.intellij.lang.Language;
+import com.intellij.psi.tree.IElementType;
 
 /**
- *
+ * @author Darkyen
  */
-public class GLSLLanguage extends Language {
-    public static final GLSLLanguage GLSL_LANGUAGE = new GLSLLanguage();
+class PreprocessorToken {
+    final IElementType type;
+    final String text;
 
-    private GLSLLanguage() {
-        super("GLSL", "x-shader/x-vertex", "x-shader/x-fragment");
+    public PreprocessorToken(IElementType type, CharSequence text) {
+        this.type = type;
+        this.text = text.toString();
     }
 }

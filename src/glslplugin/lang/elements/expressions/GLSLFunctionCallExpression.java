@@ -145,7 +145,7 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
             } else if (current instanceof GLSLVariableDeclaration) {
                 GLSLVariableDeclaration declaration = (GLSLVariableDeclaration) current;
                 GLSLTypeSpecifier typeSpecifier = declaration.getTypeSpecifierNode();
-                GLSLType type = typeSpecifier.getType();
+                GLSLType type = typeSpecifier.getType();//TODO This may (and will) crash
                 if (getFunctionName().equals(type.getTypename())) {
                     for (GLSLFunctionType constructor : type.getConstructors()) {
                         switch (constructor.getParameterCompatibilityLevel(getParameterList().getParameterTypes())) {

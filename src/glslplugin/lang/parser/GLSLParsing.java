@@ -26,6 +26,10 @@ import glslplugin.lang.elements.GLSLTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import static glslplugin.lang.elements.GLSLElementTypes.*;
 import static glslplugin.lang.elements.GLSLTokenTypes.*;
 
@@ -71,14 +75,24 @@ public final class GLSLParsing {
 
     //Code that deals with preprocessor, b.call replacements
 
-    //  b.call replacements that deal with defines
+    private final HashMap<String, List<PreprocessorToken>> defines = new HashMap<String, List<PreprocessorToken>>();
+
+    /** List of tokens to serve, because the real psiBuilder is currently on #define-d IDENTIFIER.
+     * If null, psiBuilder is not there and everything is normal. */
+    private List<PreprocessorToken> preprocessorTokens = null;
+    /** How far in preprocessorTokens is parser advanced. */
+    private int preprocessorTokensIndex = -1;
 
     /**
      * @return type of token lexer is at or null if eof
      */
     @Nullable
     private IElementType tokenType() {
-        return psiBuilder.getTokenType();
+        if(preprocessorTokens != null){
+            return preprocessorTokens.get(preprocessorTokensIndex).type;
+        } else {
+            return psiBuilder.getTokenType();
+        }
     }
 
     /**
@@ -86,7 +100,7 @@ public final class GLSLParsing {
      */
     @Nullable
     private IElementType lookAhead(int amount) {
-        return psiBuilder.lookAhead(amount);
+        return psiBuilder.lookAhead(amount); //TODO Implement for preprocessor
     }
 
     /**
@@ -100,6 +114,8 @@ public final class GLSLParsing {
      */
     @NotNull
     private PsiBuilder.Marker mark() {
+        //This will have to do.
+        //If token is expanded to more tokens, it will be hard to mark mid-token.
         return psiBuilder.mark();
     }
 
@@ -109,6 +125,7 @@ public final class GLSLParsing {
      * @param error message to be shown
      */
     private void error(String error) {
+        //This is probably fine preprocessor-define wise.
         psiBuilder.error(error);
     }
 
@@ -119,7 +136,7 @@ public final class GLSLParsing {
      * @return whether or not is the lexer at the end of the file
      */
     private boolean isEof() {
-        return psiBuilder.eof();
+        return psiBuilder.eof(); //TODO Preprocessor
     }
 
     /**
@@ -127,13 +144,41 @@ public final class GLSLParsing {
      */
     @Nullable
     private String getTokenText() {
-        return psiBuilder.getTokenText();
+        if(preprocessorTokens != null){
+            return preprocessorTokens.get(preprocessorTokensIndex).text;
+        } else {
+            return psiBuilder.getTokenText();
+        }
     }
 
     private void advanceLexer() {
-        psiBuilder.advanceLexer();
-        if (tokenType() == PREPROCESSOR_BEGIN) {
-            parsePreprocessor();
+        if(preprocessorTokens != null){
+            //In defined mode
+            //Go to next token
+            preprocessorTokensIndex++;
+            if(preprocessorTokensIndex >= preprocessorTokens.size()){
+                //At the end, jump out of preprocessor mode and advance real lexer instead
+                preprocessorTokens = null;
+                psiBuilder.advanceLexer();
+            }
+        }else{
+            //Not in defined mode
+            psiBuilder.advanceLexer();
+            IElementType tokenType = tokenType();
+            if (tokenType == PREPROCESSOR_BEGIN) {
+                parsePreprocessor();
+            }else if(tokenType == IDENTIFIER){
+                //It may be preprocessor defined identifier
+                final String text = psiBuilder.getTokenText();
+                final List<PreprocessorToken> tokens = defines.get(text);
+                if (tokens != null) {
+                    //This IDENTIFIER has been #define-d to tokens
+                    psiBuilder.remapCurrentToken(new GLSLRedefinedTokenType(tokens));
+
+                    preprocessorTokens = tokens;
+                    preprocessorTokensIndex = 0;
+                }// else There is nothing defined to this, continue normally
+            }
         }
     }
 
@@ -219,6 +264,7 @@ public final class GLSLParsing {
 
     /**
      * Parses preprocessor, assuming that the tokenType() is at PREPROCESSOR_BEGIN.
+     *
      * Called automatically on advanceLexer(), which means that elements may contain
      * some tokens, that are part of preprocessor, not that element.
      * This may cause trouble during working with the PSI tree, so be careful.
@@ -227,14 +273,71 @@ public final class GLSLParsing {
         // We can't use tryMatch etc. in here because we'll end up
         // potentially parsing a preprocessor directive inside this one.
         PsiBuilder.Marker preprocessor = mark();
-        while (!isEof()) {
-            //TODO If the directive is DEFINE or UNDEF, follow it
-            psiBuilder.advanceLexer();
-            if (tokenType() == PREPROCESSOR_END) {
+        psiBuilder.advanceLexer(); //Get past the PREPROCESSOR_BEGIN ("#")
+
+        if(psiBuilder.getTokenType() == PREPROCESSOR_DEFINE){
+            //Parse define
+            psiBuilder.advanceLexer();//Get past DEFINE
+
+            if(psiBuilder.getTokenType() == IDENTIFIER){
+                //Valid
+                final String defineIdentifier = psiBuilder.getTokenText();
+                psiBuilder.advanceLexer();//Get past identifier
+
+                final ArrayList<PreprocessorToken> definedTokens = new ArrayList<PreprocessorToken>();
+                while (!isEof()) {
+                    PreprocessorToken token = new PreprocessorToken(psiBuilder.getTokenType(), psiBuilder.getTokenText());
+                    definedTokens.add(token);
+                    psiBuilder.advanceLexer();
+                    if (psiBuilder.getTokenType() == PREPROCESSOR_END) {
+                        break;
+                    }
+                }
+
+                defines.put(defineIdentifier, definedTokens);
+                //TODO Handle function-like defines
+            }else{
+                //Invalid
+                psiBuilder.error("Identifier expected.");
+                //Eat rest
+                while (!isEof()) {
+                    psiBuilder.advanceLexer();
+                    if (psiBuilder.getTokenType() == PREPROCESSOR_END) {
+                        break;
+                    }
+                }
+            }
+        }else if(psiBuilder.getTokenType() == PREPROCESSOR_UNDEF){
+            //Parse undefine
+            psiBuilder.advanceLexer();//Get past UNDEF
+
+            if(psiBuilder.getTokenType() == IDENTIFIER){
+                //Valid
+                final String defineIdentifier = psiBuilder.getTokenText();
+                defines.remove(defineIdentifier);
+            }else{
+                //Invalid
+                psiBuilder.error("Identifier expected.");
+            }
+            //Eat rest
+            while (!isEof()) {
                 psiBuilder.advanceLexer();
-                break;
+                if (psiBuilder.getTokenType() == PREPROCESSOR_END) {
+                    break;
+                }else{
+                    psiBuilder.error("Unexpected token.");
+                }
+            }
+        }else{
+            //Some other directive, no work here
+            while (!isEof()) {
+                psiBuilder.advanceLexer();
+                if (psiBuilder.getTokenType() == PREPROCESSOR_END) {
+                    break;
+                }
             }
         }
+        advanceLexer();//Get past PREPROCESSOR_END
         preprocessor.done(PREPROCESSOR_DIRECTIVE);
 
         if (tokenType() == PREPROCESSOR_BEGIN) {
