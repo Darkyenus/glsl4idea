@@ -35,7 +35,7 @@ import glslplugin.lang.GLSLLanguage;
 public class GLSLFileType extends LanguageFileType {
 
     public GLSLFileType() {
-        super(new GLSLLanguage());
+        super(GLSLLanguage.GLSL_LANGUAGE);
     }
 
     @NotNull

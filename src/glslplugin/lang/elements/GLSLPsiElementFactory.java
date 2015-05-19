@@ -24,6 +24,7 @@ import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.declarations.*;
 import glslplugin.lang.elements.expressions.*;
 import glslplugin.lang.elements.statements.*;
+import glslplugin.lang.parser.GLSLRedefinedTokenType;
 
 /**
  * GLSLPsiElementFactory defines the interface for the GLSLElement factory.
@@ -127,6 +128,8 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.STRUCT_DECLARATION) return new GLSLStructDeclaration(node);
         if (type == GLSLElementTypes.STRUCT_DECLARATOR_LIST) return new GLSLDeclaratorList(node);
         if (type == GLSLElementTypes.STRUCT_DECLARATOR) return new GLSLDeclarator(node);
+
+        if (type instanceof GLSLRedefinedTokenType) return new GLSLRedefinedTokenType.GLSLRedefinedPsiElement(node, (GLSLRedefinedTokenType) type);
 
         return null;
     }
