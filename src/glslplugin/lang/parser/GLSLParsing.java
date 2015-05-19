@@ -58,10 +58,11 @@ public final class GLSLParsing {
     };
 
 
-    /** The source of operatorTokens and the target for the AST nodes.
+    /**
+     * The source of operatorTokens and the target for the AST nodes.
      * Do not use directly, use specialized proxy functions below, which can handle preprocessor
      * directives and macro replacements.
-     * */
+     */
     private final PsiBuilder psiBuilder;
 
     GLSLParsing(PsiBuilder builder) {
@@ -94,6 +95,7 @@ public final class GLSLParsing {
      * for example done() to complete the element,
      * error() to mark element as invalid (error on the mark, not {@link GLSLParsing#error(String)}!)
      * or drop() to cancel the mark altogether.
+     *
      * @return placed mark
      */
     @NotNull
@@ -103,6 +105,7 @@ public final class GLSLParsing {
 
     /**
      * Places an error at current lexer position.
+     *
      * @param error message to be shown
      */
     private void error(String error) {
@@ -112,6 +115,7 @@ public final class GLSLParsing {
     /**
      * Returns same as eof(), but does not complain about anything
      * and doesn't close anything.
+     *
      * @return whether or not is the lexer at the end of the file
      */
     private boolean isEof() {
@@ -139,6 +143,7 @@ public final class GLSLParsing {
      * Checks whether lexer is at the end of the file,
      * complains about it if it is
      * and closes all marks supplied (if eof).
+     *
      * @return psiBuilder.eof()
      */
     private boolean eof(PsiBuilder.Marker... marksToClose) {
@@ -308,7 +313,7 @@ public final class GLSLParsing {
             mark = mark();
         }
 
-        if(parsePrecisionStatement()) {
+        if (parsePrecisionStatement()) {
             mark.drop();
             return true;
         }
@@ -323,7 +328,7 @@ public final class GLSLParsing {
             if (tokenType() == RIGHT_BRACE) {
                 error("Empty interface block is not allowed.");
             }
-            
+
             while (!tryMatch(RIGHT_BRACE) && !eof()) {
                 final PsiBuilder.Marker member = mark();
                 parseQualifierList(true);
@@ -442,19 +447,19 @@ public final class GLSLParsing {
         return false;
     }
 
-    private boolean parsePrecisionStatement(){
+    private boolean parsePrecisionStatement() {
         // precision_statement: PRECISION precision_qualifier type_specifier_no_precision ;
-        if(tokenType() == PRECISION_KEYWORD){
+        if (tokenType() == PRECISION_KEYWORD) {
             final PsiBuilder.Marker mark = mark();
             advanceLexer();
             match(PRECISION_QUALIFIER, "Expected precision qualifier.");
-            if(!parseTypeSpecifier()){
+            if (!parseTypeSpecifier()) {
                 error("Expected type specifier.");
             }
             match(SEMICOLON, "Expected ';'");
             mark.done(PRECISION_STATEMENT);
             return true;
-        }else return false;
+        } else return false;
     }
 
     private boolean parseQualifiedTypeSpecifier() {
@@ -732,11 +737,11 @@ public final class GLSLParsing {
             parseExpression();
         } else //noinspection StatementWithEmptyBody
             if (tokenType() == SEMICOLON) {
-            // Do nothing here
-        } else {
-            // Token not in first set, how did we end up here?
-            // TODO: Add error handling!
-        }
+                // Do nothing here
+            } else {
+                // Token not in first set, how did we end up here?
+                // TODO: Add error handling!
+            }
     }
 
     private boolean parseDoIterationStatement() {
@@ -832,7 +837,7 @@ public final class GLSLParsing {
     private boolean lookaheadDeclarationStatement() {
         // they share type_specifier. So if found; look for the following identifier.
         PsiBuilder.Marker rollback = mark();
-        try{
+        try {
             if (tryMatch(QUALIFIER_TOKENS)) {
                 return true;
             }
@@ -856,11 +861,11 @@ public final class GLSLParsing {
 
         PsiBuilder.Marker mark = mark();
 
-        if(parseQualifiedTypeSpecifier()){
+        if (parseQualifiedTypeSpecifier()) {
             parseDeclaratorList();
             mark.done(VARIABLE_DECLARATION);
             return true;
-        }else{
+        } else {
             mark.error("Qualified type specifier expected.");
             return false;
         }
@@ -1020,7 +1025,7 @@ public final class GLSLParsing {
                     } while (tryMatch(OPERATORS));
                 } else {
                     operatorMark.drop();
-                    mark.error("Expected a(n) "+operatorLevel.getPartName()+".");
+                    mark.error("Expected a(n) " + operatorLevel.getPartName() + ".");
                     return false;
                 }
             }
@@ -1196,18 +1201,18 @@ public final class GLSLParsing {
             advanceLexer();
         } else //noinspection StatementWithEmptyBody
             if (tokenType() == RIGHT_PAREN) {
-            // do nothing
-        } else if (parseAssignmentExpression()) {
-            while (tryMatch(COMMA)) {
-                if (!parseAssignmentExpression()) {
-                    error("Assignment expression expected.");
-                    break;
+                // do nothing
+            } else if (parseAssignmentExpression()) {
+                while (tryMatch(COMMA)) {
+                    if (!parseAssignmentExpression()) {
+                        error("Assignment expression expected.");
+                        break;
+                    }
                 }
+            } else {
+                mark.error("Expression expected after '('.");
+                return;
             }
-        } else {
-            mark.error("Expression expected after '('.");
-            return;
-        }
 
         mark.done(PARAMETER_LIST);
     }
