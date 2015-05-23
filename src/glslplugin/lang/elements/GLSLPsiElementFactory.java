@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.declarations.*;
 import glslplugin.lang.elements.expressions.*;
+import glslplugin.lang.elements.preprocessor.GLSLExpressionDropIn;
 import glslplugin.lang.elements.statements.*;
 
 /**
@@ -44,6 +45,9 @@ public class GLSLPsiElementFactory {
             return null;
         }
         IElementType type = node.getElementType();
+
+        // preprocessor shortcuts
+        if (type == GLSLElementTypes.PREPROCESSED_EXPRESSION) return new GLSLExpressionDropIn(node);
 
         // translation unit
         if (type == GLSLElementTypes.TRANSLATION_UNIT) return new GLSLTranslationUnit(node);

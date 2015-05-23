@@ -75,13 +75,33 @@ public final class GLSLParsing {
 
     //Code that deals with preprocessor, b.call replacements
 
-    private final HashMap<String, List<PreprocessorToken>> defines = new HashMap<String, List<PreprocessorToken>>();
+    private enum PreprocessorDropInType {
+        /**
+         * Only part in constant_expression, which is needed when declaring arrays
+         */
+        CONDITIONAL_EXPRESSION,
+        EXPRESSION,
+        UNKNOWN
+    }
+
+    private final static class PreprocessorDropIn {
+        public final PreprocessorDropInType type;
+        public final List<PreprocessorToken> tokens;
+
+        private PreprocessorDropIn(PreprocessorDropInType type, List<PreprocessorToken> tokens) {
+            this.type = type;
+            this.tokens = tokens;
+        }
+    }
+
+    private final HashMap<String, PreprocessorDropIn> defines = new HashMap<String, PreprocessorDropIn>();
 
     /** List of tokens to serve, because the real psiBuilder is currently on #define-d IDENTIFIER.
      * If null, psiBuilder is not there and everything is normal. */
     private List<PreprocessorToken> preprocessorTokens = null;
     /** How far in preprocessorTokens is parser advanced. */
     private int preprocessorTokensIndex = -1;
+    private PreprocessorDropInType preprocessorTokensReplacementType = PreprocessorDropInType.UNKNOWN;
 
     /**
      * @return type of token lexer is at or null if eof
@@ -151,6 +171,51 @@ public final class GLSLParsing {
         }
     }
 
+    /**
+     * Iff advanceLexer() just advanced into the preprocessor redefined tokens,
+     * this method will return what type of redefinition should happen here.
+     * If no type of replacement was recognized, type will be {@link glslplugin.lang.parser.GLSLParsing.PreprocessorDropInType#UNKNOWN}.
+     *
+     * Parsing methods can call this before doing their job, to find if it is already parsed.
+     * If it is, they should mark the spot for special drop in element, consumePreprocessorTokens() and return true.
+     * There is a shorthand to that, isTokenPreprocessorAlias(PreprocessorDropInType).
+     *
+     * @return Replacement type if just encountered the preprocessor-replaced block, null otherwise
+     */
+    @Nullable
+    private PreprocessorDropInType getTokenPreprocessorAlias(){
+        if(preprocessorTokens != null && preprocessorTokensIndex == 0){
+            return preprocessorTokensReplacementType;
+        }else{
+            return null;
+        }
+    }
+
+    /**
+     * Checks if next token is preprocessor alias for given type.
+     * If it is, consumes all injected tokens for that preprocessor token and return true.
+     * Otherwise false.
+     */
+    private boolean isTokenPreprocessorAlias(PreprocessorDropInType type){
+        if(getTokenPreprocessorAlias() == type){
+            consumePreprocessorTokens();
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * Advances lexer over all preprocessor-injected tokens.
+     * Does nothing if not in preprocessor-injected tokens.
+     */
+    private void consumePreprocessorTokens(){
+        if(preprocessorTokens != null){
+            preprocessorTokens = null;
+            psiBuilder.advanceLexer();
+        }
+    }
+
     private void advanceLexer() {
         if(preprocessorTokens != null){
             //In defined mode
@@ -170,8 +235,11 @@ public final class GLSLParsing {
             }else if(tokenType == IDENTIFIER){
                 //It may be preprocessor defined identifier
                 final String text = psiBuilder.getTokenText();
-                final List<PreprocessorToken> tokens = defines.get(text);
-                if (tokens != null) {
+                final PreprocessorDropIn dropIn = defines.get(text);
+
+                if (dropIn != null) {
+                    preprocessorTokensReplacementType = dropIn.type;
+                    final List<PreprocessorToken> tokens = dropIn.tokens;
                     //This IDENTIFIER has been #define-d to tokens
                     psiBuilder.remapCurrentToken(new GLSLRedefinedTokenType(tokens));
 
@@ -284,6 +352,25 @@ public final class GLSLParsing {
                 final String defineIdentifier = psiBuilder.getTokenText();
                 psiBuilder.advanceLexer();//Get past identifier
 
+                PreprocessorDropInType meaning = PreprocessorDropInType.UNKNOWN;
+                PsiBuilder.Marker defineMeaningMark = mark();
+
+                if(parseConditionalExpression()){
+                    if(psiBuilder.getTokenType() == PREPROCESSOR_END){
+                        //It is only a constant expression
+                        meaning = PreprocessorDropInType.CONDITIONAL_EXPRESSION;
+                    }
+                }
+                defineMeaningMark.rollbackTo();defineMeaningMark = mark();
+
+                if(meaning == PreprocessorDropInType.UNKNOWN && parseExpression()){
+                    if(psiBuilder.getTokenType() == PREPROCESSOR_END){
+                        //It is any expression
+                        meaning = PreprocessorDropInType.EXPRESSION;
+                    }
+                }
+                defineMeaningMark.rollbackTo();
+
                 final ArrayList<PreprocessorToken> definedTokens = new ArrayList<PreprocessorToken>();
                 while (!isEof()) {
                     PreprocessorToken token = new PreprocessorToken(psiBuilder.getTokenType(), psiBuilder.getTokenText());
@@ -294,7 +381,8 @@ public final class GLSLParsing {
                     }
                 }
 
-                defines.put(defineIdentifier, definedTokens);
+                defines.put(defineIdentifier, new PreprocessorDropIn(meaning, definedTokens));
+
                 //TODO Handle function-like defines
             }else{
                 //Invalid
@@ -1058,6 +1146,12 @@ public final class GLSLParsing {
         // conditional_expression: logical_or_expression
         //                       | logical_or_expression QUESTION expression COLON assignment_expression
         PsiBuilder.Marker mark = mark();
+
+        if(isTokenPreprocessorAlias(PreprocessorDropInType.CONDITIONAL_EXPRESSION)){
+            mark.done(PREPROCESSED_EXPRESSION);
+            return true;
+        }
+
         if (!parseOperatorExpression()) {
             mark.drop();
             return false;
@@ -1081,6 +1175,11 @@ public final class GLSLParsing {
         // expression: assignment_expression (',' assignment_expression)*
 
         PsiBuilder.Marker mark = mark();
+
+        if(isTokenPreprocessorAlias(PreprocessorDropInType.EXPRESSION)){
+            mark.done(PREPROCESSED_EXPRESSION);
+            return true;
+        }
 
         if (!parseAssignmentExpression()) {
             mark.error("Expected an expression.");
