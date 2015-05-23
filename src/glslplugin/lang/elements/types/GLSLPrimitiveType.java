@@ -19,6 +19,8 @@
 
 package glslplugin.lang.elements.types;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -57,6 +59,7 @@ public class GLSLPrimitiveType extends GLSLType {
         this.implicitConversions = Arrays.asList(implicitConversions);
     }
 
+    @NotNull
     public String getTypename() {
         return typename;
     }

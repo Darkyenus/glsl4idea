@@ -22,6 +22,7 @@ package glslplugin.intentions.vectorcomponents;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
 import glslplugin.lang.elements.types.GLSLVectorType;
 
@@ -43,7 +44,9 @@ public class VectorComponentsPredicate {
                     GLSLIdentifier identifier = (GLSLIdentifier) psiElement;
 
                     GLSLFieldSelectionExpression fse = (GLSLFieldSelectionExpression) parent;
-                    if (fse.getLeftHandExpression().getType() instanceof GLSLVectorType) {
+                    GLSLExpression leftHandExpression = fse.getLeftHandExpression();
+                    if(leftHandExpression == null)return false;
+                    if (leftHandExpression.getType() instanceof GLSLVectorType) {
 
                         String parameters = identifier.getIdentifierName();
                         if (checkForMatch(parameters)) {

@@ -20,7 +20,6 @@
 package glslplugin.lang.elements.declarations;
 
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**

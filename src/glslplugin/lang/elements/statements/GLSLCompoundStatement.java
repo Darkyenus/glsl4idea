@@ -20,14 +20,8 @@
 package glslplugin.lang.elements.statements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import glslplugin.lang.elements.GLSLTokenTypes;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * GLSLCompoundStatement is ...

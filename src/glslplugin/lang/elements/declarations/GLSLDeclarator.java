@@ -42,24 +42,12 @@ public class GLSLDeclarator extends GLSLDeclaratorBase {
         super(astNode);
     }
 
-    public boolean hasInitializer() {
-        return findChildByClass(GLSLInitializer.class) != null;
-    }
-
-    public boolean hasIdentifier() {
-        return findChildByClass(GLSLIdentifier.class) != null;
-    }
-
-    /**
-     * @return initializer expression or null if hasInitializer() returned false
-     */
     @Nullable
     public GLSLExpression getInitializerExpression() {
         final GLSLInitializer init = findChildByClass(GLSLInitializer.class);
         if (init != null) {
             return init.getInitializerExpression();
         } else {
-            Logger.getLogger("GLSLDeclarator").warning("Check for initializer before asking for it!");
             return null;
         }
     }

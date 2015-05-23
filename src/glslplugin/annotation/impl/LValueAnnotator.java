@@ -23,6 +23,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.expressions.GLSLAssignmentExpression;
 import glslplugin.lang.elements.expressions.GLSLExpression;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * LValueAnnotation checks for l-values at the left hand side of assignment expressions.
@@ -35,11 +36,14 @@ public class LValueAnnotator extends Annotator<GLSLAssignmentExpression> {
 
     public void annotate(GLSLAssignmentExpression expr, AnnotationHolder holder) {
         GLSLExpression left = expr.getLeftOperand();
+        if(left == null)return;
+
         if (!left.isLValue()) {
             holder.createErrorAnnotation(left, "Left operand of assignment expression is not L-Value.");
         }
     }
 
+    @NotNull
     @Override
     public Class<GLSLAssignmentExpression> getElementType() {
         return GLSLAssignmentExpression.class;

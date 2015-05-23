@@ -23,6 +23,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.util.TextRange;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLVectorType;
@@ -39,11 +40,14 @@ public class VectorComponentsAnnotation extends Annotator<GLSLFieldSelectionExpr
     private static final char[] stpq = {'s', 't', 'p', 'q'};
 
     public void annotate(GLSLFieldSelectionExpression expr, AnnotationHolder holder) {
-        GLSLType leftHandType = expr.getLeftHandExpression().getType();
+        GLSLExpression leftHandExpression = expr.getLeftHandExpression();
+        if(leftHandExpression == null)return;
+        GLSLType leftHandType = leftHandExpression.getType();
 
         if (leftHandType instanceof GLSLVectorType) {
             GLSLVectorType type = (GLSLVectorType) leftHandType;
             GLSLIdentifier memberIdentifier = expr.getMemberIdentifier();
+            if(memberIdentifier == null)return;
             String member = memberIdentifier.getIdentifierName();
             GLSLType glslType = type.getMembers().get(member);
 
