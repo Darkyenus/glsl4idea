@@ -24,6 +24,7 @@ import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.declarations.*;
 import glslplugin.lang.elements.expressions.*;
 import glslplugin.lang.elements.preprocessor.GLSLExpressionDropIn;
+import glslplugin.lang.elements.preprocessor.GLSLLiteralDropIn;
 import glslplugin.lang.elements.statements.*;
 
 /**
@@ -48,6 +49,10 @@ public class GLSLPsiElementFactory {
 
         // preprocessor shortcuts
         if (type == GLSLElementTypes.PREPROCESSED_EXPRESSION) return new GLSLExpressionDropIn(node);
+        if (type instanceof GLSLElementTypes.PreprocessedLiteralElementType){
+            GLSLElementTypes.PreprocessedLiteralElementType t = (GLSLElementTypes.PreprocessedLiteralElementType) type;
+            return new GLSLLiteralDropIn(node, t.type, t.text);
+        }
 
         // translation unit
         if (type == GLSLElementTypes.TRANSLATION_UNIT) return new GLSLTranslationUnit(node);

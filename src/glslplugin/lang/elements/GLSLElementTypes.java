@@ -139,10 +139,12 @@ public class GLSLElementTypes {
     public static final class PreprocessedLiteralElementType extends GLSLElementType {
 
         public final GLSLLiteral.Type type;
+        public final String text;
 
-        public PreprocessedLiteralElementType(GLSLLiteral.Type type) {
+        public PreprocessedLiteralElementType(GLSLLiteral.Type type, String text) {
             super("PREPROCESSED_LITERAL");
             this.type = type;
+            this.text = text;
         }
     }
 }

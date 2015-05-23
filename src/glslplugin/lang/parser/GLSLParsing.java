@@ -23,6 +23,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import glslplugin.lang.elements.GLSLTokenTypes;
+import glslplugin.lang.elements.expressions.GLSLLiteral;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,6 +82,7 @@ public final class GLSLParsing {
          */
         CONDITIONAL_EXPRESSION,
         EXPRESSION,
+        LITERAL,
         UNKNOWN
     }
 
@@ -355,7 +357,11 @@ public final class GLSLParsing {
                 PreprocessorDropInType meaning = PreprocessorDropInType.UNKNOWN;
                 PsiBuilder.Marker defineMeaningMark = mark();
 
-                if(parseConditionalExpression()){
+                if(CONSTANT_TOKENS.contains(tokenType()) && lookAhead(1) == PREPROCESSOR_END){
+                    meaning = PreprocessorDropInType.LITERAL;
+                }
+
+                if(meaning == PreprocessorDropInType.UNKNOWN && parseConditionalExpression()){
                     if(psiBuilder.getTokenType() == PREPROCESSOR_END){
                         //It is only a constant expression
                         meaning = PreprocessorDropInType.CONDITIONAL_EXPRESSION;
@@ -1426,6 +1432,13 @@ public final class GLSLParsing {
         //                   | CONSTANT
         //                   | '(' expression ')'
         final PsiBuilder.Marker mark = mark();
+
+        if(getTokenPreprocessorAlias() == PreprocessorDropInType.LITERAL){
+            mark.done(new PreprocessedLiteralElementType(GLSLLiteral.getLiteralType(tokenType()), getTokenText()));
+            consumePreprocessorTokens();
+            return true;
+        }
+
         final IElementType type = tokenType();
         if (type == IDENTIFIER) {
             final PsiBuilder.Marker mark2 = mark();

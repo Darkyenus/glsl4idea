@@ -90,8 +90,13 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
         }
     }
 
+    @NotNull
+    public String getLiteralValue(){
+        return getText();
+    }
+
     public String toString() {
         Type literalType = getLiteralType();
-        return (literalType == null ? "(unknown)" : getLiteralType().textRepresentation) + " Literal: '" + getText() + "'";
+        return (literalType == null ? "(unknown)" : getLiteralType().textRepresentation) + " Literal: '" + getLiteralValue() + "'";
     }
 }
