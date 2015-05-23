@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Darkyen
  */
-public class GLSLLiteralDropIn extends GLSLLiteral {
+public class GLSLLiteralDropIn extends GLSLLiteral implements GLSLElementDropIn {
 
     private Type type;
     private String text;
@@ -47,6 +47,12 @@ public class GLSLLiteralDropIn extends GLSLLiteral {
     @NotNull
     @Override
     public String getLiteralValue() {
+        return text;
+    }
+
+    @NotNull
+    @Override
+    public String getOriginalText() {
         return text;
     }
 }

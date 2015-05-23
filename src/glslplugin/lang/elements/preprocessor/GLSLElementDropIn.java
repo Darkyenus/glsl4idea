@@ -19,34 +19,17 @@
 
 package glslplugin.lang.elements.preprocessor;
 
-import com.intellij.lang.ASTNode;
-import glslplugin.lang.elements.expressions.GLSLExpression;
-import glslplugin.lang.elements.types.GLSLType;
-import glslplugin.lang.elements.types.GLSLTypes;
+import glslplugin.lang.elements.GLSLElement;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Darkyen
  */
-public class GLSLExpressionDropIn extends GLSLExpression implements GLSLElementDropIn {
-    public GLSLExpressionDropIn(@NotNull ASTNode astNode) {
-        super(astNode);
-    }
+public interface GLSLElementDropIn extends GLSLElement {
 
-    @Override
-    public boolean isLValue() {
-        return false;
-    }
-
+    /**
+     * @return text which this element emulates
+     */
     @NotNull
-    @Override
-    public GLSLType getType() {
-        return GLSLTypes.UNKNOWN_TYPE;
-    }
-
-    @NotNull
-    @Override
-    public String getOriginalText() {
-        return "TBD";//TODO Get and present real value
-    }
+    String getOriginalText();
 }
