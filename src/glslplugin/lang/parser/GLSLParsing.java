@@ -94,10 +94,18 @@ public final class GLSLParsing {
     private final static class PreprocessorDropIn {
         public final PreprocessorDropInType type;
         public final List<PreprocessorToken> tokens;
+        public final String text;
 
         private PreprocessorDropIn(PreprocessorDropInType type, List<PreprocessorToken> tokens) {
             this.type = type;
             this.tokens = tokens;
+            this.text = "";
+        }
+
+        private PreprocessorDropIn(PreprocessorDropInType type, List<PreprocessorToken> tokens, String text) {
+            this.type = type;
+            this.tokens = tokens;
+            this.text = text;
         }
 
         public static final PreprocessorDropIn EMPTY = new PreprocessorDropIn(PreprocessorDropInType.EMPTY, Collections.<PreprocessorToken>emptyList());
@@ -110,6 +118,11 @@ public final class GLSLParsing {
     private List<PreprocessorToken> preprocessorTokens = null;
     /** How far in preprocessorTokens is parser advanced. */
     private int preprocessorTokensIndex = -1;
+    /** Original text of `preprocessorTokens`. Used for UI and debug. */
+    private String preprocessorTokensText = null;
+    /** Value of preprocessorTokensText before calling consumePreprocessorTokens(). (For convenience) */
+    private String preprocessorTextOfConsumedTokens = null;
+
     private PreprocessorDropInType preprocessorTokensReplacementType = PreprocessorDropInType.UNKNOWN;
 
     /**
@@ -220,8 +233,9 @@ public final class GLSLParsing {
      */
     private void consumePreprocessorTokens(){
         if(preprocessorTokens != null){
-            preprocessorTokens = null;
-            psiBuilder.advanceLexer();
+            preprocessorTextOfConsumedTokens = preprocessorTokensText;
+            preprocessorTokensIndex = preprocessorTokens.size();
+            advanceLexer();
         }
     }
 
@@ -270,6 +284,7 @@ public final class GLSLParsing {
                     if (dropIn != null) {
                         preprocessorTokensReplacementType = dropIn.type;
                         final List<PreprocessorToken> tokens = dropIn.tokens;
+                        preprocessorTokensText = dropIn.text;
                         //This IDENTIFIER has been #define-d to tokens
                         psiBuilder.remapCurrentToken(new GLSLRedefinedTokenType(tokens));
 
@@ -413,17 +428,21 @@ public final class GLSLParsing {
                     }
                     defineMeaningMark.rollbackTo();
 
+                    final StringBuilder replacementText = new StringBuilder();
+
                     final ArrayList<PreprocessorToken> definedTokens = new ArrayList<PreprocessorToken>();
                     while (!isEof()) {
                         PreprocessorToken token = new PreprocessorToken(psiBuilder.getTokenType(), psiBuilder.getTokenText());
                         definedTokens.add(token);
+                        replacementText.append(psiBuilder.getTokenText()).append(' ');
                         psiBuilder.advanceLexer();
                         if (psiBuilder.getTokenType() == PREPROCESSOR_END) {
                             break;
                         }
                     }
 
-                    defines.put(defineIdentifier, new PreprocessorDropIn(meaning, definedTokens));
+                    final String replacementTextString = replacementText.length() == 0 ? "" : replacementText.substring(0, replacementText.length()-1);
+                    defines.put(defineIdentifier, new PreprocessorDropIn(meaning, definedTokens, replacementTextString));
                 }
 
                 //TODO Handle function-like defines
@@ -1191,7 +1210,7 @@ public final class GLSLParsing {
         PsiBuilder.Marker mark = mark();
 
         if(isTokenPreprocessorAlias(PreprocessorDropInType.CONDITIONAL_EXPRESSION)){
-            mark.done(PREPROCESSED_EXPRESSION);
+            mark.done(new PreprocessedExpressionElementType(preprocessorTextOfConsumedTokens));
             return true;
         }
 
@@ -1220,7 +1239,7 @@ public final class GLSLParsing {
         PsiBuilder.Marker mark = mark();
 
         if(isTokenPreprocessorAlias(PreprocessorDropInType.EXPRESSION)){
-            mark.done(PREPROCESSED_EXPRESSION);
+            mark.done(new PreprocessedExpressionElementType(preprocessorTextOfConsumedTokens));
             return true;
         }
 
