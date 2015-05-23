@@ -17,19 +17,36 @@
  *     along with glsl4idea.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package glslplugin.lang.parser;
+package glslplugin.lang.elements.preprocessor;
 
-import com.intellij.psi.tree.IElementType;
+import com.intellij.lang.ASTNode;
+import glslplugin.lang.elements.expressions.GLSLLiteral;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Darkyen
  */
-public class PreprocessorToken {
-    public final IElementType type;
-    public final String text;
+public class GLSLLiteralDropIn extends GLSLLiteral {
 
-    public PreprocessorToken(IElementType type, CharSequence text) {
+    private Type type;
+    private String text;
+
+    public GLSLLiteralDropIn(@NotNull ASTNode astNode, @NotNull Type type, @NotNull String text) {
+        super(astNode);
         this.type = type;
-        this.text = text.toString();
+        this.text = text;
+    }
+
+    @Nullable
+    @Override
+    public Type getLiteralType() {
+        return type;
+    }
+
+    @NotNull
+    @Override
+    public String getLiteralValue() {
+        return text;
     }
 }
