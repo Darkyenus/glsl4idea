@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.declarations.*;
 import glslplugin.lang.elements.expressions.*;
+import glslplugin.lang.elements.preprocessor.GLSLEmptyDropIn;
 import glslplugin.lang.elements.preprocessor.GLSLExpressionDropIn;
 import glslplugin.lang.elements.preprocessor.GLSLLiteralDropIn;
 import glslplugin.lang.elements.statements.*;
@@ -53,6 +54,7 @@ public class GLSLPsiElementFactory {
             GLSLElementTypes.PreprocessedLiteralElementType t = (GLSLElementTypes.PreprocessedLiteralElementType) type;
             return new GLSLLiteralDropIn(node, t.type, t.text);
         }
+        if (type == GLSLElementTypes.PREPROCESSED_EMPTY) return new GLSLEmptyDropIn(node);
 
         // translation unit
         if (type == GLSLElementTypes.TRANSLATION_UNIT) return new GLSLTranslationUnit(node);

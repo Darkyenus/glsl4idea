@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -83,6 +84,10 @@ public final class GLSLParsing {
         CONDITIONAL_EXPRESSION,
         EXPRESSION,
         LITERAL,
+        /**
+         * When #define defines empty replacement
+         */
+        EMPTY,
         UNKNOWN
     }
 
@@ -94,6 +99,8 @@ public final class GLSLParsing {
             this.type = type;
             this.tokens = tokens;
         }
+
+        public static final PreprocessorDropIn EMPTY = new PreprocessorDropIn(PreprocessorDropInType.EMPTY, Collections.<PreprocessorToken>emptyList());
     }
 
     private final HashMap<String, PreprocessorDropIn> defines = new HashMap<String, PreprocessorDropIn>();
@@ -218,37 +225,62 @@ public final class GLSLParsing {
         }
     }
 
-    private void advanceLexer() {
-        if(preprocessorTokens != null){
-            //In defined mode
-            //Go to next token
-            preprocessorTokensIndex++;
-            if(preprocessorTokensIndex >= preprocessorTokens.size()){
-                //At the end, jump out of preprocessor mode and advance real lexer instead
-                preprocessorTokens = null;
+    /**
+     * Advance lexer by one token.
+     *
+     * This goes through preprocessor-injected tokens,
+     * skips empty-injected tokens and parses more preprocessor directives.
+     */
+    private void advanceLexer(){
+        PsiBuilder.Marker emptyReplacementMarker = null;
+        int advances = 0;
+        do {
+            advances++;
+            if(advances == 2)emptyReplacementMarker = mark();
+
+            boolean advancedRealLexer = false;
+
+            if (preprocessorTokens != null) {
+                //In defined mode
+                //Go to next token
+                preprocessorTokensIndex++;
+                if (preprocessorTokensIndex >= preprocessorTokens.size()) {
+                    //At the end, jump out of preprocessor mode and advance real lexer instead
+                    preprocessorTokens = null;
+                    preprocessorTokensReplacementType = null;
+                    psiBuilder.advanceLexer();
+                    advancedRealLexer = true;
+                }
+            } else {
+                //Not in defined mode
                 psiBuilder.advanceLexer();
+                advancedRealLexer = true;
             }
-        }else{
-            //Not in defined mode
-            psiBuilder.advanceLexer();
-            IElementType tokenType = tokenType();
-            if (tokenType == PREPROCESSOR_BEGIN) {
-                parsePreprocessor();
-            }else if(tokenType == IDENTIFIER){
-                //It may be preprocessor defined identifier
-                final String text = psiBuilder.getTokenText();
-                final PreprocessorDropIn dropIn = defines.get(text);
 
-                if (dropIn != null) {
-                    preprocessorTokensReplacementType = dropIn.type;
-                    final List<PreprocessorToken> tokens = dropIn.tokens;
-                    //This IDENTIFIER has been #define-d to tokens
-                    psiBuilder.remapCurrentToken(new GLSLRedefinedTokenType(tokens));
+            if (advancedRealLexer) {
+                //Real lexer advanced, so check for directives and redefined tokens
+                IElementType tokenType = tokenType();
+                if (tokenType == PREPROCESSOR_BEGIN) {
+                    parsePreprocessor();
+                } else if (tokenType == IDENTIFIER) {
+                    //It may be preprocessor defined identifier
+                    final String text = psiBuilder.getTokenText();
+                    final PreprocessorDropIn dropIn = defines.get(text);
 
-                    preprocessorTokens = tokens;
-                    preprocessorTokensIndex = 0;
-                }// else There is nothing defined to this, continue normally
+                    if (dropIn != null) {
+                        preprocessorTokensReplacementType = dropIn.type;
+                        final List<PreprocessorToken> tokens = dropIn.tokens;
+                        //This IDENTIFIER has been #define-d to tokens
+                        psiBuilder.remapCurrentToken(new GLSLRedefinedTokenType(tokens));
+
+                        preprocessorTokens = tokens;
+                        preprocessorTokensIndex = 0;
+                    }// else There is nothing defined to this, continue normally
+                }
             }
+        } while (preprocessorTokensReplacementType == PreprocessorDropInType.EMPTY);
+        if(emptyReplacementMarker != null){
+            emptyReplacementMarker.done(PREPROCESSED_EMPTY);
         }
     }
 
@@ -354,40 +386,45 @@ public final class GLSLParsing {
                 final String defineIdentifier = psiBuilder.getTokenText();
                 psiBuilder.advanceLexer();//Get past identifier
 
-                PreprocessorDropInType meaning = PreprocessorDropInType.UNKNOWN;
-                PsiBuilder.Marker defineMeaningMark = mark();
+                if(psiBuilder.getTokenType() == PREPROCESSOR_END){
+                    defines.put(defineIdentifier, PreprocessorDropIn.EMPTY);
+                } else {
+                    PreprocessorDropInType meaning = PreprocessorDropInType.UNKNOWN;
 
-                if(CONSTANT_TOKENS.contains(tokenType()) && lookAhead(1) == PREPROCESSOR_END){
-                    meaning = PreprocessorDropInType.LITERAL;
-                }
+                    PsiBuilder.Marker defineMeaningMark = mark();
 
-                if(meaning == PreprocessorDropInType.UNKNOWN && parseConditionalExpression()){
-                    if(psiBuilder.getTokenType() == PREPROCESSOR_END){
-                        //It is only a constant expression
-                        meaning = PreprocessorDropInType.CONDITIONAL_EXPRESSION;
+                    if(CONSTANT_TOKENS.contains(tokenType()) && lookAhead(1) == PREPROCESSOR_END){
+                        meaning = PreprocessorDropInType.LITERAL;
                     }
-                }
-                defineMeaningMark.rollbackTo();defineMeaningMark = mark();
 
-                if(meaning == PreprocessorDropInType.UNKNOWN && parseExpression()){
-                    if(psiBuilder.getTokenType() == PREPROCESSOR_END){
-                        //It is any expression
-                        meaning = PreprocessorDropInType.EXPRESSION;
+                    if(meaning == PreprocessorDropInType.UNKNOWN && parseConditionalExpression()){
+                        if(psiBuilder.getTokenType() == PREPROCESSOR_END){
+                            //It is only a constant expression
+                            meaning = PreprocessorDropInType.CONDITIONAL_EXPRESSION;
+                        }
                     }
-                }
-                defineMeaningMark.rollbackTo();
+                    defineMeaningMark.rollbackTo();defineMeaningMark = mark();
 
-                final ArrayList<PreprocessorToken> definedTokens = new ArrayList<PreprocessorToken>();
-                while (!isEof()) {
-                    PreprocessorToken token = new PreprocessorToken(psiBuilder.getTokenType(), psiBuilder.getTokenText());
-                    definedTokens.add(token);
-                    psiBuilder.advanceLexer();
-                    if (psiBuilder.getTokenType() == PREPROCESSOR_END) {
-                        break;
+                    if(meaning == PreprocessorDropInType.UNKNOWN && parseExpression()){
+                        if(psiBuilder.getTokenType() == PREPROCESSOR_END){
+                            //It is any expression
+                            meaning = PreprocessorDropInType.EXPRESSION;
+                        }
                     }
-                }
+                    defineMeaningMark.rollbackTo();
 
-                defines.put(defineIdentifier, new PreprocessorDropIn(meaning, definedTokens));
+                    final ArrayList<PreprocessorToken> definedTokens = new ArrayList<PreprocessorToken>();
+                    while (!isEof()) {
+                        PreprocessorToken token = new PreprocessorToken(psiBuilder.getTokenType(), psiBuilder.getTokenText());
+                        definedTokens.add(token);
+                        psiBuilder.advanceLexer();
+                        if (psiBuilder.getTokenType() == PREPROCESSOR_END) {
+                            break;
+                        }
+                    }
+
+                    defines.put(defineIdentifier, new PreprocessorDropIn(meaning, definedTokens));
+                }
 
                 //TODO Handle function-like defines
             }else{

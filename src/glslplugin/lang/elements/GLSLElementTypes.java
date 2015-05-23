@@ -147,4 +147,5 @@ public class GLSLElementTypes {
             this.text = text;
         }
     }
+    public static final IElementType PREPROCESSED_EMPTY = new GLSLElementType("PREPROCESSED_EMPTY");
 }
