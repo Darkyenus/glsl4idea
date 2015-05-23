@@ -21,6 +21,7 @@ package glslplugin.lang.elements;
 
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLElement is ...
@@ -31,14 +32,22 @@ import com.intellij.psi.PsiElement;
  */
 public interface GLSLElement extends NavigatablePsiElement {
 
+    /**
+     * @return the parent if the parent is of the given class or null otherwise
+     */
+    @Nullable
     <T extends GLSLElement> T findParentByClass(Class<T> clazz);
 
+    /**
+     * @return the parent if the parent is one of the given classes or null otherwise
+     */
+    @Nullable
     GLSLElement findParentByClasses(Class<? extends GLSLElement>... clazzes);
 
     /**
-     * Checks whether this is a descendant of elt.
-     * That is; if elt is an ancestor of this.
-     * Loops through the parent chains and reports whether or not elt is found.
+     * Checks whether this is a descendant of element.
+     * That is; if element is an ancestor of this.
+     * Loops through the parent chains and reports whether or not element is found.
      *
      * @param ancestor the proposed ancestor of this.
      * @return true if ancestor is indeed the ancestor of this, false otherwise.

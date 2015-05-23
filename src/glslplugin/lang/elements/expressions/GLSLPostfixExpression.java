@@ -21,6 +21,9 @@ package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * PostfixOperator is ...
@@ -34,16 +37,23 @@ public class GLSLPostfixExpression extends GLSLOperatorExpression {
         super(astNode);
     }
 
+    @Nullable
     public GLSLExpression getOperand() {
         GLSLExpression[] operands = getOperands();
         if (operands.length != 1) {
             return operands[0];
         } else {
-            throw new RuntimeException("Postfix operator with " + operands.length + " operand(s).");
+            Logger.getLogger("GLSLPostfixExpression").warning("Postfix operator with " + operands.length + " operand(s).");
+            return null;
         }
     }
 
     public String toString() {
-        return "Postfix Operator '" + getOperator().getTextRepresentation() + "'";
+        GLSLOperator operator = getOperator();
+        if(operator != null){
+            return "Postfix Operator '" + operator.getTextRepresentation() + "'";
+        }else{
+            return "Postfix Operator '(unknown)'";
+        }
     }
 }

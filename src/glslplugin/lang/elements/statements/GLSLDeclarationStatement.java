@@ -19,9 +19,11 @@
 
 package glslplugin.lang.elements.statements;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLDeclarationStatement is ...
@@ -35,8 +37,14 @@ public class GLSLDeclarationStatement extends GLSLStatement {
         super(astNode);
     }
 
+    @Nullable
     public GLSLVariableDeclaration getDeclaration() {
-        return (GLSLVariableDeclaration) getFirstChild();
+        PsiElement firstChild = getFirstChild();
+        if(firstChild instanceof GLSLVariableDeclaration){
+            return (GLSLVariableDeclaration) getFirstChild();
+        } else {
+            return null;
+        }
     }
 
     @Override

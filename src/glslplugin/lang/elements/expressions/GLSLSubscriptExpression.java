@@ -23,6 +23,9 @@ import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * GLSLSubscriptExpression is ...
@@ -36,27 +39,23 @@ public class GLSLSubscriptExpression extends GLSLOperatorExpression {
         super(node);
     }
 
+    @Nullable
     public GLSLExpression getArrayExpression() {
         GLSLExpression[] operands = getOperands();
         if (operands.length == 2) {
             return operands[0];
         } else {
-            throw new RuntimeException("Binary operator with " + operands.length + " operand(s).");
-        }
-    }
-
-    public GLSLExpression getSubscriptExpression() {
-        GLSLExpression[] operands = getOperands();
-        if (operands.length == 2) {
-            return operands[0];
-        } else {
-            throw new RuntimeException("Binary operator with " + operands.length + " operand(s).");
+            Logger.getLogger("GLSLSubscriptExpression").warning("Binary operator with " + operands.length + " operand(s).");
+            return null;
         }
     }
 
     @Override
     public boolean isLValue() {
-        return getArrayExpression().isLValue();
+        GLSLExpression arrExpr = getArrayExpression();
+        //noinspection SimplifiableIfStatement
+        if(arrExpr != null)return arrExpr.isLValue();
+        else return true;
     }
 
     @Override
@@ -68,6 +67,7 @@ public class GLSLSubscriptExpression extends GLSLOperatorExpression {
     @Override
     public GLSLType getType() {
         GLSLExpression left = getArrayExpression();
+        if(left == null)return GLSLTypes.UNKNOWN_TYPE;
         GLSLType type = left.getType();
         if (type != GLSLTypes.UNKNOWN_TYPE) {
             if (type.isIndexable()) {

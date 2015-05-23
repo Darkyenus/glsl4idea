@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * GLSLParameterList is ...
@@ -43,6 +44,7 @@ public class GLSLParameterList extends GLSLElementImpl implements Iterable<GLSLE
         super(astNode);
     }
 
+    @NotNull
     public GLSLExpression[] getParameters() {
         // convert the list of children to a list of GLSLStatement objects while performing sanity check.
         PsiElement[] children = getChildren();
@@ -55,7 +57,7 @@ public class GLSLParameterList extends GLSLElementImpl implements Iterable<GLSLE
                 if (node != null) {
                     final IElementType type = node.getElementType();
                     if (!GLSLTokenTypes.COMMENTS.contains(type)) {
-                        throw new RuntimeException("Parameter list contains non-comment, non-expression element.");
+                        Logger.getLogger("GLSLParameterList").warning("Parameter list contains non-comment, non-expression element.");
                     }
                 }
             }
@@ -63,6 +65,7 @@ public class GLSLParameterList extends GLSLElementImpl implements Iterable<GLSLE
         return result.toArray(new GLSLExpression[result.size()]);
     }
 
+    @NotNull
     public GLSLType[] getParameterTypes() {
         // convert the list of children to a list of GLSLStatement objects while performing sanity check.
         PsiElement[] children = getChildren();
@@ -75,7 +78,7 @@ public class GLSLParameterList extends GLSLElementImpl implements Iterable<GLSLE
                 if (node != null) {
                     final IElementType type = node.getElementType();
                     if (!GLSLTokenTypes.COMMENTS.contains(type)) {
-                        throw new RuntimeException("Parameter list contains non-comment, non-expression element.");
+                        Logger.getLogger("GLSLParameterList").warning("Parameter list contains non-comment, non-expression element.");
                     }
                 }
             }

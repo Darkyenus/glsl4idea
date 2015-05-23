@@ -35,8 +35,6 @@ public class GLSLBreakStatement extends GLSLStatement {
         super(astNode);
     }
 
-    // TODO: Implement
-
     @Override
     public String toString() {
         return "Break Statement";

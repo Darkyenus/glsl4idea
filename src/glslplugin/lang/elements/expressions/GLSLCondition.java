@@ -47,16 +47,16 @@ public class GLSLCondition extends GLSLElementImpl implements GLSLTypedElement {
         return null;
     }
 
-    public GLSLExpression getConditionExpression()
-    {
+    @Nullable
+    public GLSLExpression getConditionExpression() {
         GLSLDeclarator declarator = getDeclarator();
         if(declarator != null)
             return declarator.getInitializerExpression();
         return findChildByClass(GLSLExpression.class);
     }
-    
-    public GLSLVariableDeclaration getVariableDeclaration()
-    {
+
+    @Nullable
+    public GLSLVariableDeclaration getVariableDeclaration() {
         return findChildByClass(GLSLVariableDeclaration.class);
     }
 
@@ -69,7 +69,12 @@ public class GLSLCondition extends GLSLElementImpl implements GLSLTypedElement {
             if(typeSpecifier != null) return typeSpecifier.getType();
             else return GLSLTypes.UNKNOWN_TYPE;
         }
-        
-        return getConditionExpression().getType();
+
+        GLSLExpression conditionExpression = getConditionExpression();
+        if(conditionExpression == null){
+            return GLSLTypes.UNKNOWN_TYPE;
+        }else{
+            return conditionExpression.getType();
+        }
     }
 }

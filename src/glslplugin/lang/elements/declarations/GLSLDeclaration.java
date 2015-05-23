@@ -31,6 +31,8 @@ import org.jetbrains.annotations.NotNull;
  *         Time: 12:39:33 AM
  */
 public interface GLSLDeclaration extends GLSLElement {
+    GLSLDeclaration[] NO_DECLARATIONS = new GLSLDeclaration[0];
+
     GLSLTypeSpecifier getTypeSpecifierNode();
 
     GLSLQualifierList getQualifierList();

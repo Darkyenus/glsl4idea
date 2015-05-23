@@ -22,6 +22,7 @@ package glslplugin.lang.elements.declarations;
 import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 
@@ -42,8 +43,9 @@ public class GLSLDeclaratorList extends GLSLElementImpl implements Iterable<GLSL
         return findChildrenByClass(GLSLDeclarator.class);
     }
 
+    @Nullable
     public GLSLVariableDeclaration getParentDeclaration() {
-        return (GLSLVariableDeclaration) getParent();
+        return findParentByClass(GLSLVariableDeclaration.class);
     }
 
     @Override

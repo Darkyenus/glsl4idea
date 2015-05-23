@@ -34,6 +34,7 @@ import java.util.List;
  */
 public abstract class GLSLFunctionType extends GLSLType {
     public static final GLSLFunctionType[] EMPTY_ARRAY = {};
+
     protected final GLSLType returnType;
     protected String typename;
     @NotNull
