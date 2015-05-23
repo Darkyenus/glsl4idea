@@ -135,7 +135,15 @@ public class GLSLElementTypes {
     public static final IElementType CONDITION = new GLSLElementType("CONDITION");
 
     //Preprocessor dropins
-    public static final IElementType PREPROCESSED_EXPRESSION = new GLSLElementType("PREPROCESSED_EXPRESSION");
+    public static final class PreprocessedExpressionElementType extends GLSLElementType {
+
+        public final String text;
+
+        public PreprocessedExpressionElementType(String text) {
+            super("PREPROCESSED_EXPRESSION");
+            this.text = text;
+        }
+    }
     public static final class PreprocessedLiteralElementType extends GLSLElementType {
 
         public final GLSLLiteral.Type type;

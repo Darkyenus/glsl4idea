@@ -49,7 +49,10 @@ public class GLSLPsiElementFactory {
         IElementType type = node.getElementType();
 
         // preprocessor shortcuts
-        if (type == GLSLElementTypes.PREPROCESSED_EXPRESSION) return new GLSLExpressionDropIn(node);
+        if (type instanceof GLSLElementTypes.PreprocessedExpressionElementType){
+            GLSLElementTypes.PreprocessedExpressionElementType t = (GLSLElementTypes.PreprocessedExpressionElementType) type;
+            return new GLSLExpressionDropIn(node, t.text);
+        }
         if (type instanceof GLSLElementTypes.PreprocessedLiteralElementType){
             GLSLElementTypes.PreprocessedLiteralElementType t = (GLSLElementTypes.PreprocessedLiteralElementType) type;
             return new GLSLLiteralDropIn(node, t.type, t.text);

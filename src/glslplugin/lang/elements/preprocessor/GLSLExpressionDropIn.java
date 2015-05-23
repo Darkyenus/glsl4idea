@@ -29,8 +29,12 @@ import org.jetbrains.annotations.NotNull;
  * @author Darkyen
  */
 public class GLSLExpressionDropIn extends GLSLExpression implements GLSLElementDropIn {
-    public GLSLExpressionDropIn(@NotNull ASTNode astNode) {
+
+    private final String originalText;
+
+    public GLSLExpressionDropIn(@NotNull ASTNode astNode, @NotNull String originalText) {
         super(astNode);
+        this.originalText = originalText;
     }
 
     @Override
@@ -47,6 +51,6 @@ public class GLSLExpressionDropIn extends GLSLExpression implements GLSLElementD
     @NotNull
     @Override
     public String getOriginalText() {
-        return "TBD";//TODO Get and present real value
+        return originalText;
     }
 }
