@@ -36,7 +36,7 @@ public class GLSLTemplatesLoader implements ApplicationComponent {
     }
 
     public void initComponent() {
-        FileTemplateManager fileTemplateManager = FileTemplateManager.getInstance();
+        FileTemplateManager fileTemplateManager = FileTemplateManager.getDefaultInstance();
 
         if (fileTemplateManager.getTemplate("GLSL Shader") == null) {
             final FileTemplate template = fileTemplateManager.addTemplate("GLSL Shader", "glsl");
@@ -46,7 +46,7 @@ public class GLSLTemplatesLoader implements ApplicationComponent {
     }
 
     public void disposeComponent() {
-        FileTemplateManager fileTemplateManager = FileTemplateManager.getInstance();
+        FileTemplateManager fileTemplateManager = FileTemplateManager.getDefaultInstance();
 
         FileTemplate template = fileTemplateManager.getTemplate("GLSL Shader");
         if (template != null) {

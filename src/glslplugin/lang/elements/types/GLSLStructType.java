@@ -56,6 +56,7 @@ public class GLSLStructType extends GLSLType {
         }
     }
 
+    @NotNull
     public String getTypename() {
         return typename;
     }

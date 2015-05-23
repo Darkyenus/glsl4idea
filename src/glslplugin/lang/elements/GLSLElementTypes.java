@@ -25,7 +25,7 @@ import com.intellij.psi.tree.IFileElementType;
 import glslplugin.lang.GLSLLanguage;
 
 public class GLSLElementTypes {
-    public static final IFileElementType FILE = new IFileElementType(Language.<GLSLLanguage>findInstance(GLSLLanguage.class));
+    public static final IFileElementType FILE = new IFileElementType(Language.findInstance(GLSLLanguage.class));
     public static final IElementType TRANSLATION_UNIT = new GLSLElementType("TRANSLATION_UNIT");
     public static final IElementType BLOCK = new GLSLElementType("BLOCK");
 

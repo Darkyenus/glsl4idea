@@ -139,12 +139,14 @@ public class GLSLMatrixType extends GLSLType {
     }
 
     @Override
+    @NotNull
     public String getTypename() {
         String prefix = PREFIXES.get(fundamentalType);
         if (prefix == null) prefix = "mat";
         return prefix + numColumns + "x" + numRows;
     }
 
+    @NotNull
     @Override
     public GLSLType getBaseType() {
         return GLSLVectorType.getType(numColumns, GLSLPrimitiveType.FLOAT);

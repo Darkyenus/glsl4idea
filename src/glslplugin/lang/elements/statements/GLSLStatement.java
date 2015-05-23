@@ -20,7 +20,6 @@
 package glslplugin.lang.elements.statements;
 
 import com.intellij.lang.ASTNode;
-import glslplugin.annotation.impl.UnreachableAnnotation;
 import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
 

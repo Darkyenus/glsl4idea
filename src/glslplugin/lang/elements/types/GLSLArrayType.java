@@ -21,6 +21,7 @@ package glslplugin.lang.elements.types;
 
 import glslplugin.lang.elements.declarations.GLSLArraySpecifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class GLSLArrayType extends GLSLType {
     private GLSLArraySpecifier arraySpecifier;
     private Map<String, GLSLFunctionType> methods = new HashMap<String, GLSLFunctionType>();
 
-    public GLSLArrayType(@NotNull GLSLType baseType, GLSLArraySpecifier arraySpecifier) {
+    public GLSLArrayType(@NotNull GLSLType baseType, @Nullable GLSLArraySpecifier arraySpecifier) {
         this.baseType = baseType;
         this.arraySpecifier = arraySpecifier;
         this.methods.put("length", new GLSLBasicFunctionType("length", baseType));
@@ -55,11 +56,13 @@ public class GLSLArrayType extends GLSLType {
     }
 
     @Override
+    @Nullable
     public GLSLArraySpecifier getArraySpecifier() {
         return arraySpecifier;
     }
 
     @Override
+    @NotNull
     public Map<String, GLSLFunctionType> getMethods() {
         return methods;
     }

@@ -24,10 +24,7 @@ import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLTypeSpecifier;
 import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
-import glslplugin.lang.elements.expressions.GLSLBinaryOperatorExpression;
 import glslplugin.lang.elements.expressions.GLSLExpression;
-import glslplugin.lang.elements.expressions.GLSLOperator;
-import glslplugin.lang.elements.types.GLSLFunctionType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypeCompatibilityLevel;
 import org.jetbrains.annotations.NotNull;
@@ -45,11 +42,14 @@ public class DeclarationAssignmentTypeAnnotation extends Annotator<GLSLVariableD
 
     @Override
     public void annotate(GLSLVariableDeclaration expr, AnnotationHolder holder) {
-        final GLSLType variableType = expr.getTypeSpecifierNode().getType();
+        GLSLTypeSpecifier typeSpecifier = expr.getTypeSpecifierNode();
+        if(typeSpecifier == null)return;//There are bigger problems than type compatibility
+
+        final GLSLType variableType = typeSpecifier.getType();
         if(!variableType.isValidType())return;
         for(final GLSLDeclarator declarator:expr.getDeclarators()){
-            if(declarator.hasInitializer()){
-                final GLSLExpression initializer = declarator.getInitializerExpression();
+            final GLSLExpression initializer = declarator.getInitializerExpression();
+            if(initializer != null){
                 final GLSLType assignedType = initializer.getType();
                 if(!assignedType.isValidType())continue;
                 if(GLSLTypeCompatibilityLevel.getCompatibilityLevel(assignedType, variableType) == GLSLTypeCompatibilityLevel.INCOMPATIBLE){

@@ -22,6 +22,7 @@ package glslplugin.annotation.impl;
 import com.intellij.lang.annotation.AnnotationHolder;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
 import glslplugin.lang.elements.types.GLSLStructType;
 import glslplugin.lang.elements.types.GLSLType;
@@ -29,10 +30,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class MemberCheckAnnotation extends Annotator<GLSLFieldSelectionExpression> {
     public void annotate(GLSLFieldSelectionExpression expr, AnnotationHolder holder) {
-        GLSLType leftHandType = expr.getLeftHandExpression().getType();
+        GLSLExpression leftHandExpression = expr.getLeftHandExpression();
+        if(leftHandExpression == null)return;
+
+        GLSLType leftHandType = leftHandExpression.getType();
 
         if (leftHandType instanceof GLSLStructType) {
             GLSLIdentifier memberIdentifier = expr.getMemberIdentifier();
+            if(memberIdentifier == null)return;
             GLSLType memberType = leftHandType.getMembers().get(memberIdentifier.getIdentifierName());
             if (memberType == null) {
                 holder.createErrorAnnotation(memberIdentifier, "Unknown member for " + leftHandType.getTypename());

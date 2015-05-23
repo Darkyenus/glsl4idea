@@ -23,6 +23,6 @@ import com.intellij.lexer.FlexAdapter;
 
 public class GLSLFlexAdapter extends FlexAdapter {
     public GLSLFlexAdapter() {
-        super(new GLSLFlexLexer((java.io.Reader) null));
+        super(new GLSLFlexLexer(null));
     }
 }

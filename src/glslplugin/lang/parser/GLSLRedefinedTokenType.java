@@ -29,7 +29,7 @@ import java.util.List;
  */
 public final class GLSLRedefinedTokenType extends IElementType {
 
-    private final List<PreprocessorToken> redefinedTo;
+    public final List<PreprocessorToken> redefinedTo;
 
     protected GLSLRedefinedTokenType(List<PreprocessorToken> redefinedTo) {
         super("GLSLRedefinedToken", GLSLLanguage.GLSL_LANGUAGE, false);
