@@ -39,6 +39,7 @@ public class GLSLQualifierList extends GLSLElementImpl implements Iterable<GLSLQ
         super(astNode);
     }
 
+    @NotNull
     public GLSLQualifier[] getQualifiers() {
         return findChildrenByClass(GLSLQualifier.class);
     }

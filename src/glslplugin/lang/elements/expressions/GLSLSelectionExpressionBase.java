@@ -22,6 +22,9 @@ package glslplugin.lang.elements.expressions;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * GLSLSelectionExpressionBase is ...
@@ -35,12 +38,14 @@ public abstract class GLSLSelectionExpressionBase extends GLSLExpression {
         super(astNode);
     }
 
+    @Nullable
     public GLSLExpression getLeftHandExpression() {
         PsiElement first = getFirstChild();
         if (first instanceof GLSLExpression) {
             return (GLSLExpression) first;
         } else {
-            throw new RuntimeException("Field selection operator missing postfix expression in front of '.'");
+            Logger.getLogger("GLSLSelectionExpressionBase").warning("Field selection operator missing postfix expression in front of '.'");
+            return null;
         }
     }
 }

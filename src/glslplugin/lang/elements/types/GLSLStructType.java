@@ -21,6 +21,7 @@ package glslplugin.lang.elements.types;
 
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -79,11 +80,13 @@ public class GLSLStructType extends GLSLType {
 
     }
 
+    @NotNull
     @Override
     public Map<String, GLSLType> getMembers() {
         return members;
     }
 
+    @NotNull
     @Override
     public GLSLType[] getMemberTypes() {
         return memberTypes;
@@ -94,6 +97,7 @@ public class GLSLStructType extends GLSLType {
         return true;
     }
 
+    @NotNull
     @Override
     public GLSLFunctionType[] getConstructors() {
         return new GLSLFunctionType[]{

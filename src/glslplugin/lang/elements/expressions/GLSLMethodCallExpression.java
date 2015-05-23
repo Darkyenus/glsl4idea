@@ -19,12 +19,13 @@
 
 package glslplugin.lang.elements.expressions;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import glslplugin.lang.elements.expressions.GLSLSelectionExpressionBase;
-import glslplugin.lang.elements.expressions.GLSLParameterList;
 import glslplugin.lang.elements.GLSLIdentifier;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * GLSLMethodCall is ...
@@ -38,22 +39,35 @@ public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase {
         super(astNode);
     }
 
+    @Nullable
     public GLSLIdentifier getMethodIdentifier() {
         GLSLIdentifier id = findChildByClass(GLSLIdentifier.class);
         if (id != null) {
             return id;
         } else {
-            throw new RuntimeException("Method call expression with no method identifier.");
+            Logger.getLogger("GLSLMethodCallExpression").warning("Method call expression with no method identifier.");
+            return null;
         }
     }
 
+    @NotNull
     public String getMethodName() {
-        return getMethodIdentifier().getIdentifierName();
+        GLSLIdentifier methodIdentifier = getMethodIdentifier();
+        if(methodIdentifier != null){
+            return methodIdentifier.getIdentifierName();
+        }else{
+            return "(unknown)";
+        }
     }
 
+    @Nullable
     public GLSLParameterList getParameterList() {
         final PsiElement last = getLastChild();
-        return (GLSLParameterList) last;
+        if(last instanceof GLSLParameterList){
+            return (GLSLParameterList) last;
+        }else{
+            return null;
+        }
     }
 
     @Override

@@ -22,6 +22,9 @@ package glslplugin.lang.elements.expressions;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * PostfixOperator is ...
@@ -35,12 +38,14 @@ public class GLSLPrefixOperatorExpression extends GLSLOperatorExpression {
         super(astNode);
     }
 
+    @Nullable
     public GLSLExpression getOperand() {
         GLSLExpression[] operands = getOperands();
         if (operands.length != 1) {
             return operands[0];
         } else {
-            throw new RuntimeException("Prefix operator with " + operands.length + " operand(s).");
+            Logger.getLogger("GLSLPrefixOperatorExpression").warning("Prefix operator with " + operands.length + " operand(s).");
+            return null;
         }
     }
 
@@ -51,6 +56,7 @@ public class GLSLPrefixOperatorExpression extends GLSLOperatorExpression {
      * @return the resulting operator.
      */
     @Override
+    @Nullable
     protected GLSLOperator getOperatorFromType(IElementType type) {
         GLSLOperator op = super.getOperatorFromType(type);
         if (op == GLSLOperator.ADDITION) op = GLSLOperator.PLUS;
@@ -59,6 +65,11 @@ public class GLSLPrefixOperatorExpression extends GLSLOperatorExpression {
     }
 
     public String toString() {
-        return "Prefix Operator '" + getOperator().getTextRepresentation() + "'";
+        GLSLOperator operator = getOperator();
+        if(operator != null){
+            return "Prefix Operator '" + operator.getTextRepresentation() + "'";
+        }else{
+            return "Prefix Operator '(unknown)'";
+        }
     }
 }

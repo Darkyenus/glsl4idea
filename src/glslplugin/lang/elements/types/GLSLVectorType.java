@@ -250,6 +250,7 @@ public class GLSLVectorType extends GLSLType {
         return null;
     }
 
+    @NotNull
     @Override
     public Map<String, GLSLType> getMembers() {
         return members;
@@ -260,6 +261,7 @@ public class GLSLVectorType extends GLSLType {
         return true;
     }
 
+    @NotNull
     @Override
     public GLSLFunctionType[] getConstructors() {
         return new GLSLFunctionType[]{

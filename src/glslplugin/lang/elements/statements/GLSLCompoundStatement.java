@@ -44,7 +44,7 @@ public class GLSLCompoundStatement extends GLSLStatement {
     @NotNull
     public GLSLStatement[] getStatements() {
         GLSLStatement[] statements = PsiTreeUtil.getChildrenOfType(this, GLSLStatement.class);
-        return (statements == null) ? new GLSLStatement[0] : statements;
+        return (statements == null) ? GLSLStatement.NO_STATEMENTS : statements;
     }
 
     public String toString() {

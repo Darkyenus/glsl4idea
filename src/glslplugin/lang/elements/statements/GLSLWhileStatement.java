@@ -22,6 +22,7 @@ package glslplugin.lang.elements.statements;
 import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.expressions.GLSLCondition;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLDeclarationStatement is ...
@@ -35,14 +36,14 @@ public class GLSLWhileStatement extends GLSLStatement implements ConditionStatem
         super(astNode);
     }
 
+    @Nullable
     public GLSLCondition getCondition() {
         return findChildByClass(GLSLCondition.class);
     }
-    
-    GLSLStatement getLoopStatement() {
-        GLSLStatement loop = findChildByClass(GLSLStatement.class);
-        assert loop != null;
-        return loop;
+
+    @Nullable
+    public GLSLStatement getLoopStatement() {
+        return findChildByClass(GLSLStatement.class);
     }
 
     @Override

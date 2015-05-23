@@ -154,6 +154,7 @@ public class GLSLMatrixType extends GLSLType {
         return numColumns * numRows;
     }
 
+    @NotNull
     @Override
     public GLSLFunctionType[] getConstructors() {
         return new GLSLFunctionType[]{

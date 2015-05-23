@@ -21,6 +21,8 @@ package glslplugin.lang.elements.types;
 
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.declarations.GLSLArraySpecifier;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +44,7 @@ public abstract class GLSLType {
     /**
      * @return the text representation of this type.
      */
+    @NotNull
     public abstract String getTypename();
 
     /**
@@ -49,6 +52,7 @@ public abstract class GLSLType {
      *
      * @return the array specifier, null if it is not present.
      */
+    @Nullable
     public GLSLArraySpecifier getArraySpecifier() {
         return null;
     }
@@ -67,6 +71,7 @@ public abstract class GLSLType {
      *
      * @return the type this type is based on, null if this is a primitive type or a struct.
      */
+    @NotNull
     public GLSLType getBaseType() {
         return GLSLTypes.INVALID_TYPE;
     }
@@ -78,6 +83,7 @@ public abstract class GLSLType {
      *
      * @return the definition of this type.
      */
+    @Nullable
     public GLSLElement getDefinition() {
         return null;
     }
@@ -108,14 +114,17 @@ public abstract class GLSLType {
     /**
      * @return a set containing all the names of the members of this type.
      */
+    @NotNull
     public Set<String> getMemberNames() {
         return getMembers().keySet();
     }
 
+    @NotNull
     public Map<String, GLSLType> getMembers() {
         return EMPTY_MEMBER_MAP;
     }
 
+    @NotNull
     public GLSLType[] getMemberTypes() {
         return GLSLType.EMPTY_ARRAY;
     }
@@ -134,8 +143,9 @@ public abstract class GLSLType {
      * Fetches the type of the member of the specified name.
      *
      * @param name the name to get the type of.
-     * @return the type if found, null otherwise.
+     * @return the type if found, {@link GLSLTypes#INVALID_TYPE} otherwise.
      */
+    @NotNull
     public GLSLType getTypeOfMember(String name) {
         if (getMembers().containsKey(name)) {
             return getMembers().get(name);
@@ -158,6 +168,7 @@ public abstract class GLSLType {
      *
      * @return an array containing all the constructors of this type.
      */
+    @NotNull
     public GLSLFunctionType[] getConstructors() {
         // All types has a type constructor which takes itself as an argument.
         return new GLSLFunctionType[]{new GLSLBasicFunctionType(getTypename(), this, this)};
@@ -168,6 +179,7 @@ public abstract class GLSLType {
      *
      * @return an array containing all the methods of this
      */
+    @NotNull
     public Map<String, GLSLFunctionType> getMethods() {
         return EMPTY_METHOD_MAP;
     }

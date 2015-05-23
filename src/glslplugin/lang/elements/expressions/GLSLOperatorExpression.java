@@ -23,6 +23,9 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * GLSLOperatorExpression is the base class for all operator expressions.
@@ -37,20 +40,23 @@ public abstract class GLSLOperatorExpression extends GLSLExpression {
         super(astNode);
     }
 
+    @NotNull
     protected GLSLExpression[] getOperands() {
         return findChildrenByClass(GLSLExpression.class);
     }
 
+    @Nullable
     public GLSLOperator getOperator() {
         ASTNode operatorNode = getNode().findChildByType(GLSLTokenTypes.OPERATORS);
         if (operatorNode != null) {
             return getOperatorFromType(operatorNode.getElementType());
         } else {
-            throw new RuntimeException("Operator does not contain an operator token.");
+            Logger.getLogger("GLSLOperatorExpression").warning("Operator does not contain an operator token.");
+            return null;
         }
     }
 
-    @NotNull
+    @Nullable
     protected GLSLOperator getOperatorFromType(final IElementType type) {
         if (type == GLSLTokenTypes.INC_OP) return GLSLOperator.INCREMENT;
         if (type == GLSLTokenTypes.DEC_OP) return GLSLOperator.DECREMENT;
@@ -93,6 +99,7 @@ public abstract class GLSLOperatorExpression extends GLSLExpression {
 
         if (type == GLSLTokenTypes.DOT) return GLSLOperator.MEMBER;
 
-        throw new RuntimeException("Unsupported Operator: '" + getText() + "'");
+        Logger.getLogger("Unsupported Operator: '" + getText() + "'");
+        return null;
     }
 }

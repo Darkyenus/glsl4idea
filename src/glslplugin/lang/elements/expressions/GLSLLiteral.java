@@ -25,6 +25,9 @@ import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * GLSLLiteral is ...
@@ -55,6 +58,7 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
         super(astNode);
     }
 
+    @Nullable
     public Type getLiteralType() {
         IElementType type = getNode().getFirstChildNode().getElementType();
         if (type == GLSLTokenTypes.BOOL_CONSTANT) return Type.BOOL;
@@ -63,16 +67,23 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
         if (type == GLSLTokenTypes.FLOAT_CONSTANT) return Type.FLOAT;
         if (type == GLSLTokenTypes.DOUBLE_CONSTANT) return Type.DOUBLE;
 
-        throw new RuntimeException("Unsupported literal type.");
-    }
-
-    public String toString() {
-        return getLiteralType().textRepresentation + " Literal: '" + getText() + "'";
+        Logger.getLogger("GLSLLiteral").warning("Unsupported literal type. ("+type+")");
+        return null;
     }
 
     @NotNull
     @Override
     public GLSLType getType() {
-        return getLiteralType().type;
+        Type literalType = getLiteralType();
+        if(literalType != null){
+            return literalType.type;
+        }else{
+            return GLSLTypes.UNKNOWN_TYPE;
+        }
+    }
+
+    public String toString() {
+        Type literalType = getLiteralType();
+        return (literalType == null ? "(unknown)" : getLiteralType().textRepresentation) + " Literal: '" + getText() + "'";
     }
 }

@@ -34,8 +34,6 @@ public class GLSLDiscardStatement extends GLSLStatement {
         super(astNode);
     }
 
-    // TODO: Implement
-
     @Override
     public String toString() {
         return "Discard Statement";

@@ -24,6 +24,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import glslplugin.lang.parser.GLSLFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement {
 
@@ -38,14 +39,16 @@ public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement
 
 
     ////////////////////////////
-    // Utility methods.
+    // Utility methods
 
-    public <T extends GLSLElement> T findParentByClass(Class<T> clazz) {
+    @Nullable
+    public final <T extends GLSLElement> T findParentByClass(Class<T> clazz) {
         //noinspection unchecked
         return clazz.cast(findParentByClasses(clazz));
     }
 
-    public GLSLElement findParentByClasses(Class<? extends GLSLElement>... clazzes) {
+    @Nullable
+    public final GLSLElement findParentByClasses(Class<? extends GLSLElement>... clazzes) {
         PsiElement parent = getParent();
         while (parent != null) {
             for (Class<? extends GLSLElement> clazz : clazzes) {
@@ -58,15 +61,7 @@ public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement
         return null;
     }
 
-    /**
-     * Checks whether this is a descendant of elt.
-     * That is; if elt is an ancestor of this.
-     * Loops through the parent chains and reports whether or not elt is found.
-     *
-     * @param ancestor the proposed ancestor of this.
-     * @return true if ancestor is indeed the ancestor of this, false otherwise.
-     */
-    public boolean isDescendantOf(PsiElement ancestor) {
+    public final boolean isDescendantOf(PsiElement ancestor) {
         PsiElement current = this;
         while (current != null && !(current instanceof GLSLFile)) {
             if (current == ancestor) {

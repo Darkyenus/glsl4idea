@@ -21,6 +21,7 @@ package glslplugin.lang.elements.declarations;
 
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * NewFunctionDefinition is ...
@@ -30,6 +31,10 @@ import org.jetbrains.annotations.NotNull;
  *         Time: 12:33:24 PM
  */
 public interface GLSLFunctionDefinition extends GLSLFunctionDeclaration {
-    @NotNull
+
+    /**
+     * @return Body of function definition, null only on malformed source
+     */
+    @Nullable
     GLSLCompoundStatement getBody();
 }

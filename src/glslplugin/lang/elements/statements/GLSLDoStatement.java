@@ -23,6 +23,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.expressions.GLSLCondition;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLDeclarationStatement is ...
@@ -36,13 +37,10 @@ public class GLSLDoStatement extends GLSLStatement implements ConditionStatement
         super(astNode);
     }
 
+    @Nullable
     public GLSLCondition getCondition() {
-        GLSLCondition condition = findChildByClass(GLSLCondition.class);
-        assert condition != null;
-        return condition;
+        return findChildByClass(GLSLCondition.class);
     }
-
-    // TODO: Implement
 
     @Override
     public String toString() {

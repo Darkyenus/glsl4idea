@@ -38,6 +38,7 @@ public class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclarat
     }
 
     private static final GLSLQualifier[] NO_QUALIFIERS = new GLSLQualifier[0];
+    @NotNull
     public GLSLQualifier[] getQualifiers() {
         final GLSLQualifierList qualifierList = getQualifierList();
         if(qualifierList == null){
@@ -60,6 +61,20 @@ public class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclarat
     @Nullable
     public GLSLTypeSpecifier getTypeSpecifierNode() {
         return findChildByClass(GLSLTypeSpecifier.class);
+    }
+
+    /**
+     * Returns "(unknown)" if getTypeSpecifierNode() returns null
+     * @return result of getTypeSpecifierNode().getTypeName()
+     */
+    @NotNull
+    public String getTypeSpecifierNodeTypeName(){
+        GLSLTypeSpecifier specifier = getTypeSpecifierNode();
+        if(specifier != null){
+            return specifier.getTypeName();
+        }else {
+            return "(unknown)";
+        }
     }
 
     @Nullable
