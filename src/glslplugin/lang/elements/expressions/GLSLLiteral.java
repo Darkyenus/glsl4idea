@@ -37,7 +37,7 @@ import java.util.logging.Logger;
  *         Time: 1:50:35 PM
  */
 public class GLSLLiteral extends GLSLPrimaryExpression {
-    private enum Type {
+    public enum Type {
         BOOL("Bool", GLSLTypes.BOOL),
         FLOAT("Float", GLSLTypes.FLOAT),
         DOUBLE("Double", GLSLTypes.DOUBLE),
@@ -61,13 +61,21 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
     @Nullable
     public Type getLiteralType() {
         IElementType type = getNode().getFirstChildNode().getElementType();
+
+        Type result = getLiteralType(type);
+        if(result != null)return result;
+
+        Logger.getLogger("GLSLLiteral").warning("Unsupported literal type. ("+type+")");
+        return null;
+    }
+
+    @Nullable
+    public static Type getLiteralType(IElementType type){
         if (type == GLSLTokenTypes.BOOL_CONSTANT) return Type.BOOL;
         if (type == GLSLTokenTypes.INTEGER_CONSTANT) return Type.INTEGER;
         if (type == GLSLTokenTypes.UINT_CONSTANT) return Type.UINT;
         if (type == GLSLTokenTypes.FLOAT_CONSTANT) return Type.FLOAT;
         if (type == GLSLTokenTypes.DOUBLE_CONSTANT) return Type.DOUBLE;
-
-        Logger.getLogger("GLSLLiteral").warning("Unsupported literal type. ("+type+")");
         return null;
     }
 

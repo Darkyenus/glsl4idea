@@ -23,6 +23,9 @@ import com.intellij.lang.Language;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import glslplugin.lang.GLSLLanguage;
+import glslplugin.lang.elements.expressions.GLSLLiteral;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 public class GLSLElementTypes {
     public static final IFileElementType FILE = new IFileElementType(Language.findInstance(GLSLLanguage.class));
@@ -130,4 +133,16 @@ public class GLSLElementTypes {
     public static final IElementType FOR_INIT_STATEMENT = new GLSLElementType("FOR_INIT_STATEMENT");
     public static final IElementType FOR_REST_STATEMENT = new GLSLElementType("FOR_REST_STATEMENT");
     public static final IElementType CONDITION = new GLSLElementType("CONDITION");
+
+    //Preprocessor dropins
+    public static final IElementType PREPROCESSED_EXPRESSION = new GLSLElementType("PREPROCESSED_EXPRESSION");
+    public static final class PreprocessedLiteralElementType extends GLSLElementType {
+
+        public final GLSLLiteral.Type type;
+
+        public PreprocessedLiteralElementType(GLSLLiteral.Type type) {
+            super("PREPROCESSED_LITERAL");
+            this.type = type;
+        }
+    }
 }
