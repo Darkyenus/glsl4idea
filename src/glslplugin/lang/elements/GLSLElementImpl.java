@@ -58,24 +58,6 @@ public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement
         return null;
     }
 
-    public <T extends GLSLElement> T findPrevSiblingByClass(Class<T> clazz) {
-        //noinspection unchecked
-        return clazz.cast(findPrevSiblingByClasses(clazz));
-    }
-
-    public GLSLElement findPrevSiblingByClasses(Class<? extends GLSLElement>... clazzes) {
-        PsiElement prev = getPrevSibling();
-        while (prev != null) {
-            for (Class<? extends GLSLElement> clazz : clazzes) {
-                if (clazz.isInstance(prev)) {
-                    return clazz.cast(prev);
-                }
-            }
-            prev = prev.getPrevSibling();
-        }
-        return null;
-    }
-
     /**
      * Checks whether this is a descendant of elt.
      * That is; if elt is an ancestor of this.

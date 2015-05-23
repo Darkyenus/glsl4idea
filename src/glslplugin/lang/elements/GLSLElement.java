@@ -30,13 +30,10 @@ import com.intellij.psi.PsiElement;
  *         Time: 1:33:24 PM
  */
 public interface GLSLElement extends NavigatablePsiElement {
+
     <T extends GLSLElement> T findParentByClass(Class<T> clazz);
 
     GLSLElement findParentByClasses(Class<? extends GLSLElement>... clazzes);
-
-    <T extends GLSLElement> T findPrevSiblingByClass(Class<T> clazz);
-
-    GLSLElement findPrevSiblingByClasses(Class<? extends GLSLElement>... clazzes);
 
     /**
      * Checks whether this is a descendant of elt.

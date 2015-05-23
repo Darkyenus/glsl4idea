@@ -129,8 +129,6 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.STRUCT_DECLARATOR_LIST) return new GLSLDeclaratorList(node);
         if (type == GLSLElementTypes.STRUCT_DECLARATOR) return new GLSLDeclarator(node);
 
-        if (type instanceof GLSLRedefinedTokenType) return new GLSLRedefinedTokenType.GLSLRedefinedPsiElement(node, (GLSLRedefinedTokenType) type);
-
         return null;
     }
 }

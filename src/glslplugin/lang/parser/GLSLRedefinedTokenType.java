@@ -19,12 +19,8 @@
 
 package glslplugin.lang.parser;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.GLSLLanguage;
-import glslplugin.lang.elements.GLSLElement;
 
 import java.util.List;
 
@@ -40,38 +36,4 @@ public final class GLSLRedefinedTokenType extends IElementType {
         this.redefinedTo = redefinedTo;
     }
 
-    public static final class GLSLRedefinedPsiElement extends ASTWrapperPsiElement implements GLSLElement {
-
-        private final GLSLRedefinedTokenType type;
-
-        public GLSLRedefinedPsiElement(ASTNode node, GLSLRedefinedTokenType type) {
-            super(node);
-            this.type = type;
-        }
-
-        @Override
-        public <T extends GLSLElement> T findParentByClass(Class<T> clazz) {
-            return null;//TODO Impl
-        }
-
-        @Override
-        public GLSLElement findParentByClasses(Class<? extends GLSLElement>... clazzes) {
-            return null;//TODO Impl
-        }
-
-        @Override
-        public <T extends GLSLElement> T findPrevSiblingByClass(Class<T> clazz) {
-            return null;//TODO Impl
-        }
-
-        @Override
-        public GLSLElement findPrevSiblingByClasses(Class<? extends GLSLElement>... clazzes) {
-            return null;//TODO Impl
-        }
-
-        @Override
-        public boolean isDescendantOf(PsiElement ancestor) {
-            return false;//TODO Impl
-        }
-    }
 }
