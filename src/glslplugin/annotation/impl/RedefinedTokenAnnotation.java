@@ -40,7 +40,10 @@ public class RedefinedTokenAnnotation extends Annotator<GLSLElementDropIn> {
     public void annotate(GLSLElementDropIn expr, AnnotationHolder holder) {
         PsiElement redefinedToken = expr.getNextSibling();
         if(redefinedToken == null || !(redefinedToken.getNode().getElementType() instanceof GLSLRedefinedTokenType)) {
-            return; //Something is broken here
+            redefinedToken = expr.getFirstChild();//Case for empty replacement
+            if(redefinedToken == null || !(redefinedToken.getNode().getElementType() instanceof GLSLRedefinedTokenType)) {
+                return; //Something is broken here
+            }
         }
 
         String message = expr.getOriginalText();
