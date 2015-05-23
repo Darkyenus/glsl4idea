@@ -301,10 +301,10 @@ public final class GLSLParsing {
                 psiBuilder.error("Identifier expected.");
                 //Eat rest
                 while (!isEof()) {
-                    psiBuilder.advanceLexer();
                     if (psiBuilder.getTokenType() == PREPROCESSOR_END) {
                         break;
                     }
+                    psiBuilder.advanceLexer();
                 }
             }
         }else if(psiBuilder.getTokenType() == PREPROCESSOR_UNDEF){
@@ -315,26 +315,28 @@ public final class GLSLParsing {
                 //Valid
                 final String defineIdentifier = psiBuilder.getTokenText();
                 defines.remove(defineIdentifier);
+
+                psiBuilder.advanceLexer();//Get past IDENTIFIER
             }else{
                 //Invalid
                 psiBuilder.error("Identifier expected.");
             }
             //Eat rest
             while (!isEof()) {
-                psiBuilder.advanceLexer();
                 if (psiBuilder.getTokenType() == PREPROCESSOR_END) {
                     break;
                 }else{
                     psiBuilder.error("Unexpected token.");
                 }
+                psiBuilder.advanceLexer();
             }
         }else{
             //Some other directive, no work here
             while (!isEof()) {
-                psiBuilder.advanceLexer();
                 if (psiBuilder.getTokenType() == PREPROCESSOR_END) {
                     break;
                 }
+                psiBuilder.advanceLexer();
             }
         }
         advanceLexer();//Get past PREPROCESSOR_END
