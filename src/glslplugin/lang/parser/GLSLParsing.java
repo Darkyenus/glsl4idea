@@ -20,6 +20,7 @@
 package glslplugin.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.impl.DelegateMarker;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import glslplugin.lang.elements.GLSLTokenTypes;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static glslplugin.lang.elements.GLSLElementTypes.*;
 import static glslplugin.lang.elements.GLSLTokenTypes.*;
@@ -158,7 +160,16 @@ public final class GLSLParsing {
     private PsiBuilder.Marker mark() {
         //This will have to do.
         //If token is expanded to more tokens, it will be hard to mark mid-token.
-        return psiBuilder.mark();
+        return new DelegateMarker(psiBuilder.mark()) {
+            @Override
+            public void rollbackTo() {
+                super.rollbackTo();
+                //Reinitialize replacement tokens
+                preprocessorTokens = null;
+                preprocessorTokensReplacementType = null;
+                advanceLexer_initializePreprocessorToken(psiBuilder.getTokenType(), true);
+            }
+        };
     }
 
     /**
@@ -239,6 +250,26 @@ public final class GLSLParsing {
         }
     }
 
+    private void advanceLexer_initializePreprocessorToken(final IElementType tokenType, final boolean fromRollback){
+        boolean rerolling = (fromRollback && tokenType instanceof GLSLRedefinedTokenType);
+        if (tokenType == IDENTIFIER || rerolling) {
+            //It may be preprocessor defined identifier
+            final String text = psiBuilder.getTokenText();
+            final PreprocessorDropIn dropIn = defines.get(text);
+
+            if (dropIn != null) {
+                preprocessorTokensReplacementType = dropIn.type;
+                final List<PreprocessorToken> tokens = dropIn.tokens;
+                preprocessorTokensText = dropIn.text;
+                //This IDENTIFIER has been #define-d to tokens
+                if(!rerolling)psiBuilder.remapCurrentToken(new GLSLRedefinedTokenType(tokens));
+
+                preprocessorTokens = tokens;
+                preprocessorTokensIndex = 0;
+            }// else There is nothing defined to this, continue normally
+        }
+    }
+
     /**
      * Advance lexer by one token.
      *
@@ -273,24 +304,11 @@ public final class GLSLParsing {
 
             if (advancedRealLexer) {
                 //Real lexer advanced, so check for directives and redefined tokens
-                IElementType tokenType = tokenType();
+                IElementType tokenType = psiBuilder.getTokenType();
                 if (tokenType == PREPROCESSOR_BEGIN) {
                     parsePreprocessor();
-                } else if (tokenType == IDENTIFIER) {
-                    //It may be preprocessor defined identifier
-                    final String text = psiBuilder.getTokenText();
-                    final PreprocessorDropIn dropIn = defines.get(text);
-
-                    if (dropIn != null) {
-                        preprocessorTokensReplacementType = dropIn.type;
-                        final List<PreprocessorToken> tokens = dropIn.tokens;
-                        preprocessorTokensText = dropIn.text;
-                        //This IDENTIFIER has been #define-d to tokens
-                        psiBuilder.remapCurrentToken(new GLSLRedefinedTokenType(tokens));
-
-                        preprocessorTokens = tokens;
-                        preprocessorTokensIndex = 0;
-                    }// else There is nothing defined to this, continue normally
+                } else {
+                    advanceLexer_initializePreprocessorToken(tokenType, false);
                 }
             }
         } while (preprocessorTokensReplacementType == PreprocessorDropInType.EMPTY);
@@ -387,6 +405,8 @@ public final class GLSLParsing {
      * This may cause trouble during working with the PSI tree, so be careful.
      */
     private void parsePreprocessor() {
+        if(preprocessorTokens != null) Logger.getLogger("GLSLParsing").warning("Parsing preprocessor inside preprocessor");
+
         // We can't use tryMatch etc. in here because we'll end up
         // potentially parsing a preprocessor directive inside this one.
         PsiBuilder.Marker preprocessor = mark();
@@ -399,9 +419,10 @@ public final class GLSLParsing {
             if(psiBuilder.getTokenType() == IDENTIFIER){
                 //Valid
                 final String defineIdentifier = psiBuilder.getTokenText();
-                psiBuilder.advanceLexer();//Get past identifier
+                //Can use non-psiBuilder advanceLexer here, to allow "nested" defines
+                advanceLexer();//Get past identifier
 
-                if(psiBuilder.getTokenType() == PREPROCESSOR_END){
+                if(tokenType() == PREPROCESSOR_END){
                     defines.put(defineIdentifier, PreprocessorDropIn.EMPTY);
                 } else {
                     PreprocessorDropInType meaning = PreprocessorDropInType.UNKNOWN;
@@ -413,7 +434,7 @@ public final class GLSLParsing {
                     }
 
                     if(meaning == PreprocessorDropInType.UNKNOWN && parseConditionalExpression()){
-                        if(psiBuilder.getTokenType() == PREPROCESSOR_END){
+                        if(tokenType() == PREPROCESSOR_END){
                             //It is only a constant expression
                             meaning = PreprocessorDropInType.CONDITIONAL_EXPRESSION;
                         }
@@ -421,7 +442,7 @@ public final class GLSLParsing {
                     defineMeaningMark.rollbackTo();defineMeaningMark = mark();
 
                     if(meaning == PreprocessorDropInType.UNKNOWN && parseExpression()){
-                        if(psiBuilder.getTokenType() == PREPROCESSOR_END){
+                        if(tokenType() == PREPROCESSOR_END){
                             //It is any expression
                             meaning = PreprocessorDropInType.EXPRESSION;
                         }
@@ -432,11 +453,11 @@ public final class GLSLParsing {
 
                     final ArrayList<PreprocessorToken> definedTokens = new ArrayList<PreprocessorToken>();
                     while (!isEof()) {
-                        PreprocessorToken token = new PreprocessorToken(psiBuilder.getTokenType(), psiBuilder.getTokenText());
+                        PreprocessorToken token = new PreprocessorToken(tokenType(), getTokenText());
                         definedTokens.add(token);
-                        replacementText.append(psiBuilder.getTokenText()).append(' ');
-                        psiBuilder.advanceLexer();
-                        if (psiBuilder.getTokenType() == PREPROCESSOR_END) {
+                        replacementText.append(getTokenText()).append(' ');
+                        advanceLexer();
+                        if (tokenType() == PREPROCESSOR_END) {
                             break;
                         }
                     }
