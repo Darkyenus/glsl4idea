@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static glslplugin.lang.elements.GLSLElementTypes.PREPROCESSED_EMPTY;
 import static glslplugin.lang.elements.GLSLTokenTypes.IDENTIFIER;
@@ -81,11 +82,35 @@ abstract class GLSLParsingBase {
     }
 
     /**
-     * @return type of token after [amount] times calling advanceLexer()
+     * @return type of token after times calling advanceLexer() one more time
      */
     @Nullable
-    protected final IElementType lookAhead(int amount) {
-        return psiBuilder.lookAhead(amount); //TODO Implement for preprocessor
+    protected final IElementType lookAhead() {
+        // Hardcoded for simplicity
+        int remaining = 1;
+        if(preprocessorTokens != null){
+            if(preprocessorTokensIndex + remaining < preprocessorTokens.size()){
+                return preprocessorTokens.get(preprocessorTokensIndex+remaining).type;
+            }else{
+                remaining -= preprocessorTokens.size() - 1 - preprocessorTokensIndex;
+            }
+        }
+
+        // assert remaining == 1; //<hardcoded
+        if(remaining != 1) Logger.getLogger("GLSLParsingBase").warning("Remaining is not 1");
+
+        IElementType lookahead = psiBuilder.lookAhead(remaining);
+        if(lookahead == IDENTIFIER){
+            //This IDENTIFIER may be redefined!
+            //Need to actually go there, to get token text
+            PsiBuilder.Marker fallback = mark();
+            advanceLexer();
+            IElementType result = tokenType();
+            fallback.rollbackTo();
+            return result;
+        }else{
+            return IDENTIFIER;
+        }
     }
 
     /**

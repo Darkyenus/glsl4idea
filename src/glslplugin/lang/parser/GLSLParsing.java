@@ -97,7 +97,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
                     PsiBuilder.Marker defineMeaningMark = mark();
 
-                    if(CONSTANT_TOKENS.contains(tokenType()) && lookAhead(1) == PREPROCESSOR_END){
+                    if(CONSTANT_TOKENS.contains(tokenType()) && lookAhead() == PREPROCESSOR_END){
                         meaning = PreprocessorDropInType.LITERAL;
                     }
 
@@ -265,7 +265,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
         parseQualifierList(true);
 
-        if (tokenType() == IDENTIFIER && lookAhead(1) == LEFT_BRACE) { // interface block
+        if (tokenType() == IDENTIFIER && lookAhead() == LEFT_BRACE) { // interface block
             //TODO Make sure that this is preceded by storage_qualifier
             parseIdentifier();
             match(LEFT_BRACE, "Expected '{'");
