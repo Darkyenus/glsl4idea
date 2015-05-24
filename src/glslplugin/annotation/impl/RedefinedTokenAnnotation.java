@@ -38,11 +38,18 @@ public class RedefinedTokenAnnotation extends Annotator<GLSLElementDropIn> {
 
     @Override
     public void annotate(GLSLElementDropIn expr, AnnotationHolder holder) {
-        PsiElement redefinedToken = expr.getNextSibling();
-        if(redefinedToken == null || !(redefinedToken.getNode().getElementType() instanceof GLSLRedefinedTokenType)) {
-            redefinedToken = expr.getFirstChild();//Case for empty replacement
+
+        PsiElement redefinedToken;
+
+        if(expr.getTextRange().getLength() > 0){
+            redefinedToken = expr; //GLSLUnknownDropIn or something weird
+        }else{
+            redefinedToken = expr.getNextSibling();//GLSLExpressionDropIn found here
             if(redefinedToken == null || !(redefinedToken.getNode().getElementType() instanceof GLSLRedefinedTokenType)) {
-                return; //Something is broken here
+                redefinedToken = expr.getFirstChild();//GLSLEmptyDropIn will be found here
+                if(redefinedToken == null || !(redefinedToken.getNode().getElementType() instanceof GLSLRedefinedTokenType)) {
+                    return; //Something is broken here
+                }
             }
         }
 

@@ -17,32 +17,27 @@
  *     along with glsl4idea.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package glslplugin.lang.parser;
+package glslplugin.lang.elements.preprocessor;
 
-import com.intellij.psi.tree.IElementType;
-import glslplugin.lang.GLSLLanguage;
-
-import java.util.List;
+import com.intellij.lang.ASTNode;
+import glslplugin.lang.elements.GLSLElementImpl;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Darkyen
  */
-public final class GLSLRedefinedTokenType extends IElementType {
+public class GLSLUnknownDropIn extends GLSLElementImpl implements GLSLElementDropIn {
 
-    public final List<PreprocessorToken> redefinedTo;
-    private boolean marked = false;
+    private final String text;
 
-    protected GLSLRedefinedTokenType(List<PreprocessorToken> redefinedTo) {
-        super("GLSLRedefinedTokenType", GLSLLanguage.GLSL_LANGUAGE, false);
-        this.redefinedTo = redefinedTo;
+    public GLSLUnknownDropIn(@NotNull ASTNode astNode, @NotNull String text) {
+        super(astNode);
+        this.text = text;
     }
 
-    public boolean mark(){
-        if(!marked){
-            marked = true;
-            return true;
-        }else{
-            return false;
-        }
+    @NotNull
+    @Override
+    public String getOriginalText() {
+        return text;
     }
 }
