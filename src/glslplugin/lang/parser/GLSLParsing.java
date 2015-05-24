@@ -222,7 +222,11 @@ public final class GLSLParsing extends GLSLParsingBase {
         // external_declaration: qualifier-list type-specifier prototype [ ';' | compound-statement ]
         //                     | qualifier-list type-specifier declarator-list ';'
         //                     | qualifier-list IDENTIFIER '{' (member'}' [ IDENTIFIER array-specifier? ]';'
-        // A common prefix for all: qualifier-list
+        //                     | layout_qualifier interface_qualifier ;
+        //
+        // A common prefix for all: qualifier-list - layout_qualifier is included in qualifier_list,
+        // but can be standalone
+        //
         // Note: after type-specifier, we only need to look up IDENTIfIER '(' to determine
         //       whether or not it is a prototype or a declarator-list.
 
@@ -259,6 +263,11 @@ public final class GLSLParsing extends GLSLParsingBase {
         }
 
         if (parsePrecisionStatement()) {
+            mark.drop();
+            return true;
+        }
+
+        if (parseLayoutQualifierStatement()){
             mark.drop();
             return true;
         }
@@ -1404,23 +1413,60 @@ public final class GLSLParsing extends GLSLParsingBase {
     }
 
     private boolean parseQualifier() {
-        // qualifier: LAYOUT '(' layout_qualifier_id_list ')'
+        // qualifier: layout_qualifier
         //          | qualifier_token
+
+        if(parseLayoutQualifier())return true;
+
         if (QUALIFIER_TOKENS.contains(tokenType())) {
             final PsiBuilder.Marker mark = mark();
-
-            if (tryMatch(LAYOUT_KEYWORD)) {
-                match(LEFT_PAREN, "Expected '('");
-                parseLayoutQualifierList();
-                match(RIGHT_PAREN, "Expected ')'");
-            } else {
-                advanceLexer();
-            }
-
+            advanceLexer();
             mark.done(QUALIFIER);
             return true;
         }
         return false;
+    }
+
+    private boolean parseLayoutQualifierStatement(){
+        // layout_qualifier_statement: layout_qualifier interface_qualifier ';'
+        // (Made up name.) Can be only in global level.
+        // Since it looks like variable declaration up until ';', it will return true and parse only
+        // if the semicolon is present.
+        // NOTE: interface_qualifier is in, out or uniform
+
+        final PsiBuilder.Marker mark = mark();
+
+        if(!parseLayoutQualifier()){
+            mark.rollbackTo();
+            return false;
+        }
+
+        if(!tryMatch(INTERFACE_QUALIFIER_TOKENS)){
+            mark.rollbackTo();
+            return false;
+        }
+
+        if(!tryMatch(SEMICOLON)){
+            mark.rollbackTo();
+            return false;
+        }
+
+        mark.done(LAYOUT_QUALIFIER_STATEMENT);
+        return true;
+    }
+
+    private boolean parseLayoutQualifier(){
+        // layout_qualifier: LAYOUT '(' layout_qualifier_id_list ')'
+
+        if(tokenType() == LAYOUT_KEYWORD){
+            final PsiBuilder.Marker mark = mark();
+            advanceLexer();
+            match(LEFT_PAREN, "Expected '('");
+            parseLayoutQualifierList();
+            match(RIGHT_PAREN, "Expected ')'");
+            mark.done(QUALIFIER);
+            return true;
+        }else return false;
     }
 
     private void parseLayoutQualifierList() {

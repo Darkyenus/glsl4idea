@@ -16,6 +16,10 @@ layout(binding = 3, std140) buffer Data {
     uint element[128];
 } data[128][128];
 
+layout(points) in;
+
+layout(line_strip, max_vertices = 6) out;
+
 // these should fail:
 
 uniform EmptyBlock {

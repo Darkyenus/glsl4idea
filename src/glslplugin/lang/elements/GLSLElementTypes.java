@@ -78,6 +78,7 @@ public class GLSLElementTypes {
     public static final IElementType QUALIFIER_LIST = new GLSLElementType("QUALIFIER_LIST");
     public static final IElementType LAYOUT_QUALIFIER_ID = new GLSLElementType("LAYOUT_QUALIFIER_ID");
     public static final IElementType TYPE_SPECIFIER = new GLSLElementType("TYPE_SPECIFIER");
+    public static final IElementType LAYOUT_QUALIFIER_STATEMENT = new GLSLElementType("LAYOUT_QUALIFIER_STATEMENT");
 
     public static final IElementType PARAMETER_DECLARATION_LIST = new GLSLElementType("PARAMETER_DECLARATION_LIST");
     public static final IElementType PARAMETER_DECLARATION = new GLSLElementType("PARAMETER_DECLARATION");
