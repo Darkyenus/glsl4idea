@@ -27,4 +27,8 @@ public class GLSLElementType extends com.intellij.psi.tree.IElementType {
     public GLSLElementType(@NotNull @NonNls String s) {
         super(s, GLSLSupportLoader.GLSL.getLanguage());
     }
+
+    public GLSLElementType(@NotNull @NonNls String debugName, boolean register) {
+        super(debugName, GLSLSupportLoader.GLSL.getLanguage(), register);
+    }
 }
