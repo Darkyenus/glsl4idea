@@ -1,0 +1,29 @@
+// [config]
+// expect_result: pass
+// glsl_version: 3.30
+// require_extensions: GL_ARB_compute_shader
+// [end config]
+//
+// From the GLSL 4.4 spec, section 7.1 (Built-in Language Variables):
+//
+//     The built-in constant gl_WorkGroupSize is a compute-shader
+//     constant containing the local work-group size of the
+//     shader. The size of the work group in the X, Y, and Z
+//     dimensions is stored in the x, y, and z components. The
+//     constants values in gl_WorkGroupSize will match those specified
+//     in the required local_size_x, local_size_y, and local_size_z
+//     layout qualifiers for the current shader. This is a constant so
+//     that it can be used to size arrays of memory that can be shared
+//     within the local work group.
+
+#version 330
+#extension GL_ARB_compute_shader: enable
+
+layout(local_size_x = 3, local_size_y = 5, local_size_z = 7) in;
+
+void main()
+{
+  int x[gl_WorkGroupSize.x == 3u ? 1 : -1];
+  int y[gl_WorkGroupSize.y == 5u ? 1 : -1];
+  int z[gl_WorkGroupSize.z == 7u ? 1 : -1];
+}

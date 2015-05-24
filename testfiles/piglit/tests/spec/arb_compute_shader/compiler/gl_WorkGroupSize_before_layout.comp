@@ -1,0 +1,22 @@
+// [config]
+// expect_result: fail
+// glsl_version: 3.30
+// require_extensions: GL_ARB_compute_shader
+// [end config]
+//
+// From the GLSL 4.4 spec, section 7.1 (Built-in Language Variables):
+//
+//     It is a compile-time error to use gl_WorkGroupSize in a shader
+//     that does not declare a fixed local group size, or before that
+//     shader has declared a fixed local group size, using
+//     local_size_x, local_size_y, and local_size_z.
+
+#version 330
+#extension GL_ARB_compute_shader: enable
+
+void main()
+{
+  uvec3 size = gl_WorkGroupSize;
+}
+
+layout(local_size_x = 3, local_size_y = 5, local_size_z = 7) in;
