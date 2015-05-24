@@ -55,14 +55,18 @@ class GLSLFileTreeElement extends GLSLStructureViewTreeElement<PsiFile> {
             for (PsiElement baseNode : baseNodes) {
                 if (baseNode instanceof GLSLVariableDeclaration) {
                     final GLSLVariableDeclaration declaration = (GLSLVariableDeclaration) baseNode;
-                    final GLSLTypedElement typedef = declaration.getTypeSpecifierNode().getTypeDefinition();
-                    if (typedef instanceof GLSLTypeDefinition) {
-                        final GLSLTypeDefinition definition = (GLSLTypeDefinition) typedef;
-                        definitions.add(definition);
-                    }
+                    final GLSLTypeSpecifier typeSpecifier = declaration.getTypeSpecifierNode();
 
-                    if (declaration.getDeclarators().length > 0) {
-                        variableDeclarations.add(declaration);
+                    if(typeSpecifier != null){
+                        final GLSLTypedElement typedef = typeSpecifier.getTypeDefinition();
+                        if (typedef instanceof GLSLTypeDefinition) {
+                            final GLSLTypeDefinition definition = (GLSLTypeDefinition) typedef;
+                            definitions.add(definition);
+                        }
+
+                        if (declaration.getDeclarators().length > 0) {
+                            variableDeclarations.add(declaration);
+                        }
                     }
                 } else if (baseNode instanceof GLSLFunctionDeclaration) {
                     functions.add((GLSLFunctionDeclaration) baseNode);

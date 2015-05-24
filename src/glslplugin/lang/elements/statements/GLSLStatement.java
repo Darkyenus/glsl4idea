@@ -20,7 +20,6 @@
 package glslplugin.lang.elements.statements;
 
 import com.intellij.lang.ASTNode;
-import glslplugin.annotation.impl.UnreachableAnnotation;
 import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,6 +31,9 @@ import org.jetbrains.annotations.NotNull;
  *         Time: 5:53:03 PM
  */
 public abstract class GLSLStatement extends GLSLElementImpl {
+
+    public static final GLSLStatement[] NO_STATEMENTS = new GLSLStatement[0];
+
     public GLSLStatement(@NotNull ASTNode astNode) {
         super(astNode);
     }

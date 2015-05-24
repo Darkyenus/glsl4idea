@@ -33,6 +33,7 @@ import glslplugin.lang.elements.types.GLSLFunctionType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,17 +50,33 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
         super(astNode);
     }
 
+    @Nullable
     public GLSLIdentifier getFunctionNameIdentifier() {
         final PsiElement first = getFirstChild();
-        return (GLSLIdentifier) first;
+        if(first instanceof GLSLIdentifier) return (GLSLIdentifier) first;
+        else return null;
     }
 
+    @NotNull
     public String getFunctionName() {
-        return getFunctionNameIdentifier().getIdentifierName();
+        GLSLIdentifier identifier = getFunctionNameIdentifier();
+        if(identifier != null){
+            return identifier.getIdentifierName();
+        }else{
+            return "(unknown)";
+        }
     }
 
+    @Nullable
     public GLSLParameterList getParameterList() {
         return findChildByClass(GLSLParameterList.class);
+    }
+
+    @NotNull
+    public GLSLType[] getParameterTypes(){
+        GLSLParameterList parameterList = getParameterList();
+        if(parameterList != null)return parameterList.getParameterTypes();
+        else return GLSLType.EMPTY_ARRAY;
     }
 
     @NotNull
@@ -73,6 +90,7 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
         }
     }
 
+    @Nullable
     public GLSLFunctionReference getReferenceProxy() {
         GLSLElement[] declarations = findFunctionDeclarations();
         if (declarations.length > 0) {
@@ -82,6 +100,7 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
         }
     }
 
+    @NotNull
     private GLSLElement[] findFunctionDeclarations() {
         GLSLFunctionType[] declarations = findFunctionTypes();
         List<GLSLElement> realDeclarations = new ArrayList<GLSLElement>();
@@ -95,6 +114,7 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
     }
 
     private final GLSLFunctionType[] NO_FUNCTION_TYPES = new GLSLFunctionType[0];
+    @NotNull
     public GLSLFunctionType[] findFunctionTypes() {
         List<GLSLFunctionType> compatibleDeclarations = new ArrayList<GLSLFunctionType>();
 
@@ -126,7 +146,8 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
                 functionType = function.getType();
 
                 if (getFunctionName().equals(functionType.getName())) {
-                    switch (functionType.getParameterCompatibilityLevel(getParameterList().getParameterTypes())) {
+
+                    switch (functionType.getParameterCompatibilityLevel(getParameterTypes())) {
                         case COMPATIBLE_WITH_IMPLICIT_CONVERSION:
                             compatibleDeclarations.add(functionType);
                             break;
@@ -145,22 +166,24 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
             } else if (current instanceof GLSLVariableDeclaration) {
                 GLSLVariableDeclaration declaration = (GLSLVariableDeclaration) current;
                 GLSLTypeSpecifier typeSpecifier = declaration.getTypeSpecifierNode();
-                GLSLType type = typeSpecifier.getType();
-                if (getFunctionName().equals(type.getTypename())) {
-                    for (GLSLFunctionType constructor : type.getConstructors()) {
-                        switch (constructor.getParameterCompatibilityLevel(getParameterList().getParameterTypes())) {
-                            case COMPATIBLE_WITH_IMPLICIT_CONVERSION:
-                                compatibleDeclarations.add(constructor);
-                                break;
+                if(typeSpecifier != null){
+                    GLSLType type = typeSpecifier.getType();
+                    if (getFunctionName().equals(type.getTypename())) {
+                        for (GLSLFunctionType constructor : type.getConstructors()) {
+                            switch (constructor.getParameterCompatibilityLevel(getParameterTypes())) {
+                                case COMPATIBLE_WITH_IMPLICIT_CONVERSION:
+                                    compatibleDeclarations.add(constructor);
+                                    break;
 
-                            case DIRECTLY_COMPATIBLE:
-                                return new GLSLFunctionType[]{constructor};
+                                case DIRECTLY_COMPATIBLE:
+                                    return new GLSLFunctionType[]{constructor};
 
-                            case INCOMPATIBLE:
-                                break;
+                                case INCOMPATIBLE:
+                                    break;
 
-                            default:
-                                assert false : "Unsupported compatibility level.";
+                                default:
+                                    assert false : "Unsupported compatibility level.";
+                            }
                         }
                     }
                 }

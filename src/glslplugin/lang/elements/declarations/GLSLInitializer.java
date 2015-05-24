@@ -20,8 +20,10 @@
 package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import glslplugin.lang.elements.expressions.GLSLExpression;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLInitializer is ...
@@ -35,8 +37,12 @@ public class GLSLInitializer extends GLSLExpression {
         super(astNode);
     }
 
-    GLSLExpression getInitializerExpression() {
-        return (GLSLExpression) getFirstChild();
+    @Nullable
+    public GLSLExpression getInitializerExpression() {
+        PsiElement result = getFirstChild();
+        if(result instanceof GLSLExpression){
+            return (GLSLExpression)result;
+        }else return null;
     }
 
     @Override

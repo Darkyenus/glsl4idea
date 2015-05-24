@@ -21,6 +21,7 @@ package glslplugin.lang.elements.declarations;
 
 import glslplugin.lang.elements.GLSLElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLDeclaration is a common interface for all declarations;
@@ -31,8 +32,12 @@ import org.jetbrains.annotations.NotNull;
  *         Time: 12:39:33 AM
  */
 public interface GLSLDeclaration extends GLSLElement {
+    GLSLDeclaration[] NO_DECLARATIONS = new GLSLDeclaration[0];
+
+    @Nullable
     GLSLTypeSpecifier getTypeSpecifierNode();
 
+    @Nullable
     GLSLQualifierList getQualifierList();
 
     @NotNull

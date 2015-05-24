@@ -40,6 +40,7 @@ public class MissingReturnAnnotation extends Annotator<GLSLFunctionDefinition> {
         if (expr.getType().getBaseType() == GLSLPrimitiveType.VOID) return;
 
         final GLSLCompoundStatement body = expr.getBody();
+        if(body == null)return;
 
         if (body.getTerminatorScope() == GLSLStatement.TerminatorScope.NONE) {
             PsiElement annotationPlace = body;

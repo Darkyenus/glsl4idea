@@ -30,6 +30,8 @@ import org.jetbrains.annotations.NotNull;
  *         Time: 2:04:56 PM
  */
 public class GLSLParameterDeclaration extends GLSLSingleDeclarationImpl {
+    public static final GLSLParameterDeclaration[] NO_PARAMETER_DECLARATIONS = new GLSLParameterDeclaration[0];
+
     public GLSLParameterDeclaration(@NotNull ASTNode astNode) {
         super(astNode);
     }
@@ -41,7 +43,7 @@ public class GLSLParameterDeclaration extends GLSLSingleDeclarationImpl {
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder("Parameter Declaration: ");
-        b.append(getTypeSpecifierNode().getTypeName());
+        b.append(getTypeSpecifierNodeTypeName());
         if (hasDeclarator()) {
             b.append(getDeclaredName());
         }

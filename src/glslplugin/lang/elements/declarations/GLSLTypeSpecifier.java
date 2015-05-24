@@ -27,6 +27,7 @@ import glslplugin.lang.elements.types.GLSLArrayType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  *
@@ -39,6 +40,7 @@ public class GLSLTypeSpecifier extends GLSLElementImpl {
         super(astNode);
     }
 
+    @Nullable
     public GLSLArraySpecifier getArraySpecifierNode() {
         PsiElement[] children = getChildren();
         if (children.length == 2) {
@@ -50,6 +52,7 @@ public class GLSLTypeSpecifier extends GLSLElementImpl {
         return null;
     }
 
+    @NotNull
     public GLSLType getType() {
         // GLSLTypedElement is either a type definition or type reference
         GLSLTypedElement reference = findChildByClass(GLSLTypedElement.class);
@@ -65,6 +68,7 @@ public class GLSLTypeSpecifier extends GLSLElementImpl {
         }
     }
 
+    @NotNull
     public String getTypeName() {
         return getType().getTypename();
     }
@@ -74,6 +78,7 @@ public class GLSLTypeSpecifier extends GLSLElementImpl {
         return "Type Specifier: " + getTypeName();
     }
 
+    @Nullable
     public GLSLTypedElement getTypeDefinition() {
         return findChildByClass(GLSLTypeDefinition.class);
     }

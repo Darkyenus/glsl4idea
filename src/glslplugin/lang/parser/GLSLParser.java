@@ -25,10 +25,22 @@ import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.Semaphore;
+
 public class GLSLParser implements PsiParser {
+
+    private static final boolean ALLOW_ONLY_ONE_THREAD = false;
+    private static final Semaphore SEMAPHORE = new Semaphore(1);
 
     @NotNull
     public ASTNode parse(IElementType root, PsiBuilder builder) {
+        if(ALLOW_ONLY_ONE_THREAD){
+            try {
+                SEMAPHORE.acquire();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         //builder.setDebugMode(true);
         final PsiBuilder.Marker rootMarker = builder.mark();
         if(!builder.eof()){ //Empty file is not an error
@@ -40,6 +52,10 @@ public class GLSLParser implements PsiParser {
         }
 
         rootMarker.done(root);
+
+        if(ALLOW_ONLY_ONE_THREAD){
+            SEMAPHORE.release();
+        }
         return builder.getTreeBuilt();
     }
 }

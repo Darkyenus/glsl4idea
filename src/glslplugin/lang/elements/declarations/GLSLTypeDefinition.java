@@ -49,6 +49,7 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
         super(astNode);
     }
 
+    @Nullable
     private String getTypeNameInternal() {
         final PsiElement[] children = getChildren();
         if (children.length > 1) {
@@ -74,19 +75,21 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
         }
     }
 
-    public GLSLTypeDefinition getTypeDefinition() {
-        return this;
-    }
-
     // TODO: Add getMemberDeclarations, findMember(String), etc...
+
+    @Nullable
     public GLSLDeclarationList getDeclarationList() {
-        GLSLDeclarationList list = findChildByClass(GLSLDeclarationList.class);
-        assert list != null;
-        return list;
+        return findChildByClass(GLSLDeclarationList.class);
     }
 
+    @NotNull
     public GLSLDeclaration[] getDeclarations() {
-        return getDeclarationList().getDeclarations();
+        GLSLDeclarationList declarationList = getDeclarationList();
+        if(declarationList == null){
+            return GLSLDeclaration.NO_DECLARATIONS;
+        }else{
+            return declarationList.getDeclarations();
+        }
     }
 
     @NotNull

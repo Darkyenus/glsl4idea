@@ -23,9 +23,12 @@ import com.intellij.lang.Language;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import glslplugin.lang.GLSLLanguage;
+import glslplugin.lang.elements.expressions.GLSLLiteral;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 public class GLSLElementTypes {
-    public static final IFileElementType FILE = new IFileElementType(Language.<GLSLLanguage>findInstance(GLSLLanguage.class));
+    public static final IFileElementType FILE = new IFileElementType(Language.findInstance(GLSLLanguage.class));
     public static final IElementType TRANSLATION_UNIT = new GLSLElementType("TRANSLATION_UNIT");
     public static final IElementType BLOCK = new GLSLElementType("BLOCK");
 
@@ -130,4 +133,35 @@ public class GLSLElementTypes {
     public static final IElementType FOR_INIT_STATEMENT = new GLSLElementType("FOR_INIT_STATEMENT");
     public static final IElementType FOR_REST_STATEMENT = new GLSLElementType("FOR_REST_STATEMENT");
     public static final IElementType CONDITION = new GLSLElementType("CONDITION");
+
+    //Preprocessor dropins
+    public static final class PreprocessedExpressionElementType extends GLSLElementType {
+
+        public final String text;
+
+        public PreprocessedExpressionElementType(String text) {
+            super("PREPROCESSED_EXPRESSION", false);
+            this.text = text;
+        }
+    }
+    public static final class PreprocessedLiteralElementType extends GLSLElementType {
+
+        public final GLSLLiteral.Type type;
+        public final String text;
+
+        public PreprocessedLiteralElementType(GLSLLiteral.Type type, String text) {
+            super("PREPROCESSED_LITERAL", false);
+            this.type = type;
+            this.text = text;
+        }
+    }
+    public static final IElementType PREPROCESSED_EMPTY = new GLSLElementType("PREPROCESSED_EMPTY");
+    public static final class PreprocessedUnknownElementType extends GLSLElementType {
+        public final String text;
+
+        public PreprocessedUnknownElementType(String text) {
+            super("PREPROCESSED_UNKNOWN", false);
+            this.text = text;
+        }
+    }
 }

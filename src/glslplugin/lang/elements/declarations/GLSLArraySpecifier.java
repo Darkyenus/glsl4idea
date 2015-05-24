@@ -22,6 +22,9 @@ package glslplugin.lang.elements.declarations;
 import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.expressions.GLSLExpression;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * GLSLArrayDeclarator is ...
@@ -39,12 +42,14 @@ public class GLSLArraySpecifier extends GLSLElementImpl {
         return findChildByClass(GLSLExpression.class) != null;
     }
 
+    @Nullable
     public GLSLExpression getSizeExpression() {
         GLSLExpression expr = findChildByClass(GLSLExpression.class);
         if (expr != null) {
             return expr;
         } else {
-            throw new RuntimeException("Check for array size expression before asking for it!");
+            Logger.getLogger("GLSLArraySpecifier").warning("Check for array size expression before asking for it!");
+            return null;
         }
     }
 

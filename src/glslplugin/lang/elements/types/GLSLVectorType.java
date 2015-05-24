@@ -235,11 +235,13 @@ public class GLSLVectorType extends GLSLType {
         this.constructor = new Constructor();
     }
 
+    @NotNull
     @Override
     public String getTypename() {
         return baseType.name + numComponents;
     }
 
+    @NotNull
     @Override
     public GLSLType getBaseType() {
         return baseType.type;
@@ -250,6 +252,7 @@ public class GLSLVectorType extends GLSLType {
         return null;
     }
 
+    @NotNull
     @Override
     public Map<String, GLSLType> getMembers() {
         return members;
@@ -260,6 +263,7 @@ public class GLSLVectorType extends GLSLType {
         return true;
     }
 
+    @NotNull
     @Override
     public GLSLFunctionType[] getConstructors() {
         return new GLSLFunctionType[]{

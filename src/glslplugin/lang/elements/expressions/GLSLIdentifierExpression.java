@@ -50,14 +50,18 @@ public class GLSLIdentifierExpression extends GLSLExpression implements GLSLRefe
         return true;
     }
 
+    @Nullable
     public GLSLIdentifier getIdentifier() {
-        GLSLIdentifier id = findChildByClass(GLSLIdentifier.class);
-        assert id != null;
-        return id;
+        return findChildByClass(GLSLIdentifier.class);
     }
 
     public String getIdentifierName() {
-        return getIdentifier().getIdentifierName();
+        GLSLIdentifier identifier = getIdentifier();
+        if(identifier != null){
+            return identifier.getIdentifierName();
+        }else{
+            return "(unknown)";
+        }
     }
 
     @Override
@@ -78,6 +82,7 @@ public class GLSLIdentifierExpression extends GLSLExpression implements GLSLRefe
         return GLSLTypes.UNKNOWN_TYPE;
     }
 
+    @Nullable
     public GLSLVariableReference getReferenceProxy() {
         GLSLDeclarator target = getVariableReference(this);
 

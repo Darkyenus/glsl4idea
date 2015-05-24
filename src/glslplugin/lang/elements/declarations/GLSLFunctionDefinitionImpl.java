@@ -21,6 +21,7 @@ package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * NewFunctionDefinition is ...
@@ -34,10 +35,9 @@ public class GLSLFunctionDefinitionImpl extends GLSLFunctionDeclarationImpl impl
         super(node);
     }
 
+    @Nullable
     public GLSLCompoundStatement getBody() {
-        GLSLCompoundStatement statement = findChildByClass(GLSLCompoundStatement.class);
-        assert statement != null;
-        return statement;
+        return findChildByClass(GLSLCompoundStatement.class);
     }
 
     @Override

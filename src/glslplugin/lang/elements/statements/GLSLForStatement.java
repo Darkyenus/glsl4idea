@@ -27,6 +27,7 @@ import glslplugin.lang.elements.declarations.GLSLDeclaration;
 import glslplugin.lang.elements.expressions.GLSLCondition;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLDeclarationStatement is ...
@@ -77,8 +78,12 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
      *
      * @return the loop initialization element.
      */
+    @Nullable
     public GLSLElement getInitializerElement() {
-        return getForElements()[0];
+        GLSLElement[] forElements = getForElements();
+        if(forElements.length > 0){
+            return forElements[0];
+        }else return null;
     }
 
     /**
@@ -87,8 +92,12 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
      *
      * @return the loop condition element.
      */
+    @Nullable
     public GLSLCondition getCondition() {
-        return (GLSLCondition) getForElements()[1];
+        GLSLElement[] forElements = getForElements();
+        if(forElements.length > 1 && forElements[1] instanceof GLSLCondition){
+            return (GLSLCondition) forElements[1];
+        }else return null;
     }
 
     /**
@@ -97,15 +106,17 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
      *
      * @return the loop counter expression.
      */
+    @Nullable
     public GLSLExpression getCountExpression() {
-        return (GLSLExpression) getForElements()[2];
+        GLSLElement[] forElements = getForElements();
+        if(forElements.length > 2 && forElements[2] instanceof GLSLExpression){
+            return (GLSLExpression) forElements[2];
+        }else return null;
     }
 
-
+    @Nullable
     public GLSLStatement getLoopStatement() {
-        GLSLStatement statement = findChildByClass(GLSLStatement.class);
-        assert statement != null;
-        return statement;
+        return findChildByClass(GLSLStatement.class);
     }
 
 
@@ -115,4 +126,5 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
     }
 
     // TODO some for statements can be terminating if their condition can be constant-analyzed as true
+    // and don't contain any sort of break out. But that should probably be an error.
 }

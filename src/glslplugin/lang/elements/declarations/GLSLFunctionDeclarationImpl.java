@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.types.GLSLBasicFunctionType;
 import glslplugin.lang.elements.types.GLSLFunctionType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLFunctionDeclarationImpl is the psi implementation of a function declaration.
@@ -36,17 +37,17 @@ public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl imple
 
     @NotNull
     public GLSLParameterDeclaration[] getParameters() {
-        GLSLDeclaration[] declarations = getParameterList().getDeclarations();
-        return castToParameters(declarations);
+        GLSLDeclarationList parameterList = getParameterList();
+        if(parameterList == null)return GLSLParameterDeclaration.NO_PARAMETER_DECLARATIONS;
+        return castToParameters(parameterList.getDeclarations());
+    }
+
+    @Nullable
+    public GLSLDeclarationList getParameterList() {
+        return findChildByClass(GLSLDeclarationList.class);
     }
 
     @NotNull
-    public GLSLDeclarationList getParameterList() {
-        final GLSLDeclarationList list = findChildByClass(GLSLDeclarationList.class);
-        assert list != null;
-        return list;
-    }
-
     private static GLSLParameterDeclaration[] castToParameters(GLSLDeclaration[] declarations) {
         GLSLParameterDeclaration[] parameters = new GLSLParameterDeclaration[declarations.length];
         for (int i = 0; i < declarations.length; i++) {
@@ -65,10 +66,10 @@ public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl imple
                 b.append(",");
             }
             first = false;
-            b.append(declarator.getTypeSpecifierNode().getTypeName());
+            b.append(declarator.getTypeSpecifierNodeTypeName());
         }
         b.append(") : ");
-        b.append(getTypeSpecifierNode().getTypeName());
+        b.append(getTypeSpecifierNodeTypeName());
         return b.toString();
     }
 

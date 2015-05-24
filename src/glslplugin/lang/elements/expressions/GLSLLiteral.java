@@ -25,6 +25,9 @@ import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * GLSLLiteral is ...
@@ -34,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
  *         Time: 1:50:35 PM
  */
 public class GLSLLiteral extends GLSLPrimaryExpression {
-    private enum Type {
+    public enum Type {
         BOOL("Bool", GLSLTypes.BOOL),
         FLOAT("Float", GLSLTypes.FLOAT),
         DOUBLE("Double", GLSLTypes.DOUBLE),
@@ -55,24 +58,45 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
         super(astNode);
     }
 
+    @Nullable
     public Type getLiteralType() {
         IElementType type = getNode().getFirstChildNode().getElementType();
+
+        Type result = getLiteralType(type);
+        if(result != null)return result;
+
+        Logger.getLogger("GLSLLiteral").warning("Unsupported literal type. ("+type+")");
+        return null;
+    }
+
+    @Nullable
+    public static Type getLiteralType(IElementType type){
         if (type == GLSLTokenTypes.BOOL_CONSTANT) return Type.BOOL;
         if (type == GLSLTokenTypes.INTEGER_CONSTANT) return Type.INTEGER;
         if (type == GLSLTokenTypes.UINT_CONSTANT) return Type.UINT;
         if (type == GLSLTokenTypes.FLOAT_CONSTANT) return Type.FLOAT;
         if (type == GLSLTokenTypes.DOUBLE_CONSTANT) return Type.DOUBLE;
-
-        throw new RuntimeException("Unsupported literal type.");
-    }
-
-    public String toString() {
-        return getLiteralType().textRepresentation + " Literal: '" + getText() + "'";
+        return null;
     }
 
     @NotNull
     @Override
     public GLSLType getType() {
-        return getLiteralType().type;
+        Type literalType = getLiteralType();
+        if(literalType != null){
+            return literalType.type;
+        }else{
+            return GLSLTypes.UNKNOWN_TYPE;
+        }
+    }
+
+    @NotNull
+    public String getLiteralValue(){
+        return getText();
+    }
+
+    public String toString() {
+        Type literalType = getLiteralType();
+        return (literalType == null ? "(unknown)" : getLiteralType().textRepresentation) + " Literal: '" + getLiteralValue() + "'";
     }
 }
