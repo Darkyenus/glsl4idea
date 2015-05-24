@@ -27,8 +27,17 @@
     <idea-version since-build="139.1117"/>
     <depends>com.intellij.modules.lang</depends>
 
-    <version>1.7.1</version>
+    <version>1.8</version>
     <change-notes><![CDATA[
+        <p>1.8</p>
+        <ul>
+            <li>Support for basic #define token replacement (everything except function-like)</li>
+            <li>Parse "layout qualifier statements"</li>
+            <li>Handling syntax and grammar errors is more robust</li>
+            <li>Fix variable declarations with already-defined struct types not parsing correctly</li>
+            <li>Improve highlighting of GLES precision statements</li>
+        </ul>
+
         <p>1.7.1</p>
         <ul>
             <li>Fix problem in parsing which could cause the plugin to freeze</li>
