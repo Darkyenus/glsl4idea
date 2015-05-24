@@ -109,7 +109,7 @@ abstract class GLSLParsingBase {
             fallback.rollbackTo();
             return result;
         }else{
-            return IDENTIFIER;
+            return lookahead;
         }
     }
 

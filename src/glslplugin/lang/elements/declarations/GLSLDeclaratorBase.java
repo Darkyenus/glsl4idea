@@ -77,6 +77,7 @@ public class GLSLDeclaratorBase extends GLSLElementImpl {
 
         if(declaration == null)return GLSLTypes.UNKNOWN_TYPE;
         GLSLTypeSpecifier declarationType = declaration.getTypeSpecifierNode();
+        if(declarationType == null)return GLSLTypes.UNKNOWN_TYPE;
 
         if (arraySpecifier != null) {
             return new GLSLArrayType(declarationType.getType(), declarationType.getArraySpecifierNode());
