@@ -78,6 +78,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
 
         if (type == GLSLElementTypes.TYPE_SPECIFIER_PRIMITIVE) {
             final ASTNode child = node.getFirstChildNode();
+            if(child == null)return GLSLTypes.UNKNOWN_TYPE; //This means broken tree
             final IElementType childType = child.getElementType();
 
             if (childType == GLSLTokenTypes.VOID_TYPE) return GLSLTypes.VOID;
