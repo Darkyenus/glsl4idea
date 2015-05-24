@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "This script downloads and sorts glsl tests from git://anongit.freedesktop.org/git/piglit (repo)."
+echo "Downloaded files are under license, see repo for details."
+
 # Move to this directory
 cd "$(dirname "$0")"
 
