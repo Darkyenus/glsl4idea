@@ -156,4 +156,12 @@ public class GLSLElementTypes {
         }
     }
     public static final IElementType PREPROCESSED_EMPTY = new GLSLElementType("PREPROCESSED_EMPTY");
+    public static final class PreprocessedUnknownElementType extends GLSLElementType {
+        public final String text;
+
+        public PreprocessedUnknownElementType(String text) {
+            super("PREPROCESSED_UNKNOWN");
+            this.text = text;
+        }
+    }
 }

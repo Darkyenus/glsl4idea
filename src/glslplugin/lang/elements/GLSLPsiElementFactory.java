@@ -26,6 +26,7 @@ import glslplugin.lang.elements.expressions.*;
 import glslplugin.lang.elements.preprocessor.GLSLEmptyDropIn;
 import glslplugin.lang.elements.preprocessor.GLSLExpressionDropIn;
 import glslplugin.lang.elements.preprocessor.GLSLLiteralDropIn;
+import glslplugin.lang.elements.preprocessor.GLSLUnknownDropIn;
 import glslplugin.lang.elements.statements.*;
 
 /**
@@ -58,6 +59,10 @@ public class GLSLPsiElementFactory {
             return new GLSLLiteralDropIn(node, t.type, t.text);
         }
         if (type == GLSLElementTypes.PREPROCESSED_EMPTY) return new GLSLEmptyDropIn(node);
+        if (type instanceof GLSLElementTypes.PreprocessedUnknownElementType){
+            GLSLElementTypes.PreprocessedUnknownElementType t = (GLSLElementTypes.PreprocessedUnknownElementType) type;
+            return new GLSLUnknownDropIn(node, t.text);
+        }
 
         // translation unit
         if (type == GLSLElementTypes.TRANSLATION_UNIT) return new GLSLTranslationUnit(node);

@@ -23,6 +23,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.impl.DelegateMarker;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import glslplugin.lang.elements.GLSLElementTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -253,7 +254,9 @@ abstract class GLSLParsingBase {
                 final List<PreprocessorToken> tokens = dropIn.tokens;
                 preprocessorTokensText = dropIn.text;
                 //This IDENTIFIER has been #define-d to tokens
-                if(!rerolling)psiBuilder.remapCurrentToken(new GLSLRedefinedTokenType(tokens));
+                if(!rerolling){
+                    psiBuilder.remapCurrentToken(new GLSLRedefinedTokenType(tokens));
+                }
 
                 preprocessorTokens = tokens;
                 preprocessorTokensIndex = 0;
@@ -281,10 +284,22 @@ abstract class GLSLParsingBase {
                 preprocessorTokensIndex++;
                 if (preprocessorTokensIndex >= preprocessorTokens.size()) {
                     //At the end, jump out of preprocessor mode and advance real lexer instead
+
+                    if(preprocessorTokensReplacementType == PreprocessorDropInType.UNKNOWN
+                            && psiBuilder.getTokenType() instanceof GLSLRedefinedTokenType && ((GLSLRedefinedTokenType)psiBuilder.getTokenType()).mark()){
+                        PsiBuilder.Marker unknownReplacementMarker = psiBuilder.mark();
+                        psiBuilder.advanceLexer();
+                        unknownReplacementMarker.done(new GLSLElementTypes.PreprocessedUnknownElementType(preprocessorTokensText));
+                    }else{
+                        psiBuilder.advanceLexer();
+                    }
+
+                    //Cleanup
                     preprocessorTokens = null;
                     preprocessorTokensReplacementType = null;
                     preprocessorTokensIndex = -1;
-                    psiBuilder.advanceLexer();
+                    preprocessorTokensText = null;
+
                     advancedRealLexer = true;
                 }
             } else {
