@@ -1,4 +1,4 @@
-//This file should parse without errors
+//This file should parse without errors, except when noted
 
 #version 330
 
@@ -39,7 +39,24 @@ int baaz = BAZ;
 
 #define Min(x,y) (x) < (y) ? (x):(y)
 
-void main(){
+void functionDefineTest(){
+	//This should pass (..after adding support for function defines)
 	int i = Min(x,y);
+}
 
+#define ONE 1
+
+int one = ONE;
+
+#define VERDAD true
+
+void literalTypeTest(){
+	if(ONE){ //This should fail, because one is not boolean
+
+	}
+
+	//This should pass
+	if(VERDAD){
+
+	}
 }
