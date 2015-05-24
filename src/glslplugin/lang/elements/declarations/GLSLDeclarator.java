@@ -23,6 +23,9 @@ import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * GLSLDeclarator represents a local or global variable declaration.
@@ -39,23 +42,17 @@ public class GLSLDeclarator extends GLSLDeclaratorBase {
         super(astNode);
     }
 
-    public boolean hasInitializer() {
-        return findChildByClass(GLSLInitializer.class) != null;
-    }
-
-    public boolean hasIdentifier() {
-        return findChildByClass(GLSLIdentifier.class) != null;
-    }
-
+    @Nullable
     public GLSLExpression getInitializerExpression() {
         final GLSLInitializer init = findChildByClass(GLSLInitializer.class);
         if (init != null) {
             return init.getInitializerExpression();
         } else {
-            throw new RuntimeException("Check for initializer before asking for it!");
+            return null;
         }
     }
 
+    @Nullable
     public GLSLArraySpecifier getArraySpecifier() {
         return findChildByClass(GLSLArraySpecifier.class);
     }

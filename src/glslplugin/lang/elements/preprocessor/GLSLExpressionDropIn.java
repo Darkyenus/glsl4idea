@@ -1,5 +1,5 @@
 /*
- *     Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
+ * Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
  *
  *     This file is part of glsl4idea.
  *
@@ -17,36 +17,40 @@
  *     along with glsl4idea.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package glslplugin.lang.elements.declarations;
+package glslplugin.lang.elements.preprocessor;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
 import glslplugin.lang.elements.expressions.GLSLExpression;
-import org.jetbrains.annotations.Nullable;
+import glslplugin.lang.elements.types.GLSLType;
+import glslplugin.lang.elements.types.GLSLTypes;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * GLSLInitializer is ...
- *
- * @author Yngve Devik Hammersland
- *         Date: Jan 29, 2009
- *         Time: 2:09:11 PM
+ * @author Darkyen
  */
-public class GLSLInitializer extends GLSLExpression {
-    public GLSLInitializer(@NotNull ASTNode astNode) {
-        super(astNode);
-    }
+public class GLSLExpressionDropIn extends GLSLExpression implements GLSLElementDropIn {
 
-    @Nullable
-    public GLSLExpression getInitializerExpression() {
-        PsiElement result = getFirstChild();
-        if(result instanceof GLSLExpression){
-            return (GLSLExpression)result;
-        }else return null;
+    private final String originalText;
+
+    public GLSLExpressionDropIn(@NotNull ASTNode astNode, @NotNull String originalText) {
+        super(astNode);
+        this.originalText = originalText;
     }
 
     @Override
-    public String toString() {
-        return "Initializer";
+    public boolean isLValue() {
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public GLSLType getType() {
+        return GLSLTypes.UNKNOWN_TYPE;
+    }
+
+    @NotNull
+    @Override
+    public String getOriginalText() {
+        return originalText;
     }
 }

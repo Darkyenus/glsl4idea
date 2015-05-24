@@ -23,7 +23,6 @@ import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.PsiElement;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclarationImpl;
 import glslplugin.lang.elements.declarations.GLSLFunctionDefinitionImpl;

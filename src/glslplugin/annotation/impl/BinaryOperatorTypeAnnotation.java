@@ -23,6 +23,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.expressions.GLSLBinaryOperatorExpression;
 import glslplugin.lang.elements.expressions.GLSLExpression;
+import glslplugin.lang.elements.expressions.GLSLOperator;
 import glslplugin.lang.elements.types.GLSLFunctionType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypeCompatibilityLevel;
@@ -40,6 +41,9 @@ public class BinaryOperatorTypeAnnotation extends Annotator<GLSLBinaryOperatorEx
     public void annotate(GLSLBinaryOperatorExpression expr, AnnotationHolder holder) {
         final GLSLExpression left = expr.getLeftOperand();
         final GLSLExpression right = expr.getRightOperand();
+        final GLSLOperator operator = expr.getOperator();
+        if(left == null || right == null || operator == null)return; //There are bigger problems than type compatibility
+
         final GLSLType rightType = right.getType();
         final GLSLType leftType = left.getType();
         final GLSLFunctionType[] operatorAlternatives = expr.getOperatorTypeAlternatives();
@@ -51,7 +55,7 @@ public class BinaryOperatorTypeAnnotation extends Annotator<GLSLBinaryOperatorEx
             }
 
             if (!compatible) {
-                holder.createErrorAnnotation(expr, "Incompatible types as operands of '" + expr.getOperator().getTextRepresentation() + "': '"
+                holder.createErrorAnnotation(expr, "Incompatible types as operands of '" + operator.getTextRepresentation() + "': '"
                         + leftType.getTypename() + "' and '" + rightType.getTypename() + "'");
             }
         }

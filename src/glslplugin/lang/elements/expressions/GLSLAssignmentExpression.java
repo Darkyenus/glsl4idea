@@ -41,6 +41,11 @@ public class GLSLAssignmentExpression extends GLSLBinaryOperatorExpression {
 
     @Override
     public String toString() {
-        return "Assignment: " + getOperator().getTextRepresentation();
+        GLSLOperator operator = getOperator();
+        if(operator == null){
+            return "Assignment: (unknown)";
+        }else{
+            return "Assignment: " + operator.getTextRepresentation();
+        }
     }
 }

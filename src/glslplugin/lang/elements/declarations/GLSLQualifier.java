@@ -26,6 +26,9 @@ import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.types.GLSLTypeQualifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * GLSLQualifier is all kinds of qualifiers combined into a single class.
@@ -108,26 +111,31 @@ public class GLSLQualifier extends GLSLElementImpl {
         }
     }
 
-
+    @Nullable
     public Qualifier getQualifier() {
         PsiElement qualifier = getFirstChild();
-        assert qualifier != null;
+        if(qualifier == null)return null;
         ASTNode qualifierNode = qualifier.getNode();
-        assert qualifierNode != null;
+        if(qualifierNode == null)return null;
         return getQualifierFromType(qualifierNode.getElementType());
     }
 
+    @Nullable
     public GLSLTypeQualifier getQualifierType() {
-        return getQualifier().getType();
+        Qualifier qualifier = getQualifier();
+        if(qualifier == null)return null;
+        return qualifier.getType();
     }
 
+    @Nullable
     private Qualifier getQualifierFromType(IElementType elt) {
         for (Qualifier qualifier : Qualifier.values()) {
             if (qualifier.getCorrespondingElement() == elt) {
                 return qualifier;
             }
         }
-        throw new RuntimeException("Unsupported element type: " + elt);
+        Logger.getLogger("GLSLQualifier").warning("Unsupported element type: " + elt);
+        return null;
     }
 
     public GLSLQualifier(@NotNull ASTNode astNode) {

@@ -62,6 +62,8 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
             { TextAttributesKey.createTextAttributesKey("GLSL.PREPROCESSOR_DIRECTIVE", DefaultLanguageHighlighterColors.METADATA) };
     public static final TextAttributesKey[] GLSL_PRECISION_STATEMENT =
             { TextAttributesKey.createTextAttributesKey("GLSL.PRECISION_STATEMENT", DefaultLanguageHighlighterColors.METADATA) };
+    public static final TextAttributesKey[] GLSL_REDEFINED_TOKEN =
+            { TextAttributesKey.createTextAttributesKey("GLSL.REDEFINED_TOKEN", DefaultLanguageHighlighterColors.METADATA) };
     static final TextAttributesKey[] GLSL_STRING =
             { TextAttributesKey.createTextAttributesKey("GLSL.STRING", DefaultLanguageHighlighterColors.STRING) };
     static final TextAttributesKey[] GLSL_UNKNOWN =

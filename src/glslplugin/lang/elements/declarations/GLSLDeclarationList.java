@@ -25,9 +25,12 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTokenTypes;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * NewDeclarationList is ...
@@ -41,6 +44,7 @@ public class GLSLDeclarationList extends GLSLElementImpl {
         super(node);
     }
 
+    @NotNull
     public GLSLDeclaration[] getDeclarations() {
         // convert the list of children to a list of GLSLStatement objects while performing sanity check.
         PsiElement[] children = getChildren();
@@ -53,7 +57,7 @@ public class GLSLDeclarationList extends GLSLElementImpl {
                 if (node != null) {
                     final IElementType type = node.getElementType();
                     if (!GLSLTokenTypes.COMMENTS.contains(type)) {
-                        throw new RuntimeException("Parameter declaration list contains non-comment, non-expression element.");
+                        Logger.getLogger("GLSLDeclarationList").warning("Parameter declaration list contains non-comment, non-expression element. ("+type+")");
                     }
                 }
             }
@@ -61,14 +65,18 @@ public class GLSLDeclarationList extends GLSLElementImpl {
         return result.toArray(new GLSLDeclaration[result.size()]);
     }
 
+    @Nullable
     public GLSLDeclaration getLastDeclaration() {
         GLSLDeclaration[] declarations = getDeclarations();
-        return declarations[declarations.length - 1];
+        if(declarations.length == 0)return null;
+        else return declarations[declarations.length - 1];
     }
 
+    @Nullable
     public GLSLDeclaration getFirstDeclaration() {
         GLSLDeclaration[] declarations = getDeclarations();
-        return declarations[0];
+        if(declarations.length == 0)return null;
+        else return declarations[0];
     }
 
     @Override

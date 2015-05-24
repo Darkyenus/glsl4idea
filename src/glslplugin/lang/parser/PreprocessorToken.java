@@ -1,5 +1,5 @@
 /*
- *     Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
+ * Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
  *
  *     This file is part of glsl4idea.
  *
@@ -17,31 +17,19 @@
  *     along with glsl4idea.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package glslplugin.lang.elements.statements;
+package glslplugin.lang.parser;
 
-import org.jetbrains.annotations.NotNull;
-import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.IElementType;
 
 /**
- * GLSLDeclarationStatement is ...
- *
- * @author Yngve Devik Hammersland
- *         Date: Jan 28, 2009
- *         Time: 6:13:58 PM
+ * @author Darkyen
  */
-public class GLSLDiscardStatement extends GLSLStatement {
-    public GLSLDiscardStatement(@NotNull ASTNode astNode) {
-        super(astNode);
-    }
+public class PreprocessorToken {
+    public final IElementType type;
+    public final String text;
 
-    @Override
-    public String toString() {
-        return "Discard Statement";
-    }
-
-    @NotNull
-    @Override
-    public TerminatorScope getTerminatorScope() {
-        return TerminatorScope.SHADER;
+    public PreprocessorToken(IElementType type, CharSequence text) {
+        this.type = type;
+        this.text = text.toString();
     }
 }

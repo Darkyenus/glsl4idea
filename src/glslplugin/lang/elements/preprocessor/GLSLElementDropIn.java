@@ -1,5 +1,5 @@
 /*
- *     Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
+ * Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
  *
  *     This file is part of glsl4idea.
  *
@@ -17,29 +17,19 @@
  *     along with glsl4idea.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package glslplugin.lang.elements.declarations;
+package glslplugin.lang.elements.preprocessor;
 
 import glslplugin.lang.elements.GLSLElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * GLSLDeclaration is a common interface for all declarations;
- * variable declarations, function declarations/definitions, and struct member declarations.
- *
- * @author Yngve Devik Hammersland
- *         Date: Feb 2, 2009
- *         Time: 12:39:33 AM
+ * @author Darkyen
  */
-public interface GLSLDeclaration extends GLSLElement {
-    GLSLDeclaration[] NO_DECLARATIONS = new GLSLDeclaration[0];
+public interface GLSLElementDropIn extends GLSLElement {
 
-    @Nullable
-    GLSLTypeSpecifier getTypeSpecifierNode();
-
-    @Nullable
-    GLSLQualifierList getQualifierList();
-
+    /**
+     * @return text which this element emulates
+     */
     @NotNull
-    GLSLDeclarator[] getDeclarators();
+    String getOriginalText();
 }

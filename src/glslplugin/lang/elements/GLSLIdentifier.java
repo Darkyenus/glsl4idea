@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GLSLIdentifier extends GLSLElementImpl {
 
@@ -30,14 +31,12 @@ public class GLSLIdentifier extends GLSLElementImpl {
         super(astNode);
     }
 
+    @NotNull
     public String getIdentifierName() {
         return getText();
     }
 
-    public String toString() {
-        return "Identifier: '" + getText() + "'";
-    }
-
+    @Nullable
     private GLSLReferenceElement getRealReference() {
         PsiElement parent = getParent();
         if (parent instanceof GLSLReferenceElement) {
@@ -48,6 +47,7 @@ public class GLSLIdentifier extends GLSLElementImpl {
     }
 
     @Override
+    @Nullable
     public PsiReference getReference() {
         GLSLReferenceElement theRealReference = getRealReference();
         if (theRealReference != null) {
@@ -56,16 +56,10 @@ public class GLSLIdentifier extends GLSLElementImpl {
             return null;
         }
     }
-    /*
+
     @NotNull
     @Override
-    public PsiReference[] getReferences() {
-        GLSLReferenceElement theRealReference = getRealReference();
-        if(theRealReference!=null) {
-            return theRealReference.getReferencesProxy();
-        } else {
-            return PsiReference.EMPTY_ARRAY;
-        }
+    public String toString() {
+        return "Identifier: '" + getText() + "'";
     }
-    */
 }

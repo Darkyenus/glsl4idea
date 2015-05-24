@@ -30,6 +30,9 @@ import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import glslplugin.lang.parser.GLSLFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * GLSLTypeReference represents a type-specifier which specifies a custom type.
@@ -44,9 +47,10 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
         super(astNode);
     }
 
+    @Nullable
     public GLSLTypeDefinition getTypeDefinition() {
         GLSLIdentifier id = findChildByClass(GLSLIdentifier.class);
-        assert id != null;
+        if(id == null)return null;
         PsiReference ref = id.getReference();
         if (ref != null) {
             PsiElement elt = ref.resolve();
@@ -74,6 +78,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
 
         if (type == GLSLElementTypes.TYPE_SPECIFIER_PRIMITIVE) {
             final ASTNode child = node.getFirstChildNode();
+            if(child == null)return GLSLTypes.UNKNOWN_TYPE; //This means broken tree
             final IElementType childType = child.getElementType();
 
             if (childType == GLSLTokenTypes.VOID_TYPE) return GLSLTypes.VOID;
@@ -131,14 +136,12 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
             if (childType == GLSLTokenTypes.SAMPLER1DSHADOW_TYPE) return GLSLTypes.SAMPLER1D_SHADOW;
             if (childType == GLSLTokenTypes.SAMPLER2DSHADOW_TYPE) return GLSLTypes.SAMPLER2D_SHADOW;
         }
-        throw new RuntimeException("Unknown element type: '" + type + "'");
+
+        Logger.getLogger("GLSLTypename").warning("Unknown element type: '" + type + "'");
+        return GLSLTypes.UNKNOWN_TYPE;
     }
 
-    public boolean isNamed() {
-        // The referenced struct obviously needs to be named.
-        return true;
-    }
-
+    @Nullable
     public GLSLDeclarationList getDeclarationList() {
         final GLSLTypeDefinition definition = getTypeDefinition();
         if (definition != null) {
@@ -148,6 +151,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
         }
     }
 
+    @Nullable
     public GLSLTypeReference getReferenceProxy() {
         GLSLTypeDefinition definition = findTypeReference();
         if (definition != null) {
@@ -157,6 +161,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
         }
     }
 
+    @Nullable
     private GLSLTypeDefinition findTypeReference() {
         PsiElement current = getPrevSibling();
         GLSLTypeDefinition result = null;
@@ -213,6 +218,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
         return null;
     }
 
+    @Nullable
     private GLSLTypeDefinition checkDeclarationForType(GLSLDeclaration declaration) {
         final GLSLTypeSpecifier specifier = declaration.getTypeSpecifierNode();
         if(specifier == null)return null;
@@ -231,12 +237,13 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
         return "Struct Reference: '" + getTypename() + "'";
     }
 
+    @NotNull
     public GLSLDeclaration[] getDeclarations() {
         final GLSLTypeDefinition definition = getTypeDefinition();
         if (definition != null) {
             return definition.getDeclarations();
         } else {
-            return null;
+            return GLSLDeclaration.NO_DECLARATIONS;
         }
     }
 
@@ -250,6 +257,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
         }
     }
 
+    @NotNull
     public String getTypename() {
         return getText();
     }

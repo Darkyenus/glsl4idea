@@ -38,13 +38,12 @@ public class GLSLReturnStatement extends GLSLStatement {
         super(astNode);
     }
 
-    // TODO: Implement
-
     @Override
     public String toString() {
         return "Return Statement";
     }
 
+    @NotNull
     public GLSLType getReturnType() {
         GLSLExpression child = findChildByClass(GLSLExpression.class);
         if (child != null) {

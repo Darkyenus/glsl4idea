@@ -19,6 +19,8 @@
 
 package glslplugin.lang.elements.types;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,6 +97,7 @@ public class GLSLTypes {
     public static final GLSLPrimitiveType VOID = GLSLPrimitiveType.VOID;
 
     public static final GLSLType UNKNOWN_TYPE = new GLSLType() {
+        @NotNull
         public String getTypename() {
             return "(unknown type)";
         }
@@ -115,6 +118,7 @@ public class GLSLTypes {
         }
     };
     public static final GLSLType INVALID_TYPE = new GLSLType() {
+        @NotNull
         public String getTypename() {
             return "(invalid type)";
         }
@@ -143,6 +147,7 @@ public class GLSLTypes {
                     new GLSLType() {
                         private final String name = text;
 
+                        @NotNull
                         public String getTypename() {
                             return name;
                         }

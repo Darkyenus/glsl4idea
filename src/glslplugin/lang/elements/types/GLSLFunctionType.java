@@ -34,6 +34,7 @@ import java.util.List;
  */
 public abstract class GLSLFunctionType extends GLSLType {
     public static final GLSLFunctionType[] EMPTY_ARRAY = {};
+
     protected final GLSLType returnType;
     protected String typename;
     @NotNull
@@ -52,6 +53,7 @@ public abstract class GLSLFunctionType extends GLSLType {
 
     protected abstract String generateTypename();
 
+    @NotNull
     public String getTypename() {
         if (typename == null) {
             typename = generateTypename();
@@ -63,6 +65,7 @@ public abstract class GLSLFunctionType extends GLSLType {
      * @return The return type of the function.
      */
     @Override
+    @NotNull
     public GLSLType getBaseType() {
         return returnType;
     }

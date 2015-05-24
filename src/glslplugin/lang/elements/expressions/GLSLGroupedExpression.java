@@ -21,7 +21,11 @@ package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.types.GLSLType;
+import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * GLSLGroupedExpression is ...
@@ -35,19 +39,26 @@ public class GLSLGroupedExpression extends GLSLPrimaryExpression {
         super(astNode);
     }
 
+    @Nullable
     public GLSLExpression getExpression() {
         GLSLExpression expr = findChildByClass(GLSLExpression.class);
         if (expr != null) {
             return expr;
         } else {
-            throw new RuntimeException("Grouped expression does not contain any expression!");
+            Logger.getLogger("GLSLGroupedExpression").warning("Grouped expression does not contain any expression!");
+            return null;
         }
     }
 
     @NotNull
     @Override
     public GLSLType getType() {
-        return getExpression().getType();
+        GLSLExpression expression = getExpression();
+        if(expression != null){
+            return expression.getType();
+        }else{
+            return GLSLTypes.UNKNOWN_TYPE;
+        }
     }
 
     public String toString() {

@@ -25,7 +25,9 @@ import com.intellij.lang.Language;
  *
  */
 public class GLSLLanguage extends Language {
-    public GLSLLanguage() {
+    public static final GLSLLanguage GLSL_LANGUAGE = new GLSLLanguage();
+
+    private GLSLLanguage() {
         super("GLSL", "x-shader/x-vertex", "x-shader/x-fragment");
     }
 }

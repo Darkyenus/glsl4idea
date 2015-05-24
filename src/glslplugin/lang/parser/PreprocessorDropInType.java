@@ -1,5 +1,5 @@
 /*
- *     Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
+ * Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
  *
  *     This file is part of glsl4idea.
  *
@@ -17,31 +17,21 @@
  *     along with glsl4idea.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package glslplugin.lang.elements.statements;
-
-import org.jetbrains.annotations.NotNull;
-import com.intellij.lang.ASTNode;
+package glslplugin.lang.parser;
 
 /**
- * GLSLDeclarationStatement is ...
- *
- * @author Yngve Devik Hammersland
- *         Date: Jan 28, 2009
- *         Time: 6:13:58 PM
+ * @author Darkyen
  */
-public class GLSLDiscardStatement extends GLSLStatement {
-    public GLSLDiscardStatement(@NotNull ASTNode astNode) {
-        super(astNode);
-    }
-
-    @Override
-    public String toString() {
-        return "Discard Statement";
-    }
-
-    @NotNull
-    @Override
-    public TerminatorScope getTerminatorScope() {
-        return TerminatorScope.SHADER;
-    }
+enum PreprocessorDropInType {
+    /**
+     * Only part in constant_expression, which is needed when declaring arrays
+     */
+    CONDITIONAL_EXPRESSION,
+    EXPRESSION,
+    LITERAL,
+    /**
+     * When #define defines empty replacement
+     */
+    EMPTY,
+    UNKNOWN
 }

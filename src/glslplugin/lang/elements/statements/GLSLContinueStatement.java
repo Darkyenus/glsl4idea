@@ -35,8 +35,6 @@ public class GLSLContinueStatement extends GLSLStatement {
         super(astNode);
     }
 
-    // TODO: Implement
-
     @Override
     public String toString() {
         return "Continue Statement";

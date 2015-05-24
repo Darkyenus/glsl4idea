@@ -22,6 +22,9 @@ package glslplugin.lang.elements.statements;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.expressions.GLSLExpression;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Logger;
 
 /**
  * GLSLExpressionStatement is ...
@@ -35,12 +38,14 @@ public class GLSLExpressionStatement extends GLSLStatement {
         super(astNode);
     }
 
+    @Nullable
     public GLSLExpression getExpression() {
         GLSLExpression expr = findChildByClass(GLSLExpression.class);
         if (expr != null) {
             return expr;
         } else {
-            throw new RuntimeException("Expression statement with no expression!");
+            Logger.getLogger("GLSLExpressionStatement").warning("Expression statement with no expression!");
+            return null;
         }
     }
 

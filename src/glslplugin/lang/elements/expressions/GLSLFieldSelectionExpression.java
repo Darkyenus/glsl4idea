@@ -32,6 +32,8 @@ import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.logging.Logger;
+
 /**
  * GLSLMemberOperator is ...
  *
@@ -44,25 +46,27 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
         super(astNode);
     }
 
+    @Nullable
     public GLSLIdentifier getMemberIdentifier() {
         PsiElement last = getLastChild();
         if (last instanceof GLSLIdentifier) {
             return (GLSLIdentifier) last;
         } else {
-            throw new RuntimeException("Field selection operator missing identifier after '.'.");
+            Logger.getLogger("GLSLFieldSelectionExpression").warning("Field selection operator missing identifier after '.'.");
+            return null;
         }
     }
 
     @Override
     public boolean isLValue() {
         // A member is L-Value only if its container also is L-Value
-        return getLeftHandExpression().isLValue();
+        GLSLExpression leftExpression = getLeftHandExpression();
+        //noinspection SimplifiableIfStatement
+        if(leftExpression == null)return true; //It might be, but right now it is broken.
+        else return leftExpression.isLValue();
     }
 
-    public String toString() {
-        return "Field selection: '" + getMemberIdentifier().getIdentifierName() + "'";
-    }
-
+    @Nullable
     public GLSLFieldReference getReferenceProxy() {
         GLSLDeclarator declarator = findDefiningDeclarator();
         if (declarator != null) {
@@ -74,13 +78,19 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
     @Nullable
     private GLSLDeclarator findDefiningDeclarator() {
         GLSLExpression left = getLeftHandExpression();
+        if(left == null)return null;
         GLSLType type = left.getType();
         if (type == GLSLTypes.UNKNOWN_TYPE) {
             return null;
         }
         GLSLElement definition = type.getDefinition();
         if (definition instanceof GLSLTypeDefinition) {
-            return ((GLSLTypeDefinition) definition).getDeclarator(getMemberIdentifier().getIdentifierName());
+            GLSLIdentifier memberIdentifier = getMemberIdentifier();
+            if(memberIdentifier == null){
+                return null;
+            }else{
+                return ((GLSLTypeDefinition) definition).getDeclarator(memberIdentifier.getIdentifierName());
+            }
         } else {
             return null;
         }
@@ -95,6 +105,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
         } else {
             // No declarator, check for built-in type
             GLSLExpression left = getLeftHandExpression();
+            if(left == null)return GLSLTypes.UNKNOWN_TYPE;
             GLSLType type = left.getType();
             if (type == GLSLTypes.UNKNOWN_TYPE) {
                 return GLSLTypes.UNKNOWN_TYPE;
@@ -102,7 +113,18 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
             if (!type.hasMembers()) {
                 return GLSLTypes.INVALID_TYPE;
             }
-            return type.getTypeOfMember(getMemberIdentifier().getIdentifierName());
+            GLSLIdentifier memberIdentifier = getMemberIdentifier();
+            if(memberIdentifier == null)return GLSLTypes.UNKNOWN_TYPE;
+            else return type.getTypeOfMember(memberIdentifier.getIdentifierName());
+        }
+    }
+
+    public String toString() {
+        GLSLIdentifier memberIdentifier = getMemberIdentifier();
+        if(memberIdentifier == null){
+            return "Field selection: '(unknown)'";
+        }else{
+            return "Field selection: '" + memberIdentifier.getIdentifierName() + "'";
         }
     }
 }

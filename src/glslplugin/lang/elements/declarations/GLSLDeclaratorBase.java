@@ -50,6 +50,7 @@ public class GLSLDeclaratorBase extends GLSLElementImpl {
         }
     }
 
+    @NotNull
     public String getIdentifierName() {
         PsiElement idElement = getFirstChild();
         if (idElement instanceof GLSLIdentifier) {
@@ -59,10 +60,12 @@ public class GLSLDeclaratorBase extends GLSLElementImpl {
         }
     }
 
+    @Nullable
     private GLSLArraySpecifier getArraySpecifier() {
         return findChildByClass(GLSLArraySpecifier.class);
     }
 
+    @Nullable
     public GLSLDeclaration getParentDeclaration() {
         return findParentByClass(GLSLDeclarationImpl.class);
     }
@@ -74,6 +77,7 @@ public class GLSLDeclaratorBase extends GLSLElementImpl {
 
         if(declaration == null)return GLSLTypes.UNKNOWN_TYPE;
         GLSLTypeSpecifier declarationType = declaration.getTypeSpecifierNode();
+        if(declarationType == null)return GLSLTypes.UNKNOWN_TYPE;
 
         if (arraySpecifier != null) {
             return new GLSLArrayType(declarationType.getType(), declarationType.getArraySpecifierNode());
@@ -82,6 +86,7 @@ public class GLSLDeclaratorBase extends GLSLElementImpl {
         }
     }
 
+    @NotNull
     public GLSLQualifiedType getQualifiedType() {
         final GLSLType type = getType();
         final GLSLDeclaration declaration = getParentDeclaration();

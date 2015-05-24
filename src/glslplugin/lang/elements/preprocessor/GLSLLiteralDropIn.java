@@ -1,5 +1,5 @@
 /*
- *     Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
+ * Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
  *
  *     This file is part of glsl4idea.
  *
@@ -17,29 +17,42 @@
  *     along with glsl4idea.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package glslplugin.lang.elements.declarations;
+package glslplugin.lang.elements.preprocessor;
 
-import glslplugin.lang.elements.GLSLElement;
+import com.intellij.lang.ASTNode;
+import glslplugin.lang.elements.expressions.GLSLLiteral;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * GLSLDeclaration is a common interface for all declarations;
- * variable declarations, function declarations/definitions, and struct member declarations.
- *
- * @author Yngve Devik Hammersland
- *         Date: Feb 2, 2009
- *         Time: 12:39:33 AM
+ * @author Darkyen
  */
-public interface GLSLDeclaration extends GLSLElement {
-    GLSLDeclaration[] NO_DECLARATIONS = new GLSLDeclaration[0];
+public class GLSLLiteralDropIn extends GLSLLiteral implements GLSLElementDropIn {
+
+    private Type type;
+    private String text;
+
+    public GLSLLiteralDropIn(@NotNull ASTNode astNode, @NotNull Type type, @NotNull String text) {
+        super(astNode);
+        this.type = type;
+        this.text = text;
+    }
 
     @Nullable
-    GLSLTypeSpecifier getTypeSpecifierNode();
-
-    @Nullable
-    GLSLQualifierList getQualifierList();
+    @Override
+    public Type getLiteralType() {
+        return type;
+    }
 
     @NotNull
-    GLSLDeclarator[] getDeclarators();
+    @Override
+    public String getLiteralValue() {
+        return text;
+    }
+
+    @NotNull
+    @Override
+    public String getOriginalText() {
+        return text;
+    }
 }
