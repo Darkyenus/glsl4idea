@@ -140,7 +140,7 @@ public class GLSLElementTypes {
         public final String text;
 
         public PreprocessedExpressionElementType(String text) {
-            super("PREPROCESSED_EXPRESSION");
+            super("PREPROCESSED_EXPRESSION", false);
             this.text = text;
         }
     }
@@ -150,7 +150,7 @@ public class GLSLElementTypes {
         public final String text;
 
         public PreprocessedLiteralElementType(GLSLLiteral.Type type, String text) {
-            super("PREPROCESSED_LITERAL");
+            super("PREPROCESSED_LITERAL", false);
             this.type = type;
             this.text = text;
         }
@@ -160,7 +160,7 @@ public class GLSLElementTypes {
         public final String text;
 
         public PreprocessedUnknownElementType(String text) {
-            super("PREPROCESSED_UNKNOWN");
+            super("PREPROCESSED_UNKNOWN", false);
             this.text = text;
         }
     }
