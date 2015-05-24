@@ -20,18 +20,12 @@
 package glslplugin.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.impl.DelegateMarker;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.expressions.GLSLLiteral;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Logger;
 
 import static glslplugin.lang.elements.GLSLElementTypes.*;
@@ -44,14 +38,13 @@ import static glslplugin.lang.elements.GLSLTokenTypes.*;
  *         Date: Jan 19, 2009
  *         Time: 3:16:56 PM
  */
-public final class GLSLParsing {
+public final class GLSLParsing extends GLSLParsingBase {
     // The general approach for error return and flagging is that an error should only be returned when not flagged.
     // So, if an error is encountered; EITHER flag it in the editor OR propagate it down the call stack.
 
-
     // Traits of all binary operators.
     // They must be listed in order of precedence. (low to high)
-    private OperatorLevelTraits[] operatorPrecedence = new OperatorLevelTraits[]{
+    private final static OperatorLevelTraits[] operatorPrecedence = new OperatorLevelTraits[]{
             new OperatorLevelTraits(TokenSet.create(OR_OP), "sub expression", LOGICAL_OR_EXPRESSION),
             new OperatorLevelTraits(TokenSet.create(XOR_OP), "sub expression", LOGICAL_XOR_EXPRESSION),
             new OperatorLevelTraits(TokenSet.create(AND_OP), "sub expression", LOGICAL_AND_EXPRESSION),
@@ -65,334 +58,8 @@ public final class GLSLParsing {
             new OperatorLevelTraits(MULTIPLICATIVE_OPERATORS, "factor", MULTIPLICATIVE_EXPRESSION),
     };
 
-
-    /**
-     * The source of operatorTokens and the target for the AST nodes.
-     * Do not use directly, use specialized proxy functions below, which can handle preprocessor
-     * directives and macro replacements.
-     */
-    private final PsiBuilder psiBuilder;
-
     GLSLParsing(PsiBuilder builder) {
-        psiBuilder = builder;
-    }
-
-    //Code that deals with preprocessor, b.call replacements
-
-    private enum PreprocessorDropInType {
-        /**
-         * Only part in constant_expression, which is needed when declaring arrays
-         */
-        CONDITIONAL_EXPRESSION,
-        EXPRESSION,
-        LITERAL,
-        /**
-         * When #define defines empty replacement
-         */
-        EMPTY,
-        UNKNOWN
-    }
-
-    private final static class PreprocessorDropIn {
-        public final PreprocessorDropInType type;
-        public final List<PreprocessorToken> tokens;
-        public final String text;
-
-        private PreprocessorDropIn(PreprocessorDropInType type, List<PreprocessorToken> tokens) {
-            this.type = type;
-            this.tokens = tokens;
-            this.text = "";
-        }
-
-        private PreprocessorDropIn(PreprocessorDropInType type, List<PreprocessorToken> tokens, String text) {
-            this.type = type;
-            this.tokens = tokens;
-            this.text = text;
-        }
-
-        public static final PreprocessorDropIn EMPTY = new PreprocessorDropIn(PreprocessorDropInType.EMPTY, Collections.<PreprocessorToken>emptyList());
-    }
-
-    private final HashMap<String, PreprocessorDropIn> defines = new HashMap<String, PreprocessorDropIn>();
-
-    /** List of tokens to serve, because the real psiBuilder is currently on #define-d IDENTIFIER.
-     * If null, psiBuilder is not there and everything is normal. */
-    private List<PreprocessorToken> preprocessorTokens = null;
-    /** How far in preprocessorTokens is parser advanced. */
-    private int preprocessorTokensIndex = -1;
-    /** Original text of `preprocessorTokens`. Used for UI and debug. */
-    private String preprocessorTokensText = null;
-    /** Value of preprocessorTokensText before calling consumePreprocessorTokens(). (For convenience) */
-    private String preprocessorTextOfConsumedTokens = null;
-
-    private PreprocessorDropInType preprocessorTokensReplacementType = PreprocessorDropInType.UNKNOWN;
-
-    /**
-     * @return type of token lexer is at or null if eof
-     */
-    @Nullable
-    private IElementType tokenType() {
-        if(preprocessorTokens != null){
-            return preprocessorTokens.get(preprocessorTokensIndex).type;
-        } else {
-            return psiBuilder.getTokenType();
-        }
-    }
-
-    /**
-     * @return type of token after [amount] times calling advanceLexer()
-     */
-    @Nullable
-    private IElementType lookAhead(int amount) {
-        return psiBuilder.lookAhead(amount); //TODO Implement for preprocessor
-    }
-
-    /**
-     * Places a mark at token.
-     * This mark MUST be closed by calling functions on it,
-     * for example done() to complete the element,
-     * error() to mark element as invalid (error on the mark, not {@link GLSLParsing#error(String)}!)
-     * or drop() to cancel the mark altogether.
-     *
-     * @return placed mark
-     */
-    @NotNull
-    private PsiBuilder.Marker mark() {
-        //This will have to do.
-        //If token is expanded to more tokens, it will be hard to mark mid-token.
-        return new DelegateMarker(psiBuilder.mark()) {
-            @Override
-            public void rollbackTo() {
-                super.rollbackTo();
-                //Reinitialize replacement tokens
-                preprocessorTokens = null;
-                preprocessorTokensReplacementType = null;
-                advanceLexer_initializePreprocessorToken(psiBuilder.getTokenType(), true);
-            }
-        };
-    }
-
-    /**
-     * Places an error at current lexer position.
-     *
-     * @param error message to be shown
-     */
-    private void error(String error) {
-        //This is probably fine preprocessor-define wise.
-        psiBuilder.error(error);
-    }
-
-    /**
-     * Returns same as eof(), but does not complain about anything
-     * and doesn't close anything.
-     *
-     * @return whether or not is the lexer at the end of the file
-     */
-    private boolean isEof() {
-        return psiBuilder.eof(); //TODO Preprocessor
-    }
-
-    /**
-     * @return the text of current token
-     */
-    @Nullable
-    private String getTokenText() {
-        if(preprocessorTokens != null){
-            return preprocessorTokens.get(preprocessorTokensIndex).text;
-        } else {
-            return psiBuilder.getTokenText();
-        }
-    }
-
-    /**
-     * Iff advanceLexer() just advanced into the preprocessor redefined tokens,
-     * this method will return what type of redefinition should happen here.
-     * If no type of replacement was recognized, type will be {@link glslplugin.lang.parser.GLSLParsing.PreprocessorDropInType#UNKNOWN}.
-     *
-     * Parsing methods can call this before doing their job, to find if it is already parsed.
-     * If it is, they should mark the spot for special drop in element, consumePreprocessorTokens() and return true.
-     * There is a shorthand to that, isTokenPreprocessorAlias(PreprocessorDropInType).
-     *
-     * @return Replacement type if just encountered the preprocessor-replaced block, null otherwise
-     */
-    @Nullable
-    private PreprocessorDropInType getTokenPreprocessorAlias(){
-        if(preprocessorTokens != null && preprocessorTokensIndex == 0){
-            return preprocessorTokensReplacementType;
-        }else{
-            return null;
-        }
-    }
-
-    /**
-     * Checks if next token is preprocessor alias for given type.
-     * If it is, consumes all injected tokens for that preprocessor token and return true.
-     * Otherwise false.
-     */
-    private boolean isTokenPreprocessorAlias(PreprocessorDropInType type){
-        if(getTokenPreprocessorAlias() == type){
-            consumePreprocessorTokens();
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    /**
-     * Advances lexer over all preprocessor-injected tokens.
-     * Does nothing if not in preprocessor-injected tokens.
-     */
-    private void consumePreprocessorTokens(){
-        if(preprocessorTokens != null){
-            preprocessorTextOfConsumedTokens = preprocessorTokensText;
-            preprocessorTokensIndex = preprocessorTokens.size();
-            advanceLexer();
-        }
-    }
-
-    private void advanceLexer_initializePreprocessorToken(final IElementType tokenType, final boolean fromRollback){
-        boolean rerolling = (fromRollback && tokenType instanceof GLSLRedefinedTokenType);
-        if (tokenType == IDENTIFIER || rerolling) {
-            //It may be preprocessor defined identifier
-            final String text = psiBuilder.getTokenText();
-            final PreprocessorDropIn dropIn = defines.get(text);
-
-            if (dropIn != null) {
-                preprocessorTokensReplacementType = dropIn.type;
-                final List<PreprocessorToken> tokens = dropIn.tokens;
-                preprocessorTokensText = dropIn.text;
-                //This IDENTIFIER has been #define-d to tokens
-                if(!rerolling)psiBuilder.remapCurrentToken(new GLSLRedefinedTokenType(tokens));
-
-                preprocessorTokens = tokens;
-                preprocessorTokensIndex = 0;
-            }// else There is nothing defined to this, continue normally
-        }
-    }
-
-    /**
-     * Advance lexer by one token.
-     *
-     * This goes through preprocessor-injected tokens,
-     * skips empty-injected tokens and parses more preprocessor directives.
-     */
-    private void advanceLexer(){
-        PsiBuilder.Marker emptyReplacementMarker = null;
-        int advances = 0;
-        do {
-            advances++;
-            if(advances == 2)emptyReplacementMarker = mark();
-
-            boolean advancedRealLexer = false;
-
-            if (preprocessorTokens != null) {
-                //In defined mode
-                //Go to next token
-                preprocessorTokensIndex++;
-                if (preprocessorTokensIndex >= preprocessorTokens.size()) {
-                    //At the end, jump out of preprocessor mode and advance real lexer instead
-                    preprocessorTokens = null;
-                    preprocessorTokensReplacementType = null;
-                    psiBuilder.advanceLexer();
-                    advancedRealLexer = true;
-                }
-            } else {
-                //Not in defined mode
-                psiBuilder.advanceLexer();
-                advancedRealLexer = true;
-            }
-
-            if (advancedRealLexer) {
-                //Real lexer advanced, so check for directives and redefined tokens
-                IElementType tokenType = psiBuilder.getTokenType();
-                if (tokenType == PREPROCESSOR_BEGIN) {
-                    parsePreprocessor();
-                } else {
-                    advanceLexer_initializePreprocessorToken(tokenType, false);
-                }
-            }
-        } while (preprocessorTokensReplacementType == PreprocessorDropInType.EMPTY);
-        if(emptyReplacementMarker != null){
-            emptyReplacementMarker.done(PREPROCESSED_EMPTY);
-        }
-    }
-
-    //Utility code
-
-    /**
-     * Checks whether lexer is at the end of the file,
-     * complains about it if it is
-     * and closes all marks supplied (if eof).
-     *
-     * @return psiBuilder.eof()
-     */
-    private boolean eof(PsiBuilder.Marker... marksToClose) {
-        if (isEof()) {
-            if (marksToClose.length > 0) {
-                for (PsiBuilder.Marker mark : marksToClose) {
-                    mark.error("Premature end of file.");
-                }
-            } else {
-                error("Premature end of file.");
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Verifies that the current token is of the given type, if not it will flag an error.
-     *
-     * @param type  the expected token type.
-     * @param error an appropriate error message if any other token is found instead.
-     * @return indicates whether the match was successful or not.
-     */
-    private boolean match(IElementType type, String error) {
-        if (isEof()) {
-            return false;
-        }
-        boolean match = tokenType() == type;
-        if (match) {
-            advanceLexer();
-        } else {
-            error(error);
-        }
-        return match;
-    }
-
-    /**
-     * Consumes the next token if it is of the given types, otherwise it is ignored.
-     *
-     * @param types the expected token types.
-     * @return indicates whether the match was successful or not.
-     */
-    private boolean tryMatch(IElementType... types) {
-        if (isEof()) {
-            return false;
-        }
-        boolean match = false;
-        for (IElementType type : types) {
-            match |= tokenType() == type;
-        }
-        if (match) {
-            advanceLexer();
-        }
-        return match;
-    }
-
-    /**
-     * Consumes the next token if it is contained in the given token set, otherwise it is ignored.
-     *
-     * @param types a token set containing the expected token types.
-     * @return indicates whether the match was successful or not.
-     */
-    private boolean tryMatch(TokenSet types) {
-        boolean match = types.contains(tokenType());
-        if (match) {
-            advanceLexer();
-        }
-        return match;
+        super(builder);
     }
 
     //Parsing code
@@ -404,7 +71,8 @@ public final class GLSLParsing {
      * some tokens, that are part of preprocessor, not that element.
      * This may cause trouble during working with the PSI tree, so be careful.
      */
-    private void parsePreprocessor() {
+    @Override
+    protected final void parsePreprocessor() {
         if(preprocessorTokens != null) Logger.getLogger("GLSLParsing").warning("Parsing preprocessor inside preprocessor");
 
         // We can't use tryMatch etc. in here because we'll end up
@@ -439,7 +107,8 @@ public final class GLSLParsing {
                             meaning = PreprocessorDropInType.CONDITIONAL_EXPRESSION;
                         }
                     }
-                    defineMeaningMark.rollbackTo();defineMeaningMark = mark();
+                    defineMeaningMark.rollbackTo();
+                    defineMeaningMark = mark();
 
                     if(meaning == PreprocessorDropInType.UNKNOWN && parseExpression()){
                         if(tokenType() == PREPROCESSOR_END){
