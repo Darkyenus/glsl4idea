@@ -5,3 +5,5 @@ GLSLPlugin.iws
 .DS_Store
 out
 GLSLPlugin.jar
+/piglit
+/piglit-repo
