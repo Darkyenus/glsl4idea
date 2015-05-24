@@ -292,6 +292,13 @@ public class GLSLTokenTypes {
             //GLSL Layout qualifiers
             LAYOUT_KEYWORD);
 
+    // A subset of QUALIFIER_TOKENS which can be used for interface block definition
+    public static final TokenSet INTERFACE_QUALIFIER_TOKENS = TokenSet.create(
+            IN_KEYWORD,
+            OUT_KEYWORD,
+            UNIFORM_KEYWORD
+    );
+
     public static final TokenSet COMMENTS = TokenSet.create(COMMENT_BLOCK, COMMENT_LINE);
 
     public static final TokenSet ITERATION_KEYWORDS = TokenSet.create(WHILE_KEYWORD, DO_KEYWORD, FOR_KEYWORD);
