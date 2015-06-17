@@ -105,6 +105,8 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.FIELD_NAME) return new GLSLIdentifier(node);
         if (type == GLSLElementTypes.VARIABLE_NAME) return new GLSLIdentifier(node);
 
+        if (type == GLSLElementTypes.CONDITIONAL_EXPRESSION) return new GLSLConditionalExpression(node);
+
         if (type == GLSLElementTypes.FUNCTION_DEFINITION) return new GLSLFunctionDefinitionImpl(node);
         if (type == GLSLElementTypes.FUNCTION_DECLARATION) return new GLSLFunctionDeclarationImpl(node);
         if (type == GLSLElementTypes.PARAMETER_DECLARATION_LIST) return new GLSLDeclarationList(node);
