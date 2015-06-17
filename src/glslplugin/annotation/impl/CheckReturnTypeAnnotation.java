@@ -38,7 +38,7 @@ public class CheckReturnTypeAnnotation extends Annotator<GLSLStatement> {
                 GLSLType functionType = function.getTypeSpecifierNode().getType();
                 GLSLType returnType = ((GLSLReturnStatement) expr).getReturnType();
 
-                if (!returnType.isValidType() || !functionType.isConvertibleTo(returnType)) {
+                if (returnType.isValidType() && !functionType.isConvertibleTo(returnType)) {
                     holder.createErrorAnnotation(expr, "Incompatible types. Required: " + functionType.getTypename() + ", found: " + returnType.getTypename());
                 }
             }
