@@ -45,7 +45,6 @@ public class GLSLGroupedExpression extends GLSLPrimaryExpression {
         if (expr != null) {
             return expr;
         } else {
-            Logger.getLogger("GLSLGroupedExpression").warning("Grouped expression does not contain any expression!");
             return null;
         }
     }
