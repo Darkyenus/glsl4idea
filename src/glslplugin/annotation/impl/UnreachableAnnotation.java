@@ -24,6 +24,8 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.TokenType;
+import com.intellij.psi.tree.IElementType;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLElementTypes;
@@ -60,9 +62,22 @@ public class UnreachableAnnotation extends Annotator<GLSLStatement> {
 
         PsiElement element = expr.getNextSibling();
         while (element != null) {
-            if (element instanceof GLSLElement) {
-                Annotation annotation = holder.createWarningAnnotation(element, "Unreachable expression");
-                annotation.setTextAttributes(strikeThrough);
+            if (element instanceof GLSLElement && element.getNode().getElementType() != GLSLElementTypes.PREPROCESSOR_DIRECTIVE) {
+                PsiElement child = element.getFirstChild();
+                if(child == null){
+                    Annotation annotation = holder.createWarningAnnotation(element, "Unreachable expression");
+                    annotation.setTextAttributes(strikeThrough);
+                }else{
+                    do {
+                        IElementType type = child.getNode().getElementType();
+                        if(type != GLSLElementTypes.PREPROCESSOR_DIRECTIVE && type != TokenType.WHITE_SPACE){
+                            Annotation annotation = holder.createWarningAnnotation(child, "Unreachable expression");
+                            annotation.setTextAttributes(strikeThrough);
+                        }
+                        child = child.getNextSibling();
+                    }while(child != null);
+                }
+
             }
             element = element.getNextSibling();
         }
