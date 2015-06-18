@@ -73,7 +73,7 @@ public abstract class GLSLType {
      */
     @NotNull
     public GLSLType getBaseType() {
-        return GLSLTypes.INVALID_TYPE;
+        return GLSLTypes.UNKNOWN_TYPE;
     }
 
 
@@ -143,14 +143,14 @@ public abstract class GLSLType {
      * Fetches the type of the member of the specified name.
      *
      * @param name the name to get the type of.
-     * @return the type if found, {@link GLSLTypes#INVALID_TYPE} otherwise.
+     * @return the type if found, {@link GLSLTypes#UNKNOWN_TYPE} otherwise.
      */
     @NotNull
     public GLSLType getTypeOfMember(String name) {
         if (getMembers().containsKey(name)) {
             return getMembers().get(name);
         } else {
-            return GLSLTypes.INVALID_TYPE;
+            return GLSLTypes.UNKNOWN_TYPE;
         }
     }
 
@@ -192,7 +192,7 @@ public abstract class GLSLType {
     /**
      * Indicates whether this type is a valid type.
      *
-     * @return true for all types except UNKNOWN_TYPE and INVALID_TYPE.
+     * @return true for all types except UNKNOWN_TYPE
      */
     public boolean isValidType() {
         return true;

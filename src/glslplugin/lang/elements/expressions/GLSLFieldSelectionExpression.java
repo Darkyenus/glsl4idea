@@ -111,7 +111,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
                 return GLSLTypes.UNKNOWN_TYPE;
             }
             if (!type.hasMembers()) {
-                return GLSLTypes.INVALID_TYPE;
+                return GLSLTypes.UNKNOWN_TYPE;
             }
             GLSLIdentifier memberIdentifier = getMemberIdentifier();
             if(memberIdentifier == null)return GLSLTypes.UNKNOWN_TYPE;
