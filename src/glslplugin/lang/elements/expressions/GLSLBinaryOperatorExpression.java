@@ -46,7 +46,6 @@ public class GLSLBinaryOperatorExpression extends GLSLOperatorExpression {
         if (operands.length == 2) {
             return operands[0];
         } else {
-            Logger.getLogger("GLSLBinaryOperatorExpression").warning("Binary operator with " + operands.length + " operand(s).");
             return null;
         }
     }
@@ -57,7 +56,6 @@ public class GLSLBinaryOperatorExpression extends GLSLOperatorExpression {
         if (operands.length == 2) {
             return operands[1];
         } else {
-            Logger.getLogger("GLSLBinaryOperatorExpression").warning("Binary operator with " + operands.length + " operand(s).");
             return null;
         }
     }

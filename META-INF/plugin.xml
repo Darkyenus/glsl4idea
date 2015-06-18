@@ -29,6 +29,12 @@
 
     <version>1.8</version>
     <change-notes><![CDATA[
+
+        <p>1.9</p>
+        <ul>
+            <li>Fix issues with return types</li>
+        </ul>
+
         <p>1.8</p>
         <ul>
             <li>Support for basic #define token replacement (everything except function-like)</li>
