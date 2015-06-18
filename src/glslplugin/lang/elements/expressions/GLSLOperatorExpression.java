@@ -51,7 +51,6 @@ public abstract class GLSLOperatorExpression extends GLSLExpression {
         if (operatorNode != null) {
             return getOperatorFromType(operatorNode.getElementType());
         } else {
-            Logger.getLogger("GLSLOperatorExpression").warning("Operator does not contain an operator token.");
             return null;
         }
     }
