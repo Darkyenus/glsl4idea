@@ -20,7 +20,6 @@
 package glslplugin.lang.elements.types;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -118,27 +117,6 @@ public class GLSLTypes {
             return false;
         }
     };
-    public static final GLSLType INVALID_TYPE = new GLSLType() {
-        @NotNull
-        public String getTypename() {
-            return "(invalid type)";
-        }
-
-        @Override
-        public boolean typeEquals(GLSLType otherType) {
-            return false;
-        }
-
-        @Override
-        public boolean isConvertibleTo(GLSLType otherType) {
-            return true;
-        }
-
-        @Override
-        public boolean isValidType() {
-            return false;
-        }
-    };
 
     private static final Map<String, GLSLType> undefinedTypes = new HashMap<String, GLSLType>();
 
@@ -167,7 +145,7 @@ public class GLSLTypes {
         if (t1 == UNKNOWN_TYPE || t2 == UNKNOWN_TYPE) return UNKNOWN_TYPE;
         if (t1.isConvertibleTo(t2)) return t2;
         if (t2.isConvertibleTo(t1)) return t1;
-        return INVALID_TYPE;
+        return UNKNOWN_TYPE;
     }
 
     static boolean isScalar(GLSLType type) {
