@@ -32,6 +32,7 @@
 
         <p>1.9</p>
         <ul>
+            <li>Add type checking for conditional expressions</li>
             <li>Fix issues with return types</li>
         </ul>
 
