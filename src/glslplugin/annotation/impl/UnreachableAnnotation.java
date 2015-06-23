@@ -21,7 +21,7 @@ package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
+import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
@@ -36,10 +36,10 @@ import glslplugin.lang.elements.statements.GLSLWhileStatement;
 import org.jetbrains.annotations.NotNull;
 
 public class UnreachableAnnotation extends Annotator<GLSLStatement> {
-    private TextAttributesKey strikeThrough;
+    private TextAttributesKey unreachableAttributes;
 
     public UnreachableAnnotation() {
-        strikeThrough = TextAttributesKey.createTextAttributesKey("GLSL.UNREACHABLE", DefaultLanguageHighlighterColors.BLOCK_COMMENT);
+        unreachableAttributes = TextAttributesKey.createTextAttributesKey("GLSL.UNREACHABLE", CodeInsightColors.NOT_USED_ELEMENT_ATTRIBUTES);
     }
 
     public void annotate(GLSLStatement expr, AnnotationHolder holder) {
@@ -66,13 +66,13 @@ public class UnreachableAnnotation extends Annotator<GLSLStatement> {
                 PsiElement child = element.getFirstChild();
                 if(child == null){
                     Annotation annotation = holder.createWarningAnnotation(element, "Unreachable expression");
-                    annotation.setTextAttributes(strikeThrough);
+                    annotation.setTextAttributes(unreachableAttributes);
                 }else{
                     do {
                         IElementType type = child.getNode().getElementType();
                         if(type != GLSLElementTypes.PREPROCESSOR_DIRECTIVE && type != TokenType.WHITE_SPACE){
                             Annotation annotation = holder.createWarningAnnotation(child, "Unreachable expression");
-                            annotation.setTextAttributes(strikeThrough);
+                            annotation.setTextAttributes(unreachableAttributes);
                         }
                         child = child.getNextSibling();
                     }while(child != null);
