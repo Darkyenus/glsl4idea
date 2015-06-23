@@ -205,6 +205,8 @@ public class GLSLTokenTypes {
     public static final IElementType PREPROCESSOR_CONCAT = new GLSLElementType("PREPROCESSOR_CONCAT");
     public static final IElementType PREPROCESSOR_STRING = new GLSLElementType("PREPROCESSOR_STRING");
 
+    public static final IElementType RESERVED_KEYWORD = new GLSLElementType("RESERVED_KEYWORD");
+
     public static final TokenSet PREPROCESSOR_DIRECTIVES = TokenSet.create(
             PREPROCESSOR_BEGIN,
             PREPROCESSOR_END,
