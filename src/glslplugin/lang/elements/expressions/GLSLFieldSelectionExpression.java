@@ -29,6 +29,7 @@ import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
 import glslplugin.lang.elements.reference.GLSLFieldReference;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
+import glslplugin.lang.elements.types.GLSLVectorType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,7 +64,43 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
         GLSLExpression leftExpression = getLeftHandExpression();
         //noinspection SimplifiableIfStatement
         if(leftExpression == null)return true; //It might be, but right now it is broken.
-        else return leftExpression.isLValue();
+        else {
+            if(isSwizzle()){
+                //It is a swizzle, so it may or may not be a L value
+                //If any of the components are repeated, it is not a L value
+                GLSLIdentifier memberIdentifier = getMemberIdentifier();
+                if(memberIdentifier == null)return true; //This should not happen
+                String components = memberIdentifier.getIdentifierName();
+                for (int i = 0; i < components.length(); i++) {
+                    char c = components.charAt(i);
+                    for (int j = i+1; j < components.length(); j++) {
+                        if(c == components.charAt(j)){
+                            //When any component is repeated, it is not a L value
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }else{
+                return leftExpression.isLValue();
+            }
+        }
+    }
+
+    /**
+     * Reports whether this selection operates on vector and selects more than one component.
+     * Returns false if it failed to find out.
+     */
+    public boolean isSwizzle(){
+        GLSLExpression leftHandExpression = getLeftHandExpression();
+        GLSLIdentifier memberIdentifier = getMemberIdentifier();
+        if(leftHandExpression == null || memberIdentifier == null)return false;
+        GLSLType leftHandType = leftHandExpression.getType();
+        if(!leftHandType.isValidType())return false;
+        if(!(leftHandType instanceof GLSLVectorType))return false;
+        //If it got here, it is picking a component(s) from a vector. But how many?
+        return memberIdentifier.getIdentifierName().length() > 1;
+        //Because all vector components are marked as only one letter, having more letters means swizzling
     }
 
     @Nullable
