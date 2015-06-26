@@ -81,10 +81,8 @@ public class GLSLMatrixType extends GLSLType {
         this.baseType = baseType.type;
         this.columns = columns;
         this.rows = rows;
-        this.constructors = new GLSLFunctionType[]{
-                new Constructor()
-        };
         this.typename = baseType.name + columns + "x" + rows;
+        this.constructors = new GLSLFunctionType[]{new Constructor()};
     }
 
     @Override

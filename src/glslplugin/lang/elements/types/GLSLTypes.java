@@ -34,11 +34,11 @@ import java.util.Map;
  */
 public class GLSLTypes {
     // Scalars
-    public static final GLSLPrimitiveType INT = register(GLSLPrimitiveType.INT);
-    public static final GLSLPrimitiveType UINT = register(GLSLPrimitiveType.UINT);
-    public static final GLSLPrimitiveType FLOAT = register(GLSLPrimitiveType.FLOAT);
-    public static final GLSLPrimitiveType DOUBLE = register(GLSLPrimitiveType.DOUBLE);
-    public static final GLSLPrimitiveType BOOL = register(GLSLPrimitiveType.BOOL);
+    public static final GLSLScalarType INT = register(GLSLScalarType.INT);
+    public static final GLSLScalarType UINT = register(GLSLScalarType.UINT);
+    public static final GLSLScalarType FLOAT = register(GLSLScalarType.FLOAT);
+    public static final GLSLScalarType DOUBLE = register(GLSLScalarType.DOUBLE);
+    public static final GLSLScalarType BOOL = register(GLSLScalarType.BOOL);
 
     // Vectors
     public static final GLSLVectorType VEC2 =  register(GLSLVectorType.getType(FLOAT,  2));
@@ -86,15 +86,15 @@ public class GLSLTypes {
     public static final GLSLMatrixType DMAT4 = DMAT4x4;
 
     // Samplers
-    public static final GLSLPrimitiveType SAMPLER1D = register(GLSLPrimitiveType.SAMPLER1D);
-    public static final GLSLPrimitiveType SAMPLER2D = register(GLSLPrimitiveType.SAMPLER2D);
-    public static final GLSLPrimitiveType SAMPLER3D = register(GLSLPrimitiveType.SAMPLER3D);
-    public static final GLSLPrimitiveType SAMPLER1D_SHADOW = register(GLSLPrimitiveType.SAMPLER1D_SHADOW);
-    public static final GLSLPrimitiveType SAMPLER2D_SHADOW = register(GLSLPrimitiveType.SAMPLER2D_SHADOW);
-    public static final GLSLPrimitiveType SAMPLER_CUBE = register(GLSLPrimitiveType.SAMPLER_CUBE);
+    public static final GLSLOpaqueType SAMPLER1D =          register(GLSLOpaqueType.SAMPLER1D);
+    public static final GLSLOpaqueType SAMPLER2D =          register(GLSLOpaqueType.SAMPLER2D);
+    public static final GLSLOpaqueType SAMPLER3D =          register(GLSLOpaqueType.SAMPLER3D);
+    public static final GLSLOpaqueType SAMPLER1D_SHADOW =   register(GLSLOpaqueType.SAMPLER1D_SHADOW);
+    public static final GLSLOpaqueType SAMPLER2D_SHADOW =   register(GLSLOpaqueType.SAMPLER2D_SHADOW);
+    public static final GLSLOpaqueType SAMPLER_CUBE =       register(GLSLOpaqueType.SAMPLER_CUBE);
 
     // Specials
-    public static final GLSLPrimitiveType VOID = GLSLPrimitiveType.VOID;
+    public static final GLSLOpaqueType VOID = GLSLOpaqueType.VOID;
 
     public static final GLSLType UNKNOWN_TYPE = new GLSLType() {
         @NotNull

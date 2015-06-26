@@ -38,11 +38,11 @@ public class GLSLVectorType extends GLSLType {
     //region Static
 
     private enum BaseType {
-        INT(GLSLPrimitiveType.INT, "ivec"),
-        UINT(GLSLPrimitiveType.UINT, "uvec"),
-        BOOL(GLSLPrimitiveType.BOOL, "bvec"),
-        FLOAT(GLSLPrimitiveType.FLOAT, "vec"),
-        DOUBLE(GLSLPrimitiveType.DOUBLE, "dvec");
+        INT(GLSLScalarType.INT, "ivec"),
+        UINT(GLSLScalarType.UINT, "uvec"),
+        BOOL(GLSLScalarType.BOOL, "bvec"),
+        FLOAT(GLSLScalarType.FLOAT, "vec"),
+        DOUBLE(GLSLScalarType.DOUBLE, "dvec");
 
         final GLSLType type;
         final String name;
@@ -81,8 +81,8 @@ public class GLSLVectorType extends GLSLType {
     private GLSLVectorType(BaseType baseType, int numComponents) {
         this.baseType = baseType.type;
         this.numComponents = numComponents;
-        this.constructor = new GLSLFunctionType[]{new Constructor()};
         this.typeName = baseType.name + numComponents;
+        this.constructor = new GLSLFunctionType[]{new Constructor()};
     }
 
     @NotNull
