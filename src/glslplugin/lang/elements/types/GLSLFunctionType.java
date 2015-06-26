@@ -32,7 +32,7 @@ import java.util.List;
  *         Date: Mar 4, 2009
  *         Time: 6:47:33 PM
  */
-public abstract class GLSLFunctionType extends GLSLType {
+public abstract class GLSLFunctionType {
     public static final GLSLFunctionType[] EMPTY_ARRAY = {};
 
     protected final GLSLType returnType;
@@ -64,13 +64,11 @@ public abstract class GLSLFunctionType extends GLSLType {
     /**
      * @return The return type of the function.
      */
-    @Override
     @NotNull
     public GLSLType getBaseType() {
         return returnType;
     }
 
-    @Override
     public GLSLElement getDefinition() {
         return definition;
     }
