@@ -1,0 +1,16 @@
+//
+// GLSL compute shader builtins (first in GLSL 430)
+// see https://www.opengl.org/registry/doc/GLSLangSpec.4.50.pdf § 7.1
+//
+
+// work group dimensions
+in    uvec3 gl_NumWorkGroups;
+const uvec3 gl_WorkGroupSize;
+
+// work group and invocation IDs
+in    uvec3 gl_WorkGroupID;
+in    uvec3 gl_LocalInvocationID;
+
+// derived variables
+in    uvec3 gl_GlobalInvocationID;
+in    uint  gl_LocalInvocationIndex;
