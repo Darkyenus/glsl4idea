@@ -121,7 +121,7 @@ class GLSLPresentation implements ItemPresentation {
         if (qualifiers.length > 0) {
             result += prettyPrint(stringify(qualifiers, new Stringifyer<GLSLTypeQualifier>() {
                 public String stringify(GLSLTypeQualifier glslQualifier) {
-                    return glslQualifier.toString();
+                    return glslQualifier == null?"null":glslQualifier.toString();
                 }
             }));
             result += " ";
