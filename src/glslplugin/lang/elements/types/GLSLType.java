@@ -20,13 +20,8 @@
 package glslplugin.lang.elements.types;
 
 import glslplugin.lang.elements.GLSLElement;
-import glslplugin.lang.elements.declarations.GLSLArraySpecifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * NewType is ...
@@ -38,9 +33,6 @@ import java.util.Set;
 public abstract class GLSLType {
     public static final GLSLType[] EMPTY_ARRAY = {};
 
-    private static final Map<String, GLSLFunctionType> EMPTY_METHOD_MAP = new HashMap<String, GLSLFunctionType>();
-    private static final Map<String, GLSLType> EMPTY_MEMBER_MAP = new HashMap<String, GLSLType>();
-
     /**
      * @return the text representation of this type.
      */
@@ -48,38 +40,8 @@ public abstract class GLSLType {
     public abstract String getTypename();
 
     /**
-     * Fetches the array specifier of this type.
-     *
-     * @return the array specifier, null if it is not present.
-     */
-    @Nullable
-    public GLSLArraySpecifier getArraySpecifier() {
-        return null;
-    }
-
-    /**
-     * @return Indicates whether this type is indexable, i.e. can be subscripted.
-     */
-    public boolean isIndexable() {
-        return false;
-    }
-
-    /**
-     * Return the base type of this type.
-     * For example if this is an array (int[]), it will return (int)
-     * This applies to all subscriptable types: arrays, vectors and matrices.
-     *
-     * @return the type this type is based on, null if this is a primitive type or a struct.
-     */
-    @NotNull
-    public GLSLType getBaseType() {
-        return GLSLTypes.UNKNOWN_TYPE;
-    }
-
-
-    /**
      * Fetches the PsiElement containing the definition of this type.
-     * Applies only to structures.
+     * Applies only to user-defined types (structures).
      *
      * @return the definition of this type.
      */
@@ -107,60 +69,7 @@ public abstract class GLSLType {
      * @return true if the conversion is possible, false otherwise.
      */
     public boolean isConvertibleTo(GLSLType otherType) {
-        if (!otherType.isValidType()) return true;
-        return typeEquals(otherType);
-    }
-
-    /**
-     * @return a set containing all the names of the members of this type.
-     */
-    @NotNull
-    public Set<String> getMemberNames() {
-        return getMembers().keySet();
-    }
-
-    @NotNull
-    public Map<String, GLSLType> getMembers() {
-        return EMPTY_MEMBER_MAP;
-    }
-
-    @NotNull
-    public GLSLType[] getMemberTypes() {
-        return GLSLType.EMPTY_ARRAY;
-    }
-
-    /**
-     * Indicates whether this type has a member of the specified name.
-     *
-     * @param name the name of the member.
-     * @return true if the member exist, false otherwise.
-     */
-    public boolean hasMember(String name) {
-        return getMemberNames().contains(name);
-    }
-
-    /**
-     * Fetches the type of the member of the specified name.
-     *
-     * @param name the name to get the type of.
-     * @return the type if found, {@link GLSLTypes#UNKNOWN_TYPE} otherwise.
-     */
-    @NotNull
-    public GLSLType getTypeOfMember(String name) {
-        if (getMembers().containsKey(name)) {
-            return getMembers().get(name);
-        } else {
-            return GLSLTypes.UNKNOWN_TYPE;
-        }
-    }
-
-    /**
-     * Indicates whether this type has members.
-     *
-     * @return true for struct, vector and undefined types, false otherwise.
-     */
-    public boolean hasMembers() {
-        return false;
+        return !otherType.isValidType() || typeEquals(otherType);
     }
 
     /**
@@ -175,21 +84,6 @@ public abstract class GLSLType {
     }
 
     /**
-     * Retrieves the methods associated with this type.
-     *
-     * @return an array containing all the methods of this
-     */
-    @NotNull
-    public Map<String, GLSLFunctionType> getMethods() {
-        return EMPTY_METHOD_MAP;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + ": " + getTypename();
-    }
-
-    /**
      * Indicates whether this type is a valid type.
      *
      * @return true for all types except UNKNOWN_TYPE
@@ -197,4 +91,62 @@ public abstract class GLSLType {
     public boolean isValidType() {
         return true;
     }
+
+    //region Array-like related
+
+    /**
+     * @return Indicates whether this type is indexable, i.e. can be subscripted ("[i]").
+     */
+    public boolean isIndexable() {
+        return false;
+    }
+
+    /**
+     * Return the base type of this type.
+     * That is, the type obtained by indexing.
+     * For example if this is an array (int[]), it will return (int)
+     * This applies to all indexable types: arrays, vectors and matrices.
+     *
+     * @return the type this type is based on, UNKNOWN_TYPE if this is a primitive type or a struct.
+     */
+    @NotNull
+    public GLSLType getBaseType() {
+        return GLSLTypes.UNKNOWN_TYPE;
+    }
+
+    //endregion
+
+    //region Struct-like related
+
+    /**
+     * Check whether or not this type has given member variable.
+     * Only for those will getMemberType call be meaningful.
+     */
+    public boolean hasMember(String member){
+        return false;
+    }
+
+    /**
+     * Get type of given member variable.
+     */
+    public GLSLType getMemberType(String member){
+        return GLSLTypes.UNKNOWN_TYPE;
+    }
+
+    /**
+     * Indicates whether this type has any members.
+     *
+     * @return true for struct, vector and undefined types, false otherwise.
+     */
+    public boolean hasMembers() {
+        return false;
+    }
+
+    //endregion
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ": " + getTypename();
+    }
+
 }

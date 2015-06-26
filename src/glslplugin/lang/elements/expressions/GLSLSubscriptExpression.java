@@ -28,7 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.logging.Logger;
 
 /**
- * GLSLSubscriptExpression is ...
+ * Expression of selecting an element from (probably) an array.
+ * For example: "example_array[3]".
  *
  * @author Yngve Devik Hammersland
  *         Date: Jan 30, 2009
@@ -39,6 +40,9 @@ public class GLSLSubscriptExpression extends GLSLOperatorExpression {
         super(node);
     }
 
+    /**
+     * @return expression that is being selected from, that is "example_array" from above example.
+     */
     @Nullable
     public GLSLExpression getArrayExpression() {
         GLSLExpression[] operands = getOperands();

@@ -45,6 +45,11 @@ public class GLSLArrayType extends GLSLType {
     }
 
     @Override
+    public boolean isIndexable() {
+        return true;
+    }
+
+    @Override
     @NotNull
     public GLSLType getBaseType() {
         return baseType;
@@ -55,15 +60,8 @@ public class GLSLArrayType extends GLSLType {
         return baseType.getTypename() + "[]";
     }
 
-    @Override
     @Nullable
     public GLSLArraySpecifier getArraySpecifier() {
         return arraySpecifier;
-    }
-
-    @Override
-    @NotNull
-    public Map<String, GLSLFunctionType> getMethods() {
-        return methods;
     }
 }

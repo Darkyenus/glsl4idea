@@ -247,11 +247,6 @@ public class GLSLVectorType extends GLSLType {
         return baseType.type;
     }
 
-    @Override
-    public GLSLArraySpecifier getArraySpecifier() {
-        return null;
-    }
-
     @NotNull
     @Override
     public Map<String, GLSLType> getMembers() {

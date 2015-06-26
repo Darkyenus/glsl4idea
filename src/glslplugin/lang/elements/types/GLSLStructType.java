@@ -93,6 +93,21 @@ public class GLSLStructType extends GLSLType {
         return memberTypes;
     }
 
+    /**
+     * Fetches the type of the member of the specified name.
+     *
+     * @param name the name to get the type of.
+     * @return the type if found, {@link GLSLTypes#UNKNOWN_TYPE} otherwise.
+     */
+    @NotNull
+    public GLSLType getTypeOfMember(String name) {
+        if (getMembers().containsKey(name)) {
+            return getMembers().get(name);
+        } else {
+            return GLSLTypes.UNKNOWN_TYPE;
+        }
+    }
+
     @Override
     public boolean hasMembers() {
         return true;

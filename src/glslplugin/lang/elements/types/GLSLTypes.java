@@ -116,6 +116,16 @@ public class GLSLTypes {
         public boolean isValidType() {
             return false;
         }
+
+        @Override
+        public boolean isIndexable() {
+            return true;
+        }
+
+        @Override
+        public boolean hasMembers() {
+            return true;
+        }
     };
 
     private static final Map<String, GLSLType> undefinedTypes = new HashMap<String, GLSLType>();
