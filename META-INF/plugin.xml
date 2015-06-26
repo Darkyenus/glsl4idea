@@ -131,6 +131,7 @@
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/GLSLDarcula.xml"/>
         <lang.commenter language="GLSL" implementationClass="glslplugin.GLSLCommenter"/>
         <lang.refactoringSupport language="GLSL" implementationClass="glslplugin.extensions.GLSLRefactoringSupportProvider" />
+        <lang.findUsagesProvider language="GLSL" implementationClass="glslplugin.extensions.GLSLFindUsagesProvider" />
     </extensions>
 
     <application-components>
