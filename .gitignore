@@ -1,9 +1,10 @@
 JFlex
-GLSLPlugin.iml
-GLSLPlugin.ipr
-GLSLPlugin.iws
+*.iml
+*.ipr
+*.iws
 .DS_Store
 out
 GLSLPlugin.jar
 /piglit
 /piglit-repo
+.idea
