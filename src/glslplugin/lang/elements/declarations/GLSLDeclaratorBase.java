@@ -99,7 +99,7 @@ public class GLSLDeclaratorBase extends GLSLElementImpl {
         StringBuilder b = new StringBuilder();
         b.append("Declarator: ").append(getIdentifierName());
         b.append(" : ").append(getType().getTypename());
-        if (getType().getArraySpecifier() != null) {
+        if (getType() instanceof GLSLArrayType) {
             b.append("[]");
         }
         return b.toString();

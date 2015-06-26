@@ -19,7 +19,6 @@
 
 package glslplugin.lang.elements.types;
 
-import glslplugin.lang.elements.declarations.GLSLArraySpecifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -248,7 +247,6 @@ public class GLSLVectorType extends GLSLType {
     }
 
     @NotNull
-    @Override
     public Map<String, GLSLType> getMembers() {
         return members;
     }

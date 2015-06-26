@@ -23,6 +23,9 @@ import glslplugin.lang.elements.GLSLElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * NewType is ...
  *
@@ -127,8 +130,12 @@ public abstract class GLSLType {
     }
 
     /**
-     * Get type of given member variable.
+     * Get the type type of given member variable.
+     *
+     * @param member the name of variable to get the type of
+     * @return the type if found, {@link GLSLTypes#UNKNOWN_TYPE} otherwise
      */
+    @NotNull
     public GLSLType getMemberType(String member){
         return GLSLTypes.UNKNOWN_TYPE;
     }
@@ -140,6 +147,22 @@ public abstract class GLSLType {
      */
     public boolean hasMembers() {
         return false;
+    }
+
+    //endregion
+
+    //region Object-like related
+
+    private static final Map<String, GLSLFunctionType> NO_FUNCTIONS = Collections.emptyMap();
+
+    /**
+     * Returns convenient Map containing all member functions of this type, with their name as key.
+     *
+     * As of GLSL version 430, that is only .length() function on arrays, vectors and matrices.
+     */
+    @NotNull
+    public Map<String, GLSLFunctionType> getMemberFunctions(){
+        return NO_FUNCTIONS;
     }
 
     //endregion

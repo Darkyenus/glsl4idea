@@ -54,9 +54,9 @@ public class GLSLPrimitiveType extends GLSLType {
     private final String typename;
     private final Collection<GLSLType> implicitConversions;
 
-    private GLSLPrimitiveType(String typename, GLSLType... implicitConversions) {
+    private GLSLPrimitiveType(String typename, GLSLType... implicitlyConvertibleTo) {
         this.typename = typename;
-        this.implicitConversions = Arrays.asList(implicitConversions);
+        this.implicitConversions = Arrays.asList(implicitlyConvertibleTo);
     }
 
     @NotNull
@@ -65,6 +65,7 @@ public class GLSLPrimitiveType extends GLSLType {
     }
 
     public boolean typeEquals(GLSLType otherType) {
+        //noinspection SimplifiableIfStatement
         if (otherType instanceof GLSLPrimitiveType) {
             return typeEquals((GLSLPrimitiveType) otherType);
         }

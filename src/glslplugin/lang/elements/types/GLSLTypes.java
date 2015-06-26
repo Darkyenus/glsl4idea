@@ -159,7 +159,7 @@ public class GLSLTypes {
     }
 
     static boolean isScalar(GLSLType type) {
-        return type == INT || type == FLOAT || type == BOOL;
+        return type == INT || type == FLOAT || type == BOOL || type == DOUBLE || type == UINT;
     }
 
     private static Map<String, GLSLType> types;
