@@ -114,7 +114,7 @@ public enum GLSLOperator {
         getCommonArithmeticOperatorAlternatives(name, dest);
         for (int cols = 2; cols <= 4; cols++) {
             for (int rows = 2; rows <= 4; rows++) {
-                GLSLMatrixType mat = GLSLMatrixType.getType(cols, rows, GLSLTypes.FLOAT);
+                GLSLMatrixType mat = GLSLMatrixType.getType(GLSLTypes.FLOAT, cols, rows);
                 dest.add(new GLSLBasicFunctionType(name, mat, mat, mat));
             }
         }
@@ -127,16 +127,16 @@ public enum GLSLOperator {
         // matrix-matrix AND matrix-vector
         for (int M = 2; M <= 4; M++) {
             for (int N = 2; N <= 4; N++) {
-                GLSLMatrixType matMxN = GLSLMatrixType.getType(M, N, GLSLTypes.FLOAT);
-                GLSLVectorType vecM = GLSLVectorType.getType(M, GLSLTypes.FLOAT);
-                GLSLVectorType vecN = GLSLVectorType.getType(N, GLSLTypes.FLOAT);
+                GLSLMatrixType matMxN = GLSLMatrixType.getType(GLSLTypes.FLOAT, M, N);
+                GLSLVectorType vecM = GLSLVectorType.getType(GLSLTypes.FLOAT, M);
+                GLSLVectorType vecN = GLSLVectorType.getType(GLSLTypes.FLOAT, N);
 
                 dest.add(new GLSLBasicFunctionType("*", vecM, matMxN, vecN));
                 dest.add(new GLSLBasicFunctionType("*", vecN, vecM, matMxN));
 
                 for (int I = 2; I <= 4; I++) {
-                    GLSLMatrixType matIxM = GLSLMatrixType.getType(I, M, GLSLTypes.FLOAT);
-                    GLSLMatrixType matIxN = GLSLMatrixType.getType(I, N, GLSLTypes.FLOAT);
+                    GLSLMatrixType matIxM = GLSLMatrixType.getType(GLSLTypes.FLOAT, I, M);
+                    GLSLMatrixType matIxN = GLSLMatrixType.getType(GLSLTypes.FLOAT, I, N);
 
                     dest.add(new GLSLBasicFunctionType("*", matIxN, matMxN, matIxM));
                 }
@@ -152,8 +152,8 @@ public enum GLSLOperator {
 
         // Scalar-vector and vector-vector
         for (int i = 2; i <= 4; i++) {
-            GLSLType vec = GLSLVectorType.getType(i, GLSLTypes.FLOAT);
-            GLSLType ivec = GLSLVectorType.getType(i, GLSLTypes.INT);
+            GLSLType vec = GLSLVectorType.getType(GLSLTypes.FLOAT, i);
+            GLSLType ivec = GLSLVectorType.getType(GLSLTypes.INT, i);
             dest.add(new GLSLBasicFunctionType(name, ivec, GLSLTypes.INT, ivec));
             dest.add(new GLSLBasicFunctionType(name, vec, GLSLTypes.INT, vec));
             dest.add(new GLSLBasicFunctionType(name, ivec, ivec, GLSLTypes.INT));
@@ -185,12 +185,12 @@ public enum GLSLOperator {
         dest.add(new GLSLBasicFunctionType(name, GLSLTypes.INT, GLSLTypes.INT));
         dest.add(new GLSLBasicFunctionType(name, GLSLTypes.FLOAT, GLSLTypes.FLOAT));
         for (int i = 2; i <= 4; i++) {
-            GLSLType vec = GLSLVectorType.getType(i, GLSLTypes.FLOAT);
-            GLSLType ivec = GLSLVectorType.getType(i, GLSLTypes.INT);
+            GLSLType vec = GLSLVectorType.getType(GLSLTypes.FLOAT, i);
+            GLSLType ivec = GLSLVectorType.getType(GLSLTypes.INT, i);
             dest.add(new GLSLBasicFunctionType(name, vec, vec));
             dest.add(new GLSLBasicFunctionType(name, ivec, ivec));
             for (int j = 2; j <= 4; j++) {
-                GLSLType mat = GLSLMatrixType.getType(i, j, GLSLTypes.FLOAT);
+                GLSLType mat = GLSLMatrixType.getType(GLSLTypes.FLOAT, i, j);
                 dest.add(new GLSLBasicFunctionType(name, mat, mat));
             }
         }

@@ -25,13 +25,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * GLSLVectorType is ...
+ * Base type for GLSL vectors.
+ *
+ * All possible vectors are created once, then stored.
+ * To retrieve them, use static getType().
  *
  * @author Yngve Devik Hammersland
- *         Date: Feb 26, 2009
- *         Time: 11:48:00 AM
+ * @author Jan Polák
  */
 public class GLSLVectorType extends GLSLType {
+
+    //region Static
 
     private enum BaseType {
         INT(GLSLPrimitiveType.INT, "ivec"),
@@ -63,43 +67,42 @@ public class GLSLVectorType extends GLSLType {
         }
     }
 
-    public static GLSLVectorType getType(int numComponents, GLSLType baseType) {
-        return VECTOR_TYPES.get(baseType)[numComponents - MIN_VECTOR_DIM];
+    public static GLSLVectorType getType(GLSLType baseType, int componentCount) {
+        return VECTOR_TYPES.get(baseType)[componentCount - MIN_VECTOR_DIM];
     }
 
-    public static final GLSLVectorType BVEC2 = getType(2, GLSLTypes.BOOL);
-    public static final GLSLVectorType BVEC3 = getType(3, GLSLTypes.BOOL);
-    public static final GLSLVectorType BVEC4 = getType(4, GLSLTypes.BOOL);
+    public static final GLSLVectorType BVEC2 = getType(GLSLTypes.BOOL, 2);
+    public static final GLSLVectorType BVEC3 = getType(GLSLTypes.BOOL, 3);
+    public static final GLSLVectorType BVEC4 = getType(GLSLTypes.BOOL, 4);
 
-    public static final GLSLVectorType IVEC2 = getType(2, GLSLTypes.INT);
-    public static final GLSLVectorType IVEC3 = getType(3, GLSLTypes.INT);
-    public static final GLSLVectorType IVEC4 = getType(4, GLSLTypes.INT);
+    public static final GLSLVectorType IVEC2 = getType(GLSLTypes.INT, 2);
+    public static final GLSLVectorType IVEC3 = getType(GLSLTypes.INT, 3);
+    public static final GLSLVectorType IVEC4 = getType(GLSLTypes.INT, 4);
 
-    public static final GLSLVectorType UVEC2 = getType(2, GLSLTypes.UINT);
-    public static final GLSLVectorType UVEC3 = getType(3, GLSLTypes.UINT);
-    public static final GLSLVectorType UVEC4 = getType(4, GLSLTypes.UINT);
+    public static final GLSLVectorType UVEC2 = getType(GLSLTypes.UINT, 2);
+    public static final GLSLVectorType UVEC3 = getType(GLSLTypes.UINT, 3);
+    public static final GLSLVectorType UVEC4 = getType(GLSLTypes.UINT, 4);
 
-    public static final GLSLVectorType VEC2 = getType(2, GLSLTypes.FLOAT);
-    public static final GLSLVectorType VEC3 = getType(3, GLSLTypes.FLOAT);
-    public static final GLSLVectorType VEC4 = getType(4, GLSLTypes.FLOAT);
+    public static final GLSLVectorType VEC2 = getType(GLSLTypes.FLOAT, 2);
+    public static final GLSLVectorType VEC3 = getType(GLSLTypes.FLOAT, 3);
+    public static final GLSLVectorType VEC4 = getType(GLSLTypes.FLOAT, 4);
 
-    public static final GLSLVectorType DVEC2 = getType(2, GLSLTypes.DOUBLE);
-    public static final GLSLVectorType DVEC3 = getType(3, GLSLTypes.DOUBLE);
-    public static final GLSLVectorType DVEC4 = getType(4, GLSLTypes.DOUBLE);
+    public static final GLSLVectorType DVEC2 = getType(GLSLTypes.DOUBLE, 2);
+    public static final GLSLVectorType DVEC3 = getType(GLSLTypes.DOUBLE, 3);
+    public static final GLSLVectorType DVEC4 = getType(GLSLTypes.DOUBLE, 4);
 
-    //Non static implementation
+    //endregion
 
+    private final GLSLType baseType;
+    private final int numComponents;
     private final GLSLFunctionType[] constructor;
     private final String typeName;
-    private final int numComponents;
-    private final BaseType baseType;
 
     private GLSLVectorType(BaseType baseType, int numComponents) {
-        //NOTE: do not fill the member map here as it needs to refer the other vector types.
-        this.typeName = baseType.name + numComponents;
-        this.baseType = baseType;
+        this.baseType = baseType.type;
         this.numComponents = numComponents;
         this.constructor = new GLSLFunctionType[]{new Constructor()};
+        this.typeName = baseType.name + numComponents;
     }
 
     @NotNull
@@ -111,7 +114,7 @@ public class GLSLVectorType extends GLSLType {
     @NotNull
     @Override
     public GLSLType getBaseType() {
-        return baseType.type;
+        return baseType;
     }
 
     @Override
@@ -160,9 +163,9 @@ public class GLSLVectorType extends GLSLType {
     public GLSLType getMemberType(String member) {
         if(hasMember(member)){
             if(member.length() == 1){
-                return baseType.type;
+                return baseType;
             }else{
-                return getType(member.length(), baseType.type);
+                return getType(baseType, member.length());
             }
         }else{
             return GLSLTypes.UNKNOWN_TYPE;
