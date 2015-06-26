@@ -35,6 +35,8 @@ import java.util.Map;
  */
 public class GLSLMatrixType extends GLSLType {
 
+    //region Static
+
     private enum BaseType {
         FLOAT(GLSLTypes.FLOAT, "mat"),
         DOUBLE(GLSLTypes.DOUBLE, "dmat");
@@ -68,24 +70,7 @@ public class GLSLMatrixType extends GLSLType {
         return MATRIX_TYPES.get(baseType)[columns - MIN_MATRIX_DIM][rows - MIN_MATRIX_DIM];
     }
 
-    public static final GLSLMatrixType MAT2X2 = getType(GLSLTypes.FLOAT, 2, 2);
-    public static final GLSLMatrixType MAT3X2 = getType(GLSLTypes.FLOAT, 3, 2);
-    public static final GLSLMatrixType MAT4X2 = getType(GLSLTypes.FLOAT, 4, 2);
-    public static final GLSLMatrixType MAT2X3 = getType(GLSLTypes.FLOAT, 2, 3);
-    public static final GLSLMatrixType MAT3X3 = getType(GLSLTypes.FLOAT, 3, 3);
-    public static final GLSLMatrixType MAT4X3 = getType(GLSLTypes.FLOAT, 4, 3);
-    public static final GLSLMatrixType MAT2X4 = getType(GLSLTypes.FLOAT, 2, 4);
-    public static final GLSLMatrixType MAT3X4 = getType(GLSLTypes.FLOAT, 3, 4);
-    public static final GLSLMatrixType MAT4X4 = getType(GLSLTypes.FLOAT, 4, 4);
-    public static final GLSLMatrixType DMAT2X2 = getType(GLSLTypes.DOUBLE, 2, 2);
-    public static final GLSLMatrixType DMAT3X2 = getType(GLSLTypes.DOUBLE, 3, 2);
-    public static final GLSLMatrixType DMAT4X2 = getType(GLSLTypes.DOUBLE, 4, 2);
-    public static final GLSLMatrixType DMAT2X3 = getType(GLSLTypes.DOUBLE, 2, 3);
-    public static final GLSLMatrixType DMAT3X3 = getType(GLSLTypes.DOUBLE, 3, 3);
-    public static final GLSLMatrixType DMAT4X3 = getType(GLSLTypes.DOUBLE, 4, 3);
-    public static final GLSLMatrixType DMAT2X4 = getType(GLSLTypes.DOUBLE, 2, 4);
-    public static final GLSLMatrixType DMAT3X4 = getType(GLSLTypes.DOUBLE, 3, 4);
-    public static final GLSLMatrixType DMAT4X4 = getType(GLSLTypes.DOUBLE, 4, 4);
+    //endregion
 
     private final GLSLType baseType;
     private final int columns, rows;

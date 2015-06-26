@@ -41,49 +41,49 @@ public class GLSLTypes {
     public static final GLSLPrimitiveType BOOL = register(GLSLPrimitiveType.BOOL);
 
     // Vectors
-    public static final GLSLVectorType VEC2 = register(GLSLVectorType.VEC2);
-    public static final GLSLVectorType VEC3 = register(GLSLVectorType.VEC3);
-    public static final GLSLVectorType VEC4 = register(GLSLVectorType.VEC4);
-    public static final GLSLVectorType DVEC2 = register(GLSLVectorType.DVEC2);
-    public static final GLSLVectorType DVEC3 = register(GLSLVectorType.DVEC3);
-    public static final GLSLVectorType DVEC4 = register(GLSLVectorType.DVEC4);
-    public static final GLSLVectorType IVEC2 = register(GLSLVectorType.IVEC2);
-    public static final GLSLVectorType IVEC3 = register(GLSLVectorType.IVEC3);
-    public static final GLSLVectorType IVEC4 = register(GLSLVectorType.IVEC4);
-    public static final GLSLVectorType UVEC2 = register(GLSLVectorType.UVEC2);
-    public static final GLSLVectorType UVEC3 = register(GLSLVectorType.UVEC3);
-    public static final GLSLVectorType UVEC4 = register(GLSLVectorType.UVEC4);
-    public static final GLSLVectorType BVEC2 = register(GLSLVectorType.BVEC2);
-    public static final GLSLVectorType BVEC3 = register(GLSLVectorType.BVEC3);
-    public static final GLSLVectorType BVEC4 = register(GLSLVectorType.BVEC4);
+    public static final GLSLVectorType VEC2 =  register(GLSLVectorType.getType(FLOAT,  2));
+    public static final GLSLVectorType VEC3 =  register(GLSLVectorType.getType(FLOAT,  3));
+    public static final GLSLVectorType VEC4 =  register(GLSLVectorType.getType(FLOAT,  4));
+    public static final GLSLVectorType DVEC2 = register(GLSLVectorType.getType(DOUBLE, 2));
+    public static final GLSLVectorType DVEC3 = register(GLSLVectorType.getType(DOUBLE, 3));
+    public static final GLSLVectorType DVEC4 = register(GLSLVectorType.getType(DOUBLE, 4));
+    public static final GLSLVectorType IVEC2 = register(GLSLVectorType.getType(INT,    2));
+    public static final GLSLVectorType IVEC3 = register(GLSLVectorType.getType(INT,    3));
+    public static final GLSLVectorType IVEC4 = register(GLSLVectorType.getType(INT,    4));
+    public static final GLSLVectorType UVEC2 = register(GLSLVectorType.getType(UINT,   2));
+    public static final GLSLVectorType UVEC3 = register(GLSLVectorType.getType(UINT,   3));
+    public static final GLSLVectorType UVEC4 = register(GLSLVectorType.getType(UINT,   4));
+    public static final GLSLVectorType BVEC2 = register(GLSLVectorType.getType(BOOL,   2));
+    public static final GLSLVectorType BVEC3 = register(GLSLVectorType.getType(BOOL,   3));
+    public static final GLSLVectorType BVEC4 = register(GLSLVectorType.getType(BOOL,   4));
 
     // Matrices
-    public static final GLSLMatrixType MAT2x2 = register(GLSLMatrixType.MAT2X2);
-    public static final GLSLMatrixType MAT2x3 = register(GLSLMatrixType.MAT2X3);
-    public static final GLSLMatrixType MAT2x4 = register(GLSLMatrixType.MAT2X4);
-    public static final GLSLMatrixType MAT3x2 = register(GLSLMatrixType.MAT3X2);
-    public static final GLSLMatrixType MAT3x3 = register(GLSLMatrixType.MAT3X3);
-    public static final GLSLMatrixType MAT3x4 = register(GLSLMatrixType.MAT3X4);
-    public static final GLSLMatrixType MAT4x2 = register(GLSLMatrixType.MAT4X2);
-    public static final GLSLMatrixType MAT4x3 = register(GLSLMatrixType.MAT4X3);
-    public static final GLSLMatrixType MAT4x4 = register(GLSLMatrixType.MAT4X4);
-    public static final GLSLMatrixType DMAT2x2 = register(GLSLMatrixType.DMAT2X2);
-    public static final GLSLMatrixType DMAT2x3 = register(GLSLMatrixType.DMAT2X3);
-    public static final GLSLMatrixType DMAT2x4 = register(GLSLMatrixType.DMAT2X4);
-    public static final GLSLMatrixType DMAT3x2 = register(GLSLMatrixType.DMAT3X2);
-    public static final GLSLMatrixType DMAT3x3 = register(GLSLMatrixType.DMAT3X3);
-    public static final GLSLMatrixType DMAT3x4 = register(GLSLMatrixType.DMAT3X4);
-    public static final GLSLMatrixType DMAT4x2 = register(GLSLMatrixType.DMAT4X2);
-    public static final GLSLMatrixType DMAT4x3 = register(GLSLMatrixType.DMAT4X3);
-    public static final GLSLMatrixType DMAT4x4 = register(GLSLMatrixType.DMAT4X4);
+    public static final GLSLMatrixType MAT2x2 =  register(GLSLMatrixType.getType(FLOAT,  2, 2));
+    public static final GLSLMatrixType MAT2x3 =  register(GLSLMatrixType.getType(FLOAT,  2, 3));
+    public static final GLSLMatrixType MAT2x4 =  register(GLSLMatrixType.getType(FLOAT,  2, 4));
+    public static final GLSLMatrixType MAT3x2 =  register(GLSLMatrixType.getType(FLOAT,  3, 2));
+    public static final GLSLMatrixType MAT3x3 =  register(GLSLMatrixType.getType(FLOAT,  3, 3));
+    public static final GLSLMatrixType MAT3x4 =  register(GLSLMatrixType.getType(FLOAT,  3, 4));
+    public static final GLSLMatrixType MAT4x2 =  register(GLSLMatrixType.getType(FLOAT,  4, 2));
+    public static final GLSLMatrixType MAT4x3 =  register(GLSLMatrixType.getType(FLOAT,  4, 3));
+    public static final GLSLMatrixType MAT4x4 =  register(GLSLMatrixType.getType(FLOAT,  4, 4));
+    public static final GLSLMatrixType DMAT2x2 = register(GLSLMatrixType.getType(DOUBLE, 2, 2));
+    public static final GLSLMatrixType DMAT2x3 = register(GLSLMatrixType.getType(DOUBLE, 2, 3));
+    public static final GLSLMatrixType DMAT2x4 = register(GLSLMatrixType.getType(DOUBLE, 2, 4));
+    public static final GLSLMatrixType DMAT3x2 = register(GLSLMatrixType.getType(DOUBLE, 3, 2));
+    public static final GLSLMatrixType DMAT3x3 = register(GLSLMatrixType.getType(DOUBLE, 3, 3));
+    public static final GLSLMatrixType DMAT3x4 = register(GLSLMatrixType.getType(DOUBLE, 3, 4));
+    public static final GLSLMatrixType DMAT4x2 = register(GLSLMatrixType.getType(DOUBLE, 4, 2));
+    public static final GLSLMatrixType DMAT4x3 = register(GLSLMatrixType.getType(DOUBLE, 4, 3));
+    public static final GLSLMatrixType DMAT4x4 = register(GLSLMatrixType.getType(DOUBLE, 4, 4));
 
     // For convenience
-    public static final GLSLMatrixType MAT2 = register(GLSLMatrixType.MAT2X2);
-    public static final GLSLMatrixType MAT3 = register(GLSLMatrixType.MAT3X3);
-    public static final GLSLMatrixType MAT4 = register(GLSLMatrixType.MAT4X4);
-    public static final GLSLMatrixType DMAT2 = register(GLSLMatrixType.DMAT2X2);
-    public static final GLSLMatrixType DMAT3 = register(GLSLMatrixType.DMAT3X3);
-    public static final GLSLMatrixType DMAT4 = register(GLSLMatrixType.DMAT4X4);
+    public static final GLSLMatrixType MAT2 = MAT2x2;
+    public static final GLSLMatrixType MAT3 = MAT3x3;
+    public static final GLSLMatrixType MAT4 = MAT4x4;
+    public static final GLSLMatrixType DMAT2 = DMAT2x2;
+    public static final GLSLMatrixType DMAT3 = DMAT3x3;
+    public static final GLSLMatrixType DMAT4 = DMAT4x4;
 
     // Samplers
     public static final GLSLPrimitiveType SAMPLER1D = register(GLSLPrimitiveType.SAMPLER1D);

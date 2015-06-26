@@ -71,26 +71,6 @@ public class GLSLVectorType extends GLSLType {
         return VECTOR_TYPES.get(baseType)[componentCount - MIN_VECTOR_DIM];
     }
 
-    public static final GLSLVectorType BVEC2 = getType(GLSLTypes.BOOL, 2);
-    public static final GLSLVectorType BVEC3 = getType(GLSLTypes.BOOL, 3);
-    public static final GLSLVectorType BVEC4 = getType(GLSLTypes.BOOL, 4);
-
-    public static final GLSLVectorType IVEC2 = getType(GLSLTypes.INT, 2);
-    public static final GLSLVectorType IVEC3 = getType(GLSLTypes.INT, 3);
-    public static final GLSLVectorType IVEC4 = getType(GLSLTypes.INT, 4);
-
-    public static final GLSLVectorType UVEC2 = getType(GLSLTypes.UINT, 2);
-    public static final GLSLVectorType UVEC3 = getType(GLSLTypes.UINT, 3);
-    public static final GLSLVectorType UVEC4 = getType(GLSLTypes.UINT, 4);
-
-    public static final GLSLVectorType VEC2 = getType(GLSLTypes.FLOAT, 2);
-    public static final GLSLVectorType VEC3 = getType(GLSLTypes.FLOAT, 3);
-    public static final GLSLVectorType VEC4 = getType(GLSLTypes.FLOAT, 4);
-
-    public static final GLSLVectorType DVEC2 = getType(GLSLTypes.DOUBLE, 2);
-    public static final GLSLVectorType DVEC3 = getType(GLSLTypes.DOUBLE, 3);
-    public static final GLSLVectorType DVEC4 = getType(GLSLTypes.DOUBLE, 4);
-
     //endregion
 
     private final GLSLType baseType;
