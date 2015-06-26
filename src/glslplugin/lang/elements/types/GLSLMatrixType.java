@@ -21,8 +21,8 @@ package glslplugin.lang.elements.types;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * GLSLVectorType is ...
@@ -32,6 +32,86 @@ import java.util.HashMap;
  *         Time: 11:48:00 AM
  */
 public class GLSLMatrixType extends GLSLType {
+
+    private enum BaseType {
+        FLOAT(GLSLTypes.FLOAT, "mat"),
+        DOUBLE(GLSLTypes.DOUBLE, "dmat");
+
+        final GLSLType type;
+        final String name;
+
+        BaseType(GLSLType baseType, String baseName) {
+            this.type = baseType;
+            this.name = baseName;
+        }
+    }
+
+    private static final int MIN_MATRIX_DIM = 2, MAX_MATRIX_DIM = 4;
+    private static final Map<GLSLType, GLSLMatrixType[][]> MATRIX_TYPES = new HashMap<GLSLType, GLSLMatrixType[][]>(BaseType.values().length);
+
+    static {
+        final int len = MAX_MATRIX_DIM - MIN_MATRIX_DIM + 1;
+        for(BaseType type:BaseType.values()){
+            GLSLMatrixType[][] dimensions = new GLSLMatrixType[len][len];
+            for (int x = 0; x < len; x++) {
+                for (int y = 0; y < len; y++) {
+                    dimensions[x][y] = new GLSLMatrixType(x,y,type);
+                }
+            }
+            MATRIX_TYPES.put(type.type, dimensions);
+        }
+    }
+
+    public static GLSLMatrixType getType(int cols, int rows, GLSLType fundamentalType){
+        return MATRIX_TYPES.get(fundamentalType)[cols - MIN_MATRIX_DIM][rows - MIN_MATRIX_DIM];
+    }
+
+    public static final GLSLMatrixType MAT2X2 = getType(2, 2, GLSLTypes.FLOAT);
+    public static final GLSLMatrixType MAT3X2 = getType(3, 2, GLSLTypes.FLOAT);
+    public static final GLSLMatrixType MAT4X2 = getType(4, 2, GLSLTypes.FLOAT);
+    public static final GLSLMatrixType MAT2X3 = getType(2, 3, GLSLTypes.FLOAT);
+    public static final GLSLMatrixType MAT3X3 = getType(3, 3, GLSLTypes.FLOAT);
+    public static final GLSLMatrixType MAT4X3 = getType(4, 3, GLSLTypes.FLOAT);
+    public static final GLSLMatrixType MAT2X4 = getType(2, 4, GLSLTypes.FLOAT);
+    public static final GLSLMatrixType MAT3X4 = getType(3, 4, GLSLTypes.FLOAT);
+    public static final GLSLMatrixType MAT4X4 = getType(4, 4, GLSLTypes.FLOAT);
+    public static final GLSLMatrixType DMAT2X2 = getType(2, 2, GLSLTypes.DOUBLE);
+    public static final GLSLMatrixType DMAT3X2 = getType(3, 2, GLSLTypes.DOUBLE);
+    public static final GLSLMatrixType DMAT4X2 = getType(4, 2, GLSLTypes.DOUBLE);
+    public static final GLSLMatrixType DMAT2X3 = getType(2, 3, GLSLTypes.DOUBLE);
+    public static final GLSLMatrixType DMAT3X3 = getType(3, 3, GLSLTypes.DOUBLE);
+    public static final GLSLMatrixType DMAT4X3 = getType(4, 3, GLSLTypes.DOUBLE);
+    public static final GLSLMatrixType DMAT2X4 = getType(2, 4, GLSLTypes.DOUBLE);
+    public static final GLSLMatrixType DMAT3X4 = getType(3, 4, GLSLTypes.DOUBLE);
+    public static final GLSLMatrixType DMAT4X4 = getType(4, 4, GLSLTypes.DOUBLE);
+
+    private int numColumns, numRows;
+    private BaseType fundamentalType;
+
+    private GLSLMatrixType(int numColumns, int numRows, BaseType fundamentalType) {
+        this.numColumns = numColumns;
+        this.numRows = numRows;
+        this.fundamentalType = fundamentalType;
+    }
+
+    @Override
+    @NotNull
+    public String getTypename() {
+        return fundamentalType.name + numColumns + "x" + numRows;
+    }
+
+    @NotNull
+    @Override
+    public GLSLType getBaseType() {
+        return GLSLVectorType.getType(numColumns, fundamentalType.type);
+    }
+
+    public int getNumComponents() {
+        return numColumns * numRows;
+    }
+
+    //region Constructor
+
     private class Constructor extends GLSLFunctionType {
         protected Constructor() {
             super(GLSLMatrixType.this.getTypename(), GLSLMatrixType.this);
@@ -78,84 +158,6 @@ public class GLSLMatrixType extends GLSLType {
         }
     }
 
-    private static final HashMap<GLSLType, String> PREFIXES = new HashMap<GLSLType, String>() {{
-        put(GLSLTypes.FLOAT, "mat");
-        put(GLSLTypes.DOUBLE, "dmat");
-    }};
-
-    private static final HashMap<String, GLSLMatrixType> matrixTypes = new HashMap<String, GLSLMatrixType>() {{
-        for (int x = 2; x <= 4; x++) {
-            for (int y = 2; y <= 4; y++) {
-                for (GLSLType fundamentalType : Arrays.asList(GLSLTypes.FLOAT, GLSLTypes.DOUBLE)) {
-                    GLSLMatrixType matrixType = new GLSLMatrixType(x, y, fundamentalType);
-                    put(matrixType.getTypename(), matrixType);
-                    if (y == x) {
-                        String prefix = PREFIXES.get(fundamentalType);
-                        if (prefix == null) prefix = "mat";
-                        put(prefix + x, matrixType);
-                    }
-                }
-            }
-        }
-    }};
-
-    public static final GLSLMatrixType MAT2X2 = getTypeFromName("mat2x2");
-    public static final GLSLMatrixType MAT3X2 = getTypeFromName("mat3x2");
-    public static final GLSLMatrixType MAT4X2 = getTypeFromName("mat4x2");
-    public static final GLSLMatrixType MAT2X3 = getTypeFromName("mat2x3");
-    public static final GLSLMatrixType MAT3X3 = getTypeFromName("mat3x3");
-    public static final GLSLMatrixType MAT4X3 = getTypeFromName("mat4x3");
-    public static final GLSLMatrixType MAT2X4 = getTypeFromName("mat2x4");
-    public static final GLSLMatrixType MAT3X4 = getTypeFromName("mat3x4");
-    public static final GLSLMatrixType MAT4X4 = getTypeFromName("mat4x4");
-    public static final GLSLMatrixType DMAT2X2 = getTypeFromName("dmat2x2");
-    public static final GLSLMatrixType DMAT3X2 = getTypeFromName("dmat3x2");
-    public static final GLSLMatrixType DMAT4X2 = getTypeFromName("dmat4x2");
-    public static final GLSLMatrixType DMAT2X3 = getTypeFromName("dmat2x3");
-    public static final GLSLMatrixType DMAT3X3 = getTypeFromName("dmat3x3");
-    public static final GLSLMatrixType DMAT4X3 = getTypeFromName("dmat4x3");
-    public static final GLSLMatrixType DMAT2X4 = getTypeFromName("dmat2x4");
-    public static final GLSLMatrixType DMAT3X4 = getTypeFromName("dmat3x4");
-    public static final GLSLMatrixType DMAT4X4 = getTypeFromName("dmat4x4");
-
-    public static GLSLMatrixType getTypeFromName(String name) {
-        GLSLMatrixType type = matrixTypes.get(name);
-        assert type != null : "Unknown matrix name: '" + name + "'.";
-        return type;
-    }
-
-    public static GLSLMatrixType getType(int cols, int rows, GLSLType fundamentalType) {
-        return getTypeFromName("mat" + cols + "x" + rows);
-    }
-
-    private int numColumns, numRows;
-    private GLSLType fundamentalType;
-
-    private GLSLMatrixType(int numColumns, int numRows, GLSLType fundamentalType) {
-        //NOTE: do not fill the member map here as it needs to refer the other vector types.
-        this.numColumns = numColumns;
-        this.numRows = numRows;
-        this.fundamentalType = fundamentalType;
-    }
-
-    @Override
-    @NotNull
-    public String getTypename() {
-        String prefix = PREFIXES.get(fundamentalType);
-        if (prefix == null) prefix = "mat";
-        return prefix + numColumns + "x" + numRows;
-    }
-
-    @NotNull
-    @Override
-    public GLSLType getBaseType() {
-        return GLSLVectorType.getType(numColumns, GLSLPrimitiveType.FLOAT);
-    }
-
-    public int getNumComponents() {
-        return numColumns * numRows;
-    }
-
     @NotNull
     @Override
     public GLSLFunctionType[] getConstructors() {
@@ -164,6 +166,8 @@ public class GLSLMatrixType extends GLSLType {
         };
     }
 
+    //endregion
+
     @Override
     public boolean isConvertibleTo(GLSLType otherType) {
         if (!(otherType instanceof GLSLMatrixType)) return false;
@@ -171,6 +175,6 @@ public class GLSLMatrixType extends GLSLType {
 
         return numRows == other.numRows
                 && numColumns == other.numColumns
-                && fundamentalType.isConvertibleTo(other.fundamentalType);
+                && fundamentalType.type.isConvertibleTo(other.fundamentalType.type);
     }
 }
