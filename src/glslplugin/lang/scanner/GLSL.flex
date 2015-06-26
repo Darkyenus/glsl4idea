@@ -66,7 +66,6 @@ EXPONENT_PART       = [Ee]["+""-"]?({DIGIT})*
 LINE_COMMENT        = "//"[^\r\n]*
 BLOCK_COMMENT       = "/*"([^"*"]|("*"+[^"*""/"]))*("*"+"/")?
 
-GLSL_ES_TYPE = void|float|(u?int)|bool|((i|b|u)?vec([2-4]))|(mat[2-4](x[2-4])?)|(samplerCubeShadow|sampler2DShadow|sampler2DArrayShadow)|((i|u)?sampler(2D|3D|Cube|2DArray))
 GLSL_ES_PRECISION_QUALIFIER = (high|medium|low)p
 
 %%
@@ -219,6 +218,42 @@ else                    {return ELSE_KEYWORD; }
 
 /* GLSL ES PRECISION */
 precision  {return PRECISION_KEYWORD; }
+
+/* GLSL reserved keywords */
+common { return RESERVED_KEYWORD; }
+partition { return RESERVED_KEYWORD; }
+active { return RESERVED_KEYWORD; }
+asm { return RESERVED_KEYWORD; }
+class { return RESERVED_KEYWORD; }
+union { return RESERVED_KEYWORD; }
+enum { return RESERVED_KEYWORD; }
+typedef { return RESERVED_KEYWORD; }
+template { return RESERVED_KEYWORD; }
+this { return RESERVED_KEYWORD; }
+resource { return RESERVED_KEYWORD; }
+goto { return RESERVED_KEYWORD; }
+inline { return RESERVED_KEYWORD; }
+noinline { return RESERVED_KEYWORD; }
+public { return RESERVED_KEYWORD; }
+static { return RESERVED_KEYWORD; }
+extern { return RESERVED_KEYWORD; }
+external { return RESERVED_KEYWORD; }
+interface { return RESERVED_KEYWORD; }
+long { return RESERVED_KEYWORD; }
+short { return RESERVED_KEYWORD; }
+half { return RESERVED_KEYWORD; }
+fixed { return RESERVED_KEYWORD; }
+unsigned { return RESERVED_KEYWORD; }
+superp { return RESERVED_KEYWORD; }
+input { return RESERVED_KEYWORD; }
+output { return RESERVED_KEYWORD; }
+[hf]vec[234] { return RESERVED_KEYWORD; }
+sampler3DRect { return RESERVED_KEYWORD; }
+filter { return RESERVED_KEYWORD; }
+sizeof { return RESERVED_KEYWORD; }
+cast { return RESERVED_KEYWORD; }
+namespace { return RESERVED_KEYWORD; }
+using { return RESERVED_KEYWORD; }
 
 
 /* GLSL Symbols */
