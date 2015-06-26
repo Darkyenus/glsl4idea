@@ -33,12 +33,11 @@ import java.util.Map;
  *         Date: Feb 26, 2009
  *         Time: 11:20:35 AM
  */
-public class GLSLStructType extends GLSLType {
+public final class GLSLStructType extends GLSLType {
 
-    private GLSLTypeDefinition definition;
-    private String typename;
+    private final GLSLTypeDefinition definition;
+    private final String typename;
     private final Map<String, GLSLType> members = new HashMap<String, GLSLType>();
-    private GLSLType[] memberTypes = null;
     private final GLSLFunctionType[] constructors;
 
     public GLSLStructType(GLSLTypeDefinition definition) {
@@ -47,7 +46,7 @@ public class GLSLStructType extends GLSLType {
 
         typename = definition.getTypeName();
 
-        memberTypes = new GLSLType[declarators.length];
+        GLSLType[] memberTypes = new GLSLType[declarators.length];
 
         for (int i = 0; i < declarators.length; i++) {
             final GLSLDeclarator declarator = declarators[i];
@@ -88,11 +87,6 @@ public class GLSLStructType extends GLSLType {
     @NotNull
     public Map<String, GLSLType> getMembers() {
         return members;
-    }
-
-    @NotNull
-    public GLSLType[] getMemberTypes() {
-        return memberTypes;
     }
 
     @NotNull

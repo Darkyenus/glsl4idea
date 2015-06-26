@@ -49,9 +49,9 @@ public class VectorComponentsAnnotation extends Annotator<GLSLFieldSelectionExpr
             GLSLIdentifier memberIdentifier = expr.getMemberIdentifier();
             if(memberIdentifier == null)return;
             String member = memberIdentifier.getIdentifierName();
-            GLSLType glslType = type.getMembers().get(member);
 
-            if (glslType == null && member.length() > 0) {
+            if (!type.hasMember(member) && member.length() > 0) {
+                //It has no member like that, why?
                 TextRange mitr = memberIdentifier.getTextRange();
 
                 char[] basePattern = getPattern(member.charAt(0));
