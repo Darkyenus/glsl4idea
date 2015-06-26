@@ -54,7 +54,7 @@ public class GLSLDeclaratorBase extends GLSLElementImpl {
     public String getIdentifierName() {
         PsiElement idElement = getFirstChild();
         if (idElement instanceof GLSLIdentifier) {
-            return ((GLSLIdentifier) idElement).getIdentifierName();
+            return ((GLSLIdentifier) idElement).getName();
         } else {
             return "(anonymous)";
         }

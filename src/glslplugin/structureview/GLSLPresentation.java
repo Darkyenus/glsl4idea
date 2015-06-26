@@ -86,7 +86,7 @@ class GLSLPresentation implements ItemPresentation {
             public String stringify(GLSLDeclarator glslDeclarator) {
                 GLSLIdentifier identifier = glslDeclarator.getIdentifier();
                 if(identifier == null)return "(unknown)";
-                else return identifier.getIdentifierName();
+                else return identifier.getName();
             }
         }));
         GLSLPresentation presentation = new GLSLPresentation(dec + " : " + type);

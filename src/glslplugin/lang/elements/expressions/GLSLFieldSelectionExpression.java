@@ -70,7 +70,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
                 //If any of the components are repeated, it is not a L value
                 GLSLIdentifier memberIdentifier = getMemberIdentifier();
                 if(memberIdentifier == null)return true; //This should not happen
-                String components = memberIdentifier.getIdentifierName();
+                String components = memberIdentifier.getName();
                 for (int i = 0; i < components.length(); i++) {
                     char c = components.charAt(i);
                     for (int j = i+1; j < components.length(); j++) {
@@ -99,7 +99,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
         if(!leftHandType.isValidType())return false;
         if(!(leftHandType instanceof GLSLVectorType))return false;
         //If it got here, it is picking a component(s) from a vector. But how many?
-        return memberIdentifier.getIdentifierName().length() > 1;
+        return memberIdentifier.getName().length() > 1;
         //Because all vector components are marked as only one letter, having more letters means swizzling
     }
 
@@ -126,7 +126,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
             if(memberIdentifier == null){
                 return null;
             }else{
-                return ((GLSLTypeDefinition) definition).getDeclarator(memberIdentifier.getIdentifierName());
+                return ((GLSLTypeDefinition) definition).getDeclarator(memberIdentifier.getName());
             }
         } else {
             return null;
@@ -152,7 +152,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
             }
             GLSLIdentifier memberIdentifier = getMemberIdentifier();
             if(memberIdentifier == null)return GLSLTypes.UNKNOWN_TYPE;
-            else return type.getMemberType(memberIdentifier.getIdentifierName());
+            else return type.getMemberType(memberIdentifier.getName());
         }
     }
 
@@ -161,7 +161,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
         if(memberIdentifier == null){
             return "Field selection: '(unknown)'";
         }else{
-            return "Field selection: '" + memberIdentifier.getIdentifierName() + "'";
+            return "Field selection: '" + memberIdentifier.getName() + "'";
         }
     }
 }

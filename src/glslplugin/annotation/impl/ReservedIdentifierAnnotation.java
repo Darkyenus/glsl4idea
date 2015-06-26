@@ -12,7 +12,7 @@ public class ReservedIdentifierAnnotation extends Annotator<GLSLIdentifier> {
 
     @Override
     public void annotate(GLSLIdentifier identifier, AnnotationHolder holder) {
-        String name = identifier.getIdentifierName();
+        String name = identifier.getName();
         if (name.startsWith("__")) {
             holder.createWarningAnnotation(identifier, "This identifier is reserved for use by underlying software layers and may result in undefined behavior.");
         }

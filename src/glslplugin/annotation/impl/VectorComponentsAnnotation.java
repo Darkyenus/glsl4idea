@@ -48,7 +48,7 @@ public class VectorComponentsAnnotation extends Annotator<GLSLFieldSelectionExpr
             GLSLVectorType type = (GLSLVectorType) leftHandType;
             GLSLIdentifier memberIdentifier = expr.getMemberIdentifier();
             if(memberIdentifier == null)return;
-            String member = memberIdentifier.getIdentifierName();
+            String member = memberIdentifier.getName();
 
             if (!type.hasMember(member) && member.length() > 0) {
                 //It has no member like that, why?

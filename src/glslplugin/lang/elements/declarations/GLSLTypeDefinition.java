@@ -55,7 +55,7 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
         if (children.length > 1) {
             PsiElement id = children[0];
             if (id instanceof GLSLIdentifier) {
-                return ((GLSLIdentifier) id).getIdentifierName();
+                return ((GLSLIdentifier) id).getName();
             }
         }
         return null;
