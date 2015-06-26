@@ -130,6 +130,7 @@
         <additionalTextAttributes scheme="Default" file="colorSchemes/GLSLDefault.xml"/>
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/GLSLDarcula.xml"/>
         <lang.commenter language="GLSL" implementationClass="glslplugin.GLSLCommenter"/>
+        <lang.refactoringSupport language="GLSL" implementationClass="glslplugin.extensions.GLSLRefactoringSupportProvider" />
     </extensions>
 
     <application-components>
