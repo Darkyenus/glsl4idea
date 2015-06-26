@@ -41,7 +41,7 @@ public class GLSLSingleDeclarationImpl extends GLSLDeclarationImpl implements GL
         if(declarator == null){
             return "(unknown)";
         }else{
-            return declarator.getIdentifierName();
+            return declarator.getName();
         }
     }
 

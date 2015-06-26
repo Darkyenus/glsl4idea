@@ -97,7 +97,7 @@ public class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclarat
             if (!first) {
                 b.append(", ");
             }
-            GLSLIdentifier identifier = declarator.getIdentifier();
+            GLSLIdentifier identifier = declarator.getNameIdentifier();
             if(identifier == null){
                 b.append("(unknown)");
             } else {

@@ -21,6 +21,7 @@ package glslplugin.lang.elements.reference;
 
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElement;
@@ -62,6 +63,9 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
     }
 
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+        if (source instanceof PsiNamedElement) {
+            return ((PsiNamedElement) source).setName(newElementName);
+        }
         throw new IncorrectOperationException("Not supported!");
     }
 
@@ -70,7 +74,7 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
     }
 
     public boolean isReferenceTo(PsiElement element) {
-        return false;
+        return element == resolve();
     }
 
     @NotNull
