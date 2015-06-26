@@ -24,6 +24,10 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.logging.Logger;
+
 public class GLSLTemplatesLoader implements ApplicationComponent {
     private final static String TEMPLATE_TEXT = "#version 120\n\nvoid main() {\n\n}";
 
@@ -35,8 +39,32 @@ public class GLSLTemplatesLoader implements ApplicationComponent {
         return "GLSL Template Loader";
     }
 
+    private FileTemplateManager getDefaultFileTemplateManager() {
+        try {
+            return FileTemplateManager.getDefaultInstance();
+        } catch (NoSuchMethodError err) {
+            // This is for compatibility with IDEA 13, which does not have getDefaultInstance().
+            // While getInstance() still exists in IDEA 14, it will be probably removed soon,
+            // so the reflection dance would be needed sooner or later anyway
+            try {
+                Method getInstanceMethod = FileTemplateManager.class.getDeclaredMethod("getInstance");
+                Object result = getInstanceMethod.invoke(null);
+                if (result instanceof FileTemplateManager) {
+                    Logger.getLogger("GLSLTemplatesLoader").info("Successfully used reflection to obtain FileTemplateManager");
+                    return (FileTemplateManager) result;
+                }
+            } catch (NoSuchMethodException ignored) {
+            } catch (InvocationTargetException ignored) {
+            } catch (IllegalAccessException ignored) {
+            }
+            Logger.getLogger("GLSLTemplatesLoader").warning("Failed to obtain FileTemplateManager");
+            return null;
+        }
+    }
+
     public void initComponent() {
-        FileTemplateManager fileTemplateManager = FileTemplateManager.getDefaultInstance();
+        FileTemplateManager fileTemplateManager = getDefaultFileTemplateManager();
+        if(fileTemplateManager == null)return;
 
         if (fileTemplateManager.getTemplate("GLSL Shader") == null) {
             final FileTemplate template = fileTemplateManager.addTemplate("GLSL Shader", "glsl");
@@ -46,7 +74,8 @@ public class GLSLTemplatesLoader implements ApplicationComponent {
     }
 
     public void disposeComponent() {
-        FileTemplateManager fileTemplateManager = FileTemplateManager.getDefaultInstance();
+        FileTemplateManager fileTemplateManager = getDefaultFileTemplateManager();
+        if(fileTemplateManager == null)return;
 
         FileTemplate template = fileTemplateManager.getTemplate("GLSL Shader");
         if (template != null) {
