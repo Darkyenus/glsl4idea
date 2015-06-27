@@ -53,8 +53,8 @@ public class GLSLBasicFunctionType extends GLSLFunctionType {
         this.typename = generateTypename();
     }
 
-    public GLSLBasicFunctionType(@NotNull String name, @NotNull GLSLType type, @NotNull GLSLType... parameterTypes) {
-        super(name, type);
+    public GLSLBasicFunctionType(@NotNull String name, @NotNull GLSLType returnType, @NotNull GLSLType... parameterTypes) {
+        super(name, returnType);
         this.parameterTypes = parameterTypes;
         this.typename = generateTypename();
     }

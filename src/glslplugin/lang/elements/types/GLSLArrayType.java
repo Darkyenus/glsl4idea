@@ -53,7 +53,7 @@ public class GLSLArrayType extends GLSLType {
 
     @Override
     @NotNull
-    public GLSLType getBaseType() {
+    public GLSLType getIndexType() {
         return baseType;
     }
 

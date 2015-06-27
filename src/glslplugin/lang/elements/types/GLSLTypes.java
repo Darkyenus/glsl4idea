@@ -152,6 +152,7 @@ public class GLSLTypes {
 
     @NotNull
     public static GLSLType unifyTypes(GLSLType t1, GLSLType t2) {
+        if (t1 == t2) return t1;//Shortcut
         if (t1 == UNKNOWN_TYPE || t2 == UNKNOWN_TYPE) return UNKNOWN_TYPE;
         if (t1.isConvertibleTo(t2)) return t2;
         if (t2.isConvertibleTo(t1)) return t1;

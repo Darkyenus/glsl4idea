@@ -75,7 +75,7 @@ public class GLSLSubscriptExpression extends GLSLOperatorExpression {
         GLSLType type = left.getType();
         if (type != GLSLTypes.UNKNOWN_TYPE) {
             if (type.isIndexable()) {
-                return type.getBaseType();
+                return type.getIndexType();
             } else {
                 return GLSLTypes.UNKNOWN_TYPE;
             }
