@@ -37,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
 public class MissingReturnAnnotation extends Annotator<GLSLFunctionDefinition> {
     @Override
     public void annotate(GLSLFunctionDefinition expr, AnnotationHolder holder) {
-        if (expr.getType().getBaseType() == GLSLTypes.VOID) return;
+        if (expr.getType().getReturnType() == GLSLTypes.VOID) return;
 
         final GLSLCompoundStatement body = expr.getBody();
         if(body == null)return;

@@ -70,7 +70,7 @@ public class GLSLBasicFunctionType extends GLSLFunctionType {
             first = false;
             b.append(type.getTypename());
         }
-        b.append(") : ").append(getBaseType().getTypename());
+        b.append(") : ").append(getReturnType().getTypename());
         return b.toString();
     }
 

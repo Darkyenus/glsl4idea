@@ -26,8 +26,6 @@ import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.logging.Logger;
-
 /**
  * GLSLBinaryOperatorExpression is an expression from two operands and one operator between them.
  *
@@ -65,23 +63,10 @@ public class GLSLBinaryOperatorExpression extends GLSLOperatorExpression {
     public GLSLType getType() {
         GLSLFunctionType[] alternatives = getOperatorTypeAlternatives();
         if (alternatives.length == 1) {
-            return alternatives[0].getBaseType();
+            return alternatives[0].getReturnType();
         } else {
             return GLSLTypes.UNKNOWN_TYPE;
         }
-
-        /* TODO: REMOVE
-        GLSLType leftType = getLeftOperand().getType();
-        GLSLType rightType = getRightOperand().getType();
-
-        if (leftType.isConvertibleTo(rightType)) {
-            return rightType;
-        } else if (rightType.isConvertibleTo(leftType)) {
-            return leftType;
-        } else {
-            return GLSLTypes.UNKNOWN_TYPE;
-        }
-        */
     }
 
     @NotNull

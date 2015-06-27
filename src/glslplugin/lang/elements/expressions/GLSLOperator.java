@@ -278,7 +278,7 @@ public enum GLSLOperator {
 
                 assert basicAlternative.getParameterTypes().length == 2;
 
-                GLSLType returnType = basicAlternative.getBaseType();
+                GLSLType returnType = basicAlternative.getReturnType();
                 GLSLType leftType = basicAlternative.getParameterTypes()[0];
                 GLSLType rightType = basicAlternative.getParameterTypes()[1];
 
