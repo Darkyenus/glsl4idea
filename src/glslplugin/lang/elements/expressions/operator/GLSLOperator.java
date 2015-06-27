@@ -70,7 +70,7 @@ public class GLSLOperator {
      * <br>
      * For example: "i += 1"
      */
-    public static class GLSLAssignmentOperator extends GLSLOperator {
+    public static class GLSLAssignmentOperator extends GLSLBinaryOperator {
 
         public GLSLAssignmentOperator(@NotNull String textRepresentation) {
             super(textRepresentation);
@@ -81,6 +81,12 @@ public class GLSLOperator {
             if (!leftType.isValidType() || !rightType.isValidType()) return true;
 
             return leftType == rightType || rightType.isConvertibleTo(leftType);
+        }
+
+        @NotNull
+        @Override
+        public GLSLType getResultType(GLSLType firstInput, GLSLType secondInput) {
+            return firstInput;
         }
     }
 
@@ -99,6 +105,7 @@ public class GLSLOperator {
             super(textRepresentation);
         }
 
+        @NotNull
         @Override
         public GLSLType getResultType(GLSLType firstInput, GLSLType secondInput) {
             if(!firstInput.isValidType() || !secondInput.isValidType())return UNKNOWN_TYPE;
