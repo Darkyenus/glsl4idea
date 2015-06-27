@@ -4,6 +4,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.expressions.operator.GLSLOperator;
 import glslplugin.lang.elements.expressions.operator.GLSLOperators;
+import glslplugin.lang.elements.types.GLSLType;
+import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,6 +57,19 @@ public class GLSLUnaryOperatorExpression extends GLSLOperatorExpression {
         if (op == GLSLOperators.ADDITION) op = GLSLOperators.PLUS;
         if (op == GLSLOperators.SUBTRACTION) op = GLSLOperators.MINUS;
         return op;
+    }
+
+    @NotNull
+    @Override
+    public GLSLType getType() {
+        GLSLOperator operator = getOperator();
+        GLSLExpression operand = getOperand();
+        if(operator == null || operand == null || !(operator instanceof GLSLOperator.GLSLUnaryOperator)){
+            return GLSLTypes.UNKNOWN_TYPE;
+        }else{
+            GLSLOperator.GLSLUnaryOperator unaryOperator = (GLSLOperator.GLSLUnaryOperator) operator;
+            return unaryOperator.getResultType(operand.getType());
+        }
     }
 
     public String toString() {
