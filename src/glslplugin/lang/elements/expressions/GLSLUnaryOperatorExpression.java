@@ -36,7 +36,7 @@ public class GLSLUnaryOperatorExpression extends GLSLOperatorExpression {
     @Nullable
     public GLSLExpression getOperand() {
         GLSLExpression[] operands = getOperands();
-        if (operands.length != 1) {
+        if (operands.length == 1) {
             return operands[0];
         } else {
             Logger.getLogger("GLSLUnaryOperatorExpression").warning("Unary operator expression with " + operands.length + " operand(s).");

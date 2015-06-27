@@ -50,6 +50,7 @@ public class GLSLAnnotator implements com.intellij.lang.annotation.Annotator {
     static {
         //Register all annotators
         add(new LValueAnnotator());
+        add(new UnaryOperatorTypeAnnotation());
         add(new BinaryOperatorTypeAnnotation());
         add(new VectorComponentsAnnotation());
         add(new MemberCheckAnnotation());
