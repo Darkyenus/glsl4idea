@@ -21,6 +21,8 @@ package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
+import glslplugin.lang.elements.expressions.operator.GLSLOperator;
+import glslplugin.lang.elements.expressions.operator.GLSLOperators;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,8 +61,8 @@ public class GLSLPrefixOperatorExpression extends GLSLOperatorExpression {
     @Nullable
     protected GLSLOperator getOperatorFromType(IElementType type) {
         GLSLOperator op = super.getOperatorFromType(type);
-        if (op == GLSLOperator.ADDITION) op = GLSLOperator.PLUS;
-        if (op == GLSLOperator.SUBTRACTION) op = GLSLOperator.MINUS;
+        if (op == GLSLOperators.ADDITION) op = GLSLOperators.PLUS;
+        if (op == GLSLOperators.SUBTRACTION) op = GLSLOperators.MINUS;
         return op;
     }
 

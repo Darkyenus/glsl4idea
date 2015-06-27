@@ -485,11 +485,11 @@ public class GLSLOperator {
         }
     }
 
-    protected static class BinaryOperatorAssingnmentOperator extends GLSLAssignmentOperator {
+    protected static class BinaryOperatorAssignmentOperator extends GLSLAssignmentOperator {
 
         private final GLSLBinaryOperator operator;
 
-        public BinaryOperatorAssingnmentOperator(@NotNull String textRepresentation, GLSLBinaryOperator operator) {
+        public BinaryOperatorAssignmentOperator(@NotNull String textRepresentation, GLSLBinaryOperator operator) {
             super(textRepresentation);
             this.operator = operator;
         }

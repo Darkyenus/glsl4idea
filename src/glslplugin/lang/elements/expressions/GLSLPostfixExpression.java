@@ -20,6 +20,7 @@
 package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
+import glslplugin.lang.elements.expressions.operator.GLSLOperator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

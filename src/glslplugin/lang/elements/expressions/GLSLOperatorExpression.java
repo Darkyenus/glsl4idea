@@ -22,6 +22,8 @@ package glslplugin.lang.elements.expressions;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLTokenTypes;
+import glslplugin.lang.elements.expressions.operator.GLSLOperator;
+import glslplugin.lang.elements.expressions.operator.GLSLOperators;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,46 +59,46 @@ public abstract class GLSLOperatorExpression extends GLSLExpression {
 
     @Nullable
     protected GLSLOperator getOperatorFromType(final IElementType type) {
-        if (type == GLSLTokenTypes.INC_OP) return GLSLOperator.INCREMENT;
-        if (type == GLSLTokenTypes.DEC_OP) return GLSLOperator.DECREMENT;
-        if (type == GLSLTokenTypes.BANG) return GLSLOperator.LOGIC_NEGATION;
-        if (type == GLSLTokenTypes.TILDE) return GLSLOperator.BINARY_NEGATION;
-        if (type == GLSLTokenTypes.PLUS) return GLSLOperator.ADDITION;
-        if (type == GLSLTokenTypes.DASH) return GLSLOperator.SUBTRACTION;
-        if (type == GLSLTokenTypes.STAR) return GLSLOperator.MULTIPLICATION;
-        if (type == GLSLTokenTypes.SLASH) return GLSLOperator.DIVISION;
-        if (type == GLSLTokenTypes.PERCENT) return GLSLOperator.MODULO;
+        if (type == GLSLTokenTypes.INC_OP) return GLSLOperators.INCREMENT;
+        if (type == GLSLTokenTypes.DEC_OP) return GLSLOperators.DECREMENT;
+        if (type == GLSLTokenTypes.BANG) return GLSLOperators.LOGIC_NEGATION;
+        if (type == GLSLTokenTypes.TILDE) return GLSLOperators.BINARY_NEGATION;
+        if (type == GLSLTokenTypes.PLUS) return GLSLOperators.ADDITION;
+        if (type == GLSLTokenTypes.DASH) return GLSLOperators.SUBTRACTION;
+        if (type == GLSLTokenTypes.STAR) return GLSLOperators.MULTIPLICATION;
+        if (type == GLSLTokenTypes.SLASH) return GLSLOperators.DIVISION;
+        if (type == GLSLTokenTypes.PERCENT) return GLSLOperators.MODULO;
 
-        if (type == GLSLTokenTypes.EQUAL) return GLSLOperator.ASSIGN;
-        if (type == GLSLTokenTypes.ADD_ASSIGN) return GLSLOperator.ADDITION_ASSIGN;
-        if (type == GLSLTokenTypes.SUB_ASSIGN) return GLSLOperator.SUBTRACTION_ASSIGN;
-        if (type == GLSLTokenTypes.MUL_ASSIGN) return GLSLOperator.MULTIPLICATION_ASSIGN;
-        if (type == GLSLTokenTypes.DIV_ASSIGN) return GLSLOperator.DIVISION_ASSIGN;
-        if (type == GLSLTokenTypes.MOD_ASSIGN) return GLSLOperator.MODULO_ASSIGN;
-        if (type == GLSLTokenTypes.LEFT_ASSIGN) return GLSLOperator.LEFT_SHIFT_ASSIGN;
-        if (type == GLSLTokenTypes.RIGHT_ASSIGN) return GLSLOperator.RIGHT_SHIFT_ASSIGN;
-        if (type == GLSLTokenTypes.AND_ASSIGN) return GLSLOperator.BINARY_AND_ASSIGN;
-        if (type == GLSLTokenTypes.XOR_ASSIGN) return GLSLOperator.BINARY_XOR_ASSIGN;
-        if (type == GLSLTokenTypes.OR_ASSIGN) return GLSLOperator.BINARY_OR_ASSIGN;
+        if (type == GLSLTokenTypes.EQUAL) return GLSLOperators.ASSIGN;
+        if (type == GLSLTokenTypes.ADD_ASSIGN) return GLSLOperators.ADDITION_ASSIGN;
+        if (type == GLSLTokenTypes.SUB_ASSIGN) return GLSLOperators.SUBTRACTION_ASSIGN;
+        if (type == GLSLTokenTypes.MUL_ASSIGN) return GLSLOperators.MULTIPLICATION_ASSIGN;
+        if (type == GLSLTokenTypes.DIV_ASSIGN) return GLSLOperators.DIVISION_ASSIGN;
+        if (type == GLSLTokenTypes.MOD_ASSIGN) return GLSLOperators.MODULO_ASSIGN;
+        if (type == GLSLTokenTypes.LEFT_ASSIGN) return GLSLOperators.LEFT_SHIFT_ASSIGN;
+        if (type == GLSLTokenTypes.RIGHT_ASSIGN) return GLSLOperators.RIGHT_SHIFT_ASSIGN;
+        if (type == GLSLTokenTypes.AND_ASSIGN) return GLSLOperators.BINARY_AND_ASSIGN;
+        if (type == GLSLTokenTypes.XOR_ASSIGN) return GLSLOperators.BINARY_XOR_ASSIGN;
+        if (type == GLSLTokenTypes.OR_ASSIGN) return GLSLOperators.BINARY_OR_ASSIGN;
 
-        if (type == GLSLTokenTypes.AND_OP) return GLSLOperator.LOGIC_AND;
-        if (type == GLSLTokenTypes.OR_OP) return GLSLOperator.LOGIC_OR;
-        if (type == GLSLTokenTypes.XOR_OP) return GLSLOperator.LOGIC_XOR;
+        if (type == GLSLTokenTypes.AND_OP) return GLSLOperators.LOGIC_AND;
+        if (type == GLSLTokenTypes.OR_OP) return GLSLOperators.LOGIC_OR;
+        if (type == GLSLTokenTypes.XOR_OP) return GLSLOperators.LOGIC_XOR;
 
-        if (type == GLSLTokenTypes.AMPERSAND) return GLSLOperator.BINARY_AND;
-        if (type == GLSLTokenTypes.CARET) return GLSLOperator.BINARY_XOR;
-        if (type == GLSLTokenTypes.VERTICAL_BAR) return GLSLOperator.BINARY_OR;
-        if (type == GLSLTokenTypes.LEFT_OP) return GLSLOperator.BINARY_LEFT_SHIFT;
-        if (type == GLSLTokenTypes.RIGHT_OP) return GLSLOperator.BINARY_RIGHT_SHIFT;
+        if (type == GLSLTokenTypes.AMPERSAND) return GLSLOperators.BINARY_AND;
+        if (type == GLSLTokenTypes.CARET) return GLSLOperators.BINARY_XOR;
+        if (type == GLSLTokenTypes.VERTICAL_BAR) return GLSLOperators.BINARY_OR;
+        if (type == GLSLTokenTypes.LEFT_OP) return GLSLOperators.BINARY_LEFT_SHIFT;
+        if (type == GLSLTokenTypes.RIGHT_OP) return GLSLOperators.BINARY_RIGHT_SHIFT;
 
-        if (type == GLSLTokenTypes.EQ_OP) return GLSLOperator.EQUAL;
-        if (type == GLSLTokenTypes.NE_OP) return GLSLOperator.NOT_EQUAL;
-        if (type == GLSLTokenTypes.LEFT_ANGLE) return GLSLOperator.LESSER;
-        if (type == GLSLTokenTypes.RIGHT_ANGLE) return GLSLOperator.GREATER;
-        if (type == GLSLTokenTypes.LE_OP) return GLSLOperator.LESSER_EQUAL;
-        if (type == GLSLTokenTypes.GE_OP) return GLSLOperator.GREATER_EQUAL;
+        if (type == GLSLTokenTypes.EQ_OP) return GLSLOperators.EQUAL;
+        if (type == GLSLTokenTypes.NE_OP) return GLSLOperators.NOT_EQUAL;
+        if (type == GLSLTokenTypes.LEFT_ANGLE) return GLSLOperators.LESSER;
+        if (type == GLSLTokenTypes.RIGHT_ANGLE) return GLSLOperators.GREATER;
+        if (type == GLSLTokenTypes.LE_OP) return GLSLOperators.LESSER_EQUAL;
+        if (type == GLSLTokenTypes.GE_OP) return GLSLOperators.GREATER_EQUAL;
 
-        if (type == GLSLTokenTypes.DOT) return GLSLOperator.MEMBER;
+        if (type == GLSLTokenTypes.DOT) return GLSLOperators.MEMBER;
 
         Logger.getLogger("Unsupported Operator: '" + getText() + "'");
         return null;
