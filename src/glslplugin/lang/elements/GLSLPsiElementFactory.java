@@ -75,8 +75,8 @@ public class GLSLPsiElementFactory {
         // postfix expressions
 
         // unary operators
-        if (type == GLSLElementTypes.POSTFIX_OPERATOR_EXPRESSION) return new GLSLPostfixExpression(node);
-        if (type == GLSLElementTypes.PREFIX_OPERATOR_EXPRESSION) return new GLSLPrefixOperatorExpression(node);
+        if (type == GLSLElementTypes.POSTFIX_OPERATOR_EXPRESSION) return new GLSLUnaryOperatorExpression(node, false);
+        if (type == GLSLElementTypes.PREFIX_OPERATOR_EXPRESSION) return new GLSLUnaryOperatorExpression(node, true);
         if (type == GLSLElementTypes.SUBSCRIPT_EXPRESSION) return new GLSLSubscriptExpression(node);
 
         // binary operators

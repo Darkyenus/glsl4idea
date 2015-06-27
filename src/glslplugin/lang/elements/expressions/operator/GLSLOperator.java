@@ -9,7 +9,7 @@ import static glslplugin.lang.elements.types.GLSLTypes.*;
  *
  * Contains prototypes for all operator types and their specific implementations.
  *
- * @author Darkyen
+ * @author Jan Polák
  */
 public class GLSLOperator {
 

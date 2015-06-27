@@ -3,7 +3,9 @@ package glslplugin.lang.elements.expressions.operator;
 import glslplugin.lang.elements.expressions.operator.GLSLOperator.*;
 
 /**
- * @author Darkyen
+ * Contains all operators.
+ *
+ * @author Jan Polák
  */
 public final class GLSLOperators {
 
