@@ -89,7 +89,7 @@ public class VectorComponentsIntention extends Intentions {
 
         String[] variants = new String[]{components + " -> " + results[0], components + " -> " + results[1]};
         //http://www.jetbrains.net/devnet/message/5208622#5208622
-        final JBList list = new JBList(variants);
+        final JBList list = new JBList((Object[])variants);
         PopupChooserBuilder builder = new PopupChooserBuilder(list);
         builder.setTitle("Select Variant");
         builder.setItemChoosenCallback(new Runnable() {
