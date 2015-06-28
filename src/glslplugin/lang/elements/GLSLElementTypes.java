@@ -90,6 +90,7 @@ public class GLSLElementTypes {
     public static final IElementType DECLARATOR = new GLSLElementType("DECLARATOR");
     public static final IElementType ARRAY_DECLARATOR = new GLSLElementType("ARRAY_DECLARATOR");
     public static final IElementType INITIALIZER = new GLSLElementType("INITIALIZER");
+    public static final IElementType INITIALIZER_LIST = new GLSLElementType("INITIALIZER_LIST");
 
     public static final IElementType COMPOUND_STATEMENT = new GLSLElementType("COMPOUND_STATEMENT");
 
