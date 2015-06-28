@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class GLSLElementTypes {
     public static final IFileElementType FILE = new IFileElementType(Language.findInstance(GLSLLanguage.class));
-    public static final IElementType TRANSLATION_UNIT = new GLSLElementType("TRANSLATION_UNIT");
     public static final IElementType BLOCK = new GLSLElementType("BLOCK");
 
     public static final IElementType PREPROCESSOR_DIRECTIVE = new GLSLElementType("PREPROCESSOR_DIRECTIVE");
