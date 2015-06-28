@@ -33,12 +33,12 @@ import java.util.Map;
  *         Date: Feb 26, 2009
  *         Time: 11:20:35 AM
  */
-public class GLSLStructType extends GLSLType {
+public final class GLSLStructType extends GLSLType {
 
-    private GLSLTypeDefinition definition;
-    private String typename;
-    private Map<String, GLSLType> members = null;
-    private GLSLType[] memberTypes = null;
+    private final GLSLTypeDefinition definition;
+    private final String typename;
+    private final Map<String, GLSLType> members = new HashMap<String, GLSLType>();
+    private final GLSLFunctionType[] constructors;
 
     public GLSLStructType(GLSLTypeDefinition definition) {
         this.definition = definition;
@@ -46,14 +46,17 @@ public class GLSLStructType extends GLSLType {
 
         typename = definition.getTypeName();
 
-        members = new HashMap<String, GLSLType>();
-        memberTypes = new GLSLType[declarators.length];
+        GLSLType[] memberTypes = new GLSLType[declarators.length];
 
         for (int i = 0; i < declarators.length; i++) {
             final GLSLDeclarator declarator = declarators[i];
             members.put(declarator.getIdentifierName(), declarator.getType());
             memberTypes[i] = declarator.getType();
         }
+
+        constructors = new GLSLFunctionType[]{
+                new GLSLBasicFunctionType(getTypename(), this, memberTypes)
+        };
     }
 
     @NotNull
@@ -82,15 +85,14 @@ public class GLSLStructType extends GLSLType {
     }
 
     @NotNull
-    @Override
     public Map<String, GLSLType> getMembers() {
         return members;
     }
 
     @NotNull
     @Override
-    public GLSLType[] getMemberTypes() {
-        return memberTypes;
+    public GLSLFunctionType[] getConstructors() {
+        return constructors;
     }
 
     @Override
@@ -98,13 +100,16 @@ public class GLSLStructType extends GLSLType {
         return true;
     }
 
-    @NotNull
     @Override
-    public GLSLFunctionType[] getConstructors() {
-        return new GLSLFunctionType[]{
-                new GLSLBasicFunctionType(getTypename(), this, getMemberTypes())
-        };
+    public boolean hasMember(String member) {
+        return members.containsKey(member);
     }
 
-
+    @NotNull
+    @Override
+    public GLSLType getMemberType(String member) {
+        GLSLType type = members.get(member);
+        if(type == null)return GLSLTypes.UNKNOWN_TYPE;
+        else return type;
+    }
 }

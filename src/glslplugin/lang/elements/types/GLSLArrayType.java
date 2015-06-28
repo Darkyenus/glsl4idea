@@ -23,6 +23,7 @@ import glslplugin.lang.elements.declarations.GLSLArraySpecifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,14 +35,20 @@ import java.util.Map;
  *         Time: 11:57:22 PM
  */
 public class GLSLArrayType extends GLSLType {
+
+    public static final Map<String, GLSLFunctionType> ARRAY_LIKE_FUNCTIONS = Collections.<String, GLSLFunctionType>singletonMap("length", new GLSLBasicFunctionType("length", GLSLTypes.INT));
+
     private GLSLType baseType;
     private GLSLArraySpecifier arraySpecifier;
-    private Map<String, GLSLFunctionType> methods = new HashMap<String, GLSLFunctionType>();
 
     public GLSLArrayType(@NotNull GLSLType baseType, @Nullable GLSLArraySpecifier arraySpecifier) {
         this.baseType = baseType;
         this.arraySpecifier = arraySpecifier;
-        this.methods.put("length", new GLSLBasicFunctionType("length", baseType));
+    }
+
+    @Override
+    public boolean isIndexable() {
+        return true;
     }
 
     @Override
@@ -55,15 +62,14 @@ public class GLSLArrayType extends GLSLType {
         return baseType.getTypename() + "[]";
     }
 
-    @Override
     @Nullable
     public GLSLArraySpecifier getArraySpecifier() {
         return arraySpecifier;
     }
 
-    @Override
     @NotNull
-    public Map<String, GLSLFunctionType> getMethods() {
-        return methods;
+    @Override
+    public Map<String, GLSLFunctionType> getMemberFunctions() {
+        return ARRAY_LIKE_FUNCTIONS;
     }
 }

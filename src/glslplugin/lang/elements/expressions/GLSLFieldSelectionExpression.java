@@ -152,7 +152,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
             }
             GLSLIdentifier memberIdentifier = getMemberIdentifier();
             if(memberIdentifier == null)return GLSLTypes.UNKNOWN_TYPE;
-            else return type.getTypeOfMember(memberIdentifier.getIdentifierName());
+            else return type.getMemberType(memberIdentifier.getIdentifierName());
         }
     }
 

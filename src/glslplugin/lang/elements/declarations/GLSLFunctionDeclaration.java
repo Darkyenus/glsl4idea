@@ -19,20 +19,25 @@
 
 package glslplugin.lang.elements.declarations;
 
-import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.types.GLSLFunctionType;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * NewFunctionDeclaration represents a function declaration.
- * It inherits the name, qualifier and (return) type from {@link glslplugin.lang.elements.declarations.GLSLDeclaration} and adds the parameter list.
+ * GLSLFunctionDeclaration represents a function declaration.
+ * It inherits the name, qualifier and (return) type from {@link glslplugin.lang.elements.declarations.GLSLDeclaration}
+ * and adds the parameter list.
  */
-public interface GLSLFunctionDeclaration extends GLSLSingleDeclaration, GLSLTypedElement {
+public interface GLSLFunctionDeclaration extends GLSLSingleDeclaration {
 
+    @NotNull
     GLSLParameterDeclaration[] getParameters();
 
+    @NotNull
     String getSignature();
 
+    /**
+     * @return The return type
+     */
     @NotNull
     GLSLFunctionType getType();
 }
