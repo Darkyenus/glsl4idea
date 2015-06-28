@@ -21,7 +21,6 @@ package glslplugin.lang.elements.declarations;
 
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
-import glslplugin.lang.elements.declarations.GLSLDeclarationImpl;
 
 /**
  * NewStructDeclaration is ...
@@ -38,5 +37,11 @@ public class GLSLStructDeclaration extends GLSLDeclarationImpl {
     @Override
     public String toString() {
         return "Struct Declaration: " + getDeclaratorsString();
+    }
+
+    @NotNull
+    @Override
+    public String getDeclarationDescription() {
+        return "struct member";
     }
 }

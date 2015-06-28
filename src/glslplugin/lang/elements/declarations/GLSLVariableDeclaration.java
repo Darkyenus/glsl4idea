@@ -19,9 +19,9 @@
 
 package glslplugin.lang.elements.declarations;
 
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
-import glslplugin.lang.elements.declarations.GLSLDeclarationImpl;
 
 /**
  * NewVariableDeclaration is ...
@@ -38,5 +38,14 @@ public class GLSLVariableDeclaration extends GLSLDeclarationImpl {
     @Override
     public String toString() {
         return "Variable Declaration: " + getDeclaratorsString();
+    }
+
+    @NotNull
+    @Override
+    public String getDeclarationDescription() {
+        if (PsiTreeUtil.getParentOfType(this, GLSLFunctionDefinition.class) != null) {
+            return "local variable";
+        }
+        return "global variable";
     }
 }

@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Feb 2, 2009
  *         Time: 10:33:30 AM
  */
-public class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclaration {
+public abstract class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclaration {
     public GLSLDeclarationImpl(@NotNull ASTNode astNode) {
         super(astNode);
     }
