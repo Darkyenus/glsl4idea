@@ -64,9 +64,6 @@ public class GLSLPsiElementFactory {
             return new GLSLUnknownDropIn(node, t.text);
         }
 
-        // translation unit
-        if (type == GLSLElementTypes.TRANSLATION_UNIT) return new GLSLTranslationUnit(node);
-
         // primary expressions
         if (type == GLSLElementTypes.VARIABLE_NAME_EXPRESSION) return new GLSLIdentifierExpression(node);
         if (type == GLSLElementTypes.CONSTANT_EXPRESSION) return new GLSLLiteral(node);

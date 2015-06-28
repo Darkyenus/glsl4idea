@@ -191,9 +191,7 @@ public final class GLSLParsing extends GLSLParsingBase {
      * Entry for parser. Tries to parse whole shader file.
      */
     public void parseTranslationUnit() {
-        // translation_unit: external_declaration+
-
-        PsiBuilder.Marker unit = mark();
+        // translation_unit: external_declaration*
 
         // We normally parse preprocessor directives whenever we advance the lexer - which means that if the first
         // token is a preprocessor directive we won't catch it, so we just parse them all at the beginning here.
@@ -201,14 +199,12 @@ public final class GLSLParsing extends GLSLParsingBase {
             parsePreprocessor();
         }
 
-        do {
+        while (!isEof()) {
             if (!parseExternalDeclaration()) {
                 advanceLexer();
                 error("Unable to parse external declaration.");
             }
         }
-        while (!isEof());
-        unit.done(TRANSLATION_UNIT);
     }
 
     /**
