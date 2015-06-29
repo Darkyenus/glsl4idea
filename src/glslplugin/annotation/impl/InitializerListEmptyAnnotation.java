@@ -6,6 +6,8 @@ import glslplugin.lang.elements.declarations.GLSLInitializerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * Checks for empty initializer lists.
+ *
  * Created by abigail on 28/06/15.
  */
 public class InitializerListEmptyAnnotation extends Annotator<GLSLInitializerList> {

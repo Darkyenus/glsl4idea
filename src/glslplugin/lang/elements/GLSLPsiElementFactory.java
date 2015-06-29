@@ -123,7 +123,7 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.VARIABLE_DECLARATION) return new GLSLVariableDeclaration(node);
         if (type == GLSLElementTypes.DECLARATOR_LIST) return new GLSLDeclaratorList(node);
         if (type == GLSLElementTypes.DECLARATOR) return new GLSLDeclarator(node);
-        if (type == GLSLElementTypes.INITIALIZER) return new GLSLInitializer(node);
+        if (type == GLSLElementTypes.INITIALIZER) return new GLSLInitializerExpression(node);
         if (type == GLSLElementTypes.INITIALIZER_LIST) return new GLSLInitializerList(node);
         if (type == GLSLElementTypes.ARRAY_DECLARATOR) return new GLSLArraySpecifier(node);
 

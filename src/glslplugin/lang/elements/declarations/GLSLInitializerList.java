@@ -1,27 +1,30 @@
 package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 /**
+ * Initializer list is defined as list of either initializer lists or initializers.
+ * Initializer is an GLSLExpression, hiding inside GLSLInitializerExpression, which holds it.
+ *
  * Created by abigail on 28/06/15.
  */
-public class GLSLInitializerList extends GLSLElementImpl {
+public class GLSLInitializerList extends GLSLElementImpl implements GLSLInitializer {
     public GLSLInitializerList(@NotNull ASTNode astNode) {
         super(astNode);
     }
 
+    /**
+     * @return all initializers this contains
+     */
     @NotNull
-    public List<GLSLInitializer> getInitializers() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, GLSLInitializer.class);
+    public GLSLInitializer[] getInitializers() {
+        return findChildrenByClass(GLSLInitializer.class);
     }
 
     @Override
     public String toString() {
-        return "GLSLInitializerList";
+        return "GLSLInitializerList("+getInitializers().length+")";
     }
 }

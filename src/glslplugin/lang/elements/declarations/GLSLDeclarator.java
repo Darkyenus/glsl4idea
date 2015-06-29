@@ -48,7 +48,7 @@ public class GLSLDeclarator extends GLSLElementImpl {
 
     @Nullable
     public GLSLExpression getInitializerExpression() {
-        final GLSLInitializer init = findChildByClass(GLSLInitializer.class);
+        final GLSLInitializerExpression init = findChildByClass(GLSLInitializerExpression.class);
         if (init != null) {
             return init.getInitializerExpression();
         } else {
