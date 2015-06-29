@@ -846,25 +846,18 @@ public final class GLSLParsing extends GLSLParsingBase {
         mark.done(DECLARATOR);
     }
 
-    private void parseArrayDeclarator() {//TODO Support multi-dimensional arrays (since 4.3)
-        final PsiBuilder.Marker mark = mark();
+    private void parseArrayDeclarator() {
+        do{
+            final PsiBuilder.Marker mark = mark();
 
-        match(LEFT_BRACKET, "Expected '['.");
-        if (tokenType() != RIGHT_BRACKET) {
-            parseConstantExpression();
-        }
-        match(RIGHT_BRACKET, "Missing closing ']' after array declarator.");
-
-        mark.done(ARRAY_DECLARATOR);
-
-        if (tokenType() == LEFT_BRACKET) {
-            PsiBuilder.Marker err = mark();
-            while (tryMatch(LEFT_BRACKET)) {
+            match(LEFT_BRACKET, "Expected '['.");
+            if (tokenType() != RIGHT_BRACKET) {
                 parseConstantExpression();
-                match(RIGHT_BRACKET, "Missing closing ']' after array declarator.");
             }
-            err.error("Multi-dimensional arrays are not allowed.");
-        }
+            match(RIGHT_BRACKET, "Missing closing ']' after array declarator.");
+
+            mark.done(ARRAY_DECLARATOR);
+        }while(tokenType() == LEFT_BRACKET); //Parse all ARRAY_DECLARATOR's if multidimensional array
     }
 
     private boolean parseInitializer() {
