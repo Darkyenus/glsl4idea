@@ -60,6 +60,7 @@ public class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclarat
      */
     @Nullable
     public GLSLTypeSpecifier getTypeSpecifierNode() {
+        //TODO Some places still use this incorrectly. This should be never used to get the type of declared variable.
         return findChildByClass(GLSLTypeSpecifier.class);
     }
 
