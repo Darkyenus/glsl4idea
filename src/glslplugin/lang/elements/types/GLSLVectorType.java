@@ -223,9 +223,9 @@ public class GLSLVectorType extends GLSLType {
     @Override
     public boolean isConvertibleTo(GLSLType otherType) {
         if (!(otherType instanceof GLSLVectorType)) return false;
-        GLSLVectorType other = (GLSLVectorType) otherType;
 
-        return other.getNumComponents() == getNumComponents()
-                && getIndexType().isConvertibleTo(other.getIndexType());
+        GLSLVectorType other = (GLSLVectorType) otherType;
+        return other.numComponents == numComponents
+                && baseType.isConvertibleTo(other.baseType);
     }
 }
