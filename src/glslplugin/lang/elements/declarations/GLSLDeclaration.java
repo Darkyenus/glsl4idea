@@ -42,4 +42,7 @@ public interface GLSLDeclaration extends GLSLElement {
 
     @NotNull
     GLSLDeclarator[] getDeclarators();
+
+    @NotNull
+    String getDeclarationDescription();
 }

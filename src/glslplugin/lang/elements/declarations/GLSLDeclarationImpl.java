@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Feb 2, 2009
  *         Time: 10:33:30 AM
  */
-public class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclaration {
+public abstract class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclaration {
     public GLSLDeclarationImpl(@NotNull ASTNode astNode) {
         super(astNode);
     }
@@ -97,11 +97,11 @@ public class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclarat
             if (!first) {
                 b.append(", ");
             }
-            GLSLIdentifier identifier = declarator.getIdentifier();
+            GLSLIdentifier identifier = declarator.getNameIdentifier();
             if(identifier == null){
                 b.append("(unknown)");
             } else {
-                b.append(identifier.getIdentifierName());
+                b.append(identifier.getName());
             }
             first = false;
         }

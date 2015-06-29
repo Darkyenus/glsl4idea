@@ -84,9 +84,9 @@ class GLSLPresentation implements ItemPresentation {
     public static GLSLPresentation createFieldPresentation(String type, GLSLDeclarator[] declarators) {
         String dec = prettyPrint(stringify(declarators, new Stringifyer<GLSLDeclarator>() {
             public String stringify(GLSLDeclarator glslDeclarator) {
-                GLSLIdentifier identifier = glslDeclarator.getIdentifier();
+                GLSLIdentifier identifier = glslDeclarator.getNameIdentifier();
                 if(identifier == null)return "(unknown)";
-                else return identifier.getIdentifierName();
+                else return identifier.getName();
             }
         }));
         GLSLPresentation presentation = new GLSLPresentation(dec + " : " + type);
@@ -127,7 +127,7 @@ class GLSLPresentation implements ItemPresentation {
             result += " ";
         }
 
-        result += declarator.getIdentifierName();
+        result += declarator.getName();
 
         result += " : ";
         result += type.getType().getTypename();

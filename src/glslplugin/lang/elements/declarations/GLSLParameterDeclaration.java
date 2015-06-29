@@ -49,4 +49,10 @@ public class GLSLParameterDeclaration extends GLSLSingleDeclarationImpl {
         }
         return b.toString();
     }
+
+    @NotNull
+    @Override
+    public String getDeclarationDescription() {
+        return "parameter";
+    }
 }

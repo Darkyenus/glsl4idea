@@ -21,6 +21,9 @@ package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.PsiNamedElement;
+import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.types.*;
@@ -34,14 +37,15 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Jan 27, 2009
  *         Time: 10:31:13 AM
  */
-public class GLSLDeclaratorBase extends GLSLElementImpl {
+public class GLSLDeclaratorBase extends GLSLElementImpl implements PsiNameIdentifierOwner {
 
     public GLSLDeclaratorBase(@NotNull ASTNode astNode) {
         super(astNode);
     }
 
+    @Override
     @Nullable
-    public GLSLIdentifier getIdentifier() {
+    public GLSLIdentifier getNameIdentifier() {
         PsiElement idElement = getFirstChild();
         if (idElement instanceof GLSLIdentifier) {
             return (GLSLIdentifier) idElement;
@@ -51,12 +55,22 @@ public class GLSLDeclaratorBase extends GLSLElementImpl {
     }
 
     @NotNull
-    public String getIdentifierName() {
-        PsiElement idElement = getFirstChild();
-        if (idElement instanceof GLSLIdentifier) {
-            return ((GLSLIdentifier) idElement).getIdentifierName();
+    public String getName() {
+        GLSLIdentifier identifier = getNameIdentifier();
+        if (identifier != null) {
+            return identifier.getName();
         } else {
             return "(anonymous)";
+        }
+    }
+
+    @Override
+    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+        GLSLIdentifier identifier = getNameIdentifier();
+        if (identifier != null) {
+            return identifier.setName(name);
+        } else {
+            throw new IncorrectOperationException("Declarator with no name!");
         }
     }
 
@@ -97,7 +111,7 @@ public class GLSLDeclaratorBase extends GLSLElementImpl {
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
-        b.append("Declarator: ").append(getIdentifierName());
+        b.append("Declarator: ").append(getName());
         b.append(" : ").append(getType().getTypename());
         if (getType() instanceof GLSLArrayType) {
             b.append("[]");

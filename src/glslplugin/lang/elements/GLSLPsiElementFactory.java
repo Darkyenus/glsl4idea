@@ -20,7 +20,11 @@
 package glslplugin.lang.elements;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.tree.IElementType;
+import glslplugin.GLSLSupportLoader;
 import glslplugin.lang.elements.declarations.*;
 import glslplugin.lang.elements.expressions.*;
 import glslplugin.lang.elements.preprocessor.GLSLEmptyDropIn;
@@ -28,6 +32,7 @@ import glslplugin.lang.elements.preprocessor.GLSLExpressionDropIn;
 import glslplugin.lang.elements.preprocessor.GLSLLiteralDropIn;
 import glslplugin.lang.elements.preprocessor.GLSLUnknownDropIn;
 import glslplugin.lang.elements.statements.*;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * GLSLPsiElementFactory defines the interface for the GLSLElement factory.
@@ -148,5 +153,13 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.STRUCT_DECLARATOR) return new GLSLDeclarator(node);
 
         return null;
+    }
+
+    @NotNull
+    public static PsiElement createLeafElement(Project project, String name) {
+        PsiElement element = PsiFileFactory.getInstance(project).
+                createFileFromText("dummy.glsl", GLSLSupportLoader.GLSL, name);
+        while (element.getFirstChild() != null) element = element.getFirstChild();
+        return element;
     }
 }

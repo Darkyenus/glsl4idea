@@ -21,6 +21,9 @@ package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.PsiNamedElement;
+import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.GLSLReferenceElement;
 import glslplugin.lang.elements.declarations.*;
@@ -39,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Feb 4, 2009
  *         Time: 12:16:41 AM
  */
-public class GLSLIdentifierExpression extends GLSLExpression implements GLSLReferenceElement {
+public class GLSLIdentifierExpression extends GLSLExpression implements GLSLReferenceElement, PsiNameIdentifierOwner {
     public GLSLIdentifierExpression(@NotNull ASTNode astNode) {
         super(astNode);
     }
@@ -50,23 +53,35 @@ public class GLSLIdentifierExpression extends GLSLExpression implements GLSLRefe
         return true;
     }
 
+    @Override
     @Nullable
-    public GLSLIdentifier getIdentifier() {
+    public GLSLIdentifier getNameIdentifier() {
         return findChildByClass(GLSLIdentifier.class);
     }
 
-    public String getIdentifierName() {
-        GLSLIdentifier identifier = getIdentifier();
+    @Override
+    public String getName() {
+        GLSLIdentifier identifier = getNameIdentifier();
         if(identifier != null){
-            return identifier.getIdentifierName();
+            return identifier.getName();
         }else{
             return "(unknown)";
         }
     }
 
     @Override
+    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+        GLSLIdentifier identifier = getNameIdentifier();
+        if (identifier != null) {
+            return identifier.setName(name);
+        } else {
+            throw new IncorrectOperationException("Declarator with no name!");
+        }
+    }
+
+    @Override
     public String toString() {
-        return "Identifier Expression: " + getIdentifierName();
+        return "Identifier Expression: " + getName();
     }
 
     @NotNull
@@ -148,7 +163,7 @@ public class GLSLIdentifierExpression extends GLSLExpression implements GLSLRefe
     @Nullable
     private GLSLDeclarator getVariableReferenceCheckDeclaration(GLSLDeclaration declaration) {
         for (GLSLDeclarator declarator : declaration.getDeclarators()) {
-            if (declarator.getIdentifierName().equals(getIdentifierName())) {
+            if (declarator.getName().equals(getName())) {
                 return declarator;
             }
         }

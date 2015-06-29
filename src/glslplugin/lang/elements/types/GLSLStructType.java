@@ -50,7 +50,7 @@ public final class GLSLStructType extends GLSLType {
 
         for (int i = 0; i < declarators.length; i++) {
             final GLSLDeclarator declarator = declarators[i];
-            members.put(declarator.getIdentifierName(), declarator.getType());
+            members.put(declarator.getName(), declarator.getType());
             memberTypes[i] = declarator.getType();
         }
 

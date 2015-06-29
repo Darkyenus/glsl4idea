@@ -61,7 +61,7 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
     public String getFunctionName() {
         GLSLIdentifier identifier = getFunctionNameIdentifier();
         if(identifier != null){
-            return identifier.getIdentifierName();
+            return identifier.getName();
         }else{
             return "(unknown)";
         }
