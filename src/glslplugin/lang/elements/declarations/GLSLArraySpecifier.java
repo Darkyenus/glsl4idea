@@ -23,10 +23,7 @@ import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.types.GLSLArrayType;
-import glslplugin.lang.elements.types.GLSLType;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.logging.Logger;
 
 /**
  * GLSLArrayDeclarator is ...
@@ -40,19 +37,9 @@ public class GLSLArraySpecifier extends GLSLElementImpl {
         super(node);
     }
 
-    public boolean hasSizeExpression() {
-        return findChildByClass(GLSLExpression.class) != null;
-    }
-
     @Nullable
-    public GLSLExpression getSizeExpression() {
-        GLSLExpression expr = findChildByClass(GLSLExpression.class);
-        if (expr != null) {
-            return expr;
-        } else {
-            Logger.getLogger("GLSLArraySpecifier").warning("Check for array size expression before asking for it!");
-            return null;
-        }
+    private GLSLExpression getSizeExpression() {
+        return findChildByClass(GLSLExpression.class);
     }
 
     /**
@@ -61,7 +48,8 @@ public class GLSLArraySpecifier extends GLSLElementImpl {
      * For dimension of length known only at runtime, {@link glslplugin.lang.elements.types.GLSLArrayType#DYNAMIC_SIZE_DIMENSION} is returned.
      */
     public int getDimensionSize(){
-        if(hasSizeExpression()){
+        GLSLExpression sizeExpression = getSizeExpression();
+        if(sizeExpression != null){
             //Since no constant expression analysis yet done, must assume dynamic size
             return GLSLArrayType.DYNAMIC_SIZE_DIMENSION;
         }else{
@@ -71,6 +59,13 @@ public class GLSLArraySpecifier extends GLSLElementImpl {
 
     @Override
     public String toString() {
-        return "Array Declarator";
+        int dimensionSize = getDimensionSize();
+        if(dimensionSize == GLSLArrayType.DYNAMIC_SIZE_DIMENSION){
+            return "Array Declarator [?]";
+        }else if(dimensionSize == GLSLArrayType.UNKNOWN_SIZE_DIMENSION){
+            return "Array Declarator []";
+        }else {
+            return "Array Declarator ["+dimensionSize+"]";
+        }
     }
 }
