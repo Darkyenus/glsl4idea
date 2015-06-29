@@ -861,15 +861,17 @@ public final class GLSLParsing extends GLSLParsingBase {
     }
 
     private boolean parseInitializer() {
-        PsiBuilder.Marker mark = mark();
         // initializer: assignment_expression
         if (tokenType() == LEFT_BRACE) {
             parseInitializerList();
-        } else if (!parseAssignmentExpression()) {
-            mark.error("Expected initializer");
-            return false;
+        } else {
+            PsiBuilder.Marker mark = mark();
+            if (!parseAssignmentExpression()) {
+                mark.error("Expected initializer");
+                return false;
+            }
+            mark.done(INITIALIZER);
         }
-        mark.done(INITIALIZER);
         return true;
     }
 
