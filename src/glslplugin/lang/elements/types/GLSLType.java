@@ -121,7 +121,7 @@ public abstract class GLSLType {
     /**
      * Return the fundamental type of this type.
      * This is usually same as {@link #getIndexType()}, but can be different for multidimensional-like types,
-     * such as matrices. Base type of matrix is a vector, but fundamental type of matrix is a scalar.
+     * such as matrices. Index type of matrix is a vector, but base type of matrix is a scalar.
      *
      * @return the type this type is based on and fundamentally contains
      */

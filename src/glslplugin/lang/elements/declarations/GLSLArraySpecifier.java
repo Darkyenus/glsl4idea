@@ -22,6 +22,8 @@ package glslplugin.lang.elements.declarations;
 import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.expressions.GLSLExpression;
+import glslplugin.lang.elements.types.GLSLArrayType;
+import glslplugin.lang.elements.types.GLSLType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.logging.Logger;
@@ -50,6 +52,20 @@ public class GLSLArraySpecifier extends GLSLElementImpl {
         } else {
             Logger.getLogger("GLSLArraySpecifier").warning("Check for array size expression before asking for it!");
             return null;
+        }
+    }
+
+    /**
+     * Size of dimension which this specifier denotes.
+     * For dimension of yet unknown length, {@link glslplugin.lang.elements.types.GLSLArrayType#UNKNOWN_SIZE_DIMENSION} is returned.
+     * For dimension of length known only at runtime, {@link glslplugin.lang.elements.types.GLSLArrayType#DYNAMIC_SIZE_DIMENSION} is returned.
+     */
+    public int getDimensionSize(){
+        if(hasSizeExpression()){
+            //Since no constant expression analysis yet done, must assume dynamic size
+            return GLSLArrayType.DYNAMIC_SIZE_DIMENSION;
+        }else{
+            return GLSLArrayType.UNKNOWN_SIZE_DIMENSION;
         }
     }
 

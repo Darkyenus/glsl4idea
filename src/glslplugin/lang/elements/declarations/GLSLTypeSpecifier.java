@@ -20,7 +20,6 @@
 package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.types.GLSLArrayType;
@@ -40,29 +39,24 @@ public class GLSLTypeSpecifier extends GLSLElementImpl {
         super(astNode);
     }
 
-    @Nullable
-    public GLSLArraySpecifier getArraySpecifierNode() {
-        PsiElement[] children = getChildren();
-        if (children.length == 2) {
-            final PsiElement array = children[1];
-            if (array instanceof GLSLArraySpecifier) {
-                return ((GLSLArraySpecifier) array);
-            }
-        }
-        return null;
-    }
-
     @NotNull
     public GLSLType getType() {
         // GLSLTypedElement is either a type definition or type reference
         GLSLTypedElement reference = findChildByClass(GLSLTypedElement.class);
-        GLSLArraySpecifier array = getArraySpecifierNode();
+        GLSLArraySpecifier[] arrayDimensions = findChildrenByClass(GLSLArraySpecifier.class);
         if (reference != null) {
             final GLSLType type = reference.getType();
-            if (array != null) {
-                return new GLSLArrayType(type, array);
+            if(arrayDimensions.length == 0){
+                //It is not an array type
+                return type;
+            }else{
+                //It is an array type
+                int[] dimensions = new int[arrayDimensions.length];
+                for (int i = 0; i < dimensions.length; i++) {
+                    dimensions[i] = arrayDimensions[i].getDimensionSize();
+                }
+                return new GLSLArrayType(type, dimensions);
             }
-            return type;
         } else {
             return GLSLTypes.UNKNOWN_TYPE;
         }

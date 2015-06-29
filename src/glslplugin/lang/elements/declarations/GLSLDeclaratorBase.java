@@ -61,28 +61,43 @@ public class GLSLDeclaratorBase extends GLSLElementImpl {
     }
 
     @Nullable
-    private GLSLArraySpecifier getArraySpecifier() {
-        return findChildByClass(GLSLArraySpecifier.class);
-    }
-
-    @Nullable
     public GLSLDeclaration getParentDeclaration() {
         return findParentByClass(GLSLDeclarationImpl.class);
     }
 
     @NotNull
     public GLSLType getType() {
-        GLSLArraySpecifier arraySpecifier = getArraySpecifier();
+        //GLSLArraySpecifier arraySpecifier = getArraySpecifier();
         GLSLDeclaration declaration = getParentDeclaration();
-
         if(declaration == null)return GLSLTypes.UNKNOWN_TYPE;
         GLSLTypeSpecifier declarationType = declaration.getTypeSpecifierNode();
         if(declarationType == null)return GLSLTypes.UNKNOWN_TYPE;
 
-        if (arraySpecifier != null) {
-            return new GLSLArrayType(declarationType.getType(), declarationType.getArraySpecifierNode());
-        } else {
-            return declarationType.getType();
+        GLSLType declaredType = declarationType.getType();
+        if(!declaredType.isValidType())return GLSLTypes.UNKNOWN_TYPE;
+
+        GLSLArraySpecifier[] arraySpecifiers = findChildrenByClass(GLSLArraySpecifier.class);
+        if(arraySpecifiers.length == 0){
+            return declaredType;
+        }else{
+            //Must append some dimensions to the type
+            if(declaredType instanceof GLSLArrayType){
+                //Already an array, must append the dimensions
+                GLSLArrayType declaredArrayType = (GLSLArrayType) declaredType;
+                int[] existingDimensions = declaredArrayType.getDimensions();
+                int[] combinedDimensions = new int[existingDimensions.length + arraySpecifiers.length];
+                System.arraycopy(existingDimensions, 0, combinedDimensions, 0, existingDimensions.length);
+                for (int i = 0; i < arraySpecifiers.length; i++) {
+                    combinedDimensions[i + existingDimensions.length] = arraySpecifiers[i].getDimensionSize();
+                }
+                return new GLSLArrayType(declaredArrayType.getBaseType(), combinedDimensions);
+            }else{
+                int[] dimensions = new int[arraySpecifiers.length];
+                for (int i = 0; i < dimensions.length; i++) {
+                    dimensions[i] = arraySpecifiers[i].getDimensionSize();
+                }
+                return new GLSLArrayType(declaredType, dimensions);
+            }
         }
     }
 
