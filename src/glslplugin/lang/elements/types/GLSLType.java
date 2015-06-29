@@ -110,11 +110,24 @@ public abstract class GLSLType {
      * For example if this is an array (int[]), it will return (int)
      * This applies to all indexable types: arrays, vectors and matrices.
      *
-     * @return the type this type is based on, UNKNOWN_TYPE if this is a primitive type or a struct.
+     * @see #getBaseType()
+     * @return the type obtained by indexing, this type if this is a primitive type or a struct.
      */
     @NotNull
-    public GLSLType getBaseType() {
-        return GLSLTypes.UNKNOWN_TYPE;
+    public GLSLType getIndexType() {
+        return this;
+    }
+
+    /**
+     * Return the fundamental type of this type.
+     * This is usually same as {@link #getIndexType()}, but can be different for multidimensional-like types,
+     * such as matrices. Base type of matrix is a vector, but fundamental type of matrix is a scalar.
+     *
+     * @return the type this type is based on and fundamentally contains
+     */
+    @NotNull
+    public GLSLType getBaseType(){
+        return getIndexType();
     }
 
     //endregion

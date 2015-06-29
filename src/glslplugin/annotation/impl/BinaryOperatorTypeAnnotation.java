@@ -23,10 +23,8 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.expressions.GLSLBinaryOperatorExpression;
 import glslplugin.lang.elements.expressions.GLSLExpression;
-import glslplugin.lang.elements.expressions.GLSLOperator;
-import glslplugin.lang.elements.types.GLSLFunctionType;
+import glslplugin.lang.elements.expressions.operator.GLSLOperator;
 import glslplugin.lang.elements.types.GLSLType;
-import glslplugin.lang.elements.types.GLSLTypeCompatibilityLevel;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -44,17 +42,17 @@ public class BinaryOperatorTypeAnnotation extends Annotator<GLSLBinaryOperatorEx
         final GLSLOperator operator = expr.getOperator();
         if(left == null || right == null || operator == null)return; //There are bigger problems than type compatibility
 
+        if(!(operator instanceof GLSLOperator.GLSLBinaryOperator)){
+            holder.createErrorAnnotation(expr, '\''+operator.getTextRepresentation()+"' is not a binary operator");
+            return;
+        }
+        GLSLOperator.GLSLBinaryOperator binaryOperator = (GLSLOperator.GLSLBinaryOperator) operator;
+
         final GLSLType rightType = right.getType();
         final GLSLType leftType = left.getType();
-        final GLSLFunctionType[] operatorAlternatives = expr.getOperatorTypeAlternatives();
 
         if (leftType.isValidType() && rightType.isValidType()) {
-            boolean compatible = operatorAlternatives.length == 1;
-            if (compatible) {
-                compatible = operatorAlternatives[0].getParameterCompatibilityLevel(new GLSLType[]{leftType, rightType}) != GLSLTypeCompatibilityLevel.INCOMPATIBLE;
-            }
-
-            if (!compatible) {
+            if(!binaryOperator.isValidInput(leftType, rightType)){
                 holder.createErrorAnnotation(expr, "Incompatible types as operands of '" + operator.getTextRepresentation() + "': '"
                         + leftType.getTypename() + "' and '" + rightType.getTypename() + "'");
             }

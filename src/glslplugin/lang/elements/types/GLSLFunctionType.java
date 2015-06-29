@@ -35,13 +35,12 @@ import java.util.List;
 public abstract class GLSLFunctionType {
     public static final GLSLFunctionType[] EMPTY_ARRAY = {};
 
-    protected final GLSLType returnType;
     protected String typename;
-    @NotNull
-    private String name;
+    private final String name;
+    protected final GLSLType returnType;
     GLSLElement definition;
 
-    protected GLSLFunctionType(@NotNull String name, GLSLType returnType) {
+    protected GLSLFunctionType(@NotNull String name, @NotNull GLSLType returnType) {
         this.returnType = returnType;
         this.name = name;
     }
@@ -65,7 +64,7 @@ public abstract class GLSLFunctionType {
      * @return The return type of the function.
      */
     @NotNull
-    public GLSLType getBaseType() {
+    public GLSLType getReturnType() {
         return returnType;
     }
 

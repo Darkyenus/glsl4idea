@@ -84,7 +84,7 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
     public GLSLType getType() {
         GLSLFunctionType[] functionTypes = findFunctionTypes();
         if (functionTypes.length == 1) {
-            return functionTypes[0].getBaseType();
+            return functionTypes[0].getReturnType();
         } else {
             return GLSLTypes.UNKNOWN_TYPE;
         }

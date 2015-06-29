@@ -92,17 +92,30 @@ public class GLSLMatrixType extends GLSLType {
     }
 
     /**
-     * NOTE: This base type is not actually the absolute base type.
      * This base type is what you get by indexing, that is a vector.
      */
     @NotNull
     @Override
-    public GLSLType getBaseType() {
+    public GLSLType getIndexType() {
         return GLSLVectorType.getType(baseType, rows);
+    }
+
+    @NotNull
+    @Override
+    public GLSLType getBaseType() {
+        return baseType;
     }
 
     public int getNumComponents() {
         return columns * rows;
+    }
+
+    public int getNumColumns(){
+        return columns;
+    }
+
+    public int getNumRows(){
+        return rows;
     }
 
     @NotNull

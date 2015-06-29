@@ -35,9 +35,6 @@ public interface GLSLFunctionDeclaration extends GLSLSingleDeclaration {
     @NotNull
     String getSignature();
 
-    /**
-     * @return The return type
-     */
     @NotNull
     GLSLFunctionType getType();
 }

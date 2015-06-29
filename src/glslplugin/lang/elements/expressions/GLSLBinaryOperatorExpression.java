@@ -20,13 +20,11 @@
 package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
-import glslplugin.lang.elements.types.GLSLFunctionType;
+import glslplugin.lang.elements.expressions.operator.GLSLOperator;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.logging.Logger;
 
 /**
  * GLSLBinaryOperatorExpression is an expression from two operands and one operator between them.
@@ -63,45 +61,23 @@ public class GLSLBinaryOperatorExpression extends GLSLOperatorExpression {
     @NotNull
     @Override
     public GLSLType getType() {
-        GLSLFunctionType[] alternatives = getOperatorTypeAlternatives();
-        if (alternatives.length == 1) {
-            return alternatives[0].getBaseType();
-        } else {
-            return GLSLTypes.UNKNOWN_TYPE;
-        }
-
-        /* TODO: REMOVE
-        GLSLType leftType = getLeftOperand().getType();
-        GLSLType rightType = getRightOperand().getType();
-
-        if (leftType.isConvertibleTo(rightType)) {
-            return rightType;
-        } else if (rightType.isConvertibleTo(leftType)) {
-            return leftType;
-        } else {
-            return GLSLTypes.UNKNOWN_TYPE;
-        }
-        */
-    }
-
-    @NotNull
-    public GLSLFunctionType[] getOperatorTypeAlternatives() {
-        GLSLExpression leftExpr = getLeftOperand();
-        GLSLExpression rightExpr = getRightOperand();
         GLSLOperator operator = getOperator();
-        if(leftExpr == null || rightExpr == null || operator == null)return GLSLFunctionType.EMPTY_ARRAY;
-
-        GLSLType leftType = leftExpr.getType();
-        GLSLType rightType = rightExpr.getType();
-
-        return operator.getFunctionTypeAlternatives(new GLSLType[]{leftType, rightType});
+        if (operator instanceof GLSLOperator.GLSLBinaryOperator) {
+            GLSLOperator.GLSLBinaryOperator binaryOperator = (GLSLOperator.GLSLBinaryOperator) operator;
+            GLSLExpression leftOperand = getLeftOperand();
+            GLSLExpression rightOperand = getRightOperand();
+            return binaryOperator.getResultType(leftOperand == null ? GLSLTypes.UNKNOWN_TYPE : leftOperand.getType(),
+                    rightOperand == null ? GLSLTypes.UNKNOWN_TYPE : rightOperand.getType());
+        } else {
+            return GLSLTypes.UNKNOWN_TYPE;
+        }
     }
 
     public String toString() {
         GLSLOperator operator = getOperator();
-        if(operator == null){
+        if (operator == null) {
             return "Binary Operator: '(unknown)'";
-        }else{
+        } else {
             return "Binary Operator: '" + operator.getTextRepresentation() + "'";
         }
     }

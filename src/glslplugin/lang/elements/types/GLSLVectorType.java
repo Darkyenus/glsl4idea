@@ -93,7 +93,7 @@ public class GLSLVectorType extends GLSLType {
 
     @NotNull
     @Override
-    public GLSLType getBaseType() {
+    public GLSLType getIndexType() {
         return baseType;
     }
 
@@ -226,6 +226,6 @@ public class GLSLVectorType extends GLSLType {
         GLSLVectorType other = (GLSLVectorType) otherType;
 
         return other.getNumComponents() == getNumComponents()
-                && getBaseType().isConvertibleTo(other.getBaseType());
+                && getIndexType().isConvertibleTo(other.getIndexType());
     }
 }

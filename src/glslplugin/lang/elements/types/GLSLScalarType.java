@@ -38,6 +38,10 @@ public class GLSLScalarType extends GLSLType {
     public static final GLSLScalarType FLOAT = new GLSLScalarType("float", DOUBLE);
     public static final GLSLScalarType UINT = new GLSLScalarType("uint", FLOAT, DOUBLE);
     public static final GLSLScalarType INT = new GLSLScalarType("int", UINT, FLOAT, DOUBLE);
+
+    public static boolean isIntegerScalar(GLSLType type){
+        return type == INT || type == UINT;
+    }
     //endregion
 
     private final String typename;
