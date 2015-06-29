@@ -38,8 +38,7 @@ public class MemberCheckAnnotation extends Annotator<GLSLFieldSelectionExpressio
         if (leftHandType instanceof GLSLStructType) {
             GLSLIdentifier memberIdentifier = expr.getMemberIdentifier();
             if(memberIdentifier == null)return;
-
-            if (!leftHandType.hasMember(memberIdentifier.getIdentifierName())) {
+            if (!leftHandType.hasMember(memberIdentifier.getName())) {
                 holder.createErrorAnnotation(memberIdentifier, "Unknown member for " + leftHandType.getTypename());
             }
 

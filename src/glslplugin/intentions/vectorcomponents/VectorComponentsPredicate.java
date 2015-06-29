@@ -48,7 +48,7 @@ public class VectorComponentsPredicate {
                     if(leftHandExpression == null)return false;
                     if (leftHandExpression.getType() instanceof GLSLVectorType) {
 
-                        String parameters = identifier.getIdentifierName();
+                        String parameters = identifier.getName();
                         if (checkForMatch(parameters)) {
                             return true;
                         }

@@ -20,20 +20,48 @@
 package glslplugin.lang.elements;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiCheckedRenameElement;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiReference;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class GLSLIdentifier extends GLSLElementImpl {
+public class GLSLIdentifier extends GLSLElementImpl implements PsiCheckedRenameElement, PsiNameIdentifierOwner {
 
     public GLSLIdentifier(@NotNull ASTNode astNode) {
         super(astNode);
     }
 
+    @Nullable
+    @Override
+    public PsiElement getNameIdentifier() {
+        return findChildByType(GLSLTokenTypes.IDENTIFIER);
+    }
+
     @NotNull
-    public String getIdentifierName() {
+    public String getName() {
         return getText();
+    }
+
+    @Override
+    public void checkSetName(String name) throws IncorrectOperationException {
+        final PsiElement oldName = getNameIdentifier();
+        if (oldName == null) throw new IncorrectOperationException("Unnamed identifier!");// This probably shouldn't happen.
+        PsiElement newName = GLSLPsiElementFactory.createLeafElement(getProject(), name);
+        if (newName.getNode().getElementType() != GLSLTokenTypes.IDENTIFIER)
+            throw new IncorrectOperationException("Invalid identifier name!");
+    }
+
+    @Override
+    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+        checkSetName(name);
+        final PsiElement oldName = getNameIdentifier();
+        assert oldName != null; // we've already checked this isn't null (and thrown if it is) in checkSetName
+        PsiElement newName = GLSLPsiElementFactory.createLeafElement(getProject(), name);
+        getNode().replaceChild(oldName.getNode(), newName.getNode());
+        return this;
     }
 
     @Nullable

@@ -21,6 +21,8 @@ package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.expressions.GLSLExpression;
@@ -39,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Jan 29, 2009
  *         Time: 7:29:46 PM
  */
-public class GLSLDeclarator extends GLSLElementImpl {
+public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifierOwner {
     public static final GLSLDeclarator[] NO_DECLARATORS = new GLSLDeclarator[0];
 
     public GLSLDeclarator(@NotNull ASTNode astNode) {
@@ -61,8 +63,9 @@ public class GLSLDeclarator extends GLSLElementImpl {
         return findChildByClass(GLSLInitializer.class);
     }
 
+    @Override
     @Nullable
-    public GLSLIdentifier getIdentifier() {
+    public GLSLIdentifier getNameIdentifier() {
         PsiElement idElement = getFirstChild();
         if (idElement instanceof GLSLIdentifier) {
             return (GLSLIdentifier) idElement;
@@ -72,12 +75,22 @@ public class GLSLDeclarator extends GLSLElementImpl {
     }
 
     @NotNull
-    public String getIdentifierName() {
-        PsiElement idElement = getFirstChild();
-        if (idElement instanceof GLSLIdentifier) {
-            return ((GLSLIdentifier) idElement).getIdentifierName();
+    public String getName() {
+        GLSLIdentifier identifier = getNameIdentifier();
+        if (identifier != null) {
+            return identifier.getName();
         } else {
             return "(anonymous)";
+        }
+    }
+
+    @Override
+    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+        GLSLIdentifier identifier = getNameIdentifier();
+        if (identifier != null) {
+            return identifier.setName(name);
+        } else {
+            throw new IncorrectOperationException("Declarator with no name!");
         }
     }
 
@@ -161,6 +174,6 @@ public class GLSLDeclarator extends GLSLElementImpl {
 
     @Override
     public String toString() {
-        return "Declarator: " + getIdentifierName() + " : " + getType().getTypename();
+        return "Declarator: " + getName() + " : " + getType().getTypename();
     }
 }

@@ -72,7 +72,7 @@ public abstract class Intentions extends PsiElementBaseIntentionAction {
         String completeFragment = "float " + value + ";";
         PsiElement newFile = createExpressionFromText(identifier, completeFragment);
         GLSLDeclarator[] glslDeclarators = ((GLSLVariableDeclaration) newFile.getFirstChild()).getDeclarators();
-        GLSLIdentifier result = glslDeclarators[0].getIdentifier();
+        GLSLIdentifier result = glslDeclarators[0].getNameIdentifier();
         assert result != null;
         return result;
     }

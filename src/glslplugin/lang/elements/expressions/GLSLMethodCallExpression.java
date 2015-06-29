@@ -54,10 +54,12 @@ public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase {
     public String getMethodName() {
         GLSLIdentifier methodIdentifier = getMethodIdentifier();
         if(methodIdentifier != null){
-            return methodIdentifier.getIdentifierName();
-        }else{
-            return "(unknown)";
+            String name = methodIdentifier.getName();
+            if(name != null){
+                return name;
+            }
         }
+        return "(unknown)";
     }
 
     @Nullable

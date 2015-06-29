@@ -89,4 +89,10 @@ public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl imple
     private GLSLFunctionType createType() {
         return new GLSLBasicFunctionType(this);
     }
+
+    @NotNull
+    @Override
+    public String getDeclarationDescription() {
+        return "function";
+    }
 }
