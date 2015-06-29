@@ -78,7 +78,6 @@ public class GLSLElementTypes {
 
     public static final IElementType COMPOUND_STATEMENT = new GLSLElementType("COMPOUND_STATEMENT");
 
-    //    public static final IElementType UNARY_EXPRESSION = new GLSLElementType("UNARY_EXPRESSION");
     public static final IElementType ASSIGNMENT_EXPRESSION = new GLSLElementType("ASSIGNMENT_EXPRESSION");
     public static final IElementType CONDITIONAL_EXPRESSION = new GLSLElementType("CONDITIONAL_EXPRESSION");
     public static final IElementType LOGICAL_AND_EXPRESSION = new GLSLElementType("LOGICAL_AND_EXPRESSION");
@@ -94,6 +93,7 @@ public class GLSLElementTypes {
     public static final IElementType MULTIPLICATIVE_EXPRESSION = new GLSLElementType("MULTIPLICATIVE_EXPRESSION");
 
     public static final IElementType FUNCTION_CALL_EXPRESSION = new GLSLElementType("FUNCTION_CALL_EXPRESSION");
+    public static final IElementType CONSTRUCTOR_EXPRESSION = new GLSLElementType("CONSTRUCTOR_EXPRESSION");
     public static final IElementType PARAMETER_LIST = new GLSLElementType("PARAMETER_LIST");
     public static final IElementType EXPRESSION_STATEMENT = new GLSLElementType("EXPRESSION_STATEMENT");
     public static final IElementType DECLARATION_STATEMENT = new GLSLElementType("DECLARATION_STATEMENT");

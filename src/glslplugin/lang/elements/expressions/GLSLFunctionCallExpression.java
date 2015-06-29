@@ -195,8 +195,6 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
         return compatibleDeclarations.toArray(new GLSLFunctionType[compatibleDeclarations.size()]);
     }
 
-    //todo: need an isConstructor method
-
     @Override
     public String toString() {
         return "Function Call: " + getFunctionName();
