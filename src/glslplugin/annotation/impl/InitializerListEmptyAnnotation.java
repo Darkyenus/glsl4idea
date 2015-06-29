@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class InitializerListEmptyAnnotation extends Annotator<GLSLInitializerList> {
     @Override
     public void annotate(GLSLInitializerList expr, AnnotationHolder holder) {
-        if (expr.getInitializers().size() == 0) {
+        if (expr.getInitializers().length == 0) {
             holder.createErrorAnnotation(expr, "Empty initializer lists are not allowed");
         }
     }

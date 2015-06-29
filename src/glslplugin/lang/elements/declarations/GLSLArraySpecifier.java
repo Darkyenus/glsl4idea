@@ -44,7 +44,7 @@ public class GLSLArraySpecifier extends GLSLElementImpl {
 
     /**
      * Size of dimension which this specifier denotes.
-     * For dimension of yet unknown length, {@link glslplugin.lang.elements.types.GLSLArrayType#UNKNOWN_SIZE_DIMENSION} is returned.
+     * For dimension of yet unknown length, {@link glslplugin.lang.elements.types.GLSLArrayType#UNDEFINED_SIZE_DIMENSION} is returned.
      * For dimension of length known only at runtime, {@link glslplugin.lang.elements.types.GLSLArrayType#DYNAMIC_SIZE_DIMENSION} is returned.
      */
     public int getDimensionSize(){
@@ -53,7 +53,7 @@ public class GLSLArraySpecifier extends GLSLElementImpl {
             //Since no constant expression analysis yet done, must assume dynamic size
             return GLSLArrayType.DYNAMIC_SIZE_DIMENSION;
         }else{
-            return GLSLArrayType.UNKNOWN_SIZE_DIMENSION;
+            return GLSLArrayType.UNDEFINED_SIZE_DIMENSION;
         }
     }
 
@@ -62,7 +62,7 @@ public class GLSLArraySpecifier extends GLSLElementImpl {
         int dimensionSize = getDimensionSize();
         if(dimensionSize == GLSLArrayType.DYNAMIC_SIZE_DIMENSION){
             return "Array Declarator [?]";
-        }else if(dimensionSize == GLSLArrayType.UNKNOWN_SIZE_DIMENSION){
+        }else if(dimensionSize == GLSLArrayType.UNDEFINED_SIZE_DIMENSION){
             return "Array Declarator []";
         }else {
             return "Array Declarator ["+dimensionSize+"]";

@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public class GLSLArrayType extends GLSLType {
 
-    public static final int UNKNOWN_SIZE_DIMENSION = Integer.MIN_VALUE;
+    public static final int UNDEFINED_SIZE_DIMENSION = Integer.MIN_VALUE;
     public static final int DYNAMIC_SIZE_DIMENSION = Integer.MIN_VALUE+1;
     public static final Map<String, GLSLFunctionType> ARRAY_LIKE_FUNCTIONS = Collections.<String, GLSLFunctionType>singletonMap("length", new GLSLBasicFunctionType("length", GLSLTypes.INT));
 
@@ -62,7 +62,7 @@ public class GLSLArrayType extends GLSLType {
         for (int dimension : dimensions) {
             result.append('[');
             //noinspection StatementWithEmptyBody
-            if(dimension == UNKNOWN_SIZE_DIMENSION){
+            if(dimension == UNDEFINED_SIZE_DIMENSION){
                 // Unknown during declaration: []
             }else if(dimension == DYNAMIC_SIZE_DIMENSION){
                 result.append('?');
@@ -78,7 +78,7 @@ public class GLSLArrayType extends GLSLType {
      * Retrieve the number of dimensions this array has and their sizes.
      * Returned array has as many elements as the type has dimensions.
      * Elements of returned array denote the sizes of type's dimensions.
-     * For dimension of yet unknown length, {@link GLSLArrayType#UNKNOWN_SIZE_DIMENSION} is returned.
+     * For dimension of yet unknown length, {@link GLSLArrayType#UNDEFINED_SIZE_DIMENSION} is returned.
      * For dimension of length known only at runtime, {@link GLSLArrayType#DYNAMIC_SIZE_DIMENSION} is returned.
      *
      * For example for "int[3] exampleArray", this will return "new int[]{3}".
@@ -95,8 +95,8 @@ public class GLSLArrayType extends GLSLType {
     }
 
     private boolean dimensionSizeEquals(int first, int second){
-        if(first == UNKNOWN_SIZE_DIMENSION || first == DYNAMIC_SIZE_DIMENSION
-                || second == UNKNOWN_SIZE_DIMENSION || second == DYNAMIC_SIZE_DIMENSION){
+        if(first == UNDEFINED_SIZE_DIMENSION || first == DYNAMIC_SIZE_DIMENSION
+                || second == UNDEFINED_SIZE_DIMENSION || second == DYNAMIC_SIZE_DIMENSION){
             //If the size is not known, consider them same, because they might be the same
             //So don't show error if not 100% certain there is one
             return true;

@@ -57,6 +57,11 @@ public class GLSLDeclarator extends GLSLElementImpl {
     }
 
     @Nullable
+    public GLSLInitializer getInitializer(){
+        return findChildByClass(GLSLInitializer.class);
+    }
+
+    @Nullable
     public GLSLIdentifier getIdentifier() {
         PsiElement idElement = getFirstChild();
         if (idElement instanceof GLSLIdentifier) {
@@ -81,6 +86,36 @@ public class GLSLDeclarator extends GLSLElementImpl {
         return findParentByClass(GLSLDeclarationImpl.class);
     }
 
+    /**
+     * Clarifies array dimensions if this defines implicitly sized array by initializer.
+     * Does nothing otherwise.
+     */
+    private GLSLType clarifyArrayType(GLSLType baseType){
+        if(!(baseType instanceof GLSLArrayType))return baseType; //No need to clarify non-array types
+        GLSLInitializer rawInitializer = getInitializer();
+        if(rawInitializer == null || !(rawInitializer instanceof GLSLInitializerList)) {
+            return baseType; //Can't clarify with this
+        }
+
+        GLSLInitializerList initializerList = (GLSLInitializerList) rawInitializer;
+        final GLSLArrayType arrayType = (GLSLArrayType) baseType;
+        final int[] arrayDimensions = arrayType.getDimensions();
+        for (int i = 0; i < arrayDimensions.length; i++) {
+            GLSLInitializer[] initializers = initializerList.getInitializers();
+            if(arrayDimensions[i] == GLSLArrayType.UNDEFINED_SIZE_DIMENSION){
+                //Can clarify that!
+                arrayDimensions[i] = initializers.length;
+            }
+            if(initializers.length >= 1 && initializers[0] instanceof GLSLInitializerList){
+                initializerList = (GLSLInitializerList) initializers[0];
+            }else{
+                //Can't clarify any more
+                break;
+            }
+        }
+        return baseType; //Dimensions are changed in place, so no need to create new instance
+    }
+
     @NotNull
     public GLSLType getType() {
         GLSLDeclaration declaration = getParentDeclaration();
@@ -93,7 +128,7 @@ public class GLSLDeclarator extends GLSLElementImpl {
 
         GLSLArraySpecifier[] arraySpecifiers = findChildrenByClass(GLSLArraySpecifier.class);
         if(arraySpecifiers.length == 0){
-            return declaredType;
+            return clarifyArrayType(declaredType);
         }else{
             //Must append some dimensions to the type
             if(declaredType instanceof GLSLArrayType){
@@ -105,13 +140,13 @@ public class GLSLDeclarator extends GLSLElementImpl {
                 for (int i = 0; i < arraySpecifiers.length; i++) {
                     combinedDimensions[i + existingDimensions.length] = arraySpecifiers[i].getDimensionSize();
                 }
-                return new GLSLArrayType(declaredArrayType.getBaseType(), combinedDimensions);
+                return clarifyArrayType(new GLSLArrayType(declaredArrayType.getBaseType(), combinedDimensions));
             }else{
                 int[] dimensions = new int[arraySpecifiers.length];
                 for (int i = 0; i < dimensions.length; i++) {
                     dimensions[i] = arraySpecifiers[i].getDimensionSize();
                 }
-                return new GLSLArrayType(declaredType, dimensions);
+                return clarifyArrayType(new GLSLArrayType(declaredType, dimensions));
             }
         }
     }
