@@ -93,4 +93,31 @@ public class GLSLArrayType extends GLSLType {
     public Map<String, GLSLFunctionType> getMemberFunctions() {
         return ARRAY_LIKE_FUNCTIONS;
     }
+
+    private boolean dimensionSizeEquals(int first, int second){
+        if(first == UNKNOWN_SIZE_DIMENSION || first == DYNAMIC_SIZE_DIMENSION
+                || second == UNKNOWN_SIZE_DIMENSION || second == DYNAMIC_SIZE_DIMENSION){
+            //If the size is not known, consider them same, because they might be the same
+            //So don't show error if not 100% certain there is one
+            return true;
+        }else{
+            return first == second;
+        }
+    }
+
+    @Override
+    public boolean typeEquals(GLSLType otherType) {
+        if(otherType instanceof GLSLArrayType){
+            GLSLArrayType other = (GLSLArrayType) otherType;
+            if(dimensions.length == other.dimensions.length){
+                for (int i = 0; i < dimensions.length; i++) {
+                    if(!dimensionSizeEquals(dimensions[i], other.dimensions[i])){
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
 }
