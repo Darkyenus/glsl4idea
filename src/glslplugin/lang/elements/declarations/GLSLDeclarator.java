@@ -105,28 +105,51 @@ public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifier
      */
     private GLSLType clarifyArrayType(GLSLType baseType){
         if(!(baseType instanceof GLSLArrayType))return baseType; //No need to clarify non-array types
-        GLSLInitializer rawInitializer = getInitializer();
-        if(rawInitializer == null || !(rawInitializer instanceof GLSLInitializerList)) {
-            return baseType; //Can't clarify with this
+        final GLSLArrayType myArrayType = (GLSLArrayType) baseType;
+        final int[] myDimensions = myArrayType.getDimensions();
+
+        {   //Try clarifying using initializer list
+            GLSLInitializer rawInitializer = getInitializer();
+            if (rawInitializer != null && rawInitializer instanceof GLSLInitializerList) {
+                //Clarify using initializer list
+                GLSLInitializerList initializerList = (GLSLInitializerList) rawInitializer;
+                for (int i = 0; i < myDimensions.length; i++) {
+                    GLSLInitializer[] initializers = initializerList.getInitializers();
+                    if (myDimensions[i] == GLSLArrayType.UNDEFINED_SIZE_DIMENSION) {
+                        //Can clarify that!
+                        myDimensions[i] = initializers.length;
+                    }
+                    if (initializers.length >= 1 && initializers[0] instanceof GLSLInitializerList) {
+                        initializerList = (GLSLInitializerList) initializers[0];
+                    } else {
+                        //Can't clarify any more
+                        break;
+                    }
+                }
+                return baseType;//Dimensions are changed in place, so no need to create new instance
+            }
         }
 
-        GLSLInitializerList initializerList = (GLSLInitializerList) rawInitializer;
-        final GLSLArrayType arrayType = (GLSLArrayType) baseType;
-        final int[] arrayDimensions = arrayType.getDimensions();
-        for (int i = 0; i < arrayDimensions.length; i++) {
-            GLSLInitializer[] initializers = initializerList.getInitializers();
-            if(arrayDimensions[i] == GLSLArrayType.UNDEFINED_SIZE_DIMENSION){
-                //Can clarify that!
-                arrayDimensions[i] = initializers.length;
-            }
-            if(initializers.length >= 1 && initializers[0] instanceof GLSLInitializerList){
-                initializerList = (GLSLInitializerList) initializers[0];
-            }else{
-                //Can't clarify any more
-                break;
+        {   //Try clarifying using expression
+            GLSLExpression rawExpression = getInitializerExpression();
+            if(rawExpression != null){
+                GLSLType type = rawExpression.getType();
+                if(type instanceof GLSLArrayType){
+                    GLSLArrayType arrayType = (GLSLArrayType) type;
+                    //Great, it is being correctly initialized, try to copy as many missing dimensions as we can
+                    final int[] dimensions = arrayType.getDimensions();
+                    for (int i = 0; i < myDimensions.length && i < dimensions.length; i++) {
+                        if(myDimensions[i] == GLSLArrayType.UNDEFINED_SIZE_DIMENSION){
+                            //Copy that
+                            myDimensions[i] = dimensions[i];
+                        }
+                    }
+                    return baseType; //Dimensions are changed in place, so no need to create new instance
+                }//else - not even valid initializer
             }
         }
-        return baseType; //Dimensions are changed in place, so no need to create new instance
+
+        return baseType; //Could not clarify
     }
 
     @NotNull
