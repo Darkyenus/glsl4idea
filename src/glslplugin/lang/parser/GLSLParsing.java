@@ -841,11 +841,7 @@ public final class GLSLParsing extends GLSLParsingBase {
             parseArrayDeclarator();
         }
         if (tryMatch(EQUAL)) {
-            final PsiBuilder.Marker mark2 = mark();
-
             parseInitializer();
-
-            mark2.done(INITIALIZER);
         }
         mark.done(DECLARATOR);
     }
@@ -871,9 +867,36 @@ public final class GLSLParsing extends GLSLParsingBase {
         }
     }
 
-    private void parseInitializer() {
+    private boolean parseInitializer() {
+        PsiBuilder.Marker mark = mark();
         // initializer: assignment_expression
-        parseAssignmentExpression();
+        if (tokenType() == LEFT_BRACE) {
+            parseInitializerList();
+        } else if (!parseAssignmentExpression()) {
+            mark.error("Expected initializer");
+            return false;
+        }
+        mark.done(INITIALIZER);
+        return true;
+    }
+
+    private void parseInitializerList() {
+        // initializer_list: '{' initializer (',' initializer)* ','? '}'
+        PsiBuilder.Marker mark = mark();
+
+        match(LEFT_BRACE, "Expected '{'");
+
+        if (tokenType() != RIGHT_BRACE) parseInitializer();
+
+        while (tokenType() != RIGHT_BRACE && !eof()) {
+            match(COMMA, "Expected '}' or ','");
+            if (tokenType() == RIGHT_BRACE) break;
+            if (!parseInitializer()) { advanceLexer(); }
+        }
+
+        match(RIGHT_BRACE, "Expected '}'");
+
+        mark.done(INITIALIZER_LIST);
     }
 
     private boolean parseAssignmentExpression() {
