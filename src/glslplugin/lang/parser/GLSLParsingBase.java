@@ -355,16 +355,13 @@ abstract class GLSLParsingBase {
      * @return indicates whether the match was successful or not.
      */
     protected final boolean match(IElementType type, String error) {
-        if (isEof()) {
-            return false;
-        }
-        boolean match = tokenType() == type;
-        if (match) {
+        final boolean matched = !isEof() && tokenType() == type;
+        if (matched) {
             advanceLexer();
         } else {
             error(error);
         }
-        return match;
+        return matched;
     }
 
     /**
