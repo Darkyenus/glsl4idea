@@ -41,6 +41,7 @@ public class GLSLArrayType extends GLSLType {
     private final int[] dimensions;
 
     public GLSLArrayType(@NotNull GLSLType baseType, int...dimensions) {
+        super(null);
         this.baseType = baseType;
         this.dimensions = dimensions;
     }

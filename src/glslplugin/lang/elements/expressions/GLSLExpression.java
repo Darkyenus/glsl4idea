@@ -56,9 +56,9 @@ public abstract class GLSLExpression extends GLSLElementImpl implements GLSLType
      * Otherwise the result is undefined.
      *
      * The actual returned type depends on the type of the expression,
-     * and should map as closely as possible to the most similar Java type (where it makes sense).
-     *
-     * For example, numeric values default to their Java primitive counterparts (boxed).
+     * and can be queried through getType().getJavaType().
+     * That could not be null if the constant analysis is not supported
+     * ({@link GLSLExpression#isConstantValue()} should return false in that case).
      */
     @Nullable
     public Object getConstantValue(){

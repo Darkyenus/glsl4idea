@@ -78,6 +78,7 @@ public class GLSLMatrixType extends GLSLType {
     private final String typename;
 
     private GLSLMatrixType(BaseType baseType, int columns, int rows) {
+        super(null);
         this.baseType = baseType.type;
         this.columns = columns;
         this.rows = rows;

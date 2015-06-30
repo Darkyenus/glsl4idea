@@ -36,6 +36,12 @@ import java.util.Map;
 public abstract class GLSLType {
     public static final GLSLType[] EMPTY_ARRAY = {};
 
+    private final Class<?> javaType;
+
+    protected GLSLType(@Nullable Class<?> javaType) {
+        this.javaType = javaType;
+    }
+
     /**
      * @return the text representation of this type.
      */
@@ -93,6 +99,15 @@ public abstract class GLSLType {
      */
     public boolean isValidType() {
         return true;
+    }
+
+    /**
+     * Java type used for this GLSL type during constant expression analysis.
+     * Can be null if this type does not support that.
+     */
+    @Nullable
+    public Class<?> getJavaType(){
+        return javaType;
     }
 
     //region Array-like related

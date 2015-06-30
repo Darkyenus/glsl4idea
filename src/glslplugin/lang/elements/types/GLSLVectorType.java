@@ -79,6 +79,7 @@ public class GLSLVectorType extends GLSLType {
     private final String typeName;
 
     private GLSLVectorType(BaseType baseType, int numComponents) {
+        super(null);
         this.baseType = baseType.type;
         this.numComponents = numComponents;
         this.typeName = baseType.name + numComponents;
