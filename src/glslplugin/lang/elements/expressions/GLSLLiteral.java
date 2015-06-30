@@ -95,6 +95,46 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
         return getText();
     }
 
+    @Override
+    public boolean isConstantValue() {
+        return getConstantValue() != null;
+    }
+
+    @Nullable
+    @Override
+    public Object getConstantValue() {
+        final Type literalType = getLiteralType();
+        final String text = getText();
+        if(literalType == null)return null;
+        switch (literalType){
+            case BOOL:
+                if("true".equals(text))return true;
+                else if("false".equals(text))return false;
+                else return null;
+            case INTEGER:
+            case UINT:
+                try{
+                    return Integer.parseInt(text);
+                }catch (NumberFormatException nfe){
+                    return null;
+                }
+            case FLOAT:
+                try{
+                    return Float.parseFloat(text);
+                }catch (NumberFormatException nfe){
+                    return null;
+                }
+            case DOUBLE:
+                try{
+                    return Double.parseDouble(text);
+                }catch (NumberFormatException nfe){
+                    return null;
+                }
+            default:
+                return null;
+        }
+    }
+
     public String toString() {
         Type literalType = getLiteralType();
         return (literalType == null ? "(unknown)" : getLiteralType().textRepresentation) + " Literal: '" + getLiteralValue() + "'";

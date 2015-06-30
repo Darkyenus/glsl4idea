@@ -25,6 +25,7 @@ import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLExpression is ...
@@ -40,6 +41,28 @@ public abstract class GLSLExpression extends GLSLElementImpl implements GLSLType
 
     public boolean isLValue() {
         return false;
+    }
+
+    /**
+     * Checks whether the value of this expression is a known compile-time constant
+     */
+    public boolean isConstantValue(){
+        return false;
+    }
+
+    /**
+     * Queries for the constant value.
+     * Call is valid only if {@link GLSLExpression#isConstantValue()} returns true.
+     * Otherwise the result is undefined.
+     *
+     * The actual returned type depends on the type of the expression,
+     * and should map as closely as possible to the most similar Java type (where it makes sense).
+     *
+     * For example, numeric values default to their Java primitive counterparts (boxed).
+     */
+    @Nullable
+    public Object getConstantValue(){
+        return null;
     }
 
     @NotNull
