@@ -20,30 +20,27 @@
 package glslplugin.lang.parser;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.LightPsiParser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.Semaphore;
+public class GLSLParser implements PsiParser, LightPsiParser {
 
-public class GLSLParser implements PsiParser {
-
-    private static final boolean ALLOW_ONLY_ONE_THREAD = false;
-    private static final Semaphore SEMAPHORE = new Semaphore(1);
-
+    @Override
     @NotNull
     public ASTNode parse(IElementType root, PsiBuilder builder) {
-        if(ALLOW_ONLY_ONE_THREAD){
-            try {
-                SEMAPHORE.acquire();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
         //builder.setDebugMode(true);
+        parseLight(root, builder);
+        return builder.getTreeBuilt();
+    }
+
+    @Override
+    public void parseLight(IElementType root, PsiBuilder builder) {
+        // builder.setDebugMode(true);
         final PsiBuilder.Marker rootMarker = builder.mark();
-        if(!builder.eof()){ //Empty file is not an error
+        if (!builder.eof()) { //Empty file is not an error
             final GLSLParsing theRealParser = new GLSLParsing(builder);
 
             theRealParser.parseTranslationUnit();
@@ -52,10 +49,5 @@ public class GLSLParser implements PsiParser {
         }
 
         rootMarker.done(root);
-
-        if(ALLOW_ONLY_ONE_THREAD){
-            SEMAPHORE.release();
-        }
-        return builder.getTreeBuilt();
     }
 }
