@@ -19,14 +19,16 @@
 
 package glslplugin.lang.parser;
 
+import com.intellij.lang.ForeignLeafType;
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.TokenWrapper;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.expressions.GLSLLiteral;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static glslplugin.lang.elements.GLSLElementTypes.*;
@@ -74,8 +76,6 @@ public final class GLSLParsing extends GLSLParsingBase {
      */
     @Override
     protected final void parsePreprocessor() {
-        if(preprocessorTokens != null) Logger.getLogger("GLSLParsing").warning("Parsing preprocessor inside preprocessor");
-
         // We can't use tryMatch etc. in here because we'll end up
         // potentially parsing a preprocessor directive inside this one.
         PsiBuilder.Marker preprocessor = b.mark();
@@ -91,52 +91,13 @@ public final class GLSLParsing extends GLSLParsingBase {
                 //Can use non-b b.advanceLexer here, to allow "nested" defines
                 b.advanceLexer();//Get past identifier
 
-                if(b.getTokenType() == PREPROCESSOR_END){
-                    defines.put(defineIdentifier, PreprocessorDropIn.EMPTY);
-                } else {
-                    PreprocessorDropInType meaning = PreprocessorDropInType.UNKNOWN;
+                List<IElementType> definition = new ArrayList<>();
 
-                    PsiBuilder.Marker defineMeaningMark = b.mark();
-
-                    if(CONSTANT_TOKENS.contains(b.getTokenType()) && b.lookAhead(1) == PREPROCESSOR_END){
-                        meaning = PreprocessorDropInType.LITERAL;
-                    }
-
-                    if(meaning == PreprocessorDropInType.UNKNOWN && parseConditionalExpression()){
-                        if(b.getTokenType() == PREPROCESSOR_END){
-                            //It is only a constant expression
-                            meaning = PreprocessorDropInType.CONDITIONAL_EXPRESSION;
-                        }
-                    }
-                    defineMeaningMark.rollbackTo();
-                    defineMeaningMark = b.mark();
-
-                    if(meaning == PreprocessorDropInType.UNKNOWN && parseExpression()){
-                        if(b.getTokenType() == PREPROCESSOR_END){
-                            //It is any expression
-                            meaning = PreprocessorDropInType.EXPRESSION;
-                        }
-                    }
-                    defineMeaningMark.rollbackTo();
-
-                    final StringBuilder replacementText = new StringBuilder();
-
-                    final ArrayList<PreprocessorToken> definedTokens = new ArrayList<PreprocessorToken>();
-                    while (!b.eof()) {
-                        PreprocessorToken token = new PreprocessorToken(b.getTokenType(), b.getTokenText());
-                        definedTokens.add(token);
-                        replacementText.append(b.getTokenText()).append(' ');
-                        b.advanceLexer();
-                        if (b.getTokenType() == PREPROCESSOR_END) {
-                            break;
-                        }
-                    }
-
-                    final String replacementTextString = replacementText.length() == 0 ? "" : replacementText.substring(0, replacementText.length()-1);
-                    defines.put(defineIdentifier, new PreprocessorDropIn(meaning, definedTokens, replacementTextString));
+                while (b.getTokenType() != PREPROCESSOR_END && !b.eof()) {
+                    definition.add(new ForeignLeafType(b.getTokenType(), b.getTokenText()));
+                    b.advanceLexer();
                 }
-
-                //TODO Handle function-like defines
+                definitions.put(defineIdentifier, definition);
             }else{
                 //Invalid
                 b.error("Identifier expected.");
@@ -155,7 +116,7 @@ public final class GLSLParsing extends GLSLParsingBase {
             if(b.getTokenType() == IDENTIFIER){
                 //Valid
                 final String defineIdentifier = b.getTokenText();
-                defines.remove(defineIdentifier);
+                definitions.remove(defineIdentifier);
 
                 b.advanceLexer();//Get past IDENTIFIER
             }else{
@@ -923,11 +884,6 @@ public final class GLSLParsing extends GLSLParsingBase {
         //                       | logical_or_expression QUESTION expression COLON assignment_expression
         PsiBuilder.Marker mark = b.mark();
 
-        if(isTokenPreprocessorAlias(PreprocessorDropInType.CONDITIONAL_EXPRESSION)){
-            mark.done(new PreprocessedExpressionElementType(preprocessorTextOfConsumedTokens));
-            return true;
-        }
-
         if (!parseOperatorExpression()) {
             mark.drop();
             return false;
@@ -951,11 +907,6 @@ public final class GLSLParsing extends GLSLParsingBase {
         // expression: assignment_expression (',' assignment_expression)*
 
         PsiBuilder.Marker mark = b.mark();
-
-        if(isTokenPreprocessorAlias(PreprocessorDropInType.EXPRESSION)){
-            mark.done(new PreprocessedExpressionElementType(preprocessorTextOfConsumedTokens));
-            return true;
-        }
 
         if (!parseAssignmentExpression()) {
             mark.error("Expected an expression.");
@@ -1197,12 +1148,6 @@ public final class GLSLParsing extends GLSLParsingBase {
         //                   | CONSTANT
         //                   | '(' expression ')'
         final PsiBuilder.Marker mark = b.mark();
-
-        if(getTokenPreprocessorAlias() == PreprocessorDropInType.LITERAL){
-            mark.done(new PreprocessedLiteralElementType(GLSLLiteral.getLiteralType(b.getTokenType()), b.getTokenText()));
-            consumePreprocessorTokens();
-            return true;
-        }
 
         final IElementType type = b.getTokenType();
         if (type == IDENTIFIER) {
