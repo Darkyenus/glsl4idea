@@ -114,16 +114,11 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
             case INTEGER:
             case UINT:
                 try{
-                    return Integer.parseInt(text);
+                    return Long.parseLong(text);
                 }catch (NumberFormatException nfe){
                     return null;
                 }
             case FLOAT:
-                try{
-                    return Float.parseFloat(text);
-                }catch (NumberFormatException nfe){
-                    return null;
-                }
             case DOUBLE:
                 try{
                     return Double.parseDouble(text);

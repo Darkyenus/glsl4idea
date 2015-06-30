@@ -39,12 +39,12 @@ public final class GLSLOperators {
     public static final GLSLBinaryOperator NOT_EQUAL = new EqualityBinaryOperator("!=");
 
     // UNARY OPERATORS
-    public static final GLSLUnaryOperator PLUS = new ArithmeticUnaryOperator("+");
-    public static final GLSLUnaryOperator MINUS = new ArithmeticUnaryOperator("-");
-    public static final GLSLUnaryOperator INCREMENT = new ArithmeticUnaryOperator("++");
-    public static final GLSLUnaryOperator DECREMENT = new ArithmeticUnaryOperator("--");
-    public static final GLSLUnaryOperator LOGIC_NEGATION = new LogicalUnaryOperator("!");
-    public static final GLSLUnaryOperator BINARY_NEGATION = new OnesComplementOperator("~");
+    public static final GLSLUnaryOperator PLUS = ArithmeticUnaryOperator.PLUS;
+    public static final GLSLUnaryOperator MINUS = ArithmeticUnaryOperator.MINUS;
+    public static final GLSLUnaryOperator INCREMENT = ArithmeticUnaryOperator.INCREMENT;
+    public static final GLSLUnaryOperator DECREMENT = ArithmeticUnaryOperator.DECREMENT;
+    public static final GLSLUnaryOperator LOGIC_NEGATION = LogicalUnaryOperator.LOGIC_NEGATION;
+    public static final GLSLUnaryOperator BINARY_NEGATION = OnesComplementOperator.BINARY_NEGATION;
 
     // Assignment operators
     public static final GLSLAssignmentOperator ASSIGN = new GLSLAssignmentOperator("=");

@@ -2,6 +2,8 @@ package glslplugin.lang.elements.expressions.operator;
 
 import glslplugin.lang.elements.types.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import static glslplugin.lang.elements.types.GLSLTypes.*;
 
 /**
@@ -40,6 +42,15 @@ public class GLSLOperator {
         public abstract boolean isValidInput(GLSLType type);
         @NotNull
         public abstract GLSLType getResultType(GLSLType input);
+
+        /**
+         * Can be meaningfully called only if isValidInput returned true.
+         *
+         * @param prefix - whether this operator is in prefix position
+         * @return result of applying this operator to the input
+         */
+        @Nullable
+        public abstract Object getResultValue(Object input, boolean prefix);
     }
 
     /**
@@ -264,6 +275,11 @@ public class GLSLOperator {
      */
     protected static class ArithmeticUnaryOperator extends GLSLUnaryOperator {
 
+        public static final GLSLUnaryOperator PLUS = new ArithmeticUnaryOperator("+");
+        public static final GLSLUnaryOperator MINUS = new ArithmeticUnaryOperator("-");
+        public static final GLSLUnaryOperator INCREMENT = new ArithmeticUnaryOperator("++");
+        public static final GLSLUnaryOperator DECREMENT = new ArithmeticUnaryOperator("--");
+
         public ArithmeticUnaryOperator(@NotNull String textRepresentation) {
             super(textRepresentation);
         }
@@ -284,6 +300,39 @@ public class GLSLOperator {
                 return UNKNOWN_TYPE;
             }
         }
+
+        @Nullable
+        @Override
+        public Object getResultValue(Object input, boolean prefix) {
+            if(this == PLUS){
+                return input;
+            }else if(this == MINUS){
+                if(input instanceof Double){
+                    return -((Double)input);
+                }else if(input instanceof Long){
+                    return -((Long)input);
+                }
+            } else {
+                //Increment and decrement handling
+                if(!prefix)return input;//If it is in postfix, it is returned first, then changed, so nothing happens here
+                int change;
+                if(this == INCREMENT){
+                    change = 1;
+                }else if(this == DECREMENT){
+                    change = -1;
+                }else return null;//Weird.
+
+                if(input instanceof Double){
+                    return ((Double)input) + change;
+                }else if(input instanceof Long){
+                    return ((Long)input) + change;
+                }
+            }
+            //Something is wrong and can't deduce it
+            return null;
+        }
+
+
     }
 
     /**
@@ -363,6 +412,8 @@ public class GLSLOperator {
      */
     protected static class LogicalUnaryOperator extends GLSLUnaryOperator {
 
+        public static final GLSLUnaryOperator LOGIC_NEGATION = new LogicalUnaryOperator("!");
+
         public LogicalUnaryOperator(@NotNull String textRepresentation) {
             super(textRepresentation);
         }
@@ -377,12 +428,25 @@ public class GLSLOperator {
         public GLSLType getResultType(GLSLType input) {
             return BOOL;
         }
+
+        @Nullable
+        @Override
+        public Object getResultValue(Object input, boolean prefix) {
+            if (this == LOGIC_NEGATION) {
+                if (input instanceof Boolean) {
+                    return !((Boolean) input);
+                }
+            }
+            return null;
+        }
     }
 
     /**
      * Bitwise invert operator: ~
      */
     protected static class OnesComplementOperator extends GLSLUnaryOperator {
+
+        public static final GLSLUnaryOperator BINARY_NEGATION = new OnesComplementOperator("~");
 
         public OnesComplementOperator(@NotNull String textRepresentation) {
             super(textRepresentation);
@@ -402,6 +466,17 @@ public class GLSLOperator {
         public GLSLType getResultType(GLSLType input) {
             if(isValidInput(input))return input;
             else return UNKNOWN_TYPE;
+        }
+
+        @Nullable
+        @Override
+        public Object getResultValue(Object input, boolean prefix) {
+            if (this == BINARY_NEGATION) {
+                if (input instanceof Long) {
+                    return ~((Long) input);
+                }
+            }
+            return null;
         }
     }
 

@@ -35,9 +35,9 @@ public class GLSLScalarType extends GLSLType {
     //region Static
     public static final GLSLScalarType BOOL = new GLSLScalarType("bool", Boolean.class);
     public static final GLSLScalarType DOUBLE = new GLSLScalarType("double", Double.class);
-    public static final GLSLScalarType FLOAT = new GLSLScalarType("float", Float.class, DOUBLE);
-    public static final GLSLScalarType UINT = new GLSLScalarType("uint", Integer.class, FLOAT, DOUBLE);
-    public static final GLSLScalarType INT = new GLSLScalarType("int", Integer.class, UINT, FLOAT, DOUBLE);
+    public static final GLSLScalarType FLOAT = new GLSLScalarType("float", Double.class, DOUBLE);
+    public static final GLSLScalarType UINT = new GLSLScalarType("uint", Long.class, FLOAT, DOUBLE);
+    public static final GLSLScalarType INT = new GLSLScalarType("int", Long.class, UINT, FLOAT, DOUBLE);
 
     public static boolean isIntegerScalar(GLSLType type){
         return type == INT || type == UINT;
