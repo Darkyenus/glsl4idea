@@ -45,6 +45,7 @@ public class GLSLOperator {
 
         /**
          * Can be meaningfully called only if isValidInput returned true.
+         * Then it still might not return valid value.
          *
          * @param prefix - whether this operator is in prefix position
          * @return result of applying this operator to the input
@@ -60,7 +61,7 @@ public class GLSLOperator {
      */
     public static abstract class GLSLBinaryOperator extends GLSLOperator {
 
-        public GLSLBinaryOperator(@NotNull String textRepresentation) {
+        protected GLSLBinaryOperator(@NotNull String textRepresentation) {
             super(textRepresentation);
         }
 
@@ -73,6 +74,15 @@ public class GLSLOperator {
 
         @NotNull
         public abstract GLSLType getResultType(GLSLType firstInput, GLSLType secondInput);
+
+        /**
+         * Can be meaningfully called only if isValidInput returned true.
+         * Then it still might not return valid value.
+         *
+         * @return result of applying this operator to the input
+         */
+        @Nullable
+        public abstract Object getResultValue(Object firstInput, Object secondInput);
     }
 
     /**
@@ -99,6 +109,12 @@ public class GLSLOperator {
         public GLSLType getResultType(GLSLType firstInput, GLSLType secondInput) {
             return firstInput;
         }
+
+        @Nullable
+        @Override
+        public Object getResultValue(Object firstInput, Object secondInput) {
+            return null;
+        }
     }
 
     //endregion
@@ -112,7 +128,11 @@ public class GLSLOperator {
      */
     protected static class ArithmeticBinaryOperator extends GLSLBinaryOperator {
 
-        public ArithmeticBinaryOperator(@NotNull String textRepresentation) {
+        public static final GLSLBinaryOperator ADDITION = new ArithmeticBinaryOperator("+");
+        public static final GLSLBinaryOperator SUBTRACTION = new ArithmeticBinaryOperator("-");
+        public static final GLSLBinaryOperator DIVISION = new ArithmeticBinaryOperator("/");
+
+        private ArithmeticBinaryOperator(@NotNull String textRepresentation) {
             super(textRepresentation);
         }
 
@@ -179,11 +199,55 @@ public class GLSLOperator {
             }
             return UNKNOWN_TYPE;
         }
+
+        @Nullable
+        @Override
+        public Object getResultValue(Object firstInput, Object secondInput) {
+            if(firstInput instanceof Double && secondInput instanceof Double){
+                return getResultValueD((Double) firstInput, (Double) secondInput);
+            }else if(firstInput instanceof Long && secondInput instanceof Double){
+                return getResultValueD(((Long) firstInput).doubleValue(), (Double) secondInput);
+            }else if(firstInput instanceof Double && secondInput instanceof Long){
+                return getResultValueD((Double) firstInput, ((Long) secondInput).doubleValue());
+            }else if(firstInput instanceof Long && secondInput instanceof Long){
+                long first = (Long)firstInput;
+                long second = (Long)secondInput;
+                if(this == ADDITION){
+                    return first + second;
+                }else if(this == SUBTRACTION){
+                    return first - second;
+                }else if(this == DIVISION){
+                    return first / second;
+                }else if(this == ArithmeticMultiplicationBinaryOperator.MULTIPLICATION){
+                    //Take care of multiplication here as well,
+                    // since it is a subclass and its operation on scalars is pretty standard
+                    return first * second;
+                }else return null;
+            }
+            return null;
+        }
+
+        private Object getResultValueD(double firstInput, double secondInput){
+            if(this == ADDITION){
+                return firstInput + secondInput;
+            }else if(this == SUBTRACTION){
+                return firstInput - secondInput;
+            }else if(this == DIVISION){
+                return firstInput / secondInput;
+            }else if(this == ArithmeticMultiplicationBinaryOperator.MULTIPLICATION){
+                return firstInput * secondInput;
+            }else return null;
+        }
     }
 
+    /**
+     *      *
+     */
     protected static class ArithmeticMultiplicationBinaryOperator extends ArithmeticBinaryOperator {
 
-        public ArithmeticMultiplicationBinaryOperator(@NotNull String textRepresentation) {
+        public static final GLSLBinaryOperator MULTIPLICATION = new ArithmeticMultiplicationBinaryOperator("*");
+
+        private ArithmeticMultiplicationBinaryOperator(@NotNull String textRepresentation) {
             super(textRepresentation);
         }
 
@@ -234,9 +298,14 @@ public class GLSLOperator {
         }
     }
 
+    /**
+     *      %
+     */
     protected static class ArithmeticModuloBinaryOperator extends GLSLBinaryOperator {
 
-        public ArithmeticModuloBinaryOperator(@NotNull String textRepresentation) {
+        public static final GLSLBinaryOperator MODULO = new ArithmeticModuloBinaryOperator("%");
+
+        private ArithmeticModuloBinaryOperator(@NotNull String textRepresentation) {
             super(textRepresentation);
         }
 
@@ -268,6 +337,15 @@ public class GLSLOperator {
             //Scalar and scalar
             return unified;
         }
+
+        @Nullable
+        @Override
+        public Object getResultValue(Object firstInput, Object secondInput) {
+            if(firstInput instanceof Long && secondInput instanceof Long){
+                return ((Long)firstInput) % ((Long)secondInput);
+            }
+            return null;
+        }
     }
 
     /**
@@ -280,7 +358,7 @@ public class GLSLOperator {
         public static final GLSLUnaryOperator INCREMENT = new ArithmeticUnaryOperator("++");
         public static final GLSLUnaryOperator DECREMENT = new ArithmeticUnaryOperator("--");
 
-        public ArithmeticUnaryOperator(@NotNull String textRepresentation) {
+        private ArithmeticUnaryOperator(@NotNull String textRepresentation) {
             super(textRepresentation);
         }
 
@@ -359,6 +437,12 @@ public class GLSLOperator {
             //Relational operators always result in bool
             return BOOL;
         }
+
+        @Nullable
+        @Override
+        public Object getResultValue(Object firstInput, Object secondInput) {
+            return null;
+        }
     }
 
     /**
@@ -379,6 +463,12 @@ public class GLSLOperator {
         @Override
         public GLSLType getResultType(GLSLType firstInput, GLSLType secondInput) {
             return BOOL;
+        }
+
+        @Nullable
+        @Override
+        public Object getResultValue(Object firstInput, Object secondInput) {
+            return null;
         }
     }
 
@@ -405,6 +495,12 @@ public class GLSLOperator {
         public GLSLType getResultType(GLSLType firstInput, GLSLType secondInput) {
             return BOOL;
         }
+
+        @Nullable
+        @Override
+        public Object getResultValue(Object firstInput, Object secondInput) {
+            return null;
+        }
     }
 
     /**
@@ -414,7 +510,7 @@ public class GLSLOperator {
 
         public static final GLSLUnaryOperator LOGIC_NEGATION = new LogicalUnaryOperator("!");
 
-        public LogicalUnaryOperator(@NotNull String textRepresentation) {
+        private LogicalUnaryOperator(@NotNull String textRepresentation) {
             super(textRepresentation);
         }
 
@@ -448,7 +544,7 @@ public class GLSLOperator {
 
         public static final GLSLUnaryOperator BINARY_NEGATION = new OnesComplementOperator("~");
 
-        public OnesComplementOperator(@NotNull String textRepresentation) {
+        private OnesComplementOperator(@NotNull String textRepresentation) {
             super(textRepresentation);
         }
 
@@ -516,6 +612,12 @@ public class GLSLOperator {
                 return firstInput;
             }else return UNKNOWN_TYPE;
         }
+
+        @Nullable
+        @Override
+        public Object getResultValue(Object firstInput, Object secondInput) {
+            return null;
+        }
     }
 
     /**
@@ -564,6 +666,12 @@ public class GLSLOperator {
             }
             //Both are scalars
             return firstBaseType;
+        }
+
+        @Nullable
+        @Override
+        public Object getResultValue(Object firstInput, Object secondInput) {
+            return null;
         }
     }
 

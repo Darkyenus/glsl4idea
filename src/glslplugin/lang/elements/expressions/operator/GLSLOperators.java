@@ -10,11 +10,11 @@ import glslplugin.lang.elements.expressions.operator.GLSLOperator.*;
 public final class GLSLOperators {
 
     //Arithmetic operators
-    public static final GLSLBinaryOperator ADDITION = new ArithmeticBinaryOperator("+");
-    public static final GLSLBinaryOperator SUBTRACTION = new ArithmeticBinaryOperator("-");
-    public static final GLSLBinaryOperator MULTIPLICATION = new ArithmeticMultiplicationBinaryOperator("*");
-    public static final GLSLBinaryOperator DIVISION = new ArithmeticBinaryOperator("/");
-    public static final GLSLBinaryOperator MODULO = new ArithmeticModuloBinaryOperator("%");
+    public static final GLSLBinaryOperator ADDITION = ArithmeticBinaryOperator.ADDITION;
+    public static final GLSLBinaryOperator SUBTRACTION = ArithmeticBinaryOperator.SUBTRACTION;
+    public static final GLSLBinaryOperator MULTIPLICATION = ArithmeticMultiplicationBinaryOperator.MULTIPLICATION;
+    public static final GLSLBinaryOperator DIVISION = ArithmeticBinaryOperator.DIVISION;
+    public static final GLSLBinaryOperator MODULO = ArithmeticModuloBinaryOperator.MODULO;
 
     // Logical operators
     public static final GLSLBinaryOperator LOGIC_AND = new LogicalBinaryOperator("&&");
