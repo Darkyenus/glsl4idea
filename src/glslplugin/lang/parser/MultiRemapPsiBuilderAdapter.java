@@ -6,7 +6,9 @@ import com.intellij.lang.impl.PsiBuilderAdapter;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * A PsiBuilderAdapter in which each token can be remapped to an arbitrary number of tokens.

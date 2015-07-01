@@ -20,22 +20,14 @@
 package glslplugin.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.impl.DelegateMarker;
-import com.intellij.lang.impl.PsiBuilderAdapter;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.GLSLTokenTypes;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
-import static glslplugin.lang.elements.GLSLElementTypes.PREPROCESSED_EMPTY;
-import static glslplugin.lang.elements.GLSLTokenTypes.IDENTIFIER;
 import static glslplugin.lang.elements.GLSLTokenTypes.PREPROCESSOR_BEGIN;
 
 /**

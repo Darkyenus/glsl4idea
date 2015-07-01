@@ -21,15 +21,13 @@ package glslplugin.lang.parser;
 
 import com.intellij.lang.ForeignLeafType;
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.TokenWrapper;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import glslplugin.lang.elements.GLSLTokenTypes;
-import glslplugin.lang.elements.expressions.GLSLLiteral;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 import static glslplugin.lang.elements.GLSLElementTypes.*;
 import static glslplugin.lang.elements.GLSLTokenTypes.*;
