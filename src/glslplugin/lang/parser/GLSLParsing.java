@@ -1146,7 +1146,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
         if(!markAsMethodIdentifier){
             PsiBuilder.Marker constructorMark = mark();
-            if(parseTypeSpecifier()){
+            if(parseTypeSpecifier(true)){//true -> only built-in type specifiers
                 //Success, it is a constructor!
                 constructorMark.drop();
                 return FunctionCallLike.CONSTRUCTOR;
@@ -1261,13 +1261,27 @@ public final class GLSLParsing extends GLSLParsingBase {
         }
     }
 
-    private boolean parseTypeSpecifier() {
+    /**
+     * Parse all allowed type specifiers
+     */
+    private boolean parseTypeSpecifier(){
+        return parseTypeSpecifier(false);
+    }
+
+    /**
+     * Parse type specifier.
+     * onlyBuildIn can be used to accept as types only tokens in TYPE_SPECIFIER_NONARRAY_TOKENS.
+     * This can be used in for example parsing constructors.
+     *
+     * @param onlyBuiltIn if true, only build-in type specifiers are considered valid
+     */
+    private boolean parseTypeSpecifier(boolean onlyBuiltIn) {
         // type_specifier_noarray
         // type_specifier_noarray "[" const_expr "]"
 
         final PsiBuilder.Marker mark = mark();
 
-        if (!parseTypeSpecifierNoArray()) {
+        if (!parseTypeSpecifierNoArray(onlyBuiltIn)) {
             mark.drop();
             return false;
         }
@@ -1285,6 +1299,10 @@ public final class GLSLParsing extends GLSLParsingBase {
     }
 
     private boolean parseTypeSpecifierNoArray() {
+        return parseTypeSpecifierNoArray(false);
+    }
+
+    private boolean parseTypeSpecifierNoArray(boolean onlyBuiltIn) {
         // type_specifier_noarray: all_built_in_types
         //                       | struct_specifier
         //                       | type_name
@@ -1293,13 +1311,13 @@ public final class GLSLParsing extends GLSLParsingBase {
 
         final PsiBuilder.Marker mark = mark();
 
-        if (tokenType() == STRUCT) {
+        if (!onlyBuiltIn && tokenType() == STRUCT) {
             parseStructSpecifier();
             mark.done(TYPE_SPECIFIER_STRUCT);
         } else if (TYPE_SPECIFIER_NONARRAY_TOKENS.contains(tokenType())) {
             advanceLexer();
             mark.done(TYPE_SPECIFIER_PRIMITIVE);
-        } else if (tokenType() == IDENTIFIER) {
+        } else if (!onlyBuiltIn && tokenType() == IDENTIFIER) {
             parseIdentifier();
             mark.done(TYPE_SPECIFIER_STRUCT_REFERENCE);
         } else {
