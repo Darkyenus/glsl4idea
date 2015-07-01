@@ -6,12 +6,14 @@ import glslplugin.lang.elements.declarations.GLSLInitializerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * Checks for empty initializer lists.
+ *
  * Created by abigail on 28/06/15.
  */
 public class InitializerListEmptyAnnotation extends Annotator<GLSLInitializerList> {
     @Override
     public void annotate(GLSLInitializerList expr, AnnotationHolder holder) {
-        if (expr.getInitializers().size() == 0) {
+        if (expr.getInitializers().length == 0) {
             holder.createErrorAnnotation(expr, "Empty initializer lists are not allowed");
         }
     }

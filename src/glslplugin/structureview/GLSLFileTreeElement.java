@@ -55,6 +55,7 @@ class GLSLFileTreeElement extends GLSLStructureViewTreeElement<PsiFile> {
             for (PsiElement baseNode : baseNodes) {
                 if (baseNode instanceof GLSLVariableDeclaration) {
                     final GLSLVariableDeclaration declaration = (GLSLVariableDeclaration) baseNode;
+                    //TODO Check if this accounts for shortcomings of getTypeSpecifierNode() (probably not)
                     final GLSLTypeSpecifier typeSpecifier = declaration.getTypeSpecifierNode();
 
                     if(typeSpecifier != null){

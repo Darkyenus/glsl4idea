@@ -24,6 +24,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.expressions.GLSLLiteral;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -846,37 +847,32 @@ public final class GLSLParsing extends GLSLParsingBase {
         mark.done(DECLARATOR);
     }
 
-    private void parseArrayDeclarator() {//TODO Support multi-dimensional arrays (since 4.3)
-        final PsiBuilder.Marker mark = mark();
+    private void parseArrayDeclarator() {
+        do{
+            final PsiBuilder.Marker mark = mark();
 
-        match(LEFT_BRACKET, "Expected '['.");
-        if (tokenType() != RIGHT_BRACKET) {
-            parseConstantExpression();
-        }
-        match(RIGHT_BRACKET, "Missing closing ']' after array declarator.");
-
-        mark.done(ARRAY_DECLARATOR);
-
-        if (tokenType() == LEFT_BRACKET) {
-            PsiBuilder.Marker err = mark();
-            while (tryMatch(LEFT_BRACKET)) {
+            match(LEFT_BRACKET, "Expected '['.");
+            if (tokenType() != RIGHT_BRACKET) {
                 parseConstantExpression();
-                match(RIGHT_BRACKET, "Missing closing ']' after array declarator.");
             }
-            err.error("Multi-dimensional arrays are not allowed.");
-        }
+            match(RIGHT_BRACKET, "Missing closing ']' after array declarator.");
+
+            mark.done(ARRAY_DECLARATOR);
+        }while(tokenType() == LEFT_BRACKET); //Parse all ARRAY_DECLARATOR's if multidimensional array
     }
 
     private boolean parseInitializer() {
-        PsiBuilder.Marker mark = mark();
         // initializer: assignment_expression
         if (tokenType() == LEFT_BRACE) {
             parseInitializerList();
-        } else if (!parseAssignmentExpression()) {
-            mark.error("Expected initializer");
-            return false;
+        } else {
+            PsiBuilder.Marker mark = mark();
+            if (!parseAssignmentExpression()) {
+                mark.error("Expected initializer");
+                return false;
+            }
+            mark.done(INITIALIZER);
         }
-        mark.done(INITIALIZER);
         return true;
     }
 
@@ -1056,7 +1052,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         //                   | postfix_expression '.' function_call
         PsiBuilder.Marker mark = mark();
         boolean result;
-        if (lookupFunctionCall()) {
+        if (lookAheadFunctionCall()) {
             result = parseFunctionCall();
         } else {
             result = parsePrimaryExpression();
@@ -1071,7 +1067,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                 match(RIGHT_BRACKET, "Missing ']' after subscript.");
                 mark.done(SUBSCRIPT_EXPRESSION);
             } else if (tryMatch(DOT)) {
-                if (lookaheadMethodCall()) {
+                if (lookAheadFunctionCall()) {
                     parseFunctionCallImpl(true);
                     mark.done(METHOD_CALL_EXPRESSION);
                 } else {
@@ -1091,12 +1087,11 @@ public final class GLSLParsing extends GLSLParsingBase {
     }
 
     /**
-     * Figures out whether the next sequence of operatorTokens are a method call or a field selection.
-     * The preceding '.' token is consumed before this is called.
+     * Figures out whether the next sequence of tokens denotes a function call and not a field selection.
      *
-     * @return true if the sequence contains a method call, false otherwise.
+     * @return true if the immediately approaching tokens contain a function call, false otherwise
      */
-    private boolean lookaheadMethodCall() {
+    private boolean lookAheadFunctionCall() {
         PsiBuilder.Marker mark = mark();
         boolean result = false;
 
@@ -1112,67 +1107,63 @@ public final class GLSLParsing extends GLSLParsingBase {
         return result;
     }
 
-    /**
-     * Looks ahead to determine whether the start of a postfix_expression is
-     * a function call or a primary expression.
-     *
-     * @return true if it is a function or method call, false otherwise.
-     */
-    private boolean lookupFunctionCall() {
-        // For some reason the grammar includes method calls?
-        // They should probably be reserved, but they're included since
-        // they're in the spec.
-        // It turns out that arrays support the length() method.
-        PsiBuilder.Marker rollback = mark();
-        boolean result = false;
-
-        if (tryMatch(TYPE_SPECIFIER_NONARRAY_TOKENS)) {
-            result = true;
-        } else if (tryMatch(IDENTIFIER)) {
-            if (tryMatch(LEFT_PAREN)) {
-                result = true;
-            }
-        }
-        rollback.rollbackTo();
-        return result;
-    }
-
     private boolean parseFunctionCall() {
         PsiBuilder.Marker mark = mark();
 
-        parseFunctionCallImpl(false);
+        FunctionCallLike kind = parseFunctionCallImpl(false);
 
-        mark.done(FUNCTION_CALL_EXPRESSION);
+        if(kind == FunctionCallLike.CONSTRUCTOR){
+            mark.done(CONSTRUCTOR_EXPRESSION);
+        }else{
+            mark.done(FUNCTION_CALL_EXPRESSION);
+        }
         return true;
     }
 
-    private void parseFunctionCallImpl(boolean markIdentifierAsMethodIdentifier) {
+    private enum FunctionCallLike {
+        FUNCTION, CONSTRUCTOR, INVALID
+    }
+
+    @NotNull
+    private FunctionCallLike parseFunctionCallImpl(boolean markIdentifierAsMethodIdentifier) {
         // parse_function_call : parse_function_call_or_method
         // parse_function_call_or_method: function_call_generic
         //                              | postfix_expression '.' function_call_generic
         // NOTE: implementing function_call_or_method_directly
         // AND:  postfix_expression '.' function_call_generic is moved to parsePostfixExpression
 
-        parseFunctionIdentifier(markIdentifierAsMethodIdentifier);
+        FunctionCallLike result = parseFunctionIdentifier(markIdentifierAsMethodIdentifier);
         match(LEFT_PAREN, "Missing '('.");
         parseParameterList();
         match(RIGHT_PAREN, "Missing ')'.");
+        return result;
     }
 
-    private String parseFunctionIdentifier(boolean markAsMethodIdentifier) {
-        // function_identifier: IDENTIFIER
-        //                    | type_name [ array_declarator ] 
-        PsiBuilder.Marker mark = mark();
-        String name = getTokenText();
-        if (tryMatch(FUNCTION_IDENTIFIER_TOKENS)) {
-            if (tokenType() == LEFT_BRACKET) {
-                parseArrayDeclarator();
+    @NotNull
+    private FunctionCallLike parseFunctionIdentifier(boolean markAsMethodIdentifier) {
+        // function_identifier: IDENTIFIER                          //function/method call
+        //                    | type_name [ array_declarator ]      //constructor
+
+        if(!markAsMethodIdentifier){
+            PsiBuilder.Marker constructorMark = mark();
+            if(parseTypeSpecifier()){
+                //Success, it is a constructor!
+                constructorMark.drop();
+                return FunctionCallLike.CONSTRUCTOR;
+            }else{
+                constructorMark.rollbackTo();
             }
+        }
+
+        PsiBuilder.Marker mark = mark();
+        if(tryMatch(IDENTIFIER)){
+            //Function/method call
             mark.done(markAsMethodIdentifier ? METHOD_NAME : FUNCTION_NAME);
-            return name;
-        } else {
-            mark.error("Expected function identifier.");
-            return null;
+            return FunctionCallLike.FUNCTION;
+        }else{
+            if(markAsMethodIdentifier) mark.error("Expected method identifier.");
+            else mark.error("Expected function identifier.");
+            return FunctionCallLike.INVALID;
         }
     }
 

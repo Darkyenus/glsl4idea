@@ -19,34 +19,12 @@
 
 package glslplugin.lang.elements.declarations;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import glslplugin.lang.elements.expressions.GLSLExpression;
-import org.jetbrains.annotations.Nullable;
+import glslplugin.lang.elements.GLSLElement;
 
 /**
- * GLSLInitializer is ...
+ * Common interface for both GLSLInitializerExpression and GLSLInitializerList
  *
- * @author Yngve Devik Hammersland
- *         Date: Jan 29, 2009
- *         Time: 2:09:11 PM
+ * @author Jan Polák
  */
-public class GLSLInitializer extends GLSLExpression {
-    public GLSLInitializer(@NotNull ASTNode astNode) {
-        super(astNode);
-    }
-
-    @Nullable
-    public GLSLExpression getInitializerExpression() {
-        PsiElement result = getFirstChild();
-        if(result instanceof GLSLExpression){
-            return (GLSLExpression)result;
-        }else return null;
-    }
-
-    @Override
-    public String toString() {
-        return "Initializer";
-    }
+public interface GLSLInitializer extends GLSLElement {
 }

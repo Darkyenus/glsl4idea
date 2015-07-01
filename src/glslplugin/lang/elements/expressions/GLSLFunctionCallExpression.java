@@ -61,10 +61,10 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
     public String getFunctionName() {
         GLSLIdentifier identifier = getFunctionNameIdentifier();
         if(identifier != null){
-            return identifier.getName();
-        }else{
-            return "(unknown)";
+            String name = identifier.getName();
+            if(name != null)return name;
         }
+        return "(unknown)";
     }
 
     @Nullable
@@ -194,8 +194,6 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
 
         return compatibleDeclarations.toArray(new GLSLFunctionType[compatibleDeclarations.size()]);
     }
-
-    //todo: need an isConstructor method
 
     @Override
     public String toString() {

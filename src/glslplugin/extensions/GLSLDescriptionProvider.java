@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
+ *
  * Created by abigail on 28/06/15.
  */
 public class GLSLDescriptionProvider implements ElementDescriptionProvider {

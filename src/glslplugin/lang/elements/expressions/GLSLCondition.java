@@ -23,7 +23,6 @@ import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
-import glslplugin.lang.elements.declarations.GLSLTypeSpecifier;
 import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
@@ -55,8 +54,11 @@ public class GLSLCondition extends GLSLElementImpl implements GLSLTypedElement {
         return findChildByClass(GLSLExpression.class);
     }
 
+    /**
+     * For and while statements can declare a single variable.
+     */
     @Nullable
-    public GLSLVariableDeclaration getVariableDeclaration() {
+    private GLSLVariableDeclaration getVariableDeclaration() {
         return findChildByClass(GLSLVariableDeclaration.class);
     }
 
@@ -65,9 +67,13 @@ public class GLSLCondition extends GLSLElementImpl implements GLSLTypedElement {
     public GLSLType getType() {
         GLSLVariableDeclaration declaration = getVariableDeclaration();
         if(declaration != null) {
-            GLSLTypeSpecifier typeSpecifier = declaration.getTypeSpecifierNode();
-            if(typeSpecifier != null) return typeSpecifier.getType();
-            else return GLSLTypes.UNKNOWN_TYPE;
+            GLSLDeclarator[] declarators = declaration.getDeclarators();
+            if(declarators.length == 0){
+                return GLSLTypes.UNKNOWN_TYPE;
+            }else{
+                //There should be only one declarator, but if there is more, use the type of the last one
+                return declarators[declarators.length - 1].getType();
+            }
         }
 
         GLSLExpression conditionExpression = getConditionExpression();

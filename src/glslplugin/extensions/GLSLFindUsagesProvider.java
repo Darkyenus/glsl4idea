@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
+ *
  * Created by abigail on 26/06/15.
  */
 public class GLSLFindUsagesProvider implements FindUsagesProvider {
@@ -27,19 +28,19 @@ public class GLSLFindUsagesProvider implements FindUsagesProvider {
     }
 
     @Override
-    public boolean canFindUsagesFor(PsiElement psiElement) {
+    public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
         return psiElement instanceof PsiNamedElement;
     }
 
     @Nullable
     @Override
-    public String getHelpId(PsiElement psiElement) {
+    public String getHelpId(@NotNull PsiElement psiElement) {
         return null;
     }
 
     @NotNull
     @Override
-    public String getType(PsiElement element) {
+    public String getType(@NotNull PsiElement element) {
         return "GLSL Usage";
     }
 

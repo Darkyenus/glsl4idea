@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
  *         Time: 12:46:15 PM
  */
 public abstract class GLSLSingleDeclarationImpl extends GLSLDeclarationImpl implements GLSLSingleDeclaration {
+
     public GLSLSingleDeclarationImpl(@NotNull ASTNode astNode) {
         super(astNode);
     }
@@ -38,11 +39,13 @@ public abstract class GLSLSingleDeclarationImpl extends GLSLDeclarationImpl impl
     @NotNull
     public String getDeclaredName() {
         final GLSLDeclarator declarator = getDeclarator();
-        if(declarator == null){
-            return "(unknown)";
-        }else{
-            return declarator.getName();
+        if(declarator != null){
+            String name = declarator.getName();
+            if(name != null){
+                return name;
+            }
         }
+        return "(unknown)";
     }
 
     /**

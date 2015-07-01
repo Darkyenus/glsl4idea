@@ -35,7 +35,7 @@ public class CheckReturnTypeAnnotation extends Annotator<GLSLStatement> {
             GLSLFunctionDefinition function = expr.findParentByClass(GLSLFunctionDefinition.class);
 
             if (function != null) {
-                GLSLType functionType = function.getTypeSpecifierNode().getType();
+                GLSLType functionType = function.getType().getReturnType();
                 GLSLType returnType = ((GLSLReturnStatement) expr).getReturnType();
 
                 if (returnType.isValidType() && !returnType.isConvertibleTo(functionType)) {

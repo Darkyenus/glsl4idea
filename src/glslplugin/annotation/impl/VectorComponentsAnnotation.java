@@ -50,7 +50,7 @@ public class VectorComponentsAnnotation extends Annotator<GLSLFieldSelectionExpr
             if(memberIdentifier == null)return;
             String member = memberIdentifier.getName();
 
-            if (!type.hasMember(member) && member.length() > 0) {
+            if (member != null && !type.hasMember(member) && member.length() > 0) {
                 //It has no member like that, why?
                 TextRange mitr = memberIdentifier.getTextRange();
 

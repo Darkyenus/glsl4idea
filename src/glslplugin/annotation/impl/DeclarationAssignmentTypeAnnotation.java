@@ -22,7 +22,6 @@ package glslplugin.annotation.impl;
 import com.intellij.lang.annotation.AnnotationHolder;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
-import glslplugin.lang.elements.declarations.GLSLTypeSpecifier;
 import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.types.GLSLType;
@@ -42,14 +41,11 @@ public class DeclarationAssignmentTypeAnnotation extends Annotator<GLSLVariableD
 
     @Override
     public void annotate(GLSLVariableDeclaration expr, AnnotationHolder holder) {
-        GLSLTypeSpecifier typeSpecifier = expr.getTypeSpecifierNode();
-        if(typeSpecifier == null)return;//There are bigger problems than type compatibility
-
-        final GLSLType variableType = typeSpecifier.getType();
-        if(!variableType.isValidType())return;
         for(final GLSLDeclarator declarator:expr.getDeclarators()){
+            final GLSLType variableType = declarator.getType();
             final GLSLExpression initializer = declarator.getInitializerExpression();
-            if(initializer != null){
+
+            if(variableType.isValidType() && initializer != null){
                 final GLSLType assignedType = initializer.getType();
                 if(!assignedType.isValidType())continue;
                 if(GLSLTypeCompatibilityLevel.getCompatibilityLevel(assignedType, variableType) == GLSLTypeCompatibilityLevel.INCOMPATIBLE){

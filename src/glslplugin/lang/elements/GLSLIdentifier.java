@@ -48,7 +48,7 @@ public class GLSLIdentifier extends GLSLElementImpl implements PsiCheckedRenameE
     @Override
     public void checkSetName(String name) throws IncorrectOperationException {
         final PsiElement oldName = getNameIdentifier();
-        if (oldName == null) throw new IncorrectOperationException("Unnamed identifier! (This probably shouldn't happen.)");
+        if (oldName == null) throw new IncorrectOperationException("Unnamed identifier!");// This probably shouldn't happen.
         PsiElement newName = GLSLPsiElementFactory.createLeafElement(getProject(), name);
         if (newName.getNode().getElementType() != GLSLTokenTypes.IDENTIFIER)
             throw new IncorrectOperationException("Invalid identifier name!");

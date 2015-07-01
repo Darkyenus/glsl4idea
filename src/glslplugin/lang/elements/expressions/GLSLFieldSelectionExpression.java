@@ -71,6 +71,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
                 GLSLIdentifier memberIdentifier = getMemberIdentifier();
                 if(memberIdentifier == null)return true; //This should not happen
                 String components = memberIdentifier.getName();
+                if(components == null)return true; // This absolutely shouldn't happen
                 for (int i = 0; i < components.length(); i++) {
                     char c = components.charAt(i);
                     for (int j = i+1; j < components.length(); j++) {
