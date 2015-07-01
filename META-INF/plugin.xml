@@ -115,6 +115,11 @@
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt T"
                                second-keystroke="shift ctrl alt D"/>
         </action>
+
+        <action id="GLSL_NEW_SHADER_FILE" class="glslplugin.actions.GLSLCreateNewShaderFile"
+                text="GLSL Shader" description="Create new GLSL shader file">
+            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

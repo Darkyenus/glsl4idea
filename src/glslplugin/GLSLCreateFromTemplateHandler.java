@@ -8,7 +8,6 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.codeStyle.CodeStyleManager;
@@ -17,11 +16,8 @@ import glslplugin.lang.GLSLFileType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Handles creating new shader file templates.
@@ -32,47 +28,30 @@ import java.util.logging.Logger;
  */
 public class GLSLCreateFromTemplateHandler extends DefaultCreateFromTemplateHandler {
 
-    protected static FileTemplateManager getDefaultFileTemplateManager() {
-        try {
-            return FileTemplateManager.getDefaultInstance();
-        } catch (NoSuchMethodError err) {
-            // This is for compatibility with IDEA 13, which does not have getDefaultInstance().
-            // While getInstance() still exists in IDEA 14, it will be probably removed soon,
-            // so the reflection dance would be needed sooner or later anyway
-            try {
-                Method getInstanceMethod = FileTemplateManager.class.getDeclaredMethod("getInstance");
-                Object result = getInstanceMethod.invoke(null);
-                if (result instanceof FileTemplateManager) {
-                    Logger.getLogger("GLSLCreateFromTemplateHandler").info("Successfully used reflection to obtain FileTemplateManager");
-                    return (FileTemplateManager) result;
-                }
-            } catch (NoSuchMethodException ignored) {
-            } catch (InvocationTargetException ignored) {
-            } catch (IllegalAccessException ignored) {
-            }
-            Logger.getLogger("GLSLCreateFromTemplateHandler").warning("Failed to obtain FileTemplateManager");
-            return null;
-        }
-    }
-
     public static final String DEFAULT_EXTENSION = "glsl";
-    public static final Map<String, FileTemplate> TEMPLATES = new HashMap<String, FileTemplate>();
 
-    private static void loadTemplates(FileTemplate[] templates){
+    private static void addTemplates(Map<String, FileTemplate> result, FileTemplate[] templates){
         for(FileTemplate template:templates){
             if(template.isTemplateOfType(GLSLSupportLoader.GLSL) && GLSLFileType.EXTENSIONS.contains(template.getExtension())){
-                System.out.println("Adding ."+template.getExtension()+":\n"+template.getText()+"\n\n");
-                TEMPLATES.put(template.getExtension(), template);
+                FileTemplate existing = result.get(template.getExtension());
+                if(existing == null || existing.isDefault()){
+                    //Do not replace non-default templates with default ones
+                    result.put(template.getExtension(), template);
+                }
             }
         }
     }
 
-    static {
-        FileTemplateManager manager = getDefaultFileTemplateManager();
-        if(manager != null){
-            loadTemplates(manager.getAllTemplates());
-            loadTemplates(manager.getInternalTemplates());
-        }
+    /**
+     * Return map of extensions and their preferred template.
+     * This map is obtained from taking all internal templates and overriding them with existing custom templates.
+     */
+    private static Map<String, FileTemplate> getTemplates(Project project){
+        final Map<String, FileTemplate> result = new HashMap<String, FileTemplate>();
+        FileTemplateManager manager = FileTemplateManager.getInstance(project);
+        addTemplates(result,manager.getInternalTemplates());
+        addTemplates(result,manager.getAllTemplates());
+        return result;
     }
 
     @Override
@@ -83,9 +62,10 @@ public class GLSLCreateFromTemplateHandler extends DefaultCreateFromTemplateHand
     //Copied and modified from parent class
     @NotNull
     @Override
-    public PsiElement createFromTemplate(final Project project, final PsiDirectory directory, String fileName, FileTemplate template,
+    public PsiFile createFromTemplate(final Project project, final PsiDirectory directory, String fileName, FileTemplate template,
                                          String templateText,
                                          @NotNull final Map<String, Object> props) throws IncorrectOperationException {
+        Map<String, FileTemplate> templates = getTemplates(project);
         //Make sure it has some extension
         int extensionDot = fileName.lastIndexOf('.');
         String extension;
@@ -100,7 +80,7 @@ public class GLSLCreateFromTemplateHandler extends DefaultCreateFromTemplateHand
                 fileName = fileName + extension;
             } else {
                 //Do template replacement
-                FileTemplate alternateTemplate = TEMPLATES.get(extension.toLowerCase());
+                FileTemplate alternateTemplate = templates.get(extension.toLowerCase());
                 if(alternateTemplate != null){
                     //There is a template defined for this
                     try {
@@ -112,7 +92,7 @@ public class GLSLCreateFromTemplateHandler extends DefaultCreateFromTemplateHand
             }
         }
         //Make sure that the extension is valid
-        if(!TEMPLATES.containsKey(extension.toLowerCase())){
+        if(!templates.containsKey(extension.toLowerCase())){
             //Extension is not recognized, add recognized default one
             fileName = fileName + "." + DEFAULT_EXTENSION;
         }
