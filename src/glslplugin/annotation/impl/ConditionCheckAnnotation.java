@@ -24,6 +24,7 @@ import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.expressions.GLSLCondition;
 import glslplugin.lang.elements.statements.ConditionStatement;
 import glslplugin.lang.elements.statements.GLSLStatement;
+import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +35,9 @@ public class ConditionCheckAnnotation extends Annotator<GLSLStatement> {
             GLSLCondition condition = conditionStatement.getCondition();
 
             if (condition != null) {
-                if(condition.getType() != GLSLTypes.BOOL){
+                GLSLType conditionExpressionType = condition.getType();
+                if(!conditionExpressionType.isValidType())return;
+                if(conditionExpressionType != GLSLTypes.BOOL){
                     holder.createErrorAnnotation(condition, "Condition must be a boolean expression.");
                 }
             }
