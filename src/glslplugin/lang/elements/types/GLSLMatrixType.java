@@ -57,9 +57,9 @@ public class GLSLMatrixType extends GLSLType {
         final int len = MAX_MATRIX_DIM - MIN_MATRIX_DIM + 1;
         for(BaseType type:BaseType.values()){
             GLSLMatrixType[][] dimensions = new GLSLMatrixType[len][len];
-            for (int x = 0; x < len; x++) {
-                for (int y = 0; y < len; y++) {
-                    dimensions[x][y] = new GLSLMatrixType(type, x,y);
+            for (int column = 0; column < len; column++) {
+                for (int row = 0; row < len; row++) {
+                    dimensions[column][row] = new GLSLMatrixType(type, MIN_MATRIX_DIM + column, MIN_MATRIX_DIM + row);
                 }
             }
             MATRIX_TYPES.put(type.type, dimensions);
