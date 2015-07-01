@@ -36,7 +36,7 @@ public class GLSLOpaqueType  extends GLSLType {
     }
 
     public boolean isConvertibleTo(GLSLType otherType) {
-        return false;
+        return typeEquals(otherType);
     }
 
     @Override
