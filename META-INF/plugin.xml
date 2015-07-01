@@ -143,14 +143,9 @@
         <lang.findUsagesProvider language="GLSL" implementationClass="glslplugin.extensions.GLSLFindUsagesProvider" />
         <elementDescriptionProvider implementation="glslplugin.extensions.GLSLDescriptionProvider" />
 
-        <createFromTemplateHandler implementation="glslplugin.components.GLSLCreateFromTemplateHandler"/>
+        <createFromTemplateHandler implementation="glslplugin.GLSLCreateFromTemplateHandler"/>
+        <internalFileTemplate name="GLSL Shader"/>
+        <internalFileTemplate name="GLSL Fragment Shader"/>
+        <internalFileTemplate name="GLSL Vertex Shader"/>
     </extensions>
-
-    <application-components>
-        <!--todo:Loading the templates component causes a memory leak?-->
-        <component>
-            <implementation-class>glslplugin.components.GLSLTemplatesLoader</implementation-class>
-        </component>
-    </application-components>
-
 </idea-plugin>

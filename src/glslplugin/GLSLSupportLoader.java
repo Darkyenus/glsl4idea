@@ -19,11 +19,11 @@
 
 package glslplugin;
 
-import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.fileTypes.FileTypeFactory;
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.fileTypes.FileTypeFactory;
+import com.intellij.openapi.fileTypes.LanguageFileType;
 import glslplugin.lang.GLSLFileType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Initiates GLSL support
