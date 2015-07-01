@@ -32,9 +32,18 @@
 
         <p>1.9</p>
         <ul>
+            <li>Vastly improved under-the-hood handling of types, operators and arrays</li>
+            <li>Added basic renaming and find-usages support (WIP feature)</li>
+            <li>Parse initializer lists correctly</li>
+            <li>Allow the use of multi-dimensional arrays</li>
+            <li>Added retina icons</li>
+            <li>Changed highlighting of unreachable code</li>
+            <li>Warn on use of reserved identifiers</li>
+            <li>Repeated swizzles are no longer L values</li>
             <li>Add type checking for conditional expressions</li>
             <li>Fix issues with return types</li>
             <li>Improve unreachable statement marking</li>
+            <li>Many small fixes and improvements</li>
         </ul>
 
         <p>1.8</p>
