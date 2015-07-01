@@ -60,7 +60,6 @@ public class GLSLAnnotator implements com.intellij.lang.annotation.Annotator {
         add(new MissingReturnAnnotation());
         add(new DeclarationAssignmentTypeAnnotation());
         add(new PrecisionStatementAnnotation());
-        add(new RedefinedTokenAnnotation());
         add(new ReservedKeywordAnnotation());
         add(new ReservedIdentifierAnnotation());
         add(new InitializerListEmptyAnnotation());
