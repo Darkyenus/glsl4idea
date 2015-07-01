@@ -34,8 +34,8 @@ public class GLSLCreateFromTemplateHandler extends DefaultCreateFromTemplateHand
         for(FileTemplate template:templates){
             if(template.isTemplateOfType(GLSLSupportLoader.GLSL) && GLSLFileType.EXTENSIONS.contains(template.getExtension())){
                 FileTemplate existing = result.get(template.getExtension());
-                if(existing == null || existing.isDefault()){
-                    //Do not replace non-default templates with default ones
+                if(existing == null){
+                    //Do not replace existing templates to keep well defined priority order
                     result.put(template.getExtension(), template);
                 }
             }
