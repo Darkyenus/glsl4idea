@@ -30,7 +30,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import static glslplugin.components.GLSLCreateFromTemplateHandler.*;
+import static glslplugin.components.GLSLCreateFromTemplateHandler.DEFAULT_EXTENSION;
+import static glslplugin.components.GLSLCreateFromTemplateHandler.TEMPLATES;
 
 public class GLSLTemplatesLoader implements ApplicationComponent {
 
