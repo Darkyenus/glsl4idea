@@ -25,11 +25,12 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * NewArrayTypeImpl is ...
+ * GLSLArrayType defines the type of one or multidimensional array.
  *
  * @author Yngve Devik Hammersland
  *         Date: Feb 6, 2009
  *         Time: 11:57:22 PM
+ * @author Jan Polák
  */
 public class GLSLArrayType extends GLSLType {
 
@@ -54,6 +55,18 @@ public class GLSLArrayType extends GLSLType {
     @Override
     @NotNull
     public GLSLType getIndexType() {
+        if(dimensions.length == 1){
+            return baseType;
+        }else{
+            int[] indexTypeDimensions = new int[dimensions.length - 1];
+            System.arraycopy(dimensions, 1, indexTypeDimensions, 0, indexTypeDimensions.length);
+            return new GLSLArrayType(baseType, indexTypeDimensions);
+        }
+    }
+
+    @NotNull
+    @Override
+    public GLSLType getBaseType() {
         return baseType;
     }
 
