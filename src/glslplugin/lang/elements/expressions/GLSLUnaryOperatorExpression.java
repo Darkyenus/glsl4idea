@@ -59,6 +59,26 @@ public class GLSLUnaryOperatorExpression extends GLSLOperatorExpression {
         return op;
     }
 
+    @Override
+    public boolean isConstantValue() {
+        return getConstantValue() != null;
+    }
+
+    @Nullable
+    @Override
+    public Object getConstantValue() {
+        GLSLExpression operand = getOperand();
+        if(operand == null || !operand.isConstantValue())return null;
+        GLSLOperator operator = getOperator();
+        if(operator == null || !(operator instanceof GLSLOperator.GLSLUnaryOperator))return null;
+        GLSLOperator.GLSLUnaryOperator unaryOperator = (GLSLOperator.GLSLUnaryOperator) operator;
+        GLSLType operandType = operand.getType();
+        if(!operandType.isValidType())return null;
+        if(!unaryOperator.isValidInput(operandType))return null;
+
+        return unaryOperator.getResultValue(operand.getConstantValue(), prefix);
+    }
+
     @NotNull
     @Override
     public GLSLType getType() {

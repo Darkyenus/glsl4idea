@@ -50,7 +50,14 @@ public class GLSLArraySpecifier extends GLSLElementImpl {
     public int getDimensionSize(){
         GLSLExpression sizeExpression = getSizeExpression();
         if(sizeExpression != null){
-            //Since no constant expression analysis yet done, must assume dynamic size
+            //Check if it is a constant value
+            if(sizeExpression.isConstantValue()){
+                Object constantValue = sizeExpression.getConstantValue();
+                if(constantValue instanceof Long){
+                    return ((Long)constantValue).intValue();
+                }
+            }
+            //It is not a constant value, assume it is dynamic
             return GLSLArrayType.DYNAMIC_SIZE_DIMENSION;
         }else{
             return GLSLArrayType.UNDEFINED_SIZE_DIMENSION;

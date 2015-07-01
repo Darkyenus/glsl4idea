@@ -96,7 +96,7 @@ public class GLSLTypes {
     // Specials
     public static final GLSLOpaqueType VOID = GLSLOpaqueType.VOID;
 
-    public static final GLSLType UNKNOWN_TYPE = new GLSLType() {
+    public static final GLSLType UNKNOWN_TYPE = new GLSLType(null) {
         @NotNull
         public String getTypename() {
             return "(unknown type)";
@@ -133,7 +133,7 @@ public class GLSLTypes {
     public static GLSLType getUndefinedType(final String text) {
         if (!undefinedTypes.containsKey(text)) {
             undefinedTypes.put(text,
-                    new GLSLType() {
+                    new GLSLType(null) {
                         private final String name = text;
 
                         @NotNull

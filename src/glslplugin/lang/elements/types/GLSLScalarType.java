@@ -33,11 +33,11 @@ import java.util.Collection;
 public class GLSLScalarType extends GLSLType {
 
     //region Static
-    public static final GLSLScalarType BOOL = new GLSLScalarType("bool");
-    public static final GLSLScalarType DOUBLE = new GLSLScalarType("double");
-    public static final GLSLScalarType FLOAT = new GLSLScalarType("float", DOUBLE);
-    public static final GLSLScalarType UINT = new GLSLScalarType("uint", FLOAT, DOUBLE);
-    public static final GLSLScalarType INT = new GLSLScalarType("int", UINT, FLOAT, DOUBLE);
+    public static final GLSLScalarType BOOL = new GLSLScalarType("bool", Boolean.class);
+    public static final GLSLScalarType DOUBLE = new GLSLScalarType("double", Double.class);
+    public static final GLSLScalarType FLOAT = new GLSLScalarType("float", Double.class, DOUBLE);
+    public static final GLSLScalarType UINT = new GLSLScalarType("uint", Long.class, FLOAT, DOUBLE);
+    public static final GLSLScalarType INT = new GLSLScalarType("int", Long.class, UINT, FLOAT, DOUBLE);
 
     public static boolean isIntegerScalar(GLSLType type){
         return type == INT || type == UINT;
@@ -47,7 +47,8 @@ public class GLSLScalarType extends GLSLType {
     private final String typename;
     private final Collection<GLSLType> implicitConversions;
 
-    private GLSLScalarType(String typename, GLSLType... implicitlyConvertibleTo) {
+    private GLSLScalarType(String typename, Class<?> javaType, GLSLType... implicitlyConvertibleTo) {
+        super(javaType);
         this.typename = typename;
         this.implicitConversions = Arrays.asList(implicitlyConvertibleTo);
     }

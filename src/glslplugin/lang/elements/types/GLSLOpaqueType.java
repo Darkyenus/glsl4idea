@@ -23,6 +23,7 @@ public class GLSLOpaqueType  extends GLSLType {
     private final String typename;
 
     private GLSLOpaqueType(String typename) {
+        super(null);
         this.typename = typename;
     }
 
