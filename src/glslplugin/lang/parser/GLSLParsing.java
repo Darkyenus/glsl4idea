@@ -1405,9 +1405,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         parseIdentifier();
 
         if (tokenType() == LEFT_BRACKET) {
-            advanceLexer();
-            parseConstantExpression();
-            match(RIGHT_BRACKET, "Expected ']' after constant expression.");
+            parseArrayDeclarator();
         }
 
         PsiBuilder.Marker declaratorEnd = mark();
