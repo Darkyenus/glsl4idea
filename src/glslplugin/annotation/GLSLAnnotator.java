@@ -63,6 +63,7 @@ public class GLSLAnnotator implements com.intellij.lang.annotation.Annotator {
         add(new ReservedKeywordAnnotation());
         add(new ReservedIdentifierAnnotation());
         add(new InitializerListEmptyAnnotation());
+        add(new RedefinedTokenAnnotation());
     }
 
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {

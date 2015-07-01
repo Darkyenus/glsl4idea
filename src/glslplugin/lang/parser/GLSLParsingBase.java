@@ -22,13 +22,13 @@ package glslplugin.lang.parser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import glslplugin.lang.elements.GLSLTokenTypes;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static glslplugin.lang.elements.GLSLTokenTypes.PREPROCESSOR_BEGIN;
+import static glslplugin.lang.elements.GLSLElementTypes.*;
+import static glslplugin.lang.elements.GLSLTokenTypes.*;
 
 /**
  * Base of GLSLParsing to clearly divide helper and parsing methods.
@@ -68,7 +68,7 @@ abstract class GLSLParsingBase {
             if (definitions.get(getTokenText()) != null) {
                 Marker macro = mark();
                 remapCurrentToken(definitions.get(getTokenText()));
-                macro.done(GLSLTokenTypes.IDENTIFIER);
+                macro.done(REDEFINED_TOKEN);
             }
         }
     }
