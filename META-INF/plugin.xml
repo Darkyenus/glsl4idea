@@ -142,6 +142,8 @@
         <lang.refactoringSupport language="GLSL" implementationClass="glslplugin.extensions.GLSLRefactoringSupportProvider" />
         <lang.findUsagesProvider language="GLSL" implementationClass="glslplugin.extensions.GLSLFindUsagesProvider" />
         <elementDescriptionProvider implementation="glslplugin.extensions.GLSLDescriptionProvider" />
+
+        <createFromTemplateHandler implementation="glslplugin.components.GLSLCreateFromTemplateHandler"/>
     </extensions>
 
     <application-components>

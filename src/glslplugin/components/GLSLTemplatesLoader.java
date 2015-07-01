@@ -26,10 +26,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
+import static glslplugin.components.GLSLCreateFromTemplateHandler.*;
+
 public class GLSLTemplatesLoader implements ApplicationComponent {
-    private final static String TEMPLATE_TEXT = "#version 120\n\nvoid main() {\n\n}";
+
+    public static final String TEMPLATE_NAME = "GLSL Shader";
+    /**
+     * Should usually contain only one (or none if not yet initialized) template.
+     * Theoretically, there might be more if the templates are loaded into more template managers.
+     */
+    public static final Set<FileTemplate> addedTemplates = new HashSet<FileTemplate>(1);
 
     public GLSLTemplatesLoader() {
     }
@@ -66,10 +76,12 @@ public class GLSLTemplatesLoader implements ApplicationComponent {
         FileTemplateManager fileTemplateManager = getDefaultFileTemplateManager();
         if(fileTemplateManager == null)return;
 
-        if (fileTemplateManager.getTemplate("GLSL Shader") == null) {
-            final FileTemplate template = fileTemplateManager.addTemplate("GLSL Shader", "glsl");
-
-            template.setText(TEMPLATE_TEXT);
+        FileTemplate existingTemplate = fileTemplateManager.getTemplate(TEMPLATE_NAME);
+        if(existingTemplate == null || !addedTemplates.contains(existingTemplate)){
+            //My template not yed added into this manager (probably)
+            final FileTemplate template = fileTemplateManager.addTemplate(TEMPLATE_NAME, DEFAULT_EXTENSION);
+            template.setText(TEMPLATES.get(DEFAULT_EXTENSION));
+            addedTemplates.add(template);
         }
     }
 
@@ -77,9 +89,11 @@ public class GLSLTemplatesLoader implements ApplicationComponent {
         FileTemplateManager fileTemplateManager = getDefaultFileTemplateManager();
         if(fileTemplateManager == null)return;
 
-        FileTemplate template = fileTemplateManager.getTemplate("GLSL Shader");
-        if (template != null) {
+        for(FileTemplate template:addedTemplates){
+            //It would be nice to remove the template from the set as well, but can't be sure if it was really removed
             fileTemplateManager.removeTemplate(template);
         }
+        //So just remove all templates to prevent memory leak
+        addedTemplates.clear();
     }
 }
