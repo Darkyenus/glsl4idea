@@ -19,6 +19,7 @@
 
 package glslplugin.lang;
 
+import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NonNls;
@@ -29,10 +30,22 @@ import javax.swing.*;
 
 import glslplugin.lang.GLSLLanguage;
 
+import java.util.Set;
+
 /**
  * Language file type
  */
 public class GLSLFileType extends LanguageFileType {
+
+    public static final Set<String> EXTENSIONS = ImmutableSet.of(
+            "glsl",
+            "frag",
+            "vert",
+            "tesc",
+            "tese",
+            "geom",
+            "comp"
+    );
 
     public GLSLFileType() {
         super(GLSLLanguage.GLSL_LANGUAGE);
