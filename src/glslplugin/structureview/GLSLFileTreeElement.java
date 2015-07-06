@@ -21,7 +21,6 @@ package glslplugin.structureview;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import glslplugin.lang.elements.GLSLTranslationUnit;
 import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.declarations.*;
 
@@ -45,48 +44,41 @@ class GLSLFileTreeElement extends GLSLStructureViewTreeElement<PsiFile> {
         List<GLSLVariableDeclaration> variableDeclarations = new ArrayList<GLSLVariableDeclaration>();
         List<GLSLFunctionDeclaration> functions = new ArrayList<GLSLFunctionDeclaration>();
 
-        PsiElement translationUnit = file.getFirstChild();
-        while (translationUnit != null && !(translationUnit instanceof GLSLTranslationUnit)) {
-            translationUnit = translationUnit.getNextSibling();
+        PsiElement[] baseNodes = file.getChildren();
+        for (PsiElement baseNode : baseNodes) {
+            if (baseNode instanceof GLSLVariableDeclaration) {
+                final GLSLVariableDeclaration declaration = (GLSLVariableDeclaration) baseNode;
+                //TODO Check if this accounts for shortcomings of getTypeSpecifierNode() (probably not)
+                final GLSLTypeSpecifier typeSpecifier = declaration.getTypeSpecifierNode();
+
+                if (typeSpecifier != null) {
+                    final GLSLTypedElement typedef = typeSpecifier.getTypeDefinition();
+                    if (typedef != null) {
+                        final GLSLTypeDefinition definition = (GLSLTypeDefinition) typedef;
+                        definitions.add(definition);
+                    }
+
+                    if (declaration.getDeclarators().length > 0) {
+                        variableDeclarations.add(declaration);
+                    }
+                }
+            } else if (baseNode instanceof GLSLFunctionDeclaration) {
+                functions.add((GLSLFunctionDeclaration) baseNode);
+            }
         }
 
-        if (translationUnit != null) {
-            PsiElement[] baseNodes = translationUnit.getChildren();
-            for (PsiElement baseNode : baseNodes) {
-                if (baseNode instanceof GLSLVariableDeclaration) {
-                    final GLSLVariableDeclaration declaration = (GLSLVariableDeclaration) baseNode;
-                    //TODO Check if this accounts for shortcomings of getTypeSpecifierNode() (probably not)
-                    final GLSLTypeSpecifier typeSpecifier = declaration.getTypeSpecifierNode();
+        for (GLSLTypeDefinition definition : definitions) {
+            addChild(new GLSLStructTreeElement(definition));
+        }
 
-                    if(typeSpecifier != null){
-                        final GLSLTypedElement typedef = typeSpecifier.getTypeDefinition();
-                        if (typedef instanceof GLSLTypeDefinition) {
-                            final GLSLTypeDefinition definition = (GLSLTypeDefinition) typedef;
-                            definitions.add(definition);
-                        }
-
-                        if (declaration.getDeclarators().length > 0) {
-                            variableDeclarations.add(declaration);
-                        }
-                    }
-                } else if (baseNode instanceof GLSLFunctionDeclaration) {
-                    functions.add((GLSLFunctionDeclaration) baseNode);
-                }
+        for (GLSLVariableDeclaration declaration : variableDeclarations) {
+            for (GLSLDeclarator declarator : declaration.getDeclarators()) {
+                addChild(new GLSLDeclaratorTreeElement(declarator));
             }
+        }
 
-            for (GLSLTypeDefinition definition : definitions) {
-                addChild(new GLSLStructTreeElement(definition));
-            }
-
-            for (GLSLVariableDeclaration declaration : variableDeclarations) {
-                for (GLSLDeclarator declarator : declaration.getDeclarators()) {
-                    addChild(new GLSLDeclaratorTreeElement(declarator));
-                }
-            }
-
-            for (GLSLFunctionDeclaration function : functions) {
-                addChild(new GLSLFunctionTreeElement((GLSLFunctionDeclarationImpl) function));
-            }
+        for (GLSLFunctionDeclaration function : functions) {
+            addChild(new GLSLFunctionTreeElement((GLSLFunctionDeclarationImpl) function));
         }
     }
 }
