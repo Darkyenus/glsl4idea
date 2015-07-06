@@ -23,9 +23,14 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElement;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * GLSLVariableReference is ...
@@ -79,7 +84,10 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
 
     @NotNull
     public Object[] getVariants() {
-        return new Object[]{target};
+        List<com.intellij.psi.PsiNamedElement> elements = new ArrayList<>();
+        NamedElementCollector collector = new NamedElementCollector(elements);
+        PsiTreeUtil.treeWalkUp(collector, source, null, ResolveState.initial());
+        return elements.toArray();
     }
 
     public boolean isSoft() {
