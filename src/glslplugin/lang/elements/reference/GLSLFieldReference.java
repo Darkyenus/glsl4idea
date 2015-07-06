@@ -19,8 +19,15 @@
 
 package glslplugin.lang.elements.reference;
 
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
+import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
+import glslplugin.lang.elements.expressions.GLSLExpression;
+import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
+import glslplugin.lang.elements.types.GLSLType;
+import glslplugin.lang.elements.types.GLSLTypes;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLFieldReference is ...
@@ -30,7 +37,32 @@ import glslplugin.lang.elements.declarations.GLSLDeclarator;
  *         Time: 11:07:52 PM
  */
 public class GLSLFieldReference extends GLSLReferenceBase<GLSLIdentifier, GLSLDeclarator> {
-    public GLSLFieldReference(GLSLIdentifier source, GLSLDeclarator target) {
-        super(source, target);
+    GLSLFieldSelectionExpression sourceExpression = null;
+
+    public GLSLFieldReference(GLSLFieldSelectionExpression source) {
+        super(source.getMemberIdentifier());
+        sourceExpression = source;
+    }
+
+    @Override
+    @Nullable
+    public GLSLDeclarator resolve() {
+        GLSLExpression left = sourceExpression.getLeftHandExpression();
+        if(left == null)return null;
+        GLSLType type = left.getType();
+        if (type == GLSLTypes.UNKNOWN_TYPE) {
+            return null;
+        }
+        GLSLElement definition = type.getDefinition();
+        if (definition instanceof GLSLTypeDefinition) {
+            GLSLIdentifier memberIdentifier = source;
+            if(memberIdentifier == null){
+                return null;
+            }else{
+                return ((GLSLTypeDefinition) definition).getDeclarator(memberIdentifier.getName());
+            }
+        } else {
+            return null;
+        }
     }
 }

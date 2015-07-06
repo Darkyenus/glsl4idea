@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.GLSLReferenceElement;
+import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
 import glslplugin.lang.elements.declarations.GLSLTypeSpecifier;
@@ -60,9 +61,9 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
     @NotNull
     public String getFunctionName() {
         GLSLIdentifier identifier = getFunctionNameIdentifier();
-        if(identifier != null){
+        if (identifier != null) {
             String name = identifier.getName();
-            if(name != null)return name;
+            if (name != null) return name;
         }
         return "(unknown)";
     }
@@ -82,117 +83,15 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
     @NotNull
     @Override
     public GLSLType getType() {
-        GLSLFunctionType[] functionTypes = findFunctionTypes();
-        if (functionTypes.length == 1) {
-            return functionTypes[0].getReturnType();
-        } else {
-            return GLSLTypes.UNKNOWN_TYPE;
-        }
+        GLSLElement declaration = getReferenceProxy().resolve();
+
+        if (declaration instanceof GLSLTypedElement) return ((GLSLTypedElement) declaration).getType();
+        return GLSLTypes.UNKNOWN_TYPE;
     }
 
-    @Nullable
+    @NotNull
     public GLSLFunctionReference getReferenceProxy() {
-        GLSLElement[] declarations = findFunctionDeclarations();
-        if (declarations.length > 0) {
-            return new GLSLFunctionReference(getFunctionNameIdentifier(), declarations);
-        } else {
-            return null;
-        }
-    }
-
-    @NotNull
-    private GLSLElement[] findFunctionDeclarations() {
-        GLSLFunctionType[] declarations = findFunctionTypes();
-        List<GLSLElement> realDeclarations = new ArrayList<GLSLElement>();
-        for (GLSLFunctionType declaration : declarations) {
-            GLSLElement element = declaration.getDefinition();
-            if (element != null) {
-                realDeclarations.add(element);
-            }
-        }
-        return realDeclarations.toArray(new GLSLElement[realDeclarations.size()]);
-    }
-
-    private final GLSLFunctionType[] NO_FUNCTION_TYPES = new GLSLFunctionType[0];
-    @NotNull
-    public GLSLFunctionType[] findFunctionTypes() {
-        List<GLSLFunctionType> compatibleDeclarations = new ArrayList<GLSLFunctionType>();
-
-        PsiElement current = findParentByClass(GLSLFunctionDefinition.class);
-
-        if(current == null) return NO_FUNCTION_TYPES; //For the time being, see below
-
-        //todo: fails on vec3 and such...
-        // todo: also fails for function calls in initializers of global variables (can only be vec3 and such there...)
-        //assert current != null : "GLSLFunctionDeclaration for '" + getFunctionName() + "' not found.";
-
-        // Is this a constructor for one of the built-in types?
-        GLSLType builtInType = GLSLTypes.getTypeFromName(getFunctionName());
-        if (builtInType != null) {
-            final GLSLParameterList parameterList = getParameterList();
-            if(parameterList != null){
-                return GLSLFunctionType.findApplicableTypes(builtInType.getConstructors(), parameterList.getParameterTypes());
-            }else{
-                return NO_FUNCTION_TYPES;
-            }
-        }
-
-        while (current != null) {
-
-            GLSLFunctionType functionType;
-
-            if (current instanceof GLSLFunctionDeclaration) {
-                GLSLFunctionDeclaration function = (GLSLFunctionDeclaration) current;
-                functionType = function.getType();
-
-                if (getFunctionName().equals(functionType.getName())) {
-
-                    switch (functionType.getParameterCompatibilityLevel(getParameterTypes())) {
-                        case COMPATIBLE_WITH_IMPLICIT_CONVERSION:
-                            compatibleDeclarations.add(functionType);
-                            break;
-
-                        case DIRECTLY_COMPATIBLE:
-                            return new GLSLFunctionType[]{functionType};
-
-                        case INCOMPATIBLE:
-                            break;
-
-                        default:
-                            assert false : "Unsupported compatibility level.";
-                    }
-                }
-
-            } else if (current instanceof GLSLVariableDeclaration) {
-                GLSLVariableDeclaration declaration = (GLSLVariableDeclaration) current;
-                GLSLTypeSpecifier typeSpecifier = declaration.getTypeSpecifierNode();
-                if(typeSpecifier != null){
-                    GLSLType type = typeSpecifier.getType();
-                    if (getFunctionName().equals(type.getTypename())) {
-                        for (GLSLFunctionType constructor : type.getConstructors()) {
-                            switch (constructor.getParameterCompatibilityLevel(getParameterTypes())) {
-                                case COMPATIBLE_WITH_IMPLICIT_CONVERSION:
-                                    compatibleDeclarations.add(constructor);
-                                    break;
-
-                                case DIRECTLY_COMPATIBLE:
-                                    return new GLSLFunctionType[]{constructor};
-
-                                case INCOMPATIBLE:
-                                    break;
-
-                                default:
-                                    assert false : "Unsupported compatibility level.";
-                            }
-                        }
-                    }
-                }
-            }
-
-            current = current.getPrevSibling();
-        }
-
-        return compatibleDeclarations.toArray(new GLSLFunctionType[compatibleDeclarations.size()]);
+        return new GLSLFunctionReference(this);
     }
 
     @Override

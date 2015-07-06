@@ -43,11 +43,8 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
     protected SOURCE_TYPE source;
     protected TARGET_TYPE target;
 
-    public GLSLReferenceBase(SOURCE_TYPE source, TARGET_TYPE target) {
-        assert source != null;
-        assert target != null;
+    public GLSLReferenceBase(@NotNull SOURCE_TYPE source) {
         this.source = source;
-        this.target = target;
     }
 
     public SOURCE_TYPE getElement() {
@@ -58,9 +55,8 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
         return new TextRange(0, source.getTextLength());
     }
 
-    public TARGET_TYPE resolve() {
-        return target;
-    }
+    @Override
+    public abstract TARGET_TYPE resolve();
 
     @NotNull
     public String getCanonicalText() {

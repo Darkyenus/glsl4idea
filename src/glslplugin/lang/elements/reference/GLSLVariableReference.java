@@ -19,8 +19,15 @@
 
 package glslplugin.lang.elements.reference;
 
-import glslplugin.lang.elements.GLSLIdentifier;
+import com.intellij.psi.PsiElement;
+import glslplugin.lang.elements.declarations.GLSLDeclaration;
+import glslplugin.lang.elements.declarations.GLSLDeclarationList;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
+import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
+import glslplugin.lang.elements.expressions.GLSLIdentifierExpression;
+import glslplugin.lang.elements.statements.GLSLDeclarationStatement;
+import glslplugin.lang.parser.GLSLFile;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLVariableReference is ...
@@ -29,8 +36,71 @@ import glslplugin.lang.elements.declarations.GLSLDeclarator;
  *         Date: Feb 4, 2009
  *         Time: 1:29:50 AM
  */
-public class GLSLVariableReference extends GLSLReferenceBase<GLSLIdentifier, GLSLDeclarator> {
-    public GLSLVariableReference(GLSLIdentifier source, GLSLDeclarator target) {
-        super(source, target);
+
+public class GLSLVariableReference extends GLSLReferenceBase<GLSLIdentifierExpression, GLSLDeclarator> {
+    public GLSLVariableReference(GLSLIdentifierExpression source) {
+        super(source);
+    }
+
+    @Nullable
+    public GLSLDeclarator resolve() {
+        PsiElement current = source.getPrevSibling();
+        GLSLDeclarator result = null;
+        if (current == null) {
+            current = source.getParent();
+        }
+
+        while (current != null) {
+
+            // Only process it if we haven't already done so.
+            if (current instanceof GLSLDeclarationList && !source.isDescendantOf(current)) {
+                GLSLDeclarationList list = (GLSLDeclarationList) current;
+                for (GLSLDeclaration declaration : list.getDeclarations()) {
+                    result = getVariableReferenceCheckDeclaration(declaration);
+                    if (result != null) {
+                        break;
+                    }
+                }
+            } else {
+                GLSLVariableDeclaration declaration = null;
+
+                if (current instanceof GLSLDeclarationStatement) {
+                    declaration = ((GLSLDeclarationStatement) current).getDeclaration();
+                }
+
+                if (current instanceof GLSLVariableDeclaration) {
+                    declaration = (GLSLVariableDeclaration) current;
+                }
+
+                if (declaration != null) {
+                    result = getVariableReferenceCheckDeclaration(declaration);
+                }
+            }
+
+            if (result != null) {
+                return result;
+            }
+
+            if (current.getPrevSibling() == null) {
+                current = current.getParent();
+                if (current instanceof GLSLFile) {
+                    current = null;
+                }
+            } else {
+                current = current.getPrevSibling();
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private GLSLDeclarator getVariableReferenceCheckDeclaration(GLSLDeclaration declaration) {
+        for (GLSLDeclarator declarator : declaration.getDeclarators()) {
+            if (declarator.getName().equals(source.getName())) {
+                return declarator;
+            }
+        }
+        return null;
     }
 }

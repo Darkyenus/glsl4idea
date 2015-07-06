@@ -19,8 +19,12 @@
 
 package glslplugin.lang.elements.reference;
 
-import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
-import glslplugin.lang.elements.declarations.GLSLTypename;
+import com.intellij.psi.PsiElement;
+import glslplugin.lang.elements.GLSLTypedElement;
+import glslplugin.lang.elements.declarations.*;
+import glslplugin.lang.elements.statements.GLSLDeclarationStatement;
+import glslplugin.lang.parser.GLSLFile;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLVariableReference is ...
@@ -30,7 +34,79 @@ import glslplugin.lang.elements.declarations.GLSLTypename;
  *         Time: 1:29:50 AM
  */
 public class GLSLTypeReference extends GLSLReferenceBase<GLSLTypename, GLSLTypeDefinition> {
-    public GLSLTypeReference(GLSLTypename source, GLSLTypeDefinition target) {
-        super(source, target);
+    public GLSLTypeReference(GLSLTypename source) {
+        super(source);
+    }
+
+    @Nullable
+    @Override
+    public GLSLTypeDefinition resolve() {
+        PsiElement current = source.getPrevSibling();
+        GLSLTypeDefinition result = null;
+        if (current == null) {
+            current = source.getParent();
+        }
+
+        while (current != null) {
+
+            // Only process it if we haven't already done so.
+            if (current instanceof GLSLDeclarationList && !source.isDescendantOf(current)) {
+                GLSLDeclarationList list = (GLSLDeclarationList) current;
+                for (GLSLDeclaration declaration : list.getDeclarations()) {
+                    result = checkDeclarationForType(declaration);
+                    if (result != null) {
+                        break;
+                    }
+                }
+            } else {
+                GLSLDeclaration declaration = null;
+
+                if (current instanceof GLSLDeclarationStatement) {
+                    if (!source.isDescendantOf(current)) {
+                        declaration = ((GLSLDeclarationStatement) current).getDeclaration();
+                    }
+                }
+
+                if (current instanceof GLSLDeclaration && !(current instanceof GLSLFunctionDeclaration)) {
+                    // Do not check if this is contained in the declaration.
+                    if (!source.isDescendantOf(current)) {
+                        declaration = (GLSLDeclaration) current;
+                    }
+                }
+
+                if (declaration != null) {
+                    result = checkDeclarationForType(declaration);
+                }
+            }
+
+            if (result != null) {
+                return result;
+            }
+
+            if (current.getPrevSibling() == null) {
+                current = current.getParent();
+                if (current instanceof GLSLFile) {
+                    current = null;
+                }
+            } else {
+                current = current.getPrevSibling();
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private GLSLTypeDefinition checkDeclarationForType(GLSLDeclaration declaration) {
+        final GLSLTypeSpecifier specifier = declaration.getTypeSpecifierNode();
+        if(specifier == null)return null;
+        GLSLTypedElement definition = specifier.getTypeDefinition();
+        if (definition instanceof GLSLTypeDefinition) {
+            GLSLTypeDefinition typedef = (GLSLTypeDefinition) definition;
+            if (typedef.isNamed() && typedef.getTypeName().equals(source.getTypename())) {
+                return typedef;
+            }
+        }
+        return null;
     }
 }

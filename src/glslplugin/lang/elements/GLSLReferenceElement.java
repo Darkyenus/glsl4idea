@@ -20,6 +20,7 @@
 package glslplugin.lang.elements;
 
 import com.intellij.psi.PsiReference;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * GLSLReferenceElement acts as a proxy for getReference and getReferences of PsiElement.
@@ -36,5 +37,6 @@ import com.intellij.psi.PsiReference;
  *         Time: 10:52:06 PM
  */
 public interface GLSLReferenceElement extends GLSLElement {
+    @NotNull
     PsiReference getReferenceProxy();
 }
