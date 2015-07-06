@@ -20,6 +20,9 @@
 package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.types.GLSLArrayType;
@@ -73,7 +76,14 @@ public class GLSLTypeSpecifier extends GLSLElementImpl {
     }
 
     @Nullable
-    public GLSLTypedElement getTypeDefinition() {
+    public GLSLTypeDefinition getTypeDefinition() {
         return findChildByClass(GLSLTypeDefinition.class);
+    }
+
+    @Override
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+        GLSLTypeDefinition typeDefinition = getTypeDefinition();
+        if (typeDefinition != null && !typeDefinition.processDeclarations(processor, state, lastParent, place)) return false;
+        return true;
     }
 }

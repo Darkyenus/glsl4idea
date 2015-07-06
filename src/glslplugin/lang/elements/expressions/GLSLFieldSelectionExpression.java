@@ -53,7 +53,6 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
         if (last instanceof GLSLIdentifier) {
             return (GLSLIdentifier) last;
         } else {
-            Logger.getLogger("GLSLFieldSelectionExpression").warning("Field selection operator missing identifier after '.'.");
             return null;
         }
     }

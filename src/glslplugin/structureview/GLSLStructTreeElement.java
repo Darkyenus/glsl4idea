@@ -29,7 +29,7 @@ public class GLSLStructTreeElement extends GLSLStructureViewTreeElement<GLSLType
     }
 
     protected GLSLPresentation createPresentation(GLSLTypeDefinition definition) {
-        return GLSLPresentation.createStructPresentation(definition.getTypeName());
+        return GLSLPresentation.createStructPresentation(definition.getName());
     }
 
     protected void createChildren(GLSLTypeDefinition definition) {

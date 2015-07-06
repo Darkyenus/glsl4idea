@@ -100,12 +100,9 @@ public class GLSLTypeReference extends GLSLReferenceBase<GLSLTypename, GLSLTypeD
     private GLSLTypeDefinition checkDeclarationForType(GLSLDeclaration declaration) {
         final GLSLTypeSpecifier specifier = declaration.getTypeSpecifierNode();
         if(specifier == null)return null;
-        GLSLTypedElement definition = specifier.getTypeDefinition();
-        if (definition instanceof GLSLTypeDefinition) {
-            GLSLTypeDefinition typedef = (GLSLTypeDefinition) definition;
-            if (typedef.isNamed() && typedef.getTypeName().equals(source.getTypename())) {
-                return typedef;
-            }
+        GLSLTypeDefinition definition = specifier.getTypeDefinition();
+        if (definition != null) {
+            if (source.getTypename().equals(definition.getName())) return definition;
         }
         return null;
     }

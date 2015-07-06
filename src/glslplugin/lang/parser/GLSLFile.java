@@ -22,6 +22,9 @@ package glslplugin.lang.parser;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import glslplugin.GLSLSupportLoader;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,5 +36,15 @@ public class GLSLFile extends PsiFileBase {
     @NotNull
     public FileType getFileType() {
         return GLSLSupportLoader.GLSL;
+    }
+
+    @Override
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+        PsiElement child = lastParent.getPrevSibling();
+        while (child != null) {
+            if (!child.processDeclarations(processor, state, lastParent, place)) return false;
+            child = child.getPrevSibling();
+        }
+        return true;
     }
 }
