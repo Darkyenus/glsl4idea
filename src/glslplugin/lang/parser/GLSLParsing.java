@@ -514,6 +514,10 @@ public final class GLSLParsing extends GLSLParsingBase {
             result = parseReturnStatement();
         } else if (type == CONTINUE_JUMP_STATEMENT) {
             result = parseContinueStatement();
+        } else if (type == CASE_KEYWORD) {
+            result = parseCaseStatement();
+        } else if (type == DEFAULT_KEYWORD) {
+            result = parseDefaultStatement();
         } else {
             return false;
         }
@@ -558,6 +562,25 @@ public final class GLSLParsing extends GLSLParsingBase {
         match(BREAK_JUMP_STATEMENT, "Missing 'break'.");
         match(SEMICOLON, "Missing ';' after 'break'.");
         mark.done(BREAK_STATEMENT);
+        return true;
+    }
+
+    private boolean parseCaseStatement() {
+        // case_statement: 'case' constant_expression ':'
+        PsiBuilder.Marker mark = mark();
+        match(CASE_KEYWORD, "Expected 'case'");
+        parseConstantExpression();
+        match(COLON, "Expected ':'");
+        mark.done(CASE_STATEMENT);
+        return true;
+    }
+
+    private boolean parseDefaultStatement() {
+        // default_statement: 'default' ':'
+        PsiBuilder.Marker mark = mark();
+        match(DEFAULT_KEYWORD, "Expected 'case'");
+        match(COLON, "Expected ':'");
+        mark.done(DEFAULT_STATEMENT);
         return true;
     }
 
