@@ -34,9 +34,10 @@ public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement
 
     @Override
     public String toString() {
-        return "GLSLElementImpl:" + getNode().getElementType();
+        if (this.getClass() == GLSLElementImpl.class) return "GLSLElementImpl(" + getNode().getElementType() + ")";
+        if (getName() != null) return this.getClass().getSimpleName() + "(" + getName() + ")";
+        return this.getClass().getSimpleName();
     }
-
 
     ////////////////////////////
     // Utility methods
