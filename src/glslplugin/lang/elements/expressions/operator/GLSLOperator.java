@@ -263,7 +263,7 @@ public class GLSLOperator {
             if(matrixOrVector instanceof GLSLMatrixType){
                 return ((GLSLMatrixType)matrixOrVector).getNumColumns();
             }else{
-                return rowVector ? ((GLSLVectorType)matrixOrVector).getNumComponents() : 0;
+                return rowVector ? ((GLSLVectorType)matrixOrVector).getNumComponents() : 1;
             }
         }
 
@@ -282,7 +282,7 @@ public class GLSLOperator {
 
                 int rowsLeft = getRows(firstInput, false);
                 int columnsRight = getColumns(secondInput, false);
-                if(rowsLeft != 1 && columnsRight != 1){
+                if(rowsLeft > 1 && columnsRight > 1){
                     //Result is matrix
                     return GLSLMatrixType.getType(unified, columnsRight, rowsLeft);
                 }else {
