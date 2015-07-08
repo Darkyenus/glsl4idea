@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by abigail on 08/07/15.
  */
-public class GLSLDefaultStatement extends GLSLStatement {
+public class GLSLDefaultStatement extends GLSLStatement implements GLSLLabelStatement {
     public GLSLDefaultStatement(@NotNull ASTNode astNode) {
         super(astNode);
     }

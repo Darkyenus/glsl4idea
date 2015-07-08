@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by abigail on 08/07/15.
  */
-public class GLSLCaseStatement extends GLSLStatement {
+public class GLSLCaseStatement extends GLSLStatement implements GLSLLabelStatement {
     public GLSLCaseStatement(@NotNull ASTNode astNode) {
         super(astNode);
     }
