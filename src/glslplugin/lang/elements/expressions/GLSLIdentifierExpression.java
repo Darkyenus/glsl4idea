@@ -97,12 +97,13 @@ public class GLSLIdentifierExpression extends GLSLExpression implements GLSLRefe
         return GLSLTypes.UNKNOWN_TYPE;
     }
 
+    @Override
     @Nullable
     public GLSLVariableReference getReferenceProxy() {
         GLSLDeclarator target = getVariableReference(this);
 
         if (target != null) {
-            return new GLSLVariableReference(this, target);
+            return new GLSLVariableReference(this.getNameIdentifier(), target);
         } else {
             return null;
         }

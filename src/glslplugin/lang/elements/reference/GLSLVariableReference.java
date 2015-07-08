@@ -19,8 +19,8 @@
 
 package glslplugin.lang.elements.reference;
 
+import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
-import glslplugin.lang.elements.expressions.GLSLIdentifierExpression;
 
 /**
  * GLSLVariableReference is ...
@@ -29,8 +29,8 @@ import glslplugin.lang.elements.expressions.GLSLIdentifierExpression;
  *         Date: Feb 4, 2009
  *         Time: 1:29:50 AM
  */
-public class GLSLVariableReference extends GLSLReferenceBase<GLSLIdentifierExpression, GLSLDeclarator> {
-    public GLSLVariableReference(GLSLIdentifierExpression source, GLSLDeclarator target) {
+public class GLSLVariableReference extends GLSLReferenceBase<GLSLIdentifier, GLSLDeclarator> {
+    public GLSLVariableReference(GLSLIdentifier source, GLSLDeclarator target) {
         super(source, target);
     }
 }
