@@ -134,6 +134,7 @@
                                       implementationClass="glslplugin.structureview.GLSLStructureViewFactory"/>
         <annotator language="GLSL" implementationClass="glslplugin.annotation.GLSLAnnotator"/>
         <problemFileHighlightFilter implementation="glslplugin.extensions.GLSLProblemFileHighlightFilter" />
+        <codeInsight.parameterInfo language="GLSL" implementationClass="glslplugin.extensions.GLSLParameterInfoHandler" />
 
         <intentionAction>
             <className>glslplugin.intentions.vectorcomponents.VectorComponentsIntention</className>
