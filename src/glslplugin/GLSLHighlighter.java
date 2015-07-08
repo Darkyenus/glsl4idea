@@ -30,6 +30,7 @@ import glslplugin.lang.scanner.GLSLFlexAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import static glslplugin.lang.elements.GLSLTokenTypes.*;
+import static glslplugin.lang.elements.GLSLElementTypes.*;
 
 public class GLSLHighlighter extends SyntaxHighlighterBase {
 

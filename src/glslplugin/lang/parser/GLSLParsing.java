@@ -79,6 +79,8 @@ public final class GLSLParsing extends GLSLParsingBase {
         PsiBuilder.Marker preprocessor = b.mark();
         b.advanceLexer(); //Get past the PREPROCESSOR_BEGIN ("#")
 
+        IElementType preprocessorType = b.getTokenType();
+
         if(b.getTokenType() == PREPROCESSOR_DEFINE){
             //Parse define
             b.advanceLexer();//Get past DEFINE
@@ -140,7 +142,7 @@ public final class GLSLParsing extends GLSLParsingBase {
             }
         }
         b.advanceLexer();//Get past PREPROCESSOR_END
-        preprocessor.done(PREPROCESSOR_DIRECTIVE);
+        preprocessor.done(preprocessorType);
 
         if (b.getTokenType() == PREPROCESSOR_BEGIN) {
             parsePreprocessor();

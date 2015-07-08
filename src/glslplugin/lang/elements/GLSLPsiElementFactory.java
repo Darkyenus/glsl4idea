@@ -27,7 +27,7 @@ import com.intellij.psi.tree.IElementType;
 import glslplugin.GLSLSupportLoader;
 import glslplugin.lang.elements.declarations.*;
 import glslplugin.lang.elements.expressions.*;
-
+import glslplugin.lang.elements.preprocessor.*;
 import glslplugin.lang.elements.statements.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,6 +50,10 @@ public class GLSLPsiElementFactory {
             return null;
         }
         IElementType type = node.getElementType();
+
+        if (type == GLSLElementTypes.REDEFINED_TOKEN) return new GLSLRedefinedToken(node);
+        if (type == GLSLTokenTypes.PREPROCESSOR_DEFINE) return new GLSLDefineDirective(node);
+        if (GLSLTokenTypes.PREPROCESSOR_DIRECTIVES.contains(type)) return new GLSLPreprocessorDirective(node);
 
         // primary expressions
         if (type == GLSLElementTypes.VARIABLE_NAME_EXPRESSION) return new GLSLIdentifierExpression(node);
@@ -89,7 +93,6 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.METHOD_NAME) return new GLSLIdentifier(node);
         if (type == GLSLElementTypes.FIELD_NAME) return new GLSLIdentifier(node);
         if (type == GLSLElementTypes.VARIABLE_NAME) return new GLSLIdentifier(node);
-        if (type == GLSLElementTypes.REDEFINED_TOKEN) return new GLSLIdentifier(node);
 
         if (type == GLSLElementTypes.CONDITIONAL_EXPRESSION) return new GLSLConditionalExpression(node);
 
