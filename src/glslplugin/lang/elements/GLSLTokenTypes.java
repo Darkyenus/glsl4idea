@@ -128,6 +128,9 @@ public class GLSLTokenTypes {
 
     public static final IElementType IF_KEYWORD = new GLSLElementType("IF_KEYWORD");
     public static final IElementType ELSE_KEYWORD = new GLSLElementType("ELSE_KEYWORD");
+    public static final IElementType SWITCH_KEYWORD = new GLSLElementType("SWITCH_KEYWORD");
+    public static final IElementType CASE_KEYWORD = new GLSLElementType("CASE_KEYWORD");
+    public static final IElementType DEFAULT_KEYWORD = new GLSLElementType("DEFAULT_KEYWORD");
 
     public static final IElementType COMMENT_LINE = new GLSLElementType("COMMENT_LINE");
     public static final IElementType COMMENT_BLOCK = new GLSLElementType("COMMENT_BLOCK");
@@ -306,7 +309,7 @@ public class GLSLTokenTypes {
     public static final TokenSet ITERATION_KEYWORDS = TokenSet.create(WHILE_KEYWORD, DO_KEYWORD, FOR_KEYWORD);
     public static final TokenSet JUMP_KEYWORDS = TokenSet.create(BREAK_JUMP_STATEMENT, CONTINUE_JUMP_STATEMENT, RETURN_JUMP_STATEMENT, DISCARD_JUMP_STATEMENT);
 
-    public static final TokenSet SELECTION_KEYWORDS = TokenSet.create(IF_KEYWORD, ELSE_KEYWORD);
+    public static final TokenSet SELECTION_KEYWORDS = TokenSet.create(IF_KEYWORD, ELSE_KEYWORD, SWITCH_KEYWORD);
     public static final TokenSet FLOW_KEYWORDS = merge(SELECTION_KEYWORDS, JUMP_KEYWORDS, ITERATION_KEYWORDS);
 
     //Operators in order of precedence (high to low) (Doesn't have to be here, but for clarity)
@@ -343,7 +346,7 @@ public class GLSLTokenTypes {
                     LEFT_BRACE, // compound_statement
                     BREAK_JUMP_STATEMENT, CONTINUE_JUMP_STATEMENT, RETURN_JUMP_STATEMENT,
                     DISCARD_JUMP_STATEMENT, IF_KEYWORD,
-                    DO_KEYWORD, FOR_KEYWORD, WHILE_KEYWORD // flow control
+                    DO_KEYWORD, FOR_KEYWORD, WHILE_KEYWORD, SWITCH_KEYWORD // flow control
             ),
             QUALIFIER_TOKENS,
             EXPRESSION_FIRST_SET
