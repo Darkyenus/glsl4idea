@@ -110,6 +110,7 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.FOR_STATEMENT) return new GLSLForStatement(node);
         if (type == GLSLElementTypes.WHILE_STATEMENT) return new GLSLWhileStatement(node);
         if (type == GLSLElementTypes.DO_STATEMENT) return new GLSLDoStatement(node);
+        if (type == GLSLElementTypes.SWITCH_STATEMENT) return new GLSLSwitchStatement(node);
 
         if (type == GLSLElementTypes.DECLARATION_STATEMENT) return new GLSLDeclarationStatement(node);
         if (type == GLSLElementTypes.VARIABLE_DECLARATION) return new GLSLVariableDeclaration(node);
@@ -123,6 +124,8 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.CONTINUE_STATEMENT) return new GLSLContinueStatement(node);
         if (type == GLSLElementTypes.RETURN_STATEMENT) return new GLSLReturnStatement(node);
         if (type == GLSLElementTypes.DISCARD_STATEMENT) return new GLSLDiscardStatement(node);
+        if (type == GLSLElementTypes.CASE_STATEMENT) return new GLSLCaseStatement(node);
+        if (type == GLSLElementTypes.DEFAULT_STATEMENT) return new GLSLDefaultStatement(node);
 
         if (type == GLSLElementTypes.PRECISION_STATEMENT) return new GLSLPrecisionStatement(node);
 
