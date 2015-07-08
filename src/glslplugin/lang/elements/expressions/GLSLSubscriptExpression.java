@@ -54,6 +54,19 @@ public class GLSLSubscriptExpression extends GLSLOperatorExpression {
         }
     }
 
+    @Nullable
+    public GLSLExpression getSubscript() {
+        GLSLExpression[] operands = getOperands();
+        if (operands.length == 2) {
+            return operands[1];
+        } else {
+            Logger.getLogger("GLSLSubscriptExpression").warning("Binary operator with " + operands.length + " operand(s).");
+            return null;
+        }
+    }
+
+
+
     @Override
     public boolean isLValue() {
         GLSLExpression arrExpr = getArrayExpression();
