@@ -23,6 +23,8 @@ import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+
 /**
  * GLSLElement is ...
  *
@@ -42,7 +44,9 @@ public interface GLSLElement extends NavigatablePsiElement {
      * @return the parent if the parent is one of the given classes or null otherwise
      */
     @Nullable
-    GLSLElement findParentByClasses(Class<? extends GLSLElement>... clazzes);
+    PsiElement findParentByClasses(Class<? extends PsiElement>... clazzes);
+    @Nullable
+    PsiElement findParentByClasses(Collection<Class<? extends PsiElement>> clazzes);
 
     /**
      * Checks whether this is a descendant of element.

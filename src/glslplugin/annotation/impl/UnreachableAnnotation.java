@@ -46,15 +46,6 @@ public class UnreachableAnnotation extends Annotator<GLSLStatement> {
         GLSLStatement.TerminatorScope scope = expr.getTerminatorScope();
         if (scope == GLSLStatement.TerminatorScope.NONE) return;
 
-        if (scope == GLSLStatement.TerminatorScope.LOOP) {
-            //noinspection unchecked
-            GLSLElement parent = expr.findParentByClasses(GLSLDoStatement.class, GLSLForStatement.class, GLSLWhileStatement.class);
-            if (parent == null) {
-                holder.createErrorAnnotation(expr, "Must be in a loop!");
-                return;
-            }
-        }
-
         if (expr.getParent() == null
                 || expr.getParent().getNode().getElementType() != GLSLElementTypes.COMPOUND_STATEMENT) {
             return;
