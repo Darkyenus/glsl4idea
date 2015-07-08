@@ -47,7 +47,7 @@ public class GLSLBasicFunctionType extends GLSLFunctionType {
     }
 
     public GLSLBasicFunctionType(GLSLFunctionDeclaration declaration) {
-        super(declaration.getDeclaredName(), findReturnType(declaration));
+        super(declaration.getName(), findReturnType(declaration));
         final GLSLParameterDeclaration[] parameterDeclarations = declaration.getParameters();
         definition = declaration;
 

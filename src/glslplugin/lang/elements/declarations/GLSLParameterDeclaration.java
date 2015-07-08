@@ -45,7 +45,7 @@ public class GLSLParameterDeclaration extends GLSLSingleDeclarationImpl {
         StringBuilder b = new StringBuilder("Parameter Declaration: ");
         b.append(getTypeSpecifierNodeTypeName());
         if (hasDeclarator()) {
-            b.append(getDeclaredName());
+            b.append(getName());
         }
         return b.toString();
     }

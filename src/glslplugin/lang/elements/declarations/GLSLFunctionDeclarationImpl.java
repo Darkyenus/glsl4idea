@@ -59,7 +59,7 @@ public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl imple
     @NotNull
     public String getSignature() {
         StringBuilder b = new StringBuilder();
-        b.append(getDeclaredName()).append("(");
+        b.append(getName()).append("(");
         boolean first = true;
         for (GLSLParameterDeclaration declarator : getParameters()) {
             if (!first) {

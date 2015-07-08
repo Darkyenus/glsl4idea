@@ -30,10 +30,6 @@ import org.jetbrains.annotations.Nullable;
  *         Time: 12:44:53 PM
  */
 public interface GLSLSingleDeclaration extends GLSLDeclaration {
-
-    @NotNull
-    String getDeclaredName();
-
     @Nullable
     GLSLDeclarator getDeclarator();
 }
