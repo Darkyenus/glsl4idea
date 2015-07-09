@@ -567,7 +567,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseCaseStatement() {
         // case_statement: 'case' constant_expression ':'
-        PsiBuilder.Marker mark = mark();
+        PsiBuilder.Marker mark = b.mark();
         match(CASE_KEYWORD, "Expected 'case'");
         parseConstantExpression();
         match(COLON, "Expected ':'");
@@ -577,7 +577,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseDefaultStatement() {
         // default_statement: 'default' ':'
-        PsiBuilder.Marker mark = mark();
+        PsiBuilder.Marker mark = b.mark();
         match(DEFAULT_KEYWORD, "Expected 'case'");
         match(COLON, "Expected ':'");
         mark.done(DEFAULT_STATEMENT);
@@ -736,7 +736,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseSwitchStatement() {
         // switch_statement: 'switch' '(' for_init_statement ')' '{' statement_list '}'
-        PsiBuilder.Marker mark = mark();
+        PsiBuilder.Marker mark = b.mark();
         match(SWITCH_KEYWORD, "Expected 'switch'");
         match(LEFT_PAREN, "Expected '('");
         parseCondition();
