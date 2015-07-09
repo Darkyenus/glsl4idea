@@ -21,6 +21,10 @@ package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.GLSLTypedElement;
@@ -39,7 +43,7 @@ import java.util.List;
  *         Date: Jan 27, 2009
  *         Time: 10:31:13 AM
  */
-public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElement {
+public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElement, PsiNameIdentifierOwner {
     // Cache this one to enable equals comparison by ==
     //  this is required to be able to compare types of variables of anonymous types.
     // struct {int x;} x, y; <- how to compare types of x and y?
@@ -47,32 +51,6 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
 
     public GLSLTypeDefinition(@NotNull ASTNode astNode) {
         super(astNode);
-    }
-
-    @Nullable
-    private String getTypeNameInternal() {
-        final PsiElement[] children = getChildren();
-        if (children.length > 1) {
-            PsiElement id = children[0];
-            if (id instanceof GLSLIdentifier) {
-                return ((GLSLIdentifier) id).getName();
-            }
-        }
-        return null;
-    }
-
-    public boolean isNamed() {
-        return getTypeNameInternal() != null;
-    }
-
-    @NotNull
-    public String getTypeName() {
-        String name = getTypeNameInternal();
-        if (name != null) {
-            return name;
-        } else {
-            return "(anonymous structure)";
-        }
     }
 
     // TODO: Add getMemberDeclarations, findMember(String), etc...
@@ -103,7 +81,8 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
 
     @Override
     public String toString() {
-        return "Struct Type: " + getTypeName();
+        if (getName() == null) return "Anonymous struct";
+        return "Struct Type: '" + getName() + "'";
     }
 
     @NotNull
@@ -122,5 +101,35 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+        if (!processor.execute(this, state)) return false;
+
+        for (GLSLDeclarator declarator : getDeclarators()) {
+            if (!processor.execute(declarator, state)) return false;
+        }
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public GLSLIdentifier getNameIdentifier() {
+        return findChildByClass(GLSLIdentifier.class);
+    }
+
+    @Override
+    public String getName() {
+        GLSLIdentifier identifier = getNameIdentifier();
+        if (identifier == null) return null;
+        return identifier.getName();
+    }
+
+    @Override
+    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+        GLSLIdentifier identifier = getNameIdentifier();
+        if (identifier == null) return null;
+        return identifier.setName(name);
     }
 }

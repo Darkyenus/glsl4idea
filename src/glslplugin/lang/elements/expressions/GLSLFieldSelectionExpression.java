@@ -53,7 +53,6 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
         if (last instanceof GLSLIdentifier) {
             return (GLSLIdentifier) last;
         } else {
-            Logger.getLogger("GLSLFieldSelectionExpression").warning("Field selection operator missing identifier after '.'.");
             return null;
         }
     }
@@ -104,40 +103,15 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
         //Because all vector components are marked as only one letter, having more letters means swizzling
     }
 
-    @Nullable
+    @NotNull
     public GLSLFieldReference getReferenceProxy() {
-        GLSLDeclarator declarator = findDefiningDeclarator();
-        if (declarator != null) {
-            return new GLSLFieldReference(getMemberIdentifier(), declarator);
-        }
-        return null;
-    }
-
-    @Nullable
-    private GLSLDeclarator findDefiningDeclarator() {
-        GLSLExpression left = getLeftHandExpression();
-        if(left == null)return null;
-        GLSLType type = left.getType();
-        if (type == GLSLTypes.UNKNOWN_TYPE) {
-            return null;
-        }
-        GLSLElement definition = type.getDefinition();
-        if (definition instanceof GLSLTypeDefinition) {
-            GLSLIdentifier memberIdentifier = getMemberIdentifier();
-            if(memberIdentifier == null){
-                return null;
-            }else{
-                return ((GLSLTypeDefinition) definition).getDeclarator(memberIdentifier.getName());
-            }
-        } else {
-            return null;
-        }
+        return new GLSLFieldReference(this);
     }
 
     @NotNull
     @Override
     public GLSLType getType() {
-        GLSLDeclarator declarator = findDefiningDeclarator();
+        GLSLDeclarator declarator = getReferenceProxy().resolve();
         if (declarator != null) {
             return declarator.getType();
         } else {

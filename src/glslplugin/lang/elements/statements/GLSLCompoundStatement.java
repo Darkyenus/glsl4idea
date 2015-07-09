@@ -20,6 +20,9 @@
 package glslplugin.lang.elements.statements;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,5 +58,15 @@ public class GLSLCompoundStatement extends GLSLStatement {
             if (childScope != TerminatorScope.NONE) return childScope;
         }
         return TerminatorScope.NONE;
+    }
+
+    @Override
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+        PsiElement child = lastParent.getPrevSibling();
+        while (child != null) {
+            if (!child.processDeclarations(processor, state, lastParent, place)) return false;
+            child = child.getPrevSibling();
+        }
+        return true;
     }
 }

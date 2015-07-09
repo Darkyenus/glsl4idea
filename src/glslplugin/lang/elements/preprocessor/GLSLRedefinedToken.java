@@ -19,9 +19,7 @@ public class GLSLRedefinedToken extends GLSLElementImpl {
 
     @Override
     public PsiReference getReference() {
-        GLSLPreprocessorDirective directive = getDefiningDirective(this);
-        if (directive != null) return new GLSLMacroReference(this, directive);
-        return null;
+        return new GLSLMacroReference(this);
     }
 
     @Override
@@ -30,23 +28,4 @@ public class GLSLRedefinedToken extends GLSLElementImpl {
         return getText();
     }
 
-    @Nullable
-    public static GLSLDefineDirective getDefiningDirective(GLSLRedefinedToken start) {
-        PsiElement current = start.getPrevSibling();
-        if (current == null) current = start.getParent();
-
-        while (current != null) {
-            if (current instanceof GLSLDefineDirective) {
-                GLSLDefineDirective directive = (GLSLDefineDirective) current;
-                if (start.getName().equals(directive.getName())) return directive;
-            }
-            if (current.getPrevSibling() == null) {
-                current = current.getParent();
-                if (current instanceof PsiFile) return null;
-            } else {
-                current = current.getPrevSibling();
-            }
-        }
-        return null;
-    }
 }

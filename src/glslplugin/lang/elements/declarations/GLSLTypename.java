@@ -151,85 +151,9 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
         }
     }
 
-    @Nullable
+    @NotNull
     public GLSLTypeReference getReferenceProxy() {
-        GLSLTypeDefinition definition = findTypeReference();
-        if (definition != null) {
-            return new GLSLTypeReference(this, definition);
-        } else {
-            return null;
-        }
-    }
-
-    @Nullable
-    private GLSLTypeDefinition findTypeReference() {
-        PsiElement current = getPrevSibling();
-        GLSLTypeDefinition result = null;
-        if (current == null) {
-            current = getParent();
-        }
-
-        while (current != null) {
-
-            // Only process it if we haven't already done so.
-            if (current instanceof GLSLDeclarationList && !isDescendantOf(current)) {
-                GLSLDeclarationList list = (GLSLDeclarationList) current;
-                for (GLSLDeclaration declaration : list.getDeclarations()) {
-                    result = checkDeclarationForType(declaration);
-                    if (result != null) {
-                        break;
-                    }
-                }
-            } else {
-                GLSLDeclaration declaration = null;
-
-                if (current instanceof GLSLDeclarationStatement) {
-                    if (!isDescendantOf(current)) {
-                        declaration = ((GLSLDeclarationStatement) current).getDeclaration();
-                    }
-                }
-
-                if (current instanceof GLSLDeclaration && !(current instanceof GLSLFunctionDeclaration)) {
-                    // Do not check if this is contained in the declaration.
-                    if (!isDescendantOf(current)) {
-                        declaration = (GLSLDeclaration) current;
-                    }
-                }
-
-                if (declaration != null) {
-                    result = checkDeclarationForType(declaration);
-                }
-            }
-
-            if (result != null) {
-                return result;
-            }
-
-            if (current.getPrevSibling() == null) {
-                current = current.getParent();
-                if (current instanceof GLSLFile) {
-                    current = null;
-                }
-            } else {
-                current = current.getPrevSibling();
-            }
-        }
-
-        return null;
-    }
-
-    @Nullable
-    private GLSLTypeDefinition checkDeclarationForType(GLSLDeclaration declaration) {
-        final GLSLTypeSpecifier specifier = declaration.getTypeSpecifierNode();
-        if(specifier == null)return null;
-        GLSLTypedElement definition = specifier.getTypeDefinition();
-        if (definition instanceof GLSLTypeDefinition) {
-            GLSLTypeDefinition typedef = (GLSLTypeDefinition) definition;
-            if (typedef.isNamed() && typedef.getTypeName().equals(getTypename())) {
-                return typedef;
-            }
-        }
-        return null;
+        return new GLSLTypeReference(this);
     }
 
     @Override
