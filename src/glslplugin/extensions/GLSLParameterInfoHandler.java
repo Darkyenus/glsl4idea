@@ -3,17 +3,18 @@ package glslplugin.extensions;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.parameterInfo.*;
 import com.intellij.psi.PsiElementResolveResult;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.PsiReference;
 import glslplugin.lang.elements.GLSLTokenTypes;
+import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
-import glslplugin.lang.elements.declarations.GLSLFunctionDefinitionImpl;
 import glslplugin.lang.elements.declarations.GLSLParameterDeclaration;
-import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.expressions.GLSLFunctionCallExpression;
+import glslplugin.lang.elements.reference.GLSLFunctionReference;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by abigail on 08/07/15.
@@ -47,15 +48,26 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
                         GLSLFunctionCallExpression.class, GLSLCompoundStatement.class);
         if (call == null) return null;
 
-        PsiReference reference = call.getReferenceProxy();
-        if (reference == null) return null;
+        GLSLFunctionReference reference = call.getReferenceProxy();
 
-        if (reference instanceof PsiPolyVariantReference) {
-            context.setItemsToShow(((PsiPolyVariantReference) reference).multiResolve(true));
-        } else {
-            context.setItemsToShow(new Object[] { reference.resolve() });
+        Object[] items = reference.multiResolve(false);
+        if (items.length == 0) {
+            List<GLSLFunctionDeclaration> declarations = new ArrayList<>();
+            for (Object variant : reference.getVariants()) {
+                if (variant == null || !(variant instanceof GLSLDeclarator)) continue;
+                GLSLDeclarator declarator = (GLSLDeclarator) variant;
+                if (declarator.getParentDeclaration() instanceof GLSLFunctionDeclaration) {
+                    String name = declarator.getName();
+                    if (name.equals(call.getFunctionName())) {
+                        declarations.add((GLSLFunctionDeclaration) declarator.getParentDeclaration());
+                    }
+
+                }
+            }
+            items = declarations.toArray();
         }
 
+        context.setItemsToShow(items);
         return call;
     }
 
