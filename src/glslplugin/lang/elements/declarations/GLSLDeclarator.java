@@ -205,8 +205,6 @@ public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifier
 
     @Override
     public PsiReference getReferenceProxy() {
-        GLSLIdentifier identifier = getNameIdentifier();
-        if (identifier == null) return null;
-        return new GLSLVariableReference(identifier, this);
+        return new GLSLVariableReference(getNameIdentifier());
     }
 }
