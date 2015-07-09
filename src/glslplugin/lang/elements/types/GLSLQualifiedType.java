@@ -33,33 +33,19 @@ public class GLSLQualifiedType {
     @NotNull
     private final GLSLType type;
     @NotNull
-    private final GLSLTypeQualifier[] qualifiers;
+    private final GLSLQualifier[] qualifiers;
 
 
-    public GLSLQualifiedType(@NotNull GLSLType type, @NotNull GLSLTypeQualifier[] qualifiers) {
+    public GLSLQualifiedType(@NotNull GLSLType type, @NotNull GLSLQualifier[] qualifiers) {
         this.type = type;
         this.qualifiers = qualifiers;
     }
 
-    public GLSLQualifiedType(@NotNull GLSLType type, @NotNull glslplugin.lang.elements.declarations.GLSLQualifier[] qualifiers) {
-        this.type = type;
-        this.qualifiers = convertQualifiers(qualifiers);
-    }
-
-    private static final GLSLTypeQualifier[] NO_QUALIFIERS = new GLSLTypeQualifier[0];
+    private static final GLSLQualifier[] NO_QUALIFIERS = new GLSLQualifier[0];
 
     public GLSLQualifiedType(@NotNull GLSLType type) {
         this.type = type;
         this.qualifiers = NO_QUALIFIERS;
-    }
-
-    @NotNull
-    private GLSLTypeQualifier[] convertQualifiers(@NotNull GLSLQualifier[] qualifiers) {
-        GLSLTypeQualifier[] result = new GLSLTypeQualifier[qualifiers.length];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = qualifiers[i].getQualifierType();
-        }
-        return result;
     }
 
     @NotNull
@@ -68,7 +54,14 @@ public class GLSLQualifiedType {
     }
 
     @NotNull
-    public GLSLTypeQualifier[] getQualifiers() {
+    public GLSLQualifier[] getQualifiers() {
         return qualifiers;
+    }
+
+    public boolean hasQualifier(GLSLQualifier.Qualifier qualifier) {
+        for (GLSLQualifier candidate : getQualifiers()) {
+            if (candidate.getQualifier() == qualifier) return true;
+        }
+        return false;
     }
 }
