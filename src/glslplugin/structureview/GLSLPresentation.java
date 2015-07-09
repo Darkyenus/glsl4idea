@@ -24,6 +24,7 @@ import com.intellij.util.PlatformIcons;
 import glslplugin.GLSLSupportLoader;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
+import glslplugin.lang.elements.declarations.GLSLQualifier;
 import glslplugin.lang.elements.types.GLSLQualifiedType;
 import glslplugin.lang.elements.types.GLSLTypeQualifier;
 
@@ -116,12 +117,12 @@ class GLSLPresentation implements ItemPresentation {
         String result = "";
 
         GLSLQualifiedType type = declarator.getQualifiedType();
-        GLSLTypeQualifier[] qualifiers = type.getQualifiers();
+        GLSLQualifier[] qualifiers = type.getQualifiers();
 
         if (qualifiers.length > 0) {
-            result += prettyPrint(stringify(qualifiers, new Stringifyer<GLSLTypeQualifier>() {
-                public String stringify(GLSLTypeQualifier glslQualifier) {
-                    return glslQualifier == null?"null":glslQualifier.toString();
+            result += prettyPrint(stringify(qualifiers, new Stringifyer<GLSLQualifier>() {
+                public String stringify(GLSLQualifier glslQualifier) {
+                    return glslQualifier == null?"null":glslQualifier.getText();
                 }
             }));
             result += " ";
