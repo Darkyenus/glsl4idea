@@ -1,67 +1,32 @@
-/*
- * Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
- *
- *     This file is part of glsl4idea.
- *
- *     Glsl4idea is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as
- *     published by the Free Software Foundation, either version 3 of
- *     the License, or (at your option) any later version.
- *
- *     Glsl4idea is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with glsl4idea.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import glslplugin.GLSLHighlighter;
 import glslplugin.annotation.Annotator;
-import glslplugin.lang.elements.preprocessor.GLSLElementDropIn;
-import glslplugin.lang.parser.GLSLRedefinedTokenType;
+import glslplugin.lang.elements.GLSLElementTypes;
+import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.preprocessor.GLSLRedefinedToken;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Highlights tokens which will be replaced at compile time.
- * Also shows text they will be replaced as.
- *
- * @author Darkyen
+ * Created by abigail on 08/07/15.
  */
-public class RedefinedTokenAnnotation extends Annotator<GLSLElementDropIn> {
-
+public class RedefinedTokenAnnotation extends Annotator<GLSLRedefinedToken> {
     @Override
-    public void annotate(GLSLElementDropIn expr, AnnotationHolder holder) {
-
-        PsiElement redefinedToken;
-
-        if(expr.getTextRange().getLength() > 0){
-            redefinedToken = expr; //GLSLUnknownDropIn or something weird
-        }else{
-            redefinedToken = expr.getNextSibling();//GLSLExpressionDropIn found here
-            if(redefinedToken == null || !(redefinedToken.getNode().getElementType() instanceof GLSLRedefinedTokenType)) {
-                redefinedToken = expr.getFirstChild();//GLSLEmptyDropIn will be found here
-                if(redefinedToken == null || !(redefinedToken.getNode().getElementType() instanceof GLSLRedefinedTokenType)) {
-                    return; //Something is broken here
-                }
-            }
-        }
-
-        String message = expr.getOriginalText();
-
-        final Annotation annotation = holder.createInfoAnnotation(redefinedToken, message);
+    public void annotate(GLSLRedefinedToken identifier, AnnotationHolder holder) {
+        PsiReference reference = identifier.getReference();
+        PsiElement referent = (reference != null) ? reference.resolve() : null;
+        String definition = (referent != null) ? referent.getText() : null;
+        Annotation annotation = holder.createInfoAnnotation(identifier, definition);
         annotation.setTextAttributes(GLSLHighlighter.GLSL_REDEFINED_TOKEN[0]);
     }
 
     @NotNull
     @Override
-    public Class<GLSLElementDropIn> getElementType() {
-        return GLSLElementDropIn.class;
+    public Class<GLSLRedefinedToken> getElementType() {
+        return GLSLRedefinedToken.class;
     }
 }

@@ -29,6 +29,7 @@ public class GLSLElementTypes {
     public static final IFileElementType FILE = new IFileElementType(Language.findInstance(GLSLLanguage.class));
 
     public static final IElementType PREPROCESSOR_DIRECTIVE = new GLSLElementType("PREPROCESSOR_DIRECTIVE");
+    public static final IElementType REDEFINED_TOKEN = new GLSLElementType("REDEFINED_TOKEN");
 
     public static final IElementType VARIABLE_NAME_EXPRESSION = new GLSLElementType("VARIABLE_NAME_EXPRESSION");
     public static final IElementType EXPRESSION = new GLSLElementType("EXPRESSION");
