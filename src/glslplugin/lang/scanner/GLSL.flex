@@ -215,6 +215,9 @@ struct                  {return STRUCT; }
 /* GLSL SELECTION FLOW_KEYWORDS */
 if                      {return IF_KEYWORD; }
 else                    {return ELSE_KEYWORD; }
+switch                  {return SWITCH_KEYWORD; }
+case                    {return CASE_KEYWORD; }
+default                 {return DEFAULT_KEYWORD; }
 
 /* GLSL ES PRECISION */
 precision  {return PRECISION_KEYWORD; }

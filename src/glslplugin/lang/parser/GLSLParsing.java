@@ -481,6 +481,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         // simple_statement: declaration_statement
         //                 | expression_statement
         //                 | selection_statement
+        //                 | switch_statement
         //                 | iteration_statement
         //                 | jump_statement
         eatInvalidOperators();
@@ -497,6 +498,8 @@ public final class GLSLParsing extends GLSLParsingBase {
             }
         } else if (type == IF_KEYWORD) {
             result = parseSelectionStatement();
+        } else if (type == SWITCH_KEYWORD) {
+            result = parseSwitchStatement();
         } else if (type == WHILE_KEYWORD) {
             result = parseWhileIterationStatement();
         } else if (type == DO_KEYWORD) {
@@ -511,6 +514,10 @@ public final class GLSLParsing extends GLSLParsingBase {
             result = parseReturnStatement();
         } else if (type == CONTINUE_JUMP_STATEMENT) {
             result = parseContinueStatement();
+        } else if (type == CASE_KEYWORD) {
+            result = parseCaseStatement();
+        } else if (type == DEFAULT_KEYWORD) {
+            result = parseDefaultStatement();
         } else {
             return false;
         }
@@ -555,6 +562,25 @@ public final class GLSLParsing extends GLSLParsingBase {
         match(BREAK_JUMP_STATEMENT, "Missing 'break'.");
         match(SEMICOLON, "Missing ';' after 'break'.");
         mark.done(BREAK_STATEMENT);
+        return true;
+    }
+
+    private boolean parseCaseStatement() {
+        // case_statement: 'case' constant_expression ':'
+        PsiBuilder.Marker mark = mark();
+        match(CASE_KEYWORD, "Expected 'case'");
+        parseConstantExpression();
+        match(COLON, "Expected ':'");
+        mark.done(CASE_STATEMENT);
+        return true;
+    }
+
+    private boolean parseDefaultStatement() {
+        // default_statement: 'default' ':'
+        PsiBuilder.Marker mark = mark();
+        match(DEFAULT_KEYWORD, "Expected 'case'");
+        match(COLON, "Expected ':'");
+        mark.done(DEFAULT_STATEMENT);
         return true;
     }
 
@@ -706,6 +732,18 @@ public final class GLSLParsing extends GLSLParsingBase {
         if (tryMatch(ELSE_KEYWORD)) {
             parseStatement();
         }
+    }
+
+    private boolean parseSwitchStatement() {
+        // switch_statement: 'switch' '(' for_init_statement ')' '{' statement_list '}'
+        PsiBuilder.Marker mark = mark();
+        match(SWITCH_KEYWORD, "Expected 'switch'");
+        match(LEFT_PAREN, "Expected '('");
+        parseCondition();
+        match(RIGHT_PAREN, "Expected ')'");
+        parseCompoundStatement();
+        mark.done(SWITCH_STATEMENT);
+        return true;
     }
 
     private boolean parseExpressionStatement() {

@@ -103,11 +103,14 @@ public class GLSLElementTypes {
     public static final IElementType CONTINUE_STATEMENT = new GLSLElementType("CONTINUE_STATEMENT");
     public static final IElementType DISCARD_STATEMENT = new GLSLElementType("DISCARD_STATEMENT");
     public static final IElementType RETURN_STATEMENT = new GLSLElementType("RETURN_STATEMENT");
+    public static final IElementType CASE_STATEMENT = new GLSLElementType("CASE_STATEMENT");
+    public static final IElementType DEFAULT_STATEMENT = new GLSLElementType("DEFAULT_STATEMENT");
 
     public static final IElementType IF_STATEMENT = new GLSLElementType("IF_STATEMENT");
     public static final IElementType FOR_STATEMENT = new GLSLElementType("FOR_STATEMENT");
     public static final IElementType DO_STATEMENT = new GLSLElementType("DO_STATEMENT");
     public static final IElementType WHILE_STATEMENT = new GLSLElementType("WHILE_STATEMENT");
+    public static final IElementType SWITCH_STATEMENT = new GLSLElementType("SWITCH_STATEMENT");
 
     public static final IElementType PRECISION_STATEMENT = new GLSLElementType("PRECISION_STATEMENT");
 

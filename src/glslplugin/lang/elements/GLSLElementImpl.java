@@ -26,6 +26,10 @@ import glslplugin.lang.parser.GLSLFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+
 public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement {
 
     public GLSLElementImpl(@NotNull ASTNode astNode) {
@@ -42,17 +46,24 @@ public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement
     ////////////////////////////
     // Utility methods
 
+    @Override
     @Nullable
     public final <T extends GLSLElement> T findParentByClass(Class<T> clazz) {
         //noinspection unchecked
         return clazz.cast(findParentByClasses(clazz));
     }
 
+    @SafeVarargs
     @Nullable
-    public final GLSLElement findParentByClasses(Class<? extends GLSLElement>... clazzes) {
+    public final PsiElement findParentByClasses(Class<? extends PsiElement>... clazzes) {
+        return findParentByClasses(Arrays.asList(clazzes));
+    }
+
+    @Nullable
+    public final PsiElement findParentByClasses(Collection<Class<? extends PsiElement>> clazzes) {
         PsiElement parent = getParent();
         while (parent != null) {
-            for (Class<? extends GLSLElement> clazz : clazzes) {
+            for (Class<? extends PsiElement> clazz : clazzes) {
                 if (clazz.isInstance(parent)) {
                     return clazz.cast(parent);
                 }
@@ -62,6 +73,7 @@ public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement
         return null;
     }
 
+    @Override
     public final boolean isDescendantOf(PsiElement ancestor) {
         PsiElement current = this;
         while (current != null && !(current instanceof GLSLFile)) {
