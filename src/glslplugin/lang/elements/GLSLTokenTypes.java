@@ -77,12 +77,9 @@ public class GLSLTokenTypes {
     public static final IElementType DMAT4X2_TYPE = new GLSLElementType("DMAT4X2_TYPE");
     public static final IElementType DMAT4X3_TYPE = new GLSLElementType("DMAT4X3_TYPE");
     public static final IElementType DMAT4X4_TYPE = new GLSLElementType("DMAT4X4_TYPE");
-    public static final IElementType SAMPLER1D_TYPE = new GLSLElementType("SAMPLER1D_TYPE");
-    public static final IElementType SAMPLER2D_TYPE = new GLSLElementType("SAMPLER2D_TYPE");
-    public static final IElementType SAMPLER3D_TYPE = new GLSLElementType("SAMPLER3D_TYPE");
-    public static final IElementType SAMPLERCUBE_TYPE = new GLSLElementType("SAMPLERCUBE_TYPE");
-    public static final IElementType SAMPLER1DSHADOW_TYPE = new GLSLElementType("SAMPLER1DSHADOW_TYPE");
-    public static final IElementType SAMPLER2DSHADOW_TYPE = new GLSLElementType("SAMPLER2DSHADOW_TYPE");
+    public static final IElementType SAMPLER_TYPE = new GLSLElementType("SAMPLER_TYPE");
+    public static final IElementType ATOMIC_UINT_TYPE = new GLSLElementType("ATOMIC_UINT_TYPE");
+
     public static final IElementType NAMED_TYPE = new GLSLElementType("NAMED_TYPE");
 
     public static final IElementType CONST_KEYWORD = new GLSLElementType("CONST_KEYWORD");
@@ -251,8 +248,7 @@ public class GLSLTokenTypes {
             DMAT4X2_TYPE, DMAT4X3_TYPE, DMAT4X4_TYPE);
 
     public static final TokenSet TEXTURE_TYPE_SPECIFIER_NONARRAY =
-            TokenSet.create(SAMPLER1D_TYPE, SAMPLER2D_TYPE, SAMPLER3D_TYPE, SAMPLERCUBE_TYPE, SAMPLER1DSHADOW_TYPE,
-                    SAMPLER2DSHADOW_TYPE);
+            TokenSet.create(SAMPLER_TYPE);
 
     public static final TokenSet TYPE_SPECIFIER_NONARRAY_TOKENS =
             merge(TokenSet.create(VOID_TYPE), FLOAT_TYPE_SPECIFIER_NONARRAY, INTEGER_TYPE_SPECIFIER_NONARRAY,

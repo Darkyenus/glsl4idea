@@ -153,12 +153,10 @@ dmat3x4                 {return DMAT3X4_TYPE; }
 dmat4x2                 {return DMAT4X2_TYPE; }
 dmat4x3                 {return DMAT4X3_TYPE; }
 dmat4x4                 {return DMAT4X4_TYPE; }
-sampler1D               {return SAMPLER1D_TYPE; }
-sampler2D               {return SAMPLER2D_TYPE; }
-sampler3D               {return SAMPLER3D_TYPE; }
-samplerCube             {return SAMPLERCUBE_TYPE; }
-sampler1DShadow         {return SAMPLER1DSHADOW_TYPE; }
-sampler2DShadow         {return SAMPLER2DSHADOW_TYPE; }
+atomic_uint             {return ATOMIC_UINT_TYPE; }
+
+[iu]?(sampler|image)(1D|2D|3D|Cube|2DRect|1DArray|2DArray|Buffer|2DMS|2DMSArray|CubeArray) { return SAMPLER_TYPE; }
+sampler(1D|2D|Cube|2DRect|1DArray|2DArray|CubeArray)Shadow { return SAMPLER_TYPE; }
 
 
 /* GLSL STORAGE QUALIFIERS */

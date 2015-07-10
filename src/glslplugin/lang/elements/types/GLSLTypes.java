@@ -78,20 +78,12 @@ public class GLSLTypes {
     public static final GLSLMatrixType DMAT4x4 = register(GLSLMatrixType.getType(DOUBLE, 4, 4));
 
     // For convenience
-    public static final GLSLMatrixType MAT2 = MAT2x2;
-    public static final GLSLMatrixType MAT3 = MAT3x3;
-    public static final GLSLMatrixType MAT4 = MAT4x4;
-    public static final GLSLMatrixType DMAT2 = DMAT2x2;
-    public static final GLSLMatrixType DMAT3 = DMAT3x3;
-    public static final GLSLMatrixType DMAT4 = DMAT4x4;
-
-    // Samplers
-    public static final GLSLOpaqueType SAMPLER1D =          register(GLSLOpaqueType.SAMPLER1D);
-    public static final GLSLOpaqueType SAMPLER2D =          register(GLSLOpaqueType.SAMPLER2D);
-    public static final GLSLOpaqueType SAMPLER3D =          register(GLSLOpaqueType.SAMPLER3D);
-    public static final GLSLOpaqueType SAMPLER1D_SHADOW =   register(GLSLOpaqueType.SAMPLER1D_SHADOW);
-    public static final GLSLOpaqueType SAMPLER2D_SHADOW =   register(GLSLOpaqueType.SAMPLER2D_SHADOW);
-    public static final GLSLOpaqueType SAMPLER_CUBE =       register(GLSLOpaqueType.SAMPLER_CUBE);
+    public static final GLSLMatrixType MAT2 = register("mat2", MAT2x2);
+    public static final GLSLMatrixType MAT3 = register("mat3", MAT3x3);
+    public static final GLSLMatrixType MAT4 = register("mat4", MAT4x4);
+    public static final GLSLMatrixType DMAT2 = register("dmat2", DMAT2x2);
+    public static final GLSLMatrixType DMAT3 = register("dmat3", DMAT3x3);
+    public static final GLSLMatrixType DMAT4 = register("dmat4", DMAT4x4);
 
     // Specials
     public static final GLSLOpaqueType VOID = GLSLOpaqueType.VOID;
@@ -165,9 +157,13 @@ public class GLSLTypes {
 
     private static Map<String, GLSLType> types;
 
-    private static <TYPE extends GLSLType> TYPE register(TYPE type) {
-        if (types == null) types = new HashMap<String, GLSLType>();
-        types.put(type.getTypename(), type);
+    static <T extends GLSLType> T register(T type) {
+        return register(type.getTypename(), type);
+    }
+
+    static <T extends GLSLType> T register(String name, T type) {
+        if (types == null) types = new HashMap<>();
+        types.put(name, type);
         return type;
     }
 
