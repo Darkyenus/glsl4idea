@@ -45,7 +45,9 @@ public final class GLSLStructType extends GLSLType {
         this.definition = definition;
         final GLSLDeclarator[] declarators = definition.getDeclarators();
 
-        typename = definition.getName();
+        typename = definition.getName() != null
+                        ? definition.getName()
+                        : "(anonymous " + System.identityHashCode(this) + ")";
 
         GLSLType[] memberTypes = new GLSLType[declarators.length];
 
