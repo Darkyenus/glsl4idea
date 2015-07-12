@@ -73,7 +73,9 @@ public class GLSLQualifier extends GLSLElementImpl {
         PRECISE(GLSLTypeQualifier.PRECISE_QUALIFIER, "precise", GLSLTokenTypes.PRECISE_KEYWORD),
 
         // ES Storage Qualifiers
-        PRECISION(GLSLTypeQualifier.ES_STORAGE_QUALIFIER,"lowp|mediump|highp",GLSLTokenTypes.PRECISION_QUALIFIER),
+        HIGHP(GLSLTypeQualifier.PRECISION_QUALIFIER, "highp", GLSLTokenTypes.HIGHP_KEYWORD),
+        MEDIUMP(GLSLTypeQualifier.PRECISION_QUALIFIER, "mediump", GLSLTokenTypes.MEDIUMP_KEYWORD),
+        LOWP(GLSLTypeQualifier.PRECISION_QUALIFIER, "lowp", GLSLTokenTypes.LOWP_KEYWORD),
 
         // Parameter Modifiers
         IN(GLSLTypeQualifier.PARAMETER_MODIFIER , "in", GLSLTokenTypes.IN_KEYWORD),

@@ -28,7 +28,7 @@ public enum GLSLTypeQualifier {
     INVARIANT_QUALIFIER     (2, "invariant qualifier"),
     SUBROUTINE_QUALIFIER    (3, "subroutine qualifier"),
     PRECISE_QUALIFIER       (4, "precise qualifier"),
-    ES_STORAGE_QUALIFIER    (5, "ES storage qualifier"),
+    PRECISION_QUALIFIER     (5, "precision qualifier"),
     PARAMETER_MODIFIER      (6, "parameter modifier"),
     INTERPOLATION_MODIFIER  (7, "interpolation modifier"),
     LAYOUT_QUALIFIER        (8, "layout qualifier"),

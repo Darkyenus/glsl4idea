@@ -66,8 +66,6 @@ EXPONENT_PART       = [Ee]["+""-"]?({DIGIT})*
 LINE_COMMENT        = "//"[^\r\n]*
 BLOCK_COMMENT       = "/*"([^"*"]|("*"+[^"*""/"]))*("*"+"/")?
 
-GLSL_ES_PRECISION_QUALIFIER = (high|medium|low)p
-
 %%
 
 
@@ -189,7 +187,9 @@ flat                    {return FLAT_KEYWORD; }
 noperspective           {return NOPERSPECTIVE_KEYWORD; }
 
 /* GLSL ES STORAGE QUALIFIERS */
-{GLSL_ES_PRECISION_QUALIFIER}	{return PRECISION_QUALIFIER; }
+highp                   {return HIGHP_KEYWORD; }
+mediump                 {return MEDIUMP_KEYWORD; }
+lowp                    {return LOWP_KEYWORD; }
 
 /* GLSL PARAMETER QUALIFIER */
 in                      {return IN_KEYWORD; }
