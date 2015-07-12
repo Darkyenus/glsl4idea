@@ -78,63 +78,9 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
 
         if (type == GLSLElementTypes.TYPE_SPECIFIER_PRIMITIVE) {
             final ASTNode child = node.getFirstChildNode();
-            if(child == null)return GLSLTypes.UNKNOWN_TYPE; //This means broken tree
-            final IElementType childType = child.getElementType();
-
-            if (childType == GLSLTokenTypes.VOID_TYPE) return GLSLTypes.VOID;
-            if (childType == GLSLTokenTypes.INT_TYPE) return GLSLTypes.INT;
-            if (childType == GLSLTokenTypes.UINT_TYPE) return GLSLTypes.UINT;
-            if (childType == GLSLTokenTypes.FLOAT_TYPE) return GLSLTypes.FLOAT;
-            if (childType == GLSLTokenTypes.DOUBLE_TYPE) return GLSLTypes.DOUBLE;
-            if (childType == GLSLTokenTypes.BOOL_TYPE) return GLSLTypes.BOOL;
-
-            if (childType == GLSLTokenTypes.VEC2_TYPE) return GLSLTypes.VEC2;
-            if (childType == GLSLTokenTypes.VEC3_TYPE) return GLSLTypes.VEC3;
-            if (childType == GLSLTokenTypes.VEC4_TYPE) return GLSLTypes.VEC4;
-            if (childType == GLSLTokenTypes.DVEC2_TYPE) return GLSLTypes.DVEC2;
-            if (childType == GLSLTokenTypes.DVEC3_TYPE) return GLSLTypes.DVEC3;
-            if (childType == GLSLTokenTypes.DVEC4_TYPE) return GLSLTypes.DVEC4;
-            if (childType == GLSLTokenTypes.IVEC2_TYPE) return GLSLTypes.IVEC2;
-            if (childType == GLSLTokenTypes.IVEC3_TYPE) return GLSLTypes.IVEC3;
-            if (childType == GLSLTokenTypes.IVEC4_TYPE) return GLSLTypes.IVEC4;
-            if (childType == GLSLTokenTypes.UVEC2_TYPE) return GLSLTypes.UVEC2;
-            if (childType == GLSLTokenTypes.UVEC3_TYPE) return GLSLTypes.UVEC3;
-            if (childType == GLSLTokenTypes.UVEC4_TYPE) return GLSLTypes.UVEC4;
-            if (childType == GLSLTokenTypes.BVEC2_TYPE) return GLSLTypes.BVEC2;
-            if (childType == GLSLTokenTypes.BVEC3_TYPE) return GLSLTypes.BVEC3;
-            if (childType == GLSLTokenTypes.BVEC4_TYPE) return GLSLTypes.BVEC4;
-
-            if (childType == GLSLTokenTypes.MAT2_TYPE) return GLSLTypes.MAT2;
-            if (childType == GLSLTokenTypes.MAT3_TYPE) return GLSLTypes.MAT3;
-            if (childType == GLSLTokenTypes.MAT4_TYPE) return GLSLTypes.MAT4;
-            if (childType == GLSLTokenTypes.MAT2X2_TYPE) return GLSLTypes.MAT2x2;
-            if (childType == GLSLTokenTypes.MAT2X3_TYPE) return GLSLTypes.MAT2x3;
-            if (childType == GLSLTokenTypes.MAT2X4_TYPE) return GLSLTypes.MAT2x4;
-            if (childType == GLSLTokenTypes.MAT3X2_TYPE) return GLSLTypes.MAT3x2;
-            if (childType == GLSLTokenTypes.MAT3X3_TYPE) return GLSLTypes.MAT3x3;
-            if (childType == GLSLTokenTypes.MAT3X4_TYPE) return GLSLTypes.MAT3x4;
-            if (childType == GLSLTokenTypes.MAT4X2_TYPE) return GLSLTypes.MAT4x2;
-            if (childType == GLSLTokenTypes.MAT4X3_TYPE) return GLSLTypes.MAT4x3;
-            if (childType == GLSLTokenTypes.MAT4X4_TYPE) return GLSLTypes.MAT4x4;
-            if (childType == GLSLTokenTypes.DMAT2_TYPE) return GLSLTypes.DMAT2;
-            if (childType == GLSLTokenTypes.DMAT3_TYPE) return GLSLTypes.DMAT3;
-            if (childType == GLSLTokenTypes.DMAT4_TYPE) return GLSLTypes.DMAT4;
-            if (childType == GLSLTokenTypes.DMAT2X2_TYPE) return GLSLTypes.DMAT2x2;
-            if (childType == GLSLTokenTypes.DMAT2X3_TYPE) return GLSLTypes.DMAT2x3;
-            if (childType == GLSLTokenTypes.DMAT2X4_TYPE) return GLSLTypes.DMAT2x4;
-            if (childType == GLSLTokenTypes.DMAT3X2_TYPE) return GLSLTypes.DMAT3x2;
-            if (childType == GLSLTokenTypes.DMAT3X3_TYPE) return GLSLTypes.DMAT3x3;
-            if (childType == GLSLTokenTypes.DMAT3X4_TYPE) return GLSLTypes.DMAT3x4;
-            if (childType == GLSLTokenTypes.DMAT4X2_TYPE) return GLSLTypes.DMAT4x2;
-            if (childType == GLSLTokenTypes.DMAT4X3_TYPE) return GLSLTypes.DMAT4x3;
-            if (childType == GLSLTokenTypes.DMAT4X4_TYPE) return GLSLTypes.DMAT4x4;
-
-            if (childType == GLSLTokenTypes.SAMPLER1D_TYPE) return GLSLTypes.SAMPLER1D;
-            if (childType == GLSLTokenTypes.SAMPLER2D_TYPE) return GLSLTypes.SAMPLER2D;
-            if (childType == GLSLTokenTypes.SAMPLER3D_TYPE) return GLSLTypes.SAMPLER3D;
-            if (childType == GLSLTokenTypes.SAMPLERCUBE_TYPE) return GLSLTypes.SAMPLER_CUBE;
-            if (childType == GLSLTokenTypes.SAMPLER1DSHADOW_TYPE) return GLSLTypes.SAMPLER1D_SHADOW;
-            if (childType == GLSLTokenTypes.SAMPLER2DSHADOW_TYPE) return GLSLTypes.SAMPLER2D_SHADOW;
+            GLSLType t = GLSLTypes.getTypeFromName(child.getText());
+            if (t != null) return t;
+            return GLSLTypes.UNKNOWN_TYPE;
         }
 
         Logger.getLogger("GLSLTypename").warning("Unknown element type: '" + type + "'");
