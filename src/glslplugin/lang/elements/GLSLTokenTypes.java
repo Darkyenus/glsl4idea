@@ -102,10 +102,12 @@ public class GLSLTokenTypes {
     public static final IElementType SMOOTH_KEYWORD = new GLSLElementType("SMOOTH_KEYWORD");
     public static final IElementType FLAT_KEYWORD = new GLSLElementType("FLAT_KEYWORD");
     public static final IElementType NOPERSPECTIVE_KEYWORD = new GLSLElementType("NOPERSPECTIVE_KEYWORD");
+    public static final IElementType HIGHP_KEYWORD = new GLSLElementType("HIGHP_KEYWORD");
+    public static final IElementType MEDIUMP_KEYWORD = new GLSLElementType("MEDIUMP_KEYWORD");
+    public static final IElementType LOWP_KEYWORD = new GLSLElementType("LOWP_KEYWORD");
 
     public static final IElementType LAYOUT_KEYWORD = new GLSLElementType("LAYOUT_KEYWORD");
 
-    public static final IElementType PRECISION_QUALIFIER = new GLSLElementType("PRECISION_QUALIFIER");
     public static final IElementType PRECISION_KEYWORD = new GLSLElementType("PRECISION_KEYWORD");
 
     public static final IElementType IN_KEYWORD = new GLSLElementType("IN_KEYWORD");
@@ -280,8 +282,10 @@ public class GLSLTokenTypes {
             SUBROUTINE_KEYWORD,
             //GLSL Precise qualifier
             PRECISE_KEYWORD,
-            //GLSL ES Storage qualifiers
-            PRECISION_QUALIFIER,
+            //GLSL Precision qualifiers
+            HIGHP_KEYWORD,
+            MEDIUMP_KEYWORD,
+            LOWP_KEYWORD,
             //GLSL Parameter modifiers
             IN_KEYWORD,
             OUT_KEYWORD,
@@ -292,6 +296,8 @@ public class GLSLTokenTypes {
             NOPERSPECTIVE_KEYWORD,
             //GLSL Layout qualifiers
             LAYOUT_KEYWORD);
+
+    public static final TokenSet PRECISION_QUALIFIER_TOKENS = TokenSet.create(HIGHP_KEYWORD, MEDIUMP_KEYWORD, LOWP_KEYWORD);
 
     // A subset of QUALIFIER_TOKENS which can be used for interface block definition
     public static final TokenSet INTERFACE_QUALIFIER_TOKENS = TokenSet.create(

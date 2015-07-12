@@ -364,7 +364,11 @@ public final class GLSLParsing extends GLSLParsingBase {
         if (b.getTokenType() == PRECISION_KEYWORD) {
             final PsiBuilder.Marker mark = b.mark();
             b.advanceLexer();
-            match(PRECISION_QUALIFIER, "Expected precision qualifier.");
+
+            if (!tryMatch(PRECISION_QUALIFIER_TOKENS)) {
+                b.error("Expected precision qualifier.");
+            }
+
             if (!parseTypeSpecifier()) {
                 b.error("Expected type specifier.");
             }

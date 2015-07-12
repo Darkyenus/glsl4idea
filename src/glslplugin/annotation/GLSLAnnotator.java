@@ -59,7 +59,6 @@ public class GLSLAnnotator implements com.intellij.lang.annotation.Annotator {
         add(new ConditionCheckAnnotation());
         add(new MissingReturnAnnotation());
         add(new DeclarationAssignmentTypeAnnotation());
-        add(new PrecisionStatementAnnotation());
         add(new ReservedKeywordAnnotation());
         add(new ReservedIdentifierAnnotation());
         add(new InitializerListEmptyAnnotation());
@@ -68,6 +67,7 @@ public class GLSLAnnotator implements com.intellij.lang.annotation.Annotator {
         add(new SubscriptBoundAnnotation());
         add(new ConstModificationAnnotation());
         add(new ConstInitializationAnnotation());
+        add(new ParameterQualifierAnnotation());
     }
 
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
