@@ -80,7 +80,7 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
 
     @NotNull
     public Object[] getVariants() {
-        List<com.intellij.psi.PsiNamedElement> elements = new ArrayList<>();
+        List<PsiNamedElement> elements = new ArrayList<PsiNamedElement>();
         NamedElementCollector collector = new NamedElementCollector(elements);
         PsiTreeUtil.treeWalkUp(collector, source, null, ResolveState.initial());
         return elements.toArray();

@@ -52,7 +52,7 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
 
         Object[] items = reference.multiResolve(false);
         if (items.length == 0) {
-            List<GLSLFunctionDeclaration> declarations = new ArrayList<>();
+            List<GLSLFunctionDeclaration> declarations = new ArrayList<GLSLFunctionDeclaration>();
             for (Object variant : reference.getVariants()) {
                 if (variant == null || !(variant instanceof GLSLDeclarator)) continue;
                 GLSLDeclarator declarator = (GLSLDeclarator) variant;

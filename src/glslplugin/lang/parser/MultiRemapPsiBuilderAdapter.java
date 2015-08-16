@@ -18,7 +18,7 @@ import java.util.Collections;
  * Created by abigail on 30/06/15.
  */
 public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
-    protected ArrayList<IElementType> waitingTokens = new ArrayList<>();
+    protected ArrayList<IElementType> waitingTokens = new ArrayList<IElementType>();
 
     public MultiRemapPsiBuilderAdapter(PsiBuilder delegate) {
         super(delegate);
@@ -77,7 +77,7 @@ public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
     }
 
     protected class DelegateMarker extends com.intellij.lang.impl.DelegateMarker {
-        protected ArrayList<IElementType> rollbackWaitingTokens = new ArrayList<>();
+        protected ArrayList<IElementType> rollbackWaitingTokens = new ArrayList<IElementType>();
 
         public DelegateMarker(Marker delegate) {
             super(delegate);

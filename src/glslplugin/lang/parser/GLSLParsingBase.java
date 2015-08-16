@@ -45,7 +45,7 @@ abstract class GLSLParsingBase {
      */
     protected final PsiBuilder b;
 
-    protected Map<String, List<IElementType>> definitions = new HashMap<>();
+    protected Map<String, List<IElementType>> definitions = new HashMap<String, List<IElementType>>();
 
     GLSLParsingBase(PsiBuilder builder) {
         b = new GLSLPsiBuilderAdapter(builder);

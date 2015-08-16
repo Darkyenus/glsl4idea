@@ -17,7 +17,7 @@ public class StatementParentAnnotation extends Annotator<GLSLStatement> {
 
     static class AcceptableParents {
         AcceptableParents(String message, Class<? extends PsiElement>... parents) {
-            this.parents = new HashSet<>(Arrays.asList(parents));
+            this.parents = new HashSet<Class<? extends PsiElement>>(Arrays.asList(parents));
             this.message = message;
         }
         Set<Class<? extends PsiElement>> parents;
@@ -27,7 +27,7 @@ public class StatementParentAnnotation extends Annotator<GLSLStatement> {
     static Map<Class<? extends PsiElement>, AcceptableParents> parentsForClass;
 
     static {
-        parentsForClass = new HashMap<>();
+        parentsForClass = new HashMap<Class<? extends PsiElement>, AcceptableParents>();
         parentsForClass.put(GLSLBreakStatement.class,
                 new AcceptableParents("Break statement must be inside a loop or switch statement",
                         GLSLWhileStatement.class, GLSLForStatement.class, GLSLDoStatement.class, GLSLSwitchStatement.class));

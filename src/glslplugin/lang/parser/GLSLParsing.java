@@ -91,7 +91,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                 //Can use non-b b.advanceLexer here, to allow "nested" defines
                 b.advanceLexer();//Get past identifier
 
-                List<IElementType> definition = new ArrayList<>();
+                List<IElementType> definition = new ArrayList<IElementType>();
 
                 while (b.getTokenType() != PREPROCESSOR_END && !b.eof()) {
                     definition.add(new ForeignLeafType(b.getTokenType(), b.getTokenText()));

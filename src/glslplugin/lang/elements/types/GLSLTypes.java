@@ -162,7 +162,7 @@ public class GLSLTypes {
     }
 
     static <T extends GLSLType> T register(String name, T type) {
-        if (types == null) types = new HashMap<>();
+        if (types == null) types = new HashMap<String, GLSLType>();
         types.put(name, type);
         return type;
     }
