@@ -33,6 +33,7 @@ import java.util.List;
  *         Time: 6:47:33 PM
  */
 public abstract class GLSLFunctionType {
+    public static final GLSLFunctionType[] EMPTY = new GLSLFunctionType[0];
 
     protected String typename;
     private final String name;

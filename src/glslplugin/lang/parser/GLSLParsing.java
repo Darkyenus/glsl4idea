@@ -24,7 +24,6 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import glslplugin.lang.elements.GLSLTokenTypes;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +93,8 @@ public final class GLSLParsing extends GLSLParsingBase {
                 List<IElementType> definition = new ArrayList<IElementType>();
 
                 while (b.getTokenType() != PREPROCESSOR_END && !b.eof()) {
+                    //Suppressed warning that getTokenType/Text may be null, because it won't be (.eof() is checked).
+                    //noinspection ConstantConditions
                     definition.add(new ForeignLeafType(b.getTokenType(), b.getTokenText()));
                     b.advanceLexer();
                 }
@@ -902,7 +903,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         // assignment_expression: conditional_expression
         //                      | unary_expression assignment_operator assignment_expression
         // NOTE: both conditional_expression and assignment_expression starts with unary_expression
-        // CHANGED TO: (to reduce the need for lookahead. use the annotation passs to verify l-values)
+        // CHANGED TO: (to reduce the need for lookahead. use the annotation pass to verify l-values)
         // assignment_expression: conditional_expression (assignment_operator conditional_expression)*
         PsiBuilder.Marker mark = b.mark();
 
@@ -1102,47 +1103,44 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseFunctionCall() {
         PsiBuilder.Marker mark = b.mark();
-
-        FunctionCallLike kind = parseFunctionCallImpl(false);
-
-        if(kind == FunctionCallLike.CONSTRUCTOR){
-            mark.done(CONSTRUCTOR_EXPRESSION);
-        }else{
-            mark.done(FUNCTION_CALL_EXPRESSION);
-        }
+        parseFunctionCallImpl(false);
+        mark.done(FUNCTION_CALL_EXPRESSION);
         return true;
     }
 
-    private enum FunctionCallLike {
-        FUNCTION, CONSTRUCTOR, INVALID
-    }
-
-    @NotNull
-    private FunctionCallLike parseFunctionCallImpl(boolean markIdentifierAsMethodIdentifier) {
+    private void parseFunctionCallImpl(boolean markIdentifierAsMethodIdentifier) {
         // parse_function_call : parse_function_call_or_method
         // parse_function_call_or_method: function_call_generic
         //                              | postfix_expression '.' function_call_generic
         // NOTE: implementing function_call_or_method_directly
         // AND:  postfix_expression '.' function_call_generic is moved to parsePostfixExpression
 
-        FunctionCallLike result = parseFunctionIdentifier(markIdentifierAsMethodIdentifier);
+        parseFunctionIdentifier(markIdentifierAsMethodIdentifier);
         match(LEFT_PAREN, "Missing '('.");
         parseParameterList();
         match(RIGHT_PAREN, "Missing ')'.");
-        return result;
     }
 
-    @NotNull
-    private FunctionCallLike parseFunctionIdentifier(boolean markAsMethodIdentifier) {
+    /**
+     * Parses a function, method or constructor identifier.
+     * If method identifier is requested, METHOD_NAME is always produced.
+     * If function identifier is requested, either TYPE_SPECIFIER or FUNCTION_NAME is emitted.
+     * Additionally, in function/constructor mode, one or more ARRAY_DECLARATOR's may be emitted.
+     * That is because it might be a struct array constructor.
+     *
+     * @param markAsMethodIdentifier true -> method mode | false -> function/constructor mode
+     */
+    private boolean parseFunctionIdentifier(boolean markAsMethodIdentifier) {
         // function_identifier: IDENTIFIER                          //function/method call
         //                    | type_name [ array_declarator ]      //constructor
 
         if(!markAsMethodIdentifier){
+            //Methods can't be constructors
             PsiBuilder.Marker constructorMark = b.mark();
             if(parseTypeSpecifier(true)){//true -> only built-in type specifiers
-                //Success, it is a constructor!
-                constructorMark.drop();
-                return FunctionCallLike.CONSTRUCTOR;
+                //Success, it is definitely a constructor
+                constructorMark.drop();// (parseTypeSpecifier has added a type specifier element)
+                return true;
             }else{
                 constructorMark.rollbackTo();
             }
@@ -1151,12 +1149,18 @@ public final class GLSLParsing extends GLSLParsingBase {
         PsiBuilder.Marker mark = b.mark();
         if(tryMatch(IDENTIFIER)){
             //Function/method call
+
+            if(!markAsMethodIdentifier && b.getTokenType() == LEFT_BRACKET){
+                //If it is a constructor, it may be an array constructor.
+                parseArrayDeclarator();
+            }
+
             mark.done(markAsMethodIdentifier ? METHOD_NAME : FUNCTION_NAME);
-            return FunctionCallLike.FUNCTION;
+            return true;
         }else{
             if(markAsMethodIdentifier) mark.error("Expected method identifier.");
             else mark.error("Expected function identifier.");
-            return FunctionCallLike.INVALID;
+            return false;
         }
     }
 

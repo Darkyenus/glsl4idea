@@ -94,7 +94,6 @@ public class GLSLElementTypes {
     public static final IElementType MULTIPLICATIVE_EXPRESSION = new GLSLElementType("MULTIPLICATIVE_EXPRESSION");
 
     public static final IElementType FUNCTION_CALL_EXPRESSION = new GLSLElementType("FUNCTION_CALL_EXPRESSION");
-    public static final IElementType CONSTRUCTOR_EXPRESSION = new GLSLElementType("CONSTRUCTOR_EXPRESSION");
     public static final IElementType PARAMETER_LIST = new GLSLElementType("PARAMETER_LIST");
     public static final IElementType EXPRESSION_STATEMENT = new GLSLElementType("EXPRESSION_STATEMENT");
     public static final IElementType DECLARATION_STATEMENT = new GLSLElementType("DECLARATION_STATEMENT");
