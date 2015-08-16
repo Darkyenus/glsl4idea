@@ -27,8 +27,22 @@
     <idea-version since-build="139.1117"/>
     <depends>com.intellij.modules.lang</depends>
 
-    <version>1.9</version>
+    <version>1.10</version>
     <change-notes><![CDATA[
+
+        <p>1.10</p>
+        <ul>
+            <li>Rewrite preprocessor token parsing to be much more robust</li>
+            <li>Parse multidimensional struct members correctly</li>
+            <li>Improve autocomplete and finding usages</li>
+            <li>Parse switch statements correctly</li>
+            <li>Overhaul new file creation, allow custom templates for all supported file extensions</li>
+            <li>Warn on incorrect array indexes</li>
+            <li>Warn on incorrect const variable handling</li>
+            <li>Add function parameter lookup</li>
+            <li>Support 4.50 opaque types (samplers)</li>
+            <li>Many smaller fixes and improvements</li>
+        </ul>
 
         <p>1.9</p>
         <ul>
