@@ -739,11 +739,11 @@ public final class GLSLParsing extends GLSLParsingBase {
     }
 
     private boolean parseSwitchStatement() {
-        // switch_statement: 'switch' '(' for_init_statement ')' '{' statement_list '}'
+        // switch_statement: 'switch' '(' expression ')' '{' statement_list? '}'
         PsiBuilder.Marker mark = b.mark();
         match(SWITCH_KEYWORD, "Expected 'switch'");
         match(LEFT_PAREN, "Expected '('");
-        parseCondition();
+        parseExpression();
         match(RIGHT_PAREN, "Expected ')'");
         parseCompoundStatement();
         mark.done(SWITCH_STATEMENT);
