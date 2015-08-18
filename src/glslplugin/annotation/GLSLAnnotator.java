@@ -68,6 +68,7 @@ public class GLSLAnnotator implements com.intellij.lang.annotation.Annotator {
         add(new ConstModificationAnnotation());
         add(new ConstInitializationAnnotation());
         add(new ParameterQualifierAnnotation());
+        add(new SwitchExpressionTypeAnnotation());
     }
 
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
