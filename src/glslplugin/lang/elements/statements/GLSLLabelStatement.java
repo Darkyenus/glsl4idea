@@ -1,10 +1,10 @@
 package glslplugin.lang.elements.statements;
 
-import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.GLSLElement;
-import org.jetbrains.annotations.NotNull;
 
 /**
+ * Label statements used in switch statement
+ * <p/>
  * Created by abigail on 08/07/15.
  */
 public interface GLSLLabelStatement extends GLSLElement {
