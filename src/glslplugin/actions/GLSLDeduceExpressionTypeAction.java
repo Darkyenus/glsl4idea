@@ -31,6 +31,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.awt.RelativePoint;
+import glslplugin.lang.GLSLLanguage;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
@@ -46,9 +47,9 @@ import javax.swing.*;
  *         Time: 12:24:02 AM
  */
 public class GLSLDeduceExpressionTypeAction extends AnAction {
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        // Got no time to implement this. Hopefully I have more time in the future.
 
+
+    public void actionPerformed(@NotNull AnActionEvent e) {
         PsiElement element = getPsiElementEnclosingSelection(e);
 
         while (element != null && !(element instanceof GLSLExpression)) {
@@ -71,9 +72,19 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
             }
         }
 
-        String html = createHtml(expressionText, typename);
+        if(expressionText == null && element != null){
+            expressionText = element.getText();
+        }
 
-        showBalloon(e, html);
+        showBalloon(e, createHtml(expressionText, typename));
+    }
+
+    @Override
+    public void update(AnActionEvent e) {
+        final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
+        if(psiFile != null){
+            e.getPresentation().setEnabledAndVisible(GLSLLanguage.GLSL_LANGUAGE.equals(psiFile.getLanguage()));
+        }
     }
 
     private void showBalloon(AnActionEvent e, String html) {
@@ -87,9 +98,10 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
     }
 
     private static String createHtml(String expression, String type) {
-        expression = makeExpressionTextHtml(expression);
+        expression = makeExpressionTextHtml(expression, type != null);
         type = makeTypenameHtml(type);
 
+        //noinspection StringBufferReplaceableByString
         StringBuilder b = new StringBuilder();
         b.append("<html><table>");
 
@@ -110,10 +122,14 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
         return type;
     }
 
-    private static String makeExpressionTextHtml(String expression) {
-        if (expression == null) expression = "selection is not an expression";
-        else expression = "<code>" + expression + "</code>";
-        return expression;
+    private static String makeExpressionTextHtml(String expression, boolean valid) {
+        if(valid){
+            return "<code>" + expression + "</code>";
+        }else if(expression != null){
+            return "<code>" + expression + "</code> (Not an expression)";
+        }else{
+            return "selection is not an expression";
+        }
     }
 
     private PsiElement getPsiElementEnclosingSelection(AnActionEvent e) {
