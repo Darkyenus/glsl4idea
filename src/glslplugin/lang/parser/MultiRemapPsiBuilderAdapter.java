@@ -66,14 +66,31 @@ public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
         remapCurrentToken(Collections.singletonList(type));
     }
 
-    public void remapCurrentToken(Collection<IElementType> types) {
+    protected void remapCurrentTokenAdvanceLexer(){
         advanceLexer();
+    }
+
+    public void remapCurrentToken(Collection<IElementType> types) {
+        remapCurrentTokenAdvanceLexer();
         waitingTokens.addAll(0, types);
     }
 
     @Override
     public Marker mark() {
         return new DelegateMarker(super.mark());
+    }
+
+    @Override
+    public IElementType lookAhead(int steps) {
+        final Marker lookaheadMark = mark();
+        try{
+            for (int i = 0; i < steps; i++) {
+                advanceLexer();
+            }
+            return getTokenType();
+        }finally {
+            lookaheadMark.rollbackTo();
+        }
     }
 
     protected class DelegateMarker extends com.intellij.lang.impl.DelegateMarker {
@@ -98,5 +115,7 @@ public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
             super.rollbackTo();
             waitingTokens = rollbackWaitingTokens;
         }
+
+
     }
 }

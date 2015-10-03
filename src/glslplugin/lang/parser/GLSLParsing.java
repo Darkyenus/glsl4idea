@@ -77,7 +77,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         // potentially parsing a preprocessor directive inside this one.
         PsiBuilder.Marker preprocessor = b.mark();
         b.advanceLexer(false, false); //Get past the PREPROCESSOR_BEGIN ("#")
-        //advanceLexer(false,false)
+        //advanceLexer(false,false) explanation:
         //false -> this is not a valid place for more preprocessor directives
         //false -> don't substitute here (makes re"define"ing and "undef"ing impossible)
 
@@ -145,9 +145,10 @@ public final class GLSLParsing extends GLSLParsingBase {
                 b.advanceLexer();
             }
         }
-        b.advanceLexer(false, true);//Get past PREPROCESSOR_END
+        b.advanceLexer(false, false);//Get past PREPROCESSOR_END
         //false -> don't check for PREPROCESSOR_BEGIN, we will handle that ourselves
         preprocessor.done(preprocessorType);
+        b.advanceLexer_remapTokens(); //Remap explicitly after advancing without remapping, makes mess otherwise
 
         if (b.getTokenType() == PREPROCESSOR_BEGIN) {
             parsePreprocessor();

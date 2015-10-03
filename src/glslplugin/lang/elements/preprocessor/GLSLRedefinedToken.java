@@ -1,7 +1,9 @@
 package glslplugin.lang.elements.preprocessor;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import glslplugin.lang.elements.GLSLElementImpl;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.reference.GLSLMacroReference;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +24,13 @@ public class GLSLRedefinedToken extends GLSLElementImpl {
     @Override
     @NotNull
     public String getName() {
-        return getText();
+        //Explicitly asking for IDENTIFIER works around corner-case
+        // when two replaced tokens are right next to each other and second becomes child of first
+
+        //It shouldn't happen anymore though
+        final PsiElement name = findChildByType(GLSLTokenTypes.IDENTIFIER);
+        if(name == null)return getText();
+        return name.getText();
     }
 
 }

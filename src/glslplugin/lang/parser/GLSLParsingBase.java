@@ -71,11 +71,31 @@ abstract class GLSLParsingBase {
                 }
             }
 
-            if (remapTokens && definitions.get(getTokenText()) != null) {
-                Marker macro = mark();
-                remapCurrentToken(definitions.get(getTokenText()));
-                macro.done(REDEFINED_TOKEN);
+            if (remapTokens) {
+                advanceLexer_remapTokens();
             }
+        }
+
+        public void advanceLexer_remapTokens(){
+            if (definitions.get(getTokenText()) != null) {
+                Marker macro = mark();
+                remapCurrentTokenAdvanceLexer_redefineTokens = false;
+                remapCurrentToken(definitions.get(getTokenText()));
+                remapCurrentTokenAdvanceLexer_redefineTokens = true;
+                macro.done(REDEFINED_TOKEN);
+                advanceLexer_remapTokens();
+            }
+        }
+
+        //Behold, the longest boolean on this hemisphere
+        //Used in advanceLexer_remapTokens to not remap immediately after advancing in remapCurrentToken
+        //That prevents two redefined tokens merging together (second becomes child of first)
+        //I know that it sounds complicated, but you will have to trust me.
+        private boolean remapCurrentTokenAdvanceLexer_redefineTokens = true;
+
+        @Override
+        protected void remapCurrentTokenAdvanceLexer() {
+            advanceLexer(false, remapCurrentTokenAdvanceLexer_redefineTokens);
         }
     }
 
