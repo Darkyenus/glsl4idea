@@ -20,7 +20,7 @@
 package glslplugin.lang.elements.reference;
 
 import com.intellij.psi.PsiElement;
-import glslplugin.lang.elements.GLSLTypedElement;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.declarations.*;
 import glslplugin.lang.elements.statements.GLSLDeclarationStatement;
 import glslplugin.lang.parser.GLSLFile;
@@ -41,19 +41,23 @@ public class GLSLTypeReference extends GLSLReferenceBase<GLSLTypename, GLSLTypeD
     @Nullable
     @Override
     public GLSLTypeDefinition resolve() {
-        PsiElement current = source.getPrevSibling();
+        return findTypeDefinition(source, source.getTypename());
+    }
+
+    public static GLSLTypeDefinition findTypeDefinition(GLSLElement from, String typeName){
+        PsiElement current = from.getPrevSibling();
         GLSLTypeDefinition result = null;
         if (current == null) {
-            current = source.getParent();
+            current = from.getParent();
         }
 
         while (current != null) {
 
             // Only process it if we haven't already done so.
-            if (current instanceof GLSLDeclarationList && !source.isDescendantOf(current)) {
+            if (current instanceof GLSLDeclarationList && !from.isDescendantOf(current)) {
                 GLSLDeclarationList list = (GLSLDeclarationList) current;
                 for (GLSLDeclaration declaration : list.getDeclarations()) {
-                    result = checkDeclarationForType(declaration);
+                    result = checkDeclarationForType(declaration, typeName);
                     if (result != null) {
                         break;
                     }
@@ -62,20 +66,20 @@ public class GLSLTypeReference extends GLSLReferenceBase<GLSLTypename, GLSLTypeD
                 GLSLDeclaration declaration = null;
 
                 if (current instanceof GLSLDeclarationStatement) {
-                    if (!source.isDescendantOf(current)) {
+                    if (!from.isDescendantOf(current)) {
                         declaration = ((GLSLDeclarationStatement) current).getDeclaration();
                     }
                 }
 
                 if (current instanceof GLSLDeclaration && !(current instanceof GLSLFunctionDeclaration)) {
                     // Do not check if this is contained in the declaration.
-                    if (!source.isDescendantOf(current)) {
+                    if (!from.isDescendantOf(current)) {
                         declaration = (GLSLDeclaration) current;
                     }
                 }
 
                 if (declaration != null) {
-                    result = checkDeclarationForType(declaration);
+                    result = checkDeclarationForType(declaration, typeName);
                 }
             }
 
@@ -97,12 +101,12 @@ public class GLSLTypeReference extends GLSLReferenceBase<GLSLTypename, GLSLTypeD
     }
 
     @Nullable
-    private GLSLTypeDefinition checkDeclarationForType(GLSLDeclaration declaration) {
+    private static GLSLTypeDefinition checkDeclarationForType(GLSLDeclaration declaration, String typeName) {
         final GLSLTypeSpecifier specifier = declaration.getTypeSpecifierNode();
         if(specifier == null)return null;
         GLSLTypeDefinition definition = specifier.getTypeDefinition();
         if (definition != null) {
-            if (source.getTypename().equals(definition.getName())) return definition;
+            if (typeName.equals(definition.getName())) return definition;
         }
         return null;
     }

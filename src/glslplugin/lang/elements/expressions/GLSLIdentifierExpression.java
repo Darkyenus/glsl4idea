@@ -98,7 +98,7 @@ public class GLSLIdentifierExpression extends GLSLExpression implements GLSLRefe
     }
 
     @Override
-    @Nullable
+    @NotNull
     public GLSLVariableReference getReferenceProxy() {
         return new GLSLVariableReference(this.getNameIdentifier());
     }

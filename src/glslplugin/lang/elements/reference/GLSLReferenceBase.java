@@ -28,6 +28,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,7 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
         return new TextRange(0, source.getTextLength());
     }
 
+    @Nullable
     @Override
     public abstract TARGET_TYPE resolve();
 

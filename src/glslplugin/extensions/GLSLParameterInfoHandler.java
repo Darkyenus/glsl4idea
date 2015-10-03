@@ -3,12 +3,15 @@ package glslplugin.extensions;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.parameterInfo.*;
 import com.intellij.psi.PsiElementResolveResult;
+import glslplugin.lang.elements.GLSLElement;
+import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLParameterDeclaration;
 import glslplugin.lang.elements.expressions.GLSLFunctionCallExpression;
 import glslplugin.lang.elements.reference.GLSLFunctionReference;
+import glslplugin.lang.elements.reference.GLSLReferenceBase;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +51,10 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
                         GLSLFunctionCallExpression.class, GLSLCompoundStatement.class);
         if (call == null) return null;
 
-        GLSLFunctionReference reference = call.getReferenceProxy();
+        final GLSLReferenceBase<GLSLIdentifier, ? extends GLSLElement> rawReference = call.getReferenceProxy();
+        if (!(rawReference instanceof GLSLFunctionReference))return null;
+
+       GLSLFunctionReference reference = ((GLSLFunctionReference) rawReference);
 
         Object[] items = reference.multiResolve(false);
         if (items.length == 0) {

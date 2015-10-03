@@ -65,6 +65,14 @@ public class GLSLTypeSpecifier extends GLSLElementImpl {
         }
     }
 
+    /**
+     * @return true if this type specifier actually defines its own type (as possible with structs)
+     */
+    public boolean isTypeDeclaration(){
+        final GLSLTypedElement reference = findChildByClass(GLSLTypedElement.class);
+        return reference instanceof GLSLTypeDefinition;
+    }
+
     @NotNull
     public String getTypeName() {
         return getType().getTypename();

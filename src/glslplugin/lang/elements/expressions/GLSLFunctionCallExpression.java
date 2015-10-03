@@ -24,18 +24,17 @@ import com.intellij.psi.PsiElement;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.GLSLReferenceElement;
-import glslplugin.lang.elements.GLSLTypedElement;
-import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
-import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
-import glslplugin.lang.elements.declarations.GLSLTypeSpecifier;
-import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
 import glslplugin.lang.elements.declarations.*;
+import glslplugin.lang.elements.reference.GLSLConstructorReference;
 import glslplugin.lang.elements.reference.GLSLFunctionReference;
+import glslplugin.lang.elements.reference.GLSLReferenceBase;
+import glslplugin.lang.elements.reference.GLSLTypeReference;
 import glslplugin.lang.elements.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,6 +47,13 @@ import java.util.List;
  *  FUNCTION_NAME                       = Constructor mode of structs or an actual function call, determined by references in scope
  * All modes always followed by LEFT_PAREN parameter list RIGHT_PAREN.
  * (That is, if the tree is syntactically valid.)
+ *
+ * Examples:
+ * int A = int(4);
+ * int[] B = int[3](1,2,3);
+ * MyVec C = MyVec(3.5,6.7);
+ * MyVec[] D = MyVec[2]( MyVec(1,2), MyVec(3,4) );
+ * bool E = randomBoolean();
  *
  * @author Yngve Devik Hammersland
  *         Date: Jan 29, 2009
@@ -72,7 +78,7 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
 
     //Shared
     @Nullable
-    private GLSLIdentifier getIdentifier() {
+    public GLSLIdentifier getIdentifier() {
         return findChildByClass(GLSLIdentifier.class);
     }
 
@@ -91,7 +97,7 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
 
     //region Shared
     private boolean isStructReference(GLSLIdentifier identifier){
-        return findDefinedStruct(identifier.getName()) != null;
+        return findDefinedStruct(identifier) != null;
     }
 
     public boolean isConstructor(){
@@ -104,18 +110,17 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
 
     @NotNull
     private GLSLType getTypeOfStructConstructor(GLSLIdentifier identifier, GLSLArraySpecifier[] arraySpecifiers){
-        GLSLStructType structType = findDefinedStruct(identifier.getName());
+        GLSLStructType structType = findDefinedStruct(identifier);
         if(structType == null)return GLSLTypes.UNKNOWN_TYPE;
         if(arraySpecifiers.length == 0){
             return structType;
         }else{
             int[] dimensions = new int[arraySpecifiers.length];
             for (int i = 0; i < arraySpecifiers.length; i++) {
-                //TODO
+                dimensions[i] = arraySpecifiers[i].getDimensionSize();
             }
-            //TODO Don't forget to specify using parameter list if exists
-            //return ArrayType
-            return GLSLTypes.UNKNOWN_TYPE;
+            clarifyConstructorArrayDimensions(dimensions);
+            return new GLSLArrayType(structType, dimensions);
         }
     }
 
@@ -132,45 +137,31 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
     @NotNull
     @Override
     public GLSLType getType() {
-        //TODO There is some resolution logic in getReferenceProxy().resolve().getType(), merge it or use it.
-        //     It probably assumes that this is a function call, not a constructor
-        GLSLTypeSpecifier constructorTypeSpecifier = getConstructorTypeSpecifier();
-        if(constructorTypeSpecifier != null){
-            GLSLType constructorType = constructorTypeSpecifier.getType();
-            if(constructorType instanceof GLSLArrayType){
-                //Specify using parameter list
-                GLSLParameterList parameterList = getParameterList();
-                if (parameterList != null) {
-                    //That array may be implicitly sized, if so - clarify it
+        { //If name is built in type, resolve as constructor
+            GLSLTypeSpecifier constructorTypeSpecifier = getConstructorTypeSpecifier();
+            if(constructorTypeSpecifier != null){
+                GLSLType constructorType = constructorTypeSpecifier.getType();
+                //NOTE: Built-in types have different handling of array sizes, it is a part of their type specifier
+                // Structs don't have that - their array sizes are separate elements after specifier
+                if(constructorType instanceof GLSLArrayType){
+                    //That array may be implicitly sized, if so - clarify it using parameter list
                     GLSLArrayType arrayType = (GLSLArrayType) constructorType;
                     final int[] dimensions = arrayType.getDimensions();
-                    if (dimensions.length >= 1) {
-                        if (dimensions[0] == GLSLArrayType.UNDEFINED_SIZE_DIMENSION) {
-                            dimensions[0] = parameterList.getParameters().length;
-                        }
-                    }
-                    for (int i = 1; i < dimensions.length; i++) {
-                        if (dimensions[i] == GLSLArrayType.UNDEFINED_SIZE_DIMENSION) {
-                            //Clarify further
-                            //TODO
-                        }
-                    }
+                    clarifyConstructorArrayDimensions(dimensions);
                 }
+                return constructorType;
             }
-            return constructorType;
         }
-        GLSLIdentifier identifier = getIdentifier();
-        if(identifier == null)return GLSLTypes.UNKNOWN_TYPE; //Can't deduce type
-        GLSLArraySpecifier[] constructorArraySpecifiers = getConstructorArraySpecifiers();
-        if(constructorArraySpecifiers.length > 0){
-            return getTypeOfStructConstructor(identifier, constructorArraySpecifiers);
-        }else{
-            if(isStructReference(identifier)){
+
+        { //Not a built in type, both possibilities still open
+            GLSLIdentifier identifier = getIdentifier();
+            if(identifier == null)return GLSLTypes.UNKNOWN_TYPE; //Can't deduce type
+            GLSLArraySpecifier[] constructorArraySpecifiers = getConstructorArraySpecifiers();
+            if(constructorArraySpecifiers.length > 0 || isStructReference(identifier)){
+                //It has some array specifiers or is struct type, it has to be constructor
                 return getTypeOfStructConstructor(identifier, constructorArraySpecifiers);
             }else{
-                GLSLParameterList parameterList = getParameterList();
-                if(parameterList == null)return GLSLTypes.UNKNOWN_TYPE;//Can't deduce type without parameters
-                return getTypeOfFunctionCall(identifier, parameterList.getParameterTypes());
+                return getTypeOfFunctionCall(identifier, getParameterTypes());
             }
         }
     }
@@ -178,24 +169,26 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
 
     //region Struct only
     @Nullable
-    private GLSLStructType findDefinedStruct(String name){
-        PsiElement current = findParentByClass(GLSLVariableDeclaration.class);
-        while (current != null) {
-            if (current instanceof GLSLVariableDeclaration) {
-                GLSLTypeSpecifier typeSpecifier = ((GLSLVariableDeclaration) current).getTypeSpecifierNode();
-                if(typeSpecifier != null){
-                    GLSLType declaredType = typeSpecifier.getType();
-                    if(declaredType instanceof GLSLStructType){
-                        GLSLStructType structType = (GLSLStructType) declaredType;
-                        if(name.equals(structType.getTypename())){
-                            return structType;
-                        }
-                    }
-                }
+    private GLSLStructType findDefinedStruct(GLSLIdentifier identifier){
+        final GLSLTypeDefinition typeDefinition = GLSLTypeReference.findTypeDefinition(identifier, identifier.getName());
+        if(typeDefinition == null)return null;
+        return typeDefinition.getType();
+    }
+
+    private void clarifyConstructorArrayDimensions(final int[] dimensions){
+        final GLSLParameterList parameterList = getParameterList();
+        if(parameterList == null)return;
+        if (dimensions.length >= 1) {
+            if (dimensions[0] == GLSLArrayType.UNDEFINED_SIZE_DIMENSION) {
+                dimensions[0] = parameterList.getParameters().length;
             }
-            current = current.getPrevSibling();
         }
-        return null;
+        for (int i = 1; i < dimensions.length; i++) {
+            if (dimensions[i] == GLSLArrayType.UNDEFINED_SIZE_DIMENSION) {
+                //Clarify further
+                //TODO
+            }
+        }
     }
     //endregion
 
@@ -237,15 +230,45 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
         return "(unknown)";
     }
 
+    /**
+     * @return All function types this call can possibly call
+     */
     @NotNull
-    public GLSLFunctionReference getReferenceProxy() {
-        //TODO Calling this when this is a constructor may be very wrong
-        return new GLSLFunctionReference(this);
+    public List<GLSLFunctionType> getPossibleCalledFunctions(){
+        final GLSLIdentifier identifier = getIdentifier();
+        if(identifier == null)return Collections.emptyList();
+        return findDefinedFunctions(identifier.getText(), getParameterTypes());
+    }
+
+    /**
+     * @return Called function type or null if ambiguous
+     */
+    @Nullable
+    public GLSLFunctionType getCalledFunctionType(){
+        final List<GLSLFunctionType> possibilities = getPossibleCalledFunctions();
+        if(possibilities.size() == 1){
+            return possibilities.get(0);
+        }else{
+            return null;
+        }
+    }
+
+    @NotNull
+    public GLSLReferenceBase<GLSLIdentifier, ? extends GLSLElement> getReferenceProxy() {
+        if(isConstructor()){
+            return new GLSLConstructorReference(this);
+        }else{
+            return new GLSLFunctionReference(this);
+        }
     }
     //endregion
 
     @Override
     public String toString() {
-        return "Function Call: " + getFunctionName();
+        if(isConstructor()){
+            return "Constructor call: "+getType().getTypename();
+        }else{
+            return "Function call: " + getFunctionName();
+        }
     }
 }

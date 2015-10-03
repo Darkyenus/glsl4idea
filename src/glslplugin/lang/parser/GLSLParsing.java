@@ -324,7 +324,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                 postType = postType.precede();
                 postType.done(DECLARATOR_LIST);
                 mark.done(VARIABLE_DECLARATION);
-                b.error("Missing ';' after declaration.");
+                b.error("Missing ';' after variable declaration.");
                 return true;
             }
         } else if (GLSLTokenTypes.OPERATORS.contains(b.getTokenType()) ||
@@ -777,7 +777,7 @@ public final class GLSLParsing extends GLSLParsingBase {
             mark.error("Expected declaration.");
             return false;
         } else {
-            match(SEMICOLON, "Expected ';' after declaration.");
+            match(SEMICOLON, "Expected ';' after declaration statement.");
             mark.done(DECLARATION_STATEMENT);
             return true;
         }
@@ -1046,7 +1046,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         //                   | postfix_expression '.' function_call
         PsiBuilder.Marker mark = b.mark();
         boolean result;
-        if (lookAheadFunctionCall()) {
+        if (lookAheadFunctionCall(true)) {
             result = parseFunctionCall();
         } else {
             result = parsePrimaryExpression();
@@ -1061,7 +1061,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                 match(RIGHT_BRACKET, "Missing ']' after subscript.");
                 mark.done(SUBSCRIPT_EXPRESSION);
             } else if (tryMatch(DOT)) {
-                if (lookAheadFunctionCall()) {
+                if (lookAheadFunctionCall(false)) {
                     parseFunctionCallImpl(true);
                     mark.done(METHOD_CALL_EXPRESSION);
                 } else {
@@ -1085,14 +1085,14 @@ public final class GLSLParsing extends GLSLParsingBase {
      *
      * @return true if the immediately approaching tokens contain a function call, false otherwise
      */
-    private boolean lookAheadFunctionCall() {
+    private boolean lookAheadFunctionCall(boolean allowConstructors) {
         PsiBuilder.Marker mark = b.mark();
         boolean result = false;
 
         if (tryMatch(TYPE_SPECIFIER_NONARRAY_TOKENS)) {
             result = true;
         } else if (tryMatch(IDENTIFIER)) {
-            if (tryMatch(LEFT_PAREN)) {
+            if (allowConstructors ? tryMatch(LEFT_PAREN, LEFT_BRACKET): tryMatch(LEFT_PAREN)) {
                 result = true;
             }
         }
@@ -1149,13 +1149,13 @@ public final class GLSLParsing extends GLSLParsingBase {
         PsiBuilder.Marker mark = b.mark();
         if(tryMatch(IDENTIFIER)){
             //Function/method call
+            mark.done(markAsMethodIdentifier ? METHOD_NAME : FUNCTION_NAME);
 
+            //Search for "[x]" AFTER marking the IDENTIFIER, because it is not part of the identifier
             if(!markAsMethodIdentifier && b.getTokenType() == LEFT_BRACKET){
                 //If it is a constructor, it may be an array constructor.
                 parseArrayDeclarator();
             }
-
-            mark.done(markAsMethodIdentifier ? METHOD_NAME : FUNCTION_NAME);
             return true;
         }else{
             if(markAsMethodIdentifier) mark.error("Expected method identifier.");
@@ -1362,7 +1362,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
         parseQualifiedTypeSpecifier();
         parseStructDeclaratorList();
-        match(SEMICOLON, "Expected ';' after declaration.");
+        match(SEMICOLON, "Expected ';' after struct declaration.");
 
         mark.done(STRUCT_DECLARATION);
     }
