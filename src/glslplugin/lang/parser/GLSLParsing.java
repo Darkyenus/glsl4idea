@@ -1092,7 +1092,10 @@ public final class GLSLParsing extends GLSLParsingBase {
         if (tryMatch(TYPE_SPECIFIER_NONARRAY_TOKENS)) {
             result = true;
         } else if (tryMatch(IDENTIFIER)) {
-            if (allowConstructors ? tryMatch(LEFT_PAREN, LEFT_BRACKET): tryMatch(LEFT_PAREN)) {
+            if(allowConstructors && b.getTokenType() == LEFT_BRACKET){
+                parseArrayDeclarator();
+            }
+            if (tryMatch(LEFT_PAREN)) {
                 result = true;
             }
         }
