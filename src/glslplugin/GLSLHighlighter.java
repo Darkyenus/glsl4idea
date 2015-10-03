@@ -25,12 +25,11 @@ import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
-import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.scanner.GLSLFlexAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import static glslplugin.lang.elements.GLSLElementTypes.RedefinedTokenElementType;
 import static glslplugin.lang.elements.GLSLTokenTypes.*;
-import static glslplugin.lang.elements.GLSLElementTypes.*;
 
 public class GLSLHighlighter extends SyntaxHighlighterBase {
 
@@ -97,7 +96,7 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
         if (type == PREPROCESSOR_STRING) return GLSL_STRING;
         if (type == UNKNOWN) return GLSL_UNKNOWN;
         if (type == RESERVED_KEYWORD) return GLSL_FLOW_KEYWORDS;
-        if (type == REDEFINED_TOKEN) return GLSL_REDEFINED_TOKEN;
+        if (type instanceof RedefinedTokenElementType /*== REDEFINED_TOKEN*/) return GLSL_REDEFINED_TOKEN;
         return GLSL_TEXT;
     }
 }

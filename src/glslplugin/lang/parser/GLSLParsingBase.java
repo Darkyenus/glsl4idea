@@ -46,6 +46,7 @@ abstract class GLSLParsingBase {
     protected final GLSLPsiBuilderAdapter b;
 
     protected Map<String, List<IElementType>> definitions = new HashMap<String, List<IElementType>>();
+    protected Map<String, String> definitionTexts = new HashMap<String, String>();
 
     GLSLParsingBase(PsiBuilder builder) {
         b = new GLSLPsiBuilderAdapter(builder);
@@ -77,12 +78,14 @@ abstract class GLSLParsingBase {
         }
 
         public void advanceLexer_remapTokens(){
-            if (definitions.get(getTokenText()) != null) {
+            final String tokenText = getTokenText();
+            final List<IElementType> definition = definitions.get(tokenText);
+            if (definition != null) {
                 Marker macro = mark();
                 remapCurrentTokenAdvanceLexer_redefineTokens = false;
-                remapCurrentToken(definitions.get(getTokenText()));
+                remapCurrentToken(definition);
                 remapCurrentTokenAdvanceLexer_redefineTokens = true;
-                macro.done(REDEFINED_TOKEN);
+                macro.done(new RedefinedTokenElementType(definitionTexts.get(tokenText)));
                 advanceLexer_remapTokens();
             }
         }

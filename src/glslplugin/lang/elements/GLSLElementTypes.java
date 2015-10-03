@@ -29,7 +29,8 @@ public class GLSLElementTypes {
     public static final IFileElementType FILE = new IFileElementType(Language.findInstance(GLSLLanguage.class));
 
     public static final IElementType PREPROCESSOR_DIRECTIVE = new GLSLElementType("PREPROCESSOR_DIRECTIVE");
-    public static final IElementType REDEFINED_TOKEN = new GLSLElementType("REDEFINED_TOKEN");
+    //Workaround before proper text redefinition of remapped tokens is implemented, see RedefinedTokenElementType below
+    //public static final IElementType REDEFINED_TOKEN = new GLSLElementType("REDEFINED_TOKEN");
 
     public static final IElementType VARIABLE_NAME_EXPRESSION = new GLSLElementType("VARIABLE_NAME_EXPRESSION");
     public static final IElementType EXPRESSION = new GLSLElementType("EXPRESSION");
@@ -116,32 +117,12 @@ public class GLSLElementTypes {
     public static final IElementType CONDITION = new GLSLElementType("CONDITION");
 
     //Preprocessor dropins
-    public static final class PreprocessedExpressionElementType extends GLSLElementType {
+    public static final class RedefinedTokenElementType extends GLSLElementType {
 
         public final String text;
 
-        public PreprocessedExpressionElementType(String text) {
-            super("PREPROCESSED_EXPRESSION", false);
-            this.text = text;
-        }
-    }
-    public static final class PreprocessedLiteralElementType extends GLSLElementType {
-
-        public final GLSLLiteral.Type type;
-        public final String text;
-
-        public PreprocessedLiteralElementType(GLSLLiteral.Type type, String text) {
-            super("PREPROCESSED_LITERAL", false);
-            this.type = type;
-            this.text = text;
-        }
-    }
-    public static final IElementType PREPROCESSED_EMPTY = new GLSLElementType("PREPROCESSED_EMPTY");
-    public static final class PreprocessedUnknownElementType extends GLSLElementType {
-        public final String text;
-
-        public PreprocessedUnknownElementType(String text) {
-            super("PREPROCESSED_UNKNOWN", false);
+        public RedefinedTokenElementType(String text) {
+            super("REDEFINED_TOKEN", false);
             this.text = text;
         }
     }

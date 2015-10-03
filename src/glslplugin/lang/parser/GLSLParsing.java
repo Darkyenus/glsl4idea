@@ -94,14 +94,20 @@ public final class GLSLParsing extends GLSLParsingBase {
                 b.advanceLexer();//Get past identifier
 
                 List<IElementType> definition = new ArrayList<IElementType>();
+                StringBuilder definitionText = new StringBuilder();
 
                 while (b.getTokenType() != PREPROCESSOR_END && !b.eof()) {
                     //Suppressed warning that getTokenType/Text may be null, because it won't be (.eof() is checked).
                     //noinspection ConstantConditions
                     definition.add(new ForeignLeafType(b.getTokenType(), b.getTokenText()));
+                    definitionText.append(b.getTokenText()).append(' ');
                     b.advanceLexer();
                 }
                 definitions.put(defineIdentifier, definition);
+                if(definitionText.length() >= 1){
+                    definitionText.setLength(definitionText.length()-1);
+                }
+                definitionTexts.put(defineIdentifier, definitionText.toString());
             }else{
                 //Invalid
                 b.error("Identifier expected.");
@@ -121,6 +127,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                 //Valid
                 final String defineIdentifier = b.getTokenText();
                 definitions.remove(defineIdentifier);
+                definitionTexts.remove(defineIdentifier);
 
                 b.advanceLexer();//Get past IDENTIFIER
             }else{

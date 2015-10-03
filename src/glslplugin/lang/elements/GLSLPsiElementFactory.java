@@ -51,7 +51,7 @@ public class GLSLPsiElementFactory {
         }
         IElementType type = node.getElementType();
 
-        if (type == GLSLElementTypes.REDEFINED_TOKEN) return new GLSLRedefinedToken(node);
+        if (type instanceof GLSLElementTypes.RedefinedTokenElementType /*== GLSLElementTypes.REDEFINED_TOKEN*/) return new GLSLRedefinedToken(node);
         if (type == GLSLTokenTypes.PREPROCESSOR_DEFINE) return new GLSLDefineDirective(node);
         if (GLSLTokenTypes.PREPROCESSOR_DIRECTIVES.contains(type)) return new GLSLPreprocessorDirective(node);
 
