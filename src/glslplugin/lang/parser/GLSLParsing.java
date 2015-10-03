@@ -76,13 +76,16 @@ public final class GLSLParsing extends GLSLParsingBase {
         // We can't use tryMatch etc. in here because we'll end up
         // potentially parsing a preprocessor directive inside this one.
         PsiBuilder.Marker preprocessor = b.mark();
-        b.advanceLexer(); //Get past the PREPROCESSOR_BEGIN ("#")
+        b.advanceLexer(false, false); //Get past the PREPROCESSOR_BEGIN ("#")
+        //advanceLexer(false,false)
+        //false -> this is not a valid place for more preprocessor directives
+        //false -> don't substitute here (makes re"define"ing and "undef"ing impossible)
 
         IElementType preprocessorType = b.getTokenType();
 
         if(b.getTokenType() == PREPROCESSOR_DEFINE){
             //Parse define
-            b.advanceLexer();//Get past DEFINE
+            b.advanceLexer(false, false);//Get past DEFINE
 
             if(b.getTokenType() == IDENTIFIER){
                 //Valid
@@ -112,7 +115,7 @@ public final class GLSLParsing extends GLSLParsingBase {
             }
         }else if(b.getTokenType() == PREPROCESSOR_UNDEF){
             //Parse undefine
-            b.advanceLexer();//Get past UNDEF
+            b.advanceLexer(false, false);//Get past UNDEF
 
             if(b.getTokenType() == IDENTIFIER){
                 //Valid
@@ -142,7 +145,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                 b.advanceLexer();
             }
         }
-        b.advanceLexer(false);//Get past PREPROCESSOR_END
+        b.advanceLexer(false, true);//Get past PREPROCESSOR_END
         //false -> don't check for PREPROCESSOR_BEGIN, we will handle that ourselves
         preprocessor.done(preprocessorType);
 

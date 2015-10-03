@@ -59,10 +59,10 @@ abstract class GLSLParsingBase {
 
         @Override
         public void advanceLexer() {
-            advanceLexer(true);
+            advanceLexer(true, true);
         }
 
-        public void advanceLexer(boolean checkForPreprocessor){
+        public void advanceLexer(boolean checkForPreprocessor, boolean remapTokens){
             super.advanceLexer();
 
             if(checkForPreprocessor) {
@@ -71,7 +71,7 @@ abstract class GLSLParsingBase {
                 }
             }
 
-            if (definitions.get(getTokenText()) != null) {
+            if (remapTokens && definitions.get(getTokenText()) != null) {
                 Marker macro = mark();
                 remapCurrentToken(definitions.get(getTokenText()));
                 macro.done(REDEFINED_TOKEN);
