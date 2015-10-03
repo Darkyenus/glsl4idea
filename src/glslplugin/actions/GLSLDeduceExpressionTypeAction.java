@@ -61,6 +61,7 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
 
         String typename = null;
         String expressionText = null;
+        String value = null;
 
         GLSLExpression expr = (GLSLExpression) element;
 
@@ -70,13 +71,20 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
             if (type != GLSLTypes.UNKNOWN_TYPE) {
                 typename = type.getTypename();
             }
+
+            if(expr.isConstantValue()){
+                final Object constValue = expr.getConstantValue();
+                if(constValue != null){
+                    value = constValue.toString();
+                }
+            }
         }
 
         if(expressionText == null && element != null){
             expressionText = element.getText();
         }
 
-        showBalloon(e, createHtml(expressionText, typename));
+        showBalloon(e, createHtml(expressionText, typename, value));
     }
 
     @Override
@@ -97,9 +105,10 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
         balloon.show(position, Balloon.Position.below);
     }
 
-    private static String createHtml(String expression, String type) {
+    private static String createHtml(String expression, String type, String value) {
         expression = makeExpressionTextHtml(expression, type != null);
         type = makeTypenameHtml(type);
+        value = escapeHtml(value);
 
         //noinspection StringBufferReplaceableByString
         StringBuilder b = new StringBuilder();
@@ -111,22 +120,30 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
         b.append("<tr><th align='right'>Type:</th>");
         b.append("<td>").append(type).append("</td></tr>");
 
+        if(value != null){
+            b.append("<tr><th align='right'>Value:</th>");
+            b.append("<td>").append(value).append("</td></tr>");
+        }
+
         b.append("</table></html>");
 
         return b.toString();
     }
 
+    private static String escapeHtml(String text){
+        return org.apache.commons.lang.StringEscapeUtils.escapeHtml(text);
+    }
+
     private static String makeTypenameHtml(String type) {
-        if (type == null) type = "unable to deduce type";
-        else type = "<code>" + type + "</code>";
-        return type;
+        if (type == null) return  "unable to deduce type";
+        else return  "<code>" + escapeHtml(type) + "</code>";
     }
 
     private static String makeExpressionTextHtml(String expression, boolean valid) {
         if(valid){
-            return "<code>" + expression + "</code>";
+            return "<code>" + escapeHtml(expression) + "</code>";
         }else if(expression != null){
-            return "<code>" + expression + "</code> (Not an expression)";
+            return "<code>" + escapeHtml(expression) + "</code> (Not an expression)";
         }else{
             return "selection is not an expression";
         }
