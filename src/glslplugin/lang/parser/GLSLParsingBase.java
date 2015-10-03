@@ -43,7 +43,7 @@ abstract class GLSLParsingBase {
      * Do not use directly, use specialized proxy functions below, which can handle preprocessor
      * directives and macro replacements.
      */
-    protected final PsiBuilder b;
+    protected final GLSLPsiBuilderAdapter b;
 
     protected Map<String, List<IElementType>> definitions = new HashMap<String, List<IElementType>>();
 
@@ -51,7 +51,7 @@ abstract class GLSLParsingBase {
         b = new GLSLPsiBuilderAdapter(builder);
     }
 
-    private class GLSLPsiBuilderAdapter extends MultiRemapPsiBuilderAdapter {
+    protected final class GLSLPsiBuilderAdapter extends MultiRemapPsiBuilderAdapter {
 
         public GLSLPsiBuilderAdapter(PsiBuilder delegate) {
             super(delegate);
@@ -59,10 +59,16 @@ abstract class GLSLParsingBase {
 
         @Override
         public void advanceLexer() {
+            advanceLexer(true);
+        }
+
+        public void advanceLexer(boolean checkForPreprocessor){
             super.advanceLexer();
 
-            while (getTokenType() == PREPROCESSOR_BEGIN) {
-                parsePreprocessor();
+            if(checkForPreprocessor) {
+                while (getTokenType() == PREPROCESSOR_BEGIN) {
+                    parsePreprocessor();
+                }
             }
 
             if (definitions.get(getTokenText()) != null) {

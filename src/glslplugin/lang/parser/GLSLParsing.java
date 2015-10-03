@@ -142,7 +142,8 @@ public final class GLSLParsing extends GLSLParsingBase {
                 b.advanceLexer();
             }
         }
-        b.advanceLexer();//Get past PREPROCESSOR_END
+        b.advanceLexer(false);//Get past PREPROCESSOR_END
+        //false -> don't check for PREPROCESSOR_BEGIN, we will handle that ourselves
         preprocessor.done(preprocessorType);
 
         if (b.getTokenType() == PREPROCESSOR_BEGIN) {
