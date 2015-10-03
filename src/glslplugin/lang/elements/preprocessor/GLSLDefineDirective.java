@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
+ *
  * Created by abigail on 08/07/15.
  */
 public class GLSLDefineDirective extends GLSLPreprocessorDirective implements PsiNameIdentifierOwner {
@@ -34,6 +35,21 @@ public class GLSLDefineDirective extends GLSLPreprocessorDirective implements Ps
         return (nameIdentifier != null) ? nameIdentifier.getText() : null;
     }
 
+    /**
+     * @return text after the name
+     */
+    @NotNull
+    public String getBoundText(){
+        final PsiElement name = getNameIdentifier();
+        if(name == null)return "";
+
+        int textStart = name.getTextOffset() + name.getTextLength();
+        int textEnd = getTextOffset() + getTextLength();
+        final String text = getContainingFile().getText();
+        if(textStart >= textEnd || textStart < 0 || textEnd > text.length()) return "";
+        return text.substring(textStart, textEnd).trim();
+    }
+
     @Override
     public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
         final PsiElement oldName = getNameIdentifier();
@@ -41,5 +57,10 @@ public class GLSLDefineDirective extends GLSLPreprocessorDirective implements Ps
         PsiElement newName = GLSLPsiElementFactory.createLeafElement(getProject(), name);
         getNode().replaceChild(oldName.getNode(), newName.getNode());
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "#Define Directive "+getName()+" => "+getBoundText();
     }
 }
