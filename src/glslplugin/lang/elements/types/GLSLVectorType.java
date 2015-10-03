@@ -136,6 +136,13 @@ public class GLSLVectorType extends GLSLType {
                 return false;
             }
         }
+        //Check if not accessing member of larger vector (ie .b on vec2)
+        for (int i = 0; i < member.length(); i++) {
+            if(swizzleSet.indexOf(member.charAt(i)) >= numComponents){
+                //This is only part of larger vectors
+                return false;
+            }
+        }
         return true;
     }
 
