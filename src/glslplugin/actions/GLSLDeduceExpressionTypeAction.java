@@ -34,7 +34,6 @@ import com.intellij.ui.awt.RelativePoint;
 import glslplugin.lang.GLSLLanguage;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.types.GLSLType;
-import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -68,9 +67,7 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
         if (expr != null) {
             expressionText = expr.getText();
             GLSLType type = expr.getType();
-            if (type != GLSLTypes.UNKNOWN_TYPE) {
-                typename = type.getTypename();
-            }
+            typename = type.getTypename();
 
             if(expr.isConstantValue()){
                 final Object constValue = expr.getConstantValue();
