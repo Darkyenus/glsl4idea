@@ -27,8 +27,15 @@
     <idea-version since-build="139.1117"/>
     <depends>com.intellij.modules.lang</depends>
 
-    <version>1.10</version>
+    <version>1.11</version>
     <change-notes><![CDATA[
+        <p>1.11</p>
+        <ul>
+            <li>Major improvements to handling of preprocessor #define directives</li>
+            <li>Add checking of switch statement correctness</li>
+            <li>Improvements to Deduce Expression Type action</li>
+            <li>Distinguish between function call and constructor</li>
+        </ul>
 
         <p>1.10</p>
         <ul>
