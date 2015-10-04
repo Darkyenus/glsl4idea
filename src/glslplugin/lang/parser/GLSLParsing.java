@@ -490,9 +490,11 @@ public final class GLSLParsing extends GLSLParsingBase {
         }
     }
 
+    private static final TokenSet VALID_FIRST_OPERATORS = TokenSet.create(INC_OP, DEC_OP, PLUS, DASH);
+
     private void eatInvalidOperators() {
         PsiBuilder.Marker mark = b.mark();
-        while (OPERATORS.contains(b.getTokenType())) {
+        while (OPERATORS.contains(b.getTokenType()) && !VALID_FIRST_OPERATORS.contains(b.getTokenType())) {
             String operator = b.getTokenText();
             b.advanceLexer();
             mark.error("Unexpected operator '" + operator + "'.");
