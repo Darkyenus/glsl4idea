@@ -1326,10 +1326,6 @@ public final class GLSLParsing extends GLSLParsingBase {
         return parseConditionalExpression();
     }
 
-    private boolean parseTypeSpecifierNoArray() {
-        return parseTypeSpecifierNoArray(false);
-    }
-
     private boolean parseTypeSpecifierNoArray(boolean onlyBuiltIn) {
         // type_specifier_noarray: all_built_in_types
         //                       | struct_specifier
@@ -1468,9 +1464,11 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseQualifier() {
         // qualifier: layout_qualifier
+        //          | subroutine_qualifier
         //          | qualifier_token
 
         if(parseLayoutQualifier())return true;
+        if(parseSubroutineQualifier())return true;
 
         if (QUALIFIER_TOKENS.contains(b.getTokenType())) {
             final PsiBuilder.Marker mark = b.mark();
@@ -1518,6 +1516,36 @@ public final class GLSLParsing extends GLSLParsingBase {
             match(LEFT_PAREN, "Expected '('");
             parseLayoutQualifierList();
             match(RIGHT_PAREN, "Expected ')'");
+            mark.done(QUALIFIER);
+            return true;
+        }else return false;
+    }
+
+    private void parseSubroutineTypeName(){
+        final PsiBuilder.Marker typeNameMark = b.mark();
+        if(b.getTokenType() == IDENTIFIER){
+            b.advanceLexer();
+            typeNameMark.done(TYPE_SPECIFIER);
+        }else{
+            typeNameMark.error("Subroutine type name expected");
+        }
+
+    }
+
+    private boolean parseSubroutineQualifier(){
+        // subroutine_qualifier: SUBROUTINE ['(' TYPE_NAME [',' TYPE_NAME]* ')']?
+        if(b.getTokenType() == SUBROUTINE_KEYWORD){
+            final PsiBuilder.Marker mark = b.mark();
+            b.advanceLexer();
+            if(tryMatch(LEFT_PAREN)){
+                parseSubroutineTypeName();
+                while(b.getTokenType() == COMMA){
+                    b.advanceLexer();
+                    parseSubroutineTypeName();
+                }
+
+                match(RIGHT_PAREN, "Expected ')'");
+            }
             mark.done(QUALIFIER);
             return true;
         }else return false;
