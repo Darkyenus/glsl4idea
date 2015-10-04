@@ -69,7 +69,7 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
         if (source instanceof PsiNamedElement) {
             return ((PsiNamedElement) source).setName(newElementName);
         }
-        throw new IncorrectOperationException("Not supported!");
+        return resolve();
     }
 
     public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {

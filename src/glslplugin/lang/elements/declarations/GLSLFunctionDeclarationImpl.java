@@ -20,6 +20,11 @@
 package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiCheckedRenameElement;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.util.IncorrectOperationException;
+import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.types.GLSLBasicFunctionType;
 import glslplugin.lang.elements.types.GLSLFunctionType;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * GLSLFunctionDeclarationImpl is the psi implementation of a function declaration.
  */
-public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl implements GLSLFunctionDeclaration {
+public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl implements GLSLFunctionDeclaration, PsiNameIdentifierOwner, PsiCheckedRenameElement {
     private GLSLFunctionType type;
 
     public GLSLFunctionDeclarationImpl(@NotNull ASTNode astNode) {
@@ -94,5 +99,27 @@ public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl imple
     @Override
     public String getDeclarationDescription() {
         return "function";
+    }
+
+    @Nullable
+    @Override
+    public GLSLIdentifier getNameIdentifier() {
+        final GLSLDeclarator declarator = getDeclarator();
+        if(declarator == null)return null;
+        return declarator.getNameIdentifier();
+    }
+
+    @Override
+    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+        final GLSLIdentifier nameIdentifier = getNameIdentifier();
+        if(nameIdentifier == null)throw new IncorrectOperationException("GLSLDeclarator is null");
+        return nameIdentifier.setName(name);
+    }
+
+    @Override
+    public void checkSetName(String name) throws IncorrectOperationException {
+        final GLSLIdentifier nameIdentifier = getNameIdentifier();
+        if(nameIdentifier == null)throw new IncorrectOperationException("GLSLDeclarator is null");
+        nameIdentifier.checkSetName(name);
     }
 }

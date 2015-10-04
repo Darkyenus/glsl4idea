@@ -20,7 +20,10 @@
 package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiCheckedRenameElement;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.GLSLReferenceElement;
@@ -269,6 +272,15 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
             return "Constructor call: "+getType().getTypename();
         }else{
             return "Function call: " + getFunctionName();
+        }
+    }
+
+    @Override
+    public String getName() {
+        if(isConstructor()){
+            return getType().getTypename();
+        } else {
+            return getFunctionName();
         }
     }
 }

@@ -61,7 +61,7 @@ public class GLSLIdentifier extends GLSLElementImpl implements PsiCheckedRenameE
         assert oldName != null; // we've already checked this isn't null (and thrown if it is) in checkSetName
         PsiElement newName = GLSLPsiElementFactory.createLeafElement(getProject(), name);
         getNode().replaceChild(oldName.getNode(), newName.getNode());
-        return this;
+        return newName;
     }
 
     @Nullable
