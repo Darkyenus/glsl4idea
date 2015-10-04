@@ -16,6 +16,9 @@ public class GLSLRedefinedToken extends GLSLElementImpl {
         super(astNode);
     }
 
+    /**
+     * @return reference to the #define which caused the redefinition of this token
+     */
     @Override
     public GLSLMacroReference getReference() {
         return new GLSLMacroReference(this);

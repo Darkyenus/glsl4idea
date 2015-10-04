@@ -64,22 +64,18 @@ public class GLSLIdentifier extends GLSLElementImpl implements PsiCheckedRenameE
         return newName;
     }
 
-    @Nullable
-    private GLSLReferenceElement getRealReference() {
-        PsiElement parent = getParent();
-        if (parent instanceof GLSLReferenceElement) {
-            return (GLSLReferenceElement) parent;
-        } else {
-            return null;
-        }
-    }
-
+    /**
+     * GLSLIdentifier can be a reference to pretty much anything (functions, variables...),
+     * but it poses only as a "source", the real logic is in the parent.
+     * @return getReferenceProxy() of parent if parent is GLSLReferenceElement
+     * @see GLSLReferenceElement
+     */
     @Override
     @Nullable
     public PsiReference getReference() {
-        GLSLReferenceElement theRealReference = getRealReference();
-        if (theRealReference != null) {
-            return theRealReference.getReferenceProxy();
+        PsiElement parent = getParent();
+        if (parent instanceof GLSLReferenceElement) {
+            return ((GLSLReferenceElement) parent).getReferenceProxy();
         } else {
             return null;
         }
