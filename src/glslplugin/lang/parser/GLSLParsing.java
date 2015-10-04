@@ -27,6 +27,7 @@ import glslplugin.lang.elements.GLSLTokenTypes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static glslplugin.lang.elements.GLSLElementTypes.*;
 import static glslplugin.lang.elements.GLSLTokenTypes.*;
@@ -87,7 +88,7 @@ public final class GLSLParsing extends GLSLParsingBase {
             //Parse define
             b.advanceLexer(false, false);//Get past DEFINE
 
-            if(b.getTokenType() == IDENTIFIER){
+            if(isValidDefineIdentifier(b.getTokenText())){
                 //Valid
                 final String defineIdentifier = b.getTokenText();
                 //Can use non-b b.advanceLexer here, to allow "nested" defines
@@ -123,7 +124,7 @@ public final class GLSLParsing extends GLSLParsingBase {
             //Parse undefine
             b.advanceLexer(false, false);//Get past UNDEF
 
-            if(b.getTokenType() == IDENTIFIER){
+            if(isValidDefineIdentifier(b.getTokenText())){
                 //Valid
                 final String defineIdentifier = b.getTokenText();
                 definitions.remove(defineIdentifier);
@@ -160,6 +161,12 @@ public final class GLSLParsing extends GLSLParsingBase {
         if (b.getTokenType() == PREPROCESSOR_BEGIN) {
             parsePreprocessor();
         }
+    }
+
+    private static Pattern IDENTIFIER_REGEX = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
+    private boolean isValidDefineIdentifier(String text){
+        if(text == null)return false;
+        return IDENTIFIER_REGEX.matcher(text).matches();
     }
 
     /**
