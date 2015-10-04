@@ -169,15 +169,16 @@ public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifier
         if(arraySpecifiers.length == 0){
             return clarifyArrayType(declaredType);
         }else{
-            //Must append some dimensions to the type
+            //Must _prepend_ some dimensions to the type
+            //In: "vec4[2][4] b[3]" b is "vec4[3][2][4]", not "vec4[2][4][3]"
             if(declaredType instanceof GLSLArrayType){
                 //Already an array, must append the dimensions
                 GLSLArrayType declaredArrayType = (GLSLArrayType) declaredType;
                 int[] existingDimensions = declaredArrayType.getDimensions();
                 int[] combinedDimensions = new int[existingDimensions.length + arraySpecifiers.length];
-                System.arraycopy(existingDimensions, 0, combinedDimensions, 0, existingDimensions.length);
+                System.arraycopy(existingDimensions, 0, combinedDimensions, arraySpecifiers.length, existingDimensions.length);
                 for (int i = 0; i < arraySpecifiers.length; i++) {
-                    combinedDimensions[i + existingDimensions.length] = arraySpecifiers[i].getDimensionSize();
+                    combinedDimensions[i] = arraySpecifiers[i].getDimensionSize();
                 }
                 return clarifyArrayType(new GLSLArrayType(declaredArrayType.getBaseType(), combinedDimensions));
             }else{
