@@ -264,7 +264,7 @@ public final class GLSLParsing extends GLSLParsingBase {
             while (!tryMatch(RIGHT_BRACE) && !eof()) {
                 final PsiBuilder.Marker member = b.mark();
                 parseQualifierList(true);
-                if (!parseTypeSpecifierNoArray()) b.advanceLexer();
+                if (!parseTypeSpecifier()) b.advanceLexer();
                 parseDeclaratorList();
                 match(SEMICOLON, "Expected ';'");
                 member.done(STRUCT_DECLARATION);//TODO Should we call interface block members struct members?
