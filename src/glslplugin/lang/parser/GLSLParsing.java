@@ -82,9 +82,9 @@ public final class GLSLParsing extends GLSLParsingBase {
         //false -> this is not a valid place for more preprocessor directives
         //false -> don't substitute here (makes re"define"ing and "undef"ing impossible)
 
-        IElementType preprocessorType = b.getTokenType();
+        IElementType directiveType = b.getTokenType();
 
-        if(b.getTokenType() == PREPROCESSOR_DEFINE){
+        if(directiveType == PREPROCESSOR_DEFINE){
             //Parse define
             b.advanceLexer(false, false);//Get past DEFINE
 
@@ -120,7 +120,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                     b.advanceLexer();
                 }
             }
-        }else if(b.getTokenType() == PREPROCESSOR_UNDEF){
+        }else if(directiveType == PREPROCESSOR_UNDEF){
             //Parse undefine
             b.advanceLexer(false, false);//Get past UNDEF
 
@@ -155,7 +155,13 @@ public final class GLSLParsing extends GLSLParsingBase {
         }
         b.advanceLexer(false, false);//Get past PREPROCESSOR_END
         //false -> don't check for PREPROCESSOR_BEGIN, we will handle that ourselves
-        preprocessor.done(preprocessorType);
+        if(directiveType == null || !PREPROCESSOR_DIRECTIVES.contains(directiveType)){
+            //Happens when typing new directive at the end of the file
+            //or when malformed directive is created (eg #foo)
+            preprocessor.done(PREPROCESSOR_OTHER);
+        }else{
+            preprocessor.done(directiveType);
+        }
         b.advanceLexer_remapTokens(); //Remap explicitly after advancing without remapping, makes mess otherwise
 
         if (b.getTokenType() == PREPROCESSOR_BEGIN) {

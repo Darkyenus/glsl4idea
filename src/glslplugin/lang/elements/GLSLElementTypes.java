@@ -23,12 +23,10 @@ import com.intellij.lang.Language;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import glslplugin.lang.GLSLLanguage;
-import glslplugin.lang.elements.expressions.GLSLLiteral;
 
 public class GLSLElementTypes {
     public static final IFileElementType FILE = new IFileElementType(Language.findInstance(GLSLLanguage.class));
 
-    public static final IElementType PREPROCESSOR_DIRECTIVE = new GLSLElementType("PREPROCESSOR_DIRECTIVE");
     //Workaround before proper text redefinition of remapped tokens is implemented, see RedefinedTokenElementType below
     //public static final IElementType REDEFINED_TOKEN = new GLSLElementType("REDEFINED_TOKEN");
 

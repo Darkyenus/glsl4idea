@@ -207,6 +207,9 @@ public class GLSLTokenTypes {
     public static final IElementType PREPROCESSOR_CONCAT = new GLSLElementType("PREPROCESSOR_CONCAT");
     public static final IElementType PREPROCESSOR_STRING = new GLSLElementType("PREPROCESSOR_STRING");
 
+    /** Not returned by lexer but used instead of PREPROCESSOR_[something] when the kind of directive is unknown */
+    public static final IElementType PREPROCESSOR_OTHER = new GLSLElementType("PREPROCESSOR_OTHER");
+
     public static final IElementType RESERVED_KEYWORD = new GLSLElementType("RESERVED_KEYWORD");
 
     public static final TokenSet PREPROCESSOR_DIRECTIVES = TokenSet.create(
@@ -226,7 +229,8 @@ public class GLSLTokenTypes {
             PREPROCESSOR_VERSION,
             PREPROCESSOR_LINE,
             PREPROCESSOR_DEFINED,
-            PREPROCESSOR_CONCAT);
+            PREPROCESSOR_CONCAT,
+            PREPROCESSOR_OTHER);
 
     // Type specifiers
     public static final TokenSet FLOAT_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
@@ -353,7 +357,6 @@ public class GLSLTokenTypes {
             QUALIFIER_TOKENS,
             EXPRESSION_FIRST_SET
     );
-    public static final TokenSet FUNCTION_IDENTIFIER_TOKENS = merge(TokenSet.create(IDENTIFIER), TYPE_SPECIFIER_NONARRAY_TOKENS);
 
     public static TokenSet merge(TokenSet... sets) {
         TokenSet tokenSet = TokenSet.create();

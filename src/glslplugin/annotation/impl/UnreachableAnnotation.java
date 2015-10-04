@@ -29,6 +29,7 @@ import com.intellij.psi.tree.IElementType;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLElementTypes;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.statements.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +51,7 @@ public class UnreachableAnnotation extends Annotator<GLSLStatement> {
 
         PsiElement element = expr.getNextSibling();
         while (element != null) {
-            if (element instanceof GLSLElement && element.getNode().getElementType() != GLSLElementTypes.PREPROCESSOR_DIRECTIVE) {
+            if (element instanceof GLSLElement && !GLSLTokenTypes.PREPROCESSOR_DIRECTIVES.contains(element.getNode().getElementType())) {
                 if (element instanceof GLSLLabelStatement) return;
                 PsiElement child = element.getFirstChild();
 
@@ -60,7 +61,7 @@ public class UnreachableAnnotation extends Annotator<GLSLStatement> {
                 }else{
                     do {
                         IElementType type = child.getNode().getElementType();
-                        if(type != GLSLElementTypes.PREPROCESSOR_DIRECTIVE && type != TokenType.WHITE_SPACE){
+                        if(!GLSLTokenTypes.PREPROCESSOR_DIRECTIVES.contains(type) && type != TokenType.WHITE_SPACE){
                             if (child instanceof GLSLLabelStatement) return;
                             Annotation annotation = holder.createWarningAnnotation(child, "Unreachable expression");
                             annotation.setTextAttributes(unreachableAttributes);
