@@ -478,15 +478,8 @@ public final class GLSLParsing extends GLSLParsingBase {
         if (parseSimpleStatement()) {
             return true;
         } else {
-            final PsiBuilder.Marker mark = b.mark();
-            if (parsePrecisionStatement()) {
-                mark.error("Precision statement can be only in the top level.");
-                return true;
-            } else {
-                mark.drop();
-                b.error("Expected a statement.");
-                return false;
-            }
+            b.error("Expected a statement.");
+            return false;
         }
     }
 
@@ -515,7 +508,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         final IElementType type = b.getTokenType();
         boolean result;
 
-        if (EXPRESSION_FIRST_SET.contains(type) || QUALIFIER_TOKENS.contains(type)) {
+        if (EXPRESSION_FIRST_SET.contains(type) || QUALIFIER_TOKENS.contains(type) || type == PRECISION_KEYWORD) {
             // This set also includes the first set of declaration_statement
             if (lookaheadDeclarationStatement()) {
                 result = parseDeclarationStatement();
@@ -804,6 +797,11 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseDeclarationStatement() {
         // declaration_statement: declaration
+        //                        precision_statement
+        if(b.getTokenType() == PRECISION_KEYWORD){
+            return parsePrecisionStatement();
+        }
+
         PsiBuilder.Marker mark = b.mark();
 
         if (!parseDeclaration()) {
@@ -823,6 +821,9 @@ public final class GLSLParsing extends GLSLParsingBase {
      * @return true if it is a declaration statement, false otherwise
      */
     private boolean lookaheadDeclarationStatement() {
+        //Precision statement is a type of declaration statement (GLSL 4.30)
+        if(b.getTokenType() == PRECISION_KEYWORD)return true;
+
         // they share type_specifier. So if found; look for the following identifier.
         PsiBuilder.Marker rollback = b.mark();
         try {
