@@ -642,7 +642,7 @@ public class GLSLOperator {
             GLSLType secondBaseType = secondInput.getBaseType();
 
             if(firstBaseType != secondBaseType){
-                //Fundamental types must match
+                //Fundamental types must match (even "(un)signed-ness")
                 return UNKNOWN_TYPE;
             }
             if(!GLSLScalarType.isIntegerScalar(firstBaseType) || !GLSLScalarType.isIntegerScalar(secondBaseType)){
@@ -655,14 +655,17 @@ public class GLSLOperator {
                     //Vectors must have the same size
                     return UNKNOWN_TYPE;
                 }
+
+                //Both are vectors
+                return firstInput;
             }
-            //Both/first is/are vector(s)
+            //First is vector
             if(firstInput instanceof GLSLVectorType){
-                GLSLVectorType.getType(firstBaseType, ((GLSLVectorType)firstInput).getNumComponents());
+                return firstInput;
             }
             //Second is vector
             if(secondInput instanceof GLSLVectorType){
-                GLSLVectorType.getType(firstBaseType, ((GLSLVectorType)secondInput).getNumComponents());
+                return secondInput;
             }
             //Both are scalars
             return firstBaseType;
