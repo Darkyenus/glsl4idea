@@ -701,7 +701,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         }
 
         PsiBuilder.Marker rollback = b.mark();
-        if(parseDeclarationStatement()){
+        if(lookaheadDeclarationStatement() && parseDeclarationStatement()){
             rollback.drop();
             return;
         }else{
