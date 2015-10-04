@@ -613,19 +613,21 @@ public final class GLSLParsing extends GLSLParsingBase {
     private boolean parseForStatement() {
         // for_iteration_statement: 'for' '(' for_init_statement for_rest_statement ')' statement_no_new_scope
         // NOTE: refactored to:
-        // for_iteration_statement: 'for' '(' (expression|declaration) ';' expression
+        // for_iteration_statement: 'for' '(' (expression statement|declaration statement) condition? ';' expression? ')'
+        // condition:
+        //              expression
+        //              fully_specified_type IDENTIFIER '=' initializer
         PsiBuilder.Marker mark = b.mark();
 
         match(FOR_KEYWORD, "Missing 'for'.");
         match(LEFT_PAREN, "Missing '(' after 'for'.");
 
         parseForInitStatement();
-        match(SEMICOLON, "Missing ';' in for statement.");
 
         if (b.getTokenType() != SEMICOLON) {
             parseCondition();
         }
-        match(SEMICOLON, "Missing ';' in for statement.");
+        match(SEMICOLON, "Missing ';' after condition statement.");
 
         if (b.getTokenType() != RIGHT_PAREN) {
             // Only parse the expression if it is present.
@@ -639,6 +641,25 @@ public final class GLSLParsing extends GLSLParsingBase {
         return true;
     }
 
+    private boolean lookaheadConditionDeclaration(){
+        final PsiBuilder.Marker rollback = b.mark();
+        try {
+            if(!parseQualifiedTypeSpecifier()){
+                return false;
+            }
+            if(!tryMatch(IDENTIFIER)){
+                return false;
+            }
+            if(!tryMatch(EQUAL)){
+                return false;
+            }
+            //At this point we can be pretty confident that this is a condition-style declaration
+            return true;
+        } finally {
+            rollback.rollbackTo();
+        }
+    }
+
     private void parseCondition() {
         // condition: expression
         //          | fully_specified_type IDENTIFIER '=' initializer
@@ -646,7 +667,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         //       to declare a single variable.
 
         PsiBuilder.Marker conditionMark = b.mark();
-        if (lookaheadDeclarationStatement()) {
+        if(lookaheadConditionDeclaration()){
             PsiBuilder.Marker mark = b.mark();
 
             parseQualifiedTypeSpecifier();
@@ -662,9 +683,11 @@ public final class GLSLParsing extends GLSLParsingBase {
             list.done(DECLARATOR_LIST);
 
             mark.done(VARIABLE_DECLARATION);
-
-        } else {
-            parseExpression();
+        }else{
+            if(!parseExpression()){
+                conditionMark.error("Expression or single variable declaration expected.");
+                return;
+            }
         }
         conditionMark.done(CONDITION);
     }
@@ -672,40 +695,29 @@ public final class GLSLParsing extends GLSLParsingBase {
     private void parseForInitStatement() {
         // for_init_statement: expression_statement | declaration_statement
 
-        if (b.getTokenType() == IDENTIFIER) {
-            // needs lookahead
-            PsiBuilder.Marker rollback = b.mark();
-            b.advanceLexer();
-            if (b.getTokenType() == IDENTIFIER) {
-                // IDENTIFIER IDENTIFIER means declaration statement
-                // where the first is the type specifier
-                rollback.rollbackTo();
-                parseDeclaration();
-            } else if (OPERATORS.contains(b.getTokenType()) ||
-                    b.getTokenType() == DOT ||
-                    b.getTokenType() == LEFT_BRACKET ||
-                    b.getTokenType() == QUESTION ||
-                    b.getTokenType() == LEFT_PAREN) {
-                // This should be the complete follow set of IDENTIFIER in the
-                // context limited to expressions
-                rollback.rollbackTo();
-                parseExpression();
-            }
+        if(tryMatch(SEMICOLON)){
+            //Empty statement, don't need to parse further
+            return;
+        }
 
-        } else if (TYPE_SPECIFIER_NONARRAY_TOKENS.contains(b.getTokenType()) ||
-                QUALIFIER_TOKENS.contains(b.getTokenType())) {
-            parseDeclaration();
-        } else if (UNARY_OPERATORS.contains(b.getTokenType()) ||
-                FUNCTION_IDENTIFIER_TOKENS.contains(b.getTokenType()) ||
-                b.getTokenType() == LEFT_PAREN) {
-            parseExpression();
-        } else //noinspection StatementWithEmptyBody
-            if (b.getTokenType() == SEMICOLON) {
-                // Do nothing here
-            } else {
-                // Token not in first set, how did we end up here?
-                // TODO: Add error handling!
-            }
+        PsiBuilder.Marker rollback = b.mark();
+        if(parseDeclarationStatement()){
+            rollback.drop();
+            return;
+        }else{
+            rollback.rollbackTo();
+            rollback = b.mark();
+        }
+
+        if(parseExpressionStatement()){
+            rollback.drop();
+            return;
+        }else{
+            rollback.rollbackTo();
+            rollback = b.mark();
+        }
+
+        rollback.error("Failed to parse for-init statement.");
     }
 
     private boolean parseDoIterationStatement() {
