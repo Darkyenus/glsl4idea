@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.FoldingBuilder;
 import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.GLSLTokenTypes;
@@ -31,9 +32,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-
-// Todo: Blocks. Must have a PSI tree implemented...
 public class GLSLFoldingBuilder implements FoldingBuilder {
+
     @NotNull
     public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
         List<FoldingDescriptor> descriptors = new ArrayList<FoldingDescriptor>();
@@ -43,11 +43,13 @@ public class GLSLFoldingBuilder implements FoldingBuilder {
 
     private void appendDescriptors(final ASTNode node, final List<FoldingDescriptor> descriptors) {
         IElementType type = node.getElementType();
-        if (type == GLSLTokenTypes.COMMENT_BLOCK) {
-            //todo: check if inside or outside method
-            descriptors.add(new FoldingDescriptor(node, node.getTextRange()));
-        } else if(type == GLSLElementTypes.COMPOUND_STATEMENT) {
-            descriptors.add(new FoldingDescriptor(node, node.getTextRange()));
+
+        final TextRange textRange = node.getTextRange();
+        //Don't add folding to 0-length nodes, crashes in new FoldingDescriptor
+        if(textRange.getLength() <= 0)return;
+
+        if (type == GLSLTokenTypes.COMMENT_BLOCK || type == GLSLElementTypes.COMPOUND_STATEMENT) {
+            descriptors.add(new FoldingDescriptor(node, textRange));
         }
 
         ASTNode child = node.getFirstChildNode();
