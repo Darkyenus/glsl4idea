@@ -27,8 +27,14 @@
     <idea-version since-build="139.1117"/>
     <depends>com.intellij.modules.lang</depends>
 
-    <version>1.11</version>
+    <version>1.12</version>
     <change-notes><![CDATA[
+        <p>1.12</p>
+        <ul>
+            <li>Fix lexer not being thread safe and failing when parsing many files at the same time</li>
+            <li>Many minor fixes in parsing and error reporting</li>
+        </ul>
+
         <p>1.11</p>
         <ul>
             <li>Major improvements to handling of preprocessor #define directives</li>
