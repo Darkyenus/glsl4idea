@@ -175,6 +175,8 @@
         <lang.refactoringSupport language="GLSL" implementationClass="glslplugin.extensions.GLSLRefactoringSupportProvider" />
         <lang.findUsagesProvider language="GLSL" implementationClass="glslplugin.extensions.GLSLFindUsagesProvider" />
         <elementDescriptionProvider implementation="glslplugin.extensions.GLSLDescriptionProvider" />
+        <enterHandlerDelegate implementation="glslplugin.extensions.GLSLEnterHandlerDelegate" />
+        <lang.formatter language="GLSL" implementationClass="glslplugin.formatter.GLSLFormattingModelBuilder" />
 
         <createFromTemplateHandler implementation="glslplugin.GLSLCreateFromTemplateHandler"/>
         <internalFileTemplate name="GLSL Shader"/>
