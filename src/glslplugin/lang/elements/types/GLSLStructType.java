@@ -38,28 +38,35 @@ public final class GLSLStructType extends GLSLType {
     private final GLSLTypeDefinition definition;
     private final String typename;
     private final Map<String, GLSLType> members = new HashMap<String, GLSLType>();
-    private final GLSLFunctionType[] constructors;
+    private final GLSLFunctionType[] constructors = new GLSLFunctionType[1];
 
     public GLSLStructType(GLSLTypeDefinition definition) {
         super(null);
         this.definition = definition;
-        final GLSLDeclarator[] declarators = definition.getDeclarators();
 
         typename = definition.getName() != null
                         ? definition.getName()
                         : "(anonymous " + System.identityHashCode(this) + ")";
 
+        updateMembers();
+    }
+
+    /**
+     * Updates internal members containers from the struct type definition.
+     */
+    public void updateMembers() {
+        final GLSLDeclarator[] declarators = definition.getDeclarators();
+
         GLSLType[] memberTypes = new GLSLType[declarators.length];
 
+        members.clear();
         for (int i = 0; i < declarators.length; i++) {
             final GLSLDeclarator declarator = declarators[i];
             members.put(declarator.getName(), declarator.getType());
             memberTypes[i] = declarator.getType();
         }
 
-        constructors = new GLSLFunctionType[]{
-                new GLSLBasicFunctionType(getTypename(), this, memberTypes)
-        };
+        constructors[0] = new GLSLBasicFunctionType(getTypename(), this, memberTypes);
     }
 
     @NotNull
