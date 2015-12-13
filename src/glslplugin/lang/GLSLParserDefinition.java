@@ -68,7 +68,7 @@ public class GLSLParserDefinition implements ParserDefinition {
 
     @NotNull
     public PsiElement createElement(ASTNode node) {
-        GLSLElement elt = psiFactory.create(node);
+        GLSLElement elt =  psiFactory.create(node);
         if (elt != null) {
             return elt;
         } else {
@@ -82,6 +82,6 @@ public class GLSLParserDefinition implements ParserDefinition {
     }
 
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
-        return null;
+        return SpaceRequirements.MAY;
     }
 }

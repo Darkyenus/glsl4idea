@@ -167,6 +167,10 @@
             <className>glslplugin.intentions.vectorcomponents.VectorComponentsIntention</className>
             <category>GLSL</category>
         </intentionAction>
+
+        <localInspection language="GLSL" groupName="GLSL" enabledByDefault="true" level="WARNING"
+                         displayName="C-Style Constructor" implementationClass="glslplugin.codeInspection.CStyleStructConstructorInspection"/>
+
         <codeInsight.lineMarkerProvider language="GLSL"
                                         implementationClass="glslplugin.extensions.GLSLLineMarkerProvider"/>
         <additionalTextAttributes scheme="Default" file="colorSchemes/GLSLDefault.xml"/>

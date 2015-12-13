@@ -23,7 +23,11 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.impl.source.DummyHolderFactory;
+import com.intellij.psi.impl.source.SourceTreeToPsiMap;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.IncorrectOperationException;
 import glslplugin.GLSLSupportLoader;
 import glslplugin.lang.elements.declarations.*;
 import glslplugin.lang.elements.expressions.*;
@@ -142,6 +146,19 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.STRUCT_DECLARATOR) return new GLSLDeclarator(node);
 
         return null;
+    }
+
+    @NotNull
+    public static PsiElement createExpressionFromText(Project project, String expr) {
+        PsiElement element = PsiFileFactory.getInstance(project).
+                createFileFromText("dummy.glsl", GLSLSupportLoader.GLSL, "void dummy() { " + expr + " }");
+
+        PsiElement lastChild = PsiTreeUtil.getChildOfType(element, GLSLFunctionDeclaration.class).getLastChild();
+        GLSLStatement[] statements = ((GLSLCompoundStatement) lastChild).getStatements();
+        if (statements.length == 0)
+            throw new IncorrectOperationException("Incorrect expression '" + expr + "'");
+        GLSLExpressionStatement firstStatement = (GLSLExpressionStatement) statements[0];
+        return firstStatement.getExpression();
     }
 
     @NotNull
