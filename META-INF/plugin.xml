@@ -205,6 +205,8 @@
         <lang.findUsagesProvider language="GLSL" implementationClass="glslplugin.extensions.GLSLFindUsagesProvider" />
         <completion.contributor language="GLSL" implementationClass="glslplugin.extensions.GLSLCompletionContributor" />
         <elementDescriptionProvider implementation="glslplugin.extensions.GLSLDescriptionProvider" />
+        <enterHandlerDelegate implementation="glslplugin.extensions.GLSLEnterHandlerDelegate" />
+        <lang.formatter language="GLSL" implementationClass="glslplugin.formatter.GLSLFormattingModelBuilder" />
 
         <createFromTemplateHandler implementation="glslplugin.GLSLCreateFromTemplateHandler"/>
         <internalFileTemplate name="GLSL Shader"/>
