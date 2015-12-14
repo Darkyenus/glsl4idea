@@ -47,13 +47,13 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
     // Cache this one to enable equals comparison by ==
     //  this is required to be able to compare types of variables of anonymous types.
     // struct {int x;} x, y; <- how to compare types of x and y?
-    private GLSLStructType type;
+    private GLSLStructType typeCache = null;
+    /** Struct members are recomputed on getType when dirty */
+    private boolean typeCacheDirty = false;
 
     public GLSLTypeDefinition(@NotNull ASTNode astNode) {
         super(astNode);
     }
-
-    // TODO: Add getMemberDeclarations, findMember(String), etc...
 
     @Nullable
     public GLSLDeclarationList getDeclarationList() {
@@ -85,12 +85,21 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
         return "Struct Type: '" + getName() + "'";
     }
 
+    /**
+     * Get the struct type declared.
+     * This always returns the same instance, but internal data is refreshed on each get.
+     * Returned value can therefore change when kept for long enough - don't cache it if you rely on always updated data.
+     */
     @NotNull
     public GLSLStructType getType() {
-        if (type == null) {
-            type = new GLSLStructType(this);
+        if (typeCache == null) {
+            typeCache = new GLSLStructType(this);
+            typeCacheDirty = false;
+        } else if (typeCacheDirty){
+            typeCache.updateMembers();
+            typeCacheDirty = false;
         }
-        return type;
+        return typeCache;
     }
 
     @Nullable
@@ -131,5 +140,13 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
         GLSLIdentifier identifier = getNameIdentifier();
         if (identifier == null) return null;
         return identifier.setName(name);
+    }
+
+    @Override
+    public void subtreeChanged() {
+        super.subtreeChanged();
+
+        // Struct's subtree has changed, refresh struct members which may have changed
+        typeCacheDirty = true;
     }
 }
