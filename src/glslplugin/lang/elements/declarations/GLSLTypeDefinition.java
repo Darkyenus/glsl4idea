@@ -132,4 +132,17 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
         if (identifier == null) return null;
         return identifier.setName(name);
     }
+
+
+    /**
+     * Update type's cached members if the struct's subtree changes.
+     */
+    @Override
+    public void subtreeChanged() {
+        super.subtreeChanged();
+
+        if (type != null) {
+            type.updateMembers();
+        }
+    }
 }
