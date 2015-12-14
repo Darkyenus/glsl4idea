@@ -35,55 +35,64 @@ public class ConstructorParamCountAnnotation extends Annotator<GLSLFunctionCallE
     public void annotate(GLSLFunctionCallExpression expr, AnnotationHolder holder) {
         if (!expr.isConstructor()) return;
         final GLSLType constructorType = expr.getType();
+
+        // We don't handle array constructors
+        if (constructorType instanceof GLSLArrayType) return;
+
         final GLSLType[] parameters = expr.getParameterTypes();
 
-        if (!(constructorType instanceof GLSLArrayType)) {//We do not handle array constructors
-            //Now it can be only scalar, vector, matrix or a struct
+        // Make sure we're only dealing with known types
+        for (GLSLType paramType : parameters) {
+            if (!paramType.isValidType()) {
+                return;
+            }
+        }
 
-            final GLSLFunctionType[] constructors = constructorType.getConstructors();
-            if(constructors.length == 0) return; //Huh, this one does not have any constructors, don't report anything then
-            boolean found = false;
+        final GLSLFunctionType[] constructors = constructorType.getConstructors();
+        if(constructors.length == 0) return; //Huh, this one does not have any constructors, don't report anything then
+
+        boolean found = false;
+        for (GLSLFunctionType constructor : constructors) {
+            if(constructor.getParameterCompatibilityLevel(parameters) != GLSLTypeCompatibilityLevel.INCOMPATIBLE){
+                found = true;
+                break;
+            }
+        }
+
+        if(!found){
+            StringBuilder sb = new StringBuilder();
+            sb.append("Cannot resolve constructor '").append(constructorType.getTypename()).append('(');
+            if(parameters.length != 0){
+                final String PARAMETER_SEPARATOR = ", ";
+                for (GLSLType parameter : parameters) {
+                    sb.append(parameter.getTypename()).append(PARAMETER_SEPARATOR);
+                }
+                sb.setLength(sb.length() - PARAMETER_SEPARATOR.length());
+            }
+            sb.append(")'");
+
+            final String baseMessage = sb.toString();
+
+            sb.setLength(0);
+            sb.append("<html><body>");
+            sb.append(baseMessage);
+            sb.append("<br/>");
+
+            if(constructorType instanceof GLSLVectorType || constructorType instanceof GLSLMatrixType){
+                sb.append(GLSLVectorType.countVectorOrMatrixConstructorElements(parameters));
+                sb.append(" elements found<br/>");
+            }
+
+            sb.append("Try:<hr/><code>");
+
             for (GLSLFunctionType constructor : constructors) {
-                if(constructor.getParameterCompatibilityLevel(parameters) != GLSLTypeCompatibilityLevel.INCOMPATIBLE){
-                    found = true;
-                    break;
-                }
+                sb.append(constructor.getTypename()).append("<br/>");
             }
-            if(!found){
-                StringBuilder sb = new StringBuilder();
-                sb.append("Cannot resolve constructor '").append(constructorType.getTypename()).append('(');
-                if(parameters.length != 0){
-                    final String PARAMETER_SEPARATOR = ", ";
-                    for (GLSLType parameter : parameters) {
-                        sb.append(parameter.getTypename()).append(PARAMETER_SEPARATOR);
-                    }
-                    sb.setLength(sb.length() - PARAMETER_SEPARATOR.length());
-                }
-                sb.append(")'");
 
-                final String baseMessage = sb.toString();
-
-                sb.setLength(0);
-                sb.append("<html><body>");
-                sb.append(baseMessage);
-                sb.append("<br/>");
-
-                if(constructorType instanceof GLSLVectorType || constructorType instanceof GLSLMatrixType){
-                    sb.append(GLSLVectorType.countVectorOrMatrixConstructorElements(parameters));
-                    sb.append(" elements found<br/>");
-                }
-
-                sb.append("Try:<hr/><code>");
-
-                for (GLSLFunctionType constructor : constructors) {
-                    sb.append(constructor.getTypename()).append("<br/>");
-                }
-
-                sb.append("</code></body></html>");
+            sb.append("</code></body></html>");
 
 
-                holder.createAnnotation(HighlightSeverity.ERROR, expr.getTextRange(), baseMessage, sb.toString());
-            }
+            holder.createAnnotation(HighlightSeverity.ERROR, expr.getTextRange(), baseMessage, sb.toString());
         }
     }
 
