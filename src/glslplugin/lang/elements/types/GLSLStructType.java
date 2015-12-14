@@ -39,6 +39,7 @@ public final class GLSLStructType extends GLSLType {
     private final String typename;
     private final Map<String, GLSLType> members = new HashMap<String, GLSLType>();
     private final GLSLFunctionType[] constructors = new GLSLFunctionType[1];
+    private String[] memberNames;
 
     public GLSLStructType(GLSLTypeDefinition definition) {
         super(null);
@@ -58,15 +59,17 @@ public final class GLSLStructType extends GLSLType {
         final GLSLDeclarator[] declarators = definition.getDeclarators();
 
         final GLSLType[] memberTypes = new GLSLType[declarators.length];
+        memberNames = new String[memberTypes.length];
 
         members.clear();
         for (int i = 0; i < declarators.length; i++) {
             final GLSLDeclarator declarator = declarators[i];
             members.put(declarator.getName(), declarator.getType());
+            memberNames[i] = declarator.getName();
             memberTypes[i] = declarator.getType();
         }
 
-        constructors[0] = new GLSLBasicConstructorType(this, memberTypes);
+        constructors[0] = new GLSLBasicConstructorType(this.definition, this, memberTypes);
     }
 
     @NotNull
@@ -94,6 +97,10 @@ public final class GLSLStructType extends GLSLType {
 
     }
 
+    public String[] getMemberNames() {
+        return memberNames;
+    }
+
     @NotNull
     public Map<String, GLSLType> getMembers() {
         return members;
@@ -103,6 +110,11 @@ public final class GLSLStructType extends GLSLType {
     @Override
     public GLSLFunctionType[] getConstructors() {
         return constructors;
+    }
+
+    @NotNull
+    public GLSLFunctionType getConstructor() {
+        return constructors[0];
     }
 
     @Override

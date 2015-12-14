@@ -182,6 +182,7 @@
         <lang.commenter language="GLSL" implementationClass="glslplugin.GLSLCommenter"/>
         <lang.refactoringSupport language="GLSL" implementationClass="glslplugin.extensions.GLSLRefactoringSupportProvider" />
         <lang.findUsagesProvider language="GLSL" implementationClass="glslplugin.extensions.GLSLFindUsagesProvider" />
+        <lang.documentationProvider language="GLSL" implementationClass="glslplugin.extensions.GLSLDocumentationProvider"/>
         <completion.contributor language="GLSL" implementationClass="glslplugin.extensions.GLSLCompletionContributor" />
         <elementDescriptionProvider implementation="glslplugin.extensions.GLSLDescriptionProvider" />
 
