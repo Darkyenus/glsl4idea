@@ -181,38 +181,7 @@ public class GLSLVectorType extends GLSLType {
         @Override
         @NotNull
         public GLSLTypeCompatibilityLevel getParameterCompatibilityLevel(@NotNull GLSLType[] types) {
-            // Special constructor for vectors.
-            // See GLSL specification 5.4.2 for details.
-            if (types.length == 0) {
-                return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
-            }
-            if (types.length == 1) {
-                if (GLSLTypes.isScalar(types[0])) {
-                    return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
-                } else if (types[0] instanceof GLSLVectorType) {
-                    return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
-                } else {
-                    return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
-                }
-            } else {
-                int numComponents = 0;
-                for (GLSLType type : types) {
-                    if (GLSLTypes.isScalar(type)) {
-                        numComponents++;
-                    } else if (type instanceof GLSLVectorType) {
-                        numComponents += ((GLSLVectorType) type).getNumComponents();
-                    } else if (type instanceof GLSLMatrixType) {
-                        numComponents += ((GLSLMatrixType) type).getNumComponents();
-                    } else {
-                        return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
-                    }
-                }
-                if (numComponents == getNumComponents()) {
-                    return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
-                } else {
-                    return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
-                }
-            }
+            return getParameterCompatibilityLevelForMatrixOrVector(types, getNumComponents());
         }
     }
 
@@ -236,4 +205,67 @@ public class GLSLVectorType extends GLSLType {
         return other.numComponents == numComponents
                 && baseType.isConvertibleTo(other.baseType);
     }
+
+    //region Internal constructor methods shared with matrix
+
+    public static int countVectorOrMatrixConstructorElements(@NotNull GLSLType[] types){
+        return countVectorOrMatrixConstructorElements(types, types.length);
+    }
+
+    /** @param length only first `length` types will be consumed */
+    private static int countVectorOrMatrixConstructorElements(@NotNull GLSLType[] types, int length){
+        int numComponents = 0;
+        for (int i = 0; i < length; i++) {
+            final GLSLType type = types[i];
+
+            if (GLSLTypes.isScalar(type)) {
+                numComponents++;
+            } else if (type instanceof GLSLVectorType) {
+                numComponents += ((GLSLVectorType) type).getNumComponents();
+            } else if (type instanceof GLSLMatrixType) {
+                numComponents += ((GLSLMatrixType) type).getNumComponents();
+            } else {
+                return -1;
+            }
+        }
+        return numComponents;
+    }
+
+    public static GLSLTypeCompatibilityLevel getParameterCompatibilityLevelForMatrixOrVector(@NotNull GLSLType[] types, int requiredElements){
+        // Special constructor for vectors and matrices
+        // See GLSL specification 5.4.2 for details.
+        if (types.length == 0) {
+            return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
+        }
+        if (types.length == 1) {
+            if (GLSLTypes.isScalar(types[0])) {
+                return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
+            } else if (types[0] instanceof GLSLVectorType) {
+                return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
+            } else {
+                return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
+            }
+        } else {
+            final int numComponents = countVectorOrMatrixConstructorElements(types);
+            if(numComponents == -1){
+                return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
+            } else if (numComponents == requiredElements) {
+                return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
+            } else if (numComponents < requiredElements) {
+                return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
+            } else {
+                //Shortening is allowed, but no extra elements can be present
+                final int componentsWithoutLast = countVectorOrMatrixConstructorElements(types, types.length - 1);
+                if(componentsWithoutLast < requiredElements){
+                    //Does not fit into the limit without the last element => valid
+                    return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
+                } else {
+                    //Last element is extra, that is an error
+                    return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
+                }
+            }
+        }
+    }
+
+    //endregion
 }

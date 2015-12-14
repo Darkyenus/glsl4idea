@@ -28,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Creates an error annotation if trying to pass invalid amount of arguments to a constructor.
+ *
+ * TODO: Check if all conversion scalar constructors are recognized (5.4.1 in GLSL spec 4.50)
  */
 public class ConstructorParamCountAnnotation extends Annotator<GLSLFunctionCallExpression> {
 
@@ -67,6 +69,11 @@ public class ConstructorParamCountAnnotation extends Annotator<GLSLFunctionCallE
                 sb.append("<html><body>");
                 sb.append(baseMessage);
                 sb.append("<br/>");
+
+                if(constructorType instanceof GLSLVectorType || constructorType instanceof GLSLMatrixType){
+                    sb.append(GLSLVectorType.countVectorOrMatrixConstructorElements(parameters));
+                    sb.append(" elements found<br/>");
+                }
 
                 sb.append("Try:<hr/><code>");
 

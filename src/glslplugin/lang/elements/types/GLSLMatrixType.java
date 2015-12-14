@@ -141,38 +141,7 @@ public class GLSLMatrixType extends GLSLType {
         @Override
         @NotNull
         public GLSLTypeCompatibilityLevel getParameterCompatibilityLevel(@NotNull GLSLType[] types) {
-            // Special constructor for vectors.
-            // See GLSL specification 5.4.2 for details.
-            if (types.length == 0) {
-                return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
-            }
-            if (types.length == 1) {
-                if (GLSLTypes.isScalar(types[0])) {
-                    return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
-                } else if (types[0] instanceof GLSLVectorType) {
-                    return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
-                } else {
-                    return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
-                }
-            } else {
-                int numComponents = 0;
-                for (GLSLType type : types) {
-                    if (GLSLTypes.isScalar(type)) {
-                        numComponents++;
-                    } else if (type instanceof GLSLVectorType) {
-                        numComponents += ((GLSLVectorType) type).getNumComponents();
-                    } else if (type instanceof GLSLMatrixType) {
-                        numComponents += ((GLSLMatrixType) type).getNumComponents();
-                    } else {
-                        return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
-                    }
-                }
-                if (numComponents == getNumComponents()) {
-                    return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
-                } else {
-                    return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
-                }
-            }
+            return GLSLVectorType.getParameterCompatibilityLevelForMatrixOrVector(types, getNumComponents());
         }
     }
 
