@@ -29,6 +29,14 @@
 
     <version>1.12</version>
     <change-notes><![CDATA[
+        <p>1.13</p>
+        <ul>
+            <li>Add autocompletion for struct members</li>
+            <li>Add checking of constructor call parameters</li>
+            <li>Support scalar conversion constructors</li>
+            <li>Minor fixes and improvements</li>
+        </ul>
+
         <p>1.12</p>
         <ul>
             <li>Fix lexer not being thread safe and failing when parsing many files at the same time</li>
