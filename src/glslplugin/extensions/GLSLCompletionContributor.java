@@ -31,14 +31,15 @@ import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
 import glslplugin.lang.elements.types.GLSLStructType;
 import glslplugin.lang.elements.types.GLSLType;
-import glslplugin.lang.elements.types.GLSLVectorType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import static com.intellij.patterns.PlatformPatterns.*;
+import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 /**
+ * Provides more advanced contextual autocompletion
+ *
  * @author Wyozi
  */
 public class GLSLCompletionContributor extends DefaultCompletionContributor {
@@ -78,10 +79,6 @@ public class GLSLCompletionContributor extends DefaultCompletionContributor {
         public GLSLLookupElement(String str, GLSLType type) {
             this.str = str;
             this.type = type;
-        }
-
-        public GLSLLookupElement(String str) {
-            this.str = str;
         }
 
         @Override
