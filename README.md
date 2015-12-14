@@ -29,6 +29,7 @@ Licensed under GNU LGPL, see license file.
 ## Compiling
 1. Clone (or download) this repository
 2. Create Intellij project in this directory with Plugin module (Make sure you have official Plugin DevKit installed)
+  - Easiest way might be to first create an empty project in `glsl4idea` folder and then create a Intellij Platform Plugin module from same folder
 3. File -> Project Structure -> Modules -> Right-click the `resources` directory -> Mark as Resources
 4. Build -> Prepare plugin for deployment -> You will be notified with plugin jar path
  
