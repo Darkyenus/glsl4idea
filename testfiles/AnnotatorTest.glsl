@@ -53,6 +53,21 @@ void VectorComponentsAnnotation(){
     bar.oo = vec2(0.0);//Should warn here (none of possible ranges)
 }
 
+void VectorConstructorParamCountAnnotation(){
+    vec3 v3;
+    vec4 v4;
+
+    v3 = vec3();//Should warn here
+    v3 = vec3(1.0);
+    v3 = vec3(1.0, 2, 3.0);
+    v3 = vec3(0, 0);//Should warn here
+    v3 = vec3(0, 0, 0, 0);//Should warn here
+
+    v3 = vec3(vec2(0.0), 0.0);
+    v4 = vec4(0.0, vec2(0.0), 0.0);
+    v4 = vec4(vec2(0.0), 0.0);//Should warn here
+}
+
 //Unreachable Annotation
 void UA1(){
     int x;
