@@ -44,7 +44,7 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
     protected SOURCE_TYPE source;
     protected TARGET_TYPE target;
 
-    public GLSLReferenceBase(@NotNull SOURCE_TYPE source) {
+    public GLSLReferenceBase(SOURCE_TYPE source) {
         this.source = source;
     }
 
@@ -53,7 +53,7 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
     }
 
     public TextRange getRangeInElement() {
-        return new TextRange(0, source.getTextLength());
+        return new TextRange(0, source == null ? 0 : source.getTextLength());
     }
 
     @Nullable
@@ -66,6 +66,7 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
     }
 
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+        if(source == null) throw new IncorrectOperationException("Reference is invalid");
         if (source instanceof PsiNamedElement) {
             return ((PsiNamedElement) source).setName(newElementName);
         }
