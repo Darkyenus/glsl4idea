@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * GLSLStructType is ...
+ * Type for struct types
  *
  * @author Yngve Devik Hammersland
  *         Date: Feb 26, 2009
@@ -57,7 +57,7 @@ public final class GLSLStructType extends GLSLType {
     public void updateMembers() {
         final GLSLDeclarator[] declarators = definition.getDeclarators();
 
-        GLSLType[] memberTypes = new GLSLType[declarators.length];
+        final GLSLType[] memberTypes = new GLSLType[declarators.length];
 
         members.clear();
         for (int i = 0; i < declarators.length; i++) {
@@ -66,7 +66,26 @@ public final class GLSLStructType extends GLSLType {
             memberTypes[i] = declarator.getType();
         }
 
-        constructors[0] = new GLSLBasicFunctionType(getTypename(), this, memberTypes);
+        constructors[0] = new GLSLBasicFunctionType(getTypename(), this, memberTypes){
+
+            /** Similar to GLSLBasicFunctionType, but without return type */
+            @Override
+            protected String generateTypename() {
+                StringBuilder b = new StringBuilder();
+                b.append(getName());
+                b.append('(');
+                boolean first = true;
+                for (GLSLType type : memberTypes) {
+                    if (!first) {
+                        b.append(',');
+                    }
+                    first = false;
+                    b.append(type.getTypename());
+                }
+                b.append(")");
+                return b.toString();
+            }
+        };
     }
 
     @NotNull

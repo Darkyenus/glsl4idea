@@ -175,7 +175,7 @@ public class GLSLVectorType extends GLSLType {
 
         @Override
         protected String generateTypename() {
-            return "(...) : " + GLSLVectorType.this.getTypename();
+            return GLSLVectorType.this.getTypename()+"(1 or "+numComponents+" elements of type "+baseType.getTypename()+")";
         }
 
         @Override

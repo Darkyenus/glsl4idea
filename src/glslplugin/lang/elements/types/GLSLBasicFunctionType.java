@@ -26,7 +26,7 @@ import glslplugin.lang.elements.declarations.GLSLTypeSpecifier;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * GLSLFunctionType is ...
+ * FunctionType for functions (= not constructors)
  *
  * @author Yngve Devik Hammersland
  *         Date: Mar 2, 2009
@@ -47,7 +47,7 @@ public class GLSLBasicFunctionType extends GLSLFunctionType {
     }
 
     public GLSLBasicFunctionType(GLSLFunctionDeclaration declaration) {
-        super(declaration.getName(), findReturnType(declaration));
+        super(declaration.getName() == null ? "<null>" : declaration.getName(), findReturnType(declaration));
         final GLSLParameterDeclaration[] parameterDeclarations = declaration.getParameters();
         definition = declaration;
 
@@ -60,18 +60,16 @@ public class GLSLBasicFunctionType extends GLSLFunctionType {
                 parameterTypes[i] = declarator.getType();
             }
         }
-
-        this.typename = generateTypename();
     }
 
     public GLSLBasicFunctionType(@NotNull String name, @NotNull GLSLType returnType, @NotNull GLSLType... parameterTypes) {
         super(name, returnType);
         this.parameterTypes = parameterTypes;
-        this.typename = generateTypename();
     }
 
     protected String generateTypename() {
         StringBuilder b = new StringBuilder();
+        b.append(getReturnType().getTypename()).append(' ').append(getName());
         b.append('(');
         boolean first = true;
         for (GLSLType type : parameterTypes) {
@@ -81,7 +79,7 @@ public class GLSLBasicFunctionType extends GLSLFunctionType {
             first = false;
             b.append(type.getTypename());
         }
-        b.append(") : ").append(getReturnType().getTypename());
+        b.append(")");
         return b.toString();
     }
 

@@ -82,7 +82,7 @@ public class GLSLMatrixType extends GLSLType {
         this.baseType = baseType.type;
         this.columns = columns;
         this.rows = rows;
-        this.typename = baseType.name + columns + "x" + rows;
+        this.typename = baseType.name + (columns == rows ? columns : columns + "x" + rows);
         this.constructors = new GLSLFunctionType[]{new Constructor()};
     }
 
@@ -128,13 +128,14 @@ public class GLSLMatrixType extends GLSLType {
     //region Constructor
 
     private class Constructor extends GLSLFunctionType {
+
         protected Constructor() {
             super(GLSLMatrixType.this.getTypename(), GLSLMatrixType.this);
         }
 
         @Override
         protected String generateTypename() {
-            return "(...) : " + GLSLMatrixType.this.getTypename();
+            return GLSLMatrixType.this.getTypename()+"(1 or "+(columns * rows)+" elements of type "+baseType.getTypename()+")";
         }
 
         @Override
