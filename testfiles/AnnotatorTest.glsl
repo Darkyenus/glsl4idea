@@ -66,6 +66,10 @@ void VectorConstructorParamCountAnnotation(){
     v3 = vec3(vec2(0.0), 0.0);
     v4 = vec4(0.0, vec2(0.0), 0.0);
     v4 = vec4(vec2(0.0), 0.0);//Should warn here
+
+    v3 = vec3(vec4(1));
+    v4 = vec4(1, vec4(1));
+    v3 = vec3(vec3(1), 1);//Should warn here
 }
 
 //Unreachable Annotation

@@ -88,8 +88,8 @@ public abstract class GLSLType {
      */
     @NotNull
     public GLSLFunctionType[] getConstructors() {
-        // All types has a type constructor which takes itself as an argument.
-        return new GLSLFunctionType[]{new GLSLBasicFunctionType(getTypename(), this, this)};
+        // Types that don't explicitly declare constructor/s, do not have them
+        return GLSLFunctionType.EMPTY_ARRAY;
     }
 
     /**

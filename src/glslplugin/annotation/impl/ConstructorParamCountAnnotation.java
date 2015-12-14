@@ -28,8 +28,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Creates an error annotation if trying to pass invalid amount of arguments to a constructor.
- *
- * TODO: Check if all conversion scalar constructors are recognized (5.4.1 in GLSL spec 4.50)
  */
 public class ConstructorParamCountAnnotation extends Annotator<GLSLFunctionCallExpression> {
 

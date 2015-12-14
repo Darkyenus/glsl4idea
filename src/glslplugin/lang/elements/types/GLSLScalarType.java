@@ -25,7 +25,8 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Scalar type is a scalar type. Not much to say about that.
+ * Scalar type is a type that has only magnitude, no members or elements.
+ * NOTE: Although practically, they have one member - themselves.
  *
  * @author Yngve Devik Hammersland
  * @author Jan Polák
@@ -38,6 +39,8 @@ public class GLSLScalarType extends GLSLType {
     public static final GLSLScalarType FLOAT = new GLSLScalarType("float", Double.class, DOUBLE);
     public static final GLSLScalarType UINT = new GLSLScalarType("uint", Long.class, FLOAT, DOUBLE);
     public static final GLSLScalarType INT = new GLSLScalarType("int", Long.class, UINT, FLOAT, DOUBLE);
+
+    private static final GLSLScalarType[] SCALARS = {BOOL, DOUBLE, FLOAT, UINT, INT};
 
     public static boolean isIntegerScalar(GLSLType type){
         return type == INT || type == UINT;
@@ -88,6 +91,24 @@ public class GLSLScalarType extends GLSLType {
         }else{
             return GLSLTypes.UNKNOWN_TYPE;
         }
+    }
+
+    private GLSLFunctionType[] constructorsCache;
+
+    /**
+     * Each scalar type is explicitly convertible to any other scalar type.
+     * See 5.4.1 of GLSL Spec. 4.50
+     */
+    @NotNull
+    @Override
+    public GLSLFunctionType[] getConstructors() {
+        if(constructorsCache == null){
+            final GLSLFunctionType[] constructorsCache = this.constructorsCache = new GLSLFunctionType[SCALARS.length];
+            for (int i = 0; i < SCALARS.length; i++) {
+                constructorsCache[i] = new GLSLBasicConstructorType(this, SCALARS[i]);
+            }
+        }
+        return constructorsCache;
     }
 
     @Override

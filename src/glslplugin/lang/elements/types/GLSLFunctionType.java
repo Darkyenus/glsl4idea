@@ -31,6 +31,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class GLSLFunctionType {
 
+    public static final GLSLFunctionType[] EMPTY_ARRAY = new GLSLFunctionType[0];
+
     private final String name;
     protected final GLSLType returnType;
     GLSLElement definition;
