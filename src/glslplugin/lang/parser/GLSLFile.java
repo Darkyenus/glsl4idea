@@ -25,12 +25,34 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.GLSLSupportLoader;
+import glslplugin.lang.elements.preprocessor.GLSLVersionDirective;
 import org.jetbrains.annotations.NotNull;
 
 public class GLSLFile extends PsiFileBase {
+    /**
+     * The assumed GLSL version target if no #version directive exists.
+     *
+     * @see <a href="https://www.opengl.org/registry/doc/GLSLangSpec.4.40.pdf">https://www.opengl.org/registry/doc/GLSLangSpec.4.40.pdf</a> (page 17)
+     */
+    public static final int GLSL_DEFAULT_VERSION = 110;
+
     public GLSLFile(FileViewProvider fileViewProvider) {
         super(fileViewProvider, GLSLSupportLoader.GLSL.getLanguage());
+    }
+
+    /**
+     * @return the GLSL version specified in #version directive or {@link GLSLFile#GLSL_DEFAULT_VERSION}
+     */
+    public int getGLSLVersion() {
+        GLSLVersionDirective versionDirective = PsiTreeUtil.findChildOfType(this, GLSLVersionDirective.class);
+        if (versionDirective == null) return GLSL_DEFAULT_VERSION;
+
+        int versionLiteralNumber = versionDirective.getVersionLiteralNumber();
+        if (versionLiteralNumber == -1) return GLSL_DEFAULT_VERSION;
+
+        return versionLiteralNumber;
     }
 
     @NotNull

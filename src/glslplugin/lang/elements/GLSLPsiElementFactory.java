@@ -53,6 +53,7 @@ public class GLSLPsiElementFactory {
 
         if (type instanceof GLSLElementTypes.RedefinedTokenElementType /*== GLSLElementTypes.REDEFINED_TOKEN*/) return new GLSLRedefinedToken(node);
         if (type == GLSLTokenTypes.PREPROCESSOR_DEFINE) return new GLSLDefineDirective(node);
+        if (type == GLSLTokenTypes.PREPROCESSOR_VERSION) return new GLSLVersionDirective(node);
         if (GLSLTokenTypes.PREPROCESSOR_DIRECTIVES.contains(type)) return new GLSLPreprocessorDirective(node);
 
         // primary expressions
