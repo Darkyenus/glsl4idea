@@ -37,25 +37,25 @@ public class GLSLMatrixType extends GLSLType {
 
     //region Static
 
-    private enum BaseType {
+    private enum MatrixType {
         FLOAT(GLSLTypes.FLOAT, "mat"),
         DOUBLE(GLSLTypes.DOUBLE, "dmat");
 
         final GLSLType type;
         final String name;
 
-        BaseType(GLSLType baseType, String baseName) {
+        MatrixType(GLSLType baseType, String baseName) {
             this.type = baseType;
             this.name = baseName;
         }
     }
 
     private static final int MIN_MATRIX_DIM = 2, MAX_MATRIX_DIM = 4;
-    private static final Map<GLSLType, GLSLMatrixType[][]> MATRIX_TYPES = new HashMap<GLSLType, GLSLMatrixType[][]>(BaseType.values().length);
+    private static final Map<GLSLType, GLSLMatrixType[][]> MATRIX_TYPES = new HashMap<GLSLType, GLSLMatrixType[][]>(MatrixType.values().length);
 
     static {
         final int len = MAX_MATRIX_DIM - MIN_MATRIX_DIM + 1;
-        for(BaseType type:BaseType.values()){
+        for(MatrixType type: MatrixType.values()){
             GLSLMatrixType[][] dimensions = new GLSLMatrixType[len][len];
             for (int column = 0; column < len; column++) {
                 for (int row = 0; row < len; row++) {
@@ -75,15 +75,18 @@ public class GLSLMatrixType extends GLSLType {
     private final GLSLType baseType;
     private final int columns, rows;
     private final GLSLFunctionType[] constructors;
+
+    private final MatrixType matrixType;
     private final String typename;
 
-    private GLSLMatrixType(BaseType baseType, int columns, int rows) {
+    private GLSLMatrixType(MatrixType matrixType, int columns, int rows) {
         super(null);
-        this.baseType = baseType.type;
+        this.matrixType = matrixType;
+        this.baseType = matrixType.type;
         this.columns = columns;
         this.rows = rows;
-        this.typename = baseType.name + (columns == rows ? columns : columns + "x" + rows);
-        this.constructors = new GLSLFunctionType[]{new Constructor()};
+        this.typename = matrixType.name + (columns == rows ? columns : columns + "x" + rows);
+        this.constructors = new GLSLFunctionType[]{new BaseTypeConstructor(), new OtherMatrixConstructor()};
     }
 
     @Override
@@ -127,9 +130,9 @@ public class GLSLMatrixType extends GLSLType {
 
     //region Constructor
 
-    private class Constructor extends GLSLFunctionType {
+    private class BaseTypeConstructor extends GLSLFunctionType {
 
-        protected Constructor() {
+        protected BaseTypeConstructor() {
             super(GLSLMatrixType.this.getTypename(), GLSLMatrixType.this);
         }
 
@@ -142,6 +145,30 @@ public class GLSLMatrixType extends GLSLType {
         @NotNull
         public GLSLTypeCompatibilityLevel getParameterCompatibilityLevel(@NotNull GLSLType[] types) {
             return GLSLVectorType.getParameterCompatibilityLevelForMatrixOrVector(types, getNumComponents());
+        }
+    }
+
+    private class OtherMatrixConstructor extends GLSLFunctionType {
+        protected OtherMatrixConstructor() {
+            super(GLSLMatrixType.this.getTypename(), GLSLMatrixType.this);
+        }
+
+        @Override
+        protected String generateTypename() {
+            return GLSLMatrixType.this.getTypename()+"(1 element of type "+GLSLMatrixType.this.matrixType.name+")";
+        }
+
+        @NotNull
+        @Override
+        public GLSLTypeCompatibilityLevel getParameterCompatibilityLevel(@NotNull GLSLType[] types) {
+            if (types.length != 1)
+                return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
+            GLSLType type = types[0];
+            if (type instanceof GLSLMatrixType && ((GLSLMatrixType) type).matrixType == GLSLMatrixType.this.matrixType) {
+                return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
+            } else {
+                return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
+            }
         }
     }
 

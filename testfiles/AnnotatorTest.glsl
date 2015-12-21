@@ -53,7 +53,7 @@ void VectorComponentsAnnotation(){
     bar.oo = vec2(0.0);//Should warn here (none of possible ranges)
 }
 
-void VectorConstructorParamCountAnnotation(){
+void ConstructorParamCheckerAnnotation(){
     vec3 v3;
     vec4 v4;
 
@@ -72,6 +72,8 @@ void VectorConstructorParamCountAnnotation(){
     v3 = vec3(vec3(1), 1);//Should warn here
 
     v3 = vec3(1.0, 1.0, someParameterWithUnknownType);
+
+    mat3 m3 = mat3(mat4(1.0));
 }
 
 //Unreachable Annotation
