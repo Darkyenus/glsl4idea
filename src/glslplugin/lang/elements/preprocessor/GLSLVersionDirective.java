@@ -2,12 +2,8 @@ package glslplugin.lang.elements.preprocessor;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.util.IncorrectOperationException;
-import glslplugin.lang.elements.GLSLPsiElementFactory;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Wyozi
@@ -38,6 +34,7 @@ public class GLSLVersionDirective extends GLSLPreprocessorDirective {
 
     @Override
     public String toString() {
-        return "#Version Directive " + getVersionLiteral();
+        final int versionLiteralNumber = getVersionLiteralNumber();
+        return "#Version Directive " + (versionLiteralNumber == -1 ? "?" : versionLiteralNumber);
     }
 }
