@@ -21,6 +21,7 @@ package glslplugin.lang.elements.types;
 
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
+import glslplugin.lang.elements.types.constructors.GLSLBasicConstructorType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

@@ -1,9 +1,14 @@
-package glslplugin.lang.elements.types;
+package glslplugin.lang.elements.types.constructors;
 
+import glslplugin.lang.elements.types.GLSLFunctionType;
+import glslplugin.lang.elements.types.GLSLType;
+import glslplugin.lang.elements.types.GLSLTypeCompatibilityLevel;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * FunctionType for most constructors (= not functions)
+ *
+ * Used when the exact parameters (type and amount) are well known.
  */
 public class GLSLBasicConstructorType extends GLSLFunctionType {
 

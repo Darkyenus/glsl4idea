@@ -151,7 +151,7 @@ public class GLSLTypes {
         return UNKNOWN_TYPE;
     }
 
-    static boolean isScalar(GLSLType type) {
+    public static boolean isScalar(GLSLType type) {
         return type == INT || type == FLOAT || type == BOOL || type == DOUBLE || type == UINT;
     }
 

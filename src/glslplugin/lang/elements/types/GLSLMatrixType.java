@@ -19,6 +19,8 @@
 
 package glslplugin.lang.elements.types;
 
+import glslplugin.lang.elements.types.constructors.GLSLAggregateParamConstructor;
+import glslplugin.lang.elements.types.constructors.GLSLScalarParamConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -83,7 +85,23 @@ public class GLSLMatrixType extends GLSLType {
         this.columns = columns;
         this.rows = rows;
         this.typename = baseType.name + (columns == rows ? columns : columns + "x" + rows);
-        this.constructors = new GLSLFunctionType[]{new Constructor()};
+        this.constructors = new GLSLFunctionType[]{
+                new GLSLScalarParamConstructor(this),
+                new GLSLAggregateParamConstructor(this, false, columns * rows),
+                new GLSLFunctionType(this.typename, this) {
+                    @Override
+                    protected String generateTypename() {
+                        return typename +"(matrix)";
+                    }
+
+                    @NotNull
+                    @Override
+                    public GLSLTypeCompatibilityLevel getParameterCompatibilityLevel(@NotNull GLSLType[] types) {
+                        if(types.length == 1 && types[0] instanceof GLSLMatrixType){
+                            return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
+                        } else return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
+                    }
+                }};
     }
 
     @Override
@@ -125,33 +143,11 @@ public class GLSLMatrixType extends GLSLType {
         return GLSLArrayType.ARRAY_LIKE_FUNCTIONS;//Matrices have, like arrays, .length() function
     }
 
-    //region Constructor
-
-    private class Constructor extends GLSLFunctionType {
-
-        protected Constructor() {
-            super(GLSLMatrixType.this.getTypename(), GLSLMatrixType.this);
-        }
-
-        @Override
-        protected String generateTypename() {
-            return GLSLMatrixType.this.getTypename()+"(1 or "+(columns * rows)+" elements of type "+baseType.getTypename()+")";
-        }
-
-        @Override
-        @NotNull
-        public GLSLTypeCompatibilityLevel getParameterCompatibilityLevel(@NotNull GLSLType[] types) {
-            return GLSLVectorType.getParameterCompatibilityLevelForMatrixOrVector(types, getNumComponents());
-        }
-    }
-
     @NotNull
     @Override
     public GLSLFunctionType[] getConstructors() {
         return constructors;
     }
-
-    //endregion
 
     @Override
     public boolean isConvertibleTo(GLSLType otherType) {

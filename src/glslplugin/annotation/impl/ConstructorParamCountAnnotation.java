@@ -24,6 +24,7 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.expressions.GLSLFunctionCallExpression;
 import glslplugin.lang.elements.types.*;
+import glslplugin.lang.elements.types.constructors.GLSLAggregateParamConstructor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -78,8 +79,10 @@ public class ConstructorParamCountAnnotation extends Annotator<GLSLFunctionCallE
             sb.append(baseMessage);
             sb.append("<br/>");
 
-            if(constructorType instanceof GLSLVectorType || constructorType instanceof GLSLMatrixType){
-                sb.append(GLSLVectorType.countVectorOrMatrixConstructorElements(parameters));
+            if((constructorType instanceof GLSLMatrixType) && GLSLAggregateParamConstructor.containsMatrixType(parameters) && parameters.length > 1){
+                sb.append("Matrix constructor from matrix may not contain any other parameters<br/>");
+            } else if(constructorType instanceof GLSLVectorType || constructorType instanceof GLSLMatrixType){
+                sb.append(GLSLAggregateParamConstructor.countVectorOrMatrixConstructorElements(parameters));
                 sb.append(" elements found<br/>");
             }
 
@@ -95,6 +98,8 @@ public class ConstructorParamCountAnnotation extends Annotator<GLSLFunctionCallE
             holder.createAnnotation(HighlightSeverity.ERROR, expr.getTextRange(), baseMessage, sb.toString());
         }
     }
+
+
 
     @NotNull
     @Override
