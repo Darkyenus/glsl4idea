@@ -69,4 +69,9 @@ public class GLSLFile extends PsiFileBase {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }
