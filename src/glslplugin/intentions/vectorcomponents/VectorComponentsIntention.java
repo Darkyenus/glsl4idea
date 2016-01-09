@@ -28,27 +28,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.ui.components.JBList;
 import glslplugin.intentions.Intentions;
 import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.util.VectorComponents;
 import org.jetbrains.annotations.NotNull;
 
 import static glslplugin.intentions.vectorcomponents.VectorComponentsPredicate.*;
 
 public class VectorComponentsIntention extends Intentions {
-
-    private enum Components {
-        RGBA("rgba"),
-        XYZW("xyzw"),
-        STPQ("stpq");
-
-        private String components;
-
-        Components(String components) {
-            this.components = components;
-        }
-
-        public String getComponent(int i) {
-            return String.valueOf(components.charAt(i));
-        }
-    }
 
     private String[] results = new String[2];
 
@@ -110,15 +95,15 @@ public class VectorComponentsIntention extends Intentions {
     private void createComponentVariants(String components) {
         int i = 0;
         if (!rgba.matcher(components).matches()) {
-            results[i++] = convertComponents(components, Components.RGBA);
+            results[i++] = convertComponents(components, VectorComponents.RGBA);
         }
 
         if (!xyzw.matcher(components).matches()) {
-            results[i++] = convertComponents(components, Components.XYZW);
+            results[i++] = convertComponents(components, VectorComponents.XYZW);
         }
 
         if (!stpq.matcher(components).matches()) {
-            results[i++] = convertComponents(components, Components.STPQ);
+            results[i++] = convertComponents(components, VectorComponents.STPQ);
         }
 
         if (i != 2) {
@@ -126,7 +111,7 @@ public class VectorComponentsIntention extends Intentions {
         }
     }
 
-    private String convertComponents(String vectorComponents, Components components) {
+    private String convertComponents(String vectorComponents, VectorComponents components) {
         return toComponents(toNumbers(vectorComponents), components);
     }
 
@@ -138,7 +123,7 @@ public class VectorComponentsIntention extends Intentions {
         return results;
     }
 
-    private String toComponents(String componentsAsNumbers, Components components) {
+    private String toComponents(String componentsAsNumbers, VectorComponents components) {
         String results = componentsAsNumbers.replaceAll("1", components.getComponent(0));
         results = results.replaceAll("2", components.getComponent(1));
         results = results.replaceAll("3", components.getComponent(2));
