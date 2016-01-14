@@ -321,7 +321,7 @@ public class GLSLTokenTypes {
     //Operators in order of precedence (high to low) (Doesn't have to be here, but for clarity)
     //(missing) postfix inc & dec
     public static final TokenSet UNARY_OPERATORS = TokenSet.create(INC_OP, DEC_OP, PLUS, DASH, BANG, TILDE);
-    public static final TokenSet MULTIPLICATIVE_OPERATORS = TokenSet.create(STAR, SLASH);
+    public static final TokenSet MULTIPLICATIVE_OPERATORS = TokenSet.create(STAR, SLASH, PERCENT);
     public static final TokenSet ADDITIVE_OPERATORS = TokenSet.create(PLUS, DASH);
     public static final TokenSet BIT_SHIFT_OPERATORS = TokenSet.create(LEFT_OP, RIGHT_OP);
     public static final TokenSet RELATIONAL_OPERATORS = TokenSet.create(LEFT_ANGLE, RIGHT_ANGLE, LE_OP, GE_OP);
