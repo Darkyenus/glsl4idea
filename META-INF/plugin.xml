@@ -27,13 +27,14 @@
     <idea-version since-build="139.1117"/>
     <depends>com.intellij.modules.lang</depends>
 
-    <version>1.12</version>
+    <version>1.13</version>
     <change-notes><![CDATA[
         <p>1.13</p>
         <ul>
             <li>Add autocompletion for struct members</li>
             <li>Add checking of constructor call parameters</li>
             <li>Support scalar conversion constructors</li>
+            <li>Fix support for modulo operator</li>
             <li>Minor fixes and improvements</li>
         </ul>
 
