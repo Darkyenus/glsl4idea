@@ -32,11 +32,11 @@ import javax.swing.*;
 import java.util.Map;
 
 public class GLSLColorAndFontsPage implements ColorSettingsPage {
-    private static final AttributesDescriptor[] ATTIBUTES;
+    private static final AttributesDescriptor[] ATTRIBUTES;
     private static final SyntaxHighlighter syntaxHighlighter = new GLSLHighlighter();
 
     static {
-        ATTIBUTES = new AttributesDescriptor[]{
+        ATTRIBUTES = new AttributesDescriptor[]{
             new AttributesDescriptor("Numbers",GLSLHighlighter.GLSL_NUMBER[0]),
             new AttributesDescriptor("Types",GLSLHighlighter.GLSL_TYPE_SPECIFIER[0]),
             new AttributesDescriptor("Type qualifiers",GLSLHighlighter.GLSL_TYPE_QUALIFIERS[0]),
@@ -51,6 +51,8 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
             new AttributesDescriptor("Parentheses", GLSLHighlighter.GLSL_PARENS[0]),
             new AttributesDescriptor("Brackets", GLSLHighlighter.GLSL_BRACKETS[0]),
             new AttributesDescriptor("Identifiers",GLSLHighlighter.GLSL_IDENTIFIER[0]),
+            new AttributesDescriptor("Identifiers of Uniforms",GLSLHighlighter.GLSL_IDENTIFIER_UNIFORM[0]),
+            new AttributesDescriptor("Identifiers of Varyings",GLSLHighlighter.GLSL_IDENTIFIER_VARYING[0]),
             new AttributesDescriptor("Text",GLSLHighlighter.GLSL_TEXT[0]),
             new AttributesDescriptor("Directives",GLSLHighlighter.GLSL_PREPROCESSOR_DIRECTIVE[0])
         };
@@ -68,7 +70,7 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
 
     @NotNull
     public AttributesDescriptor[] getAttributeDescriptors() {
-        return ATTIBUTES;
+        return ATTRIBUTES;
     }
 
     @NotNull
