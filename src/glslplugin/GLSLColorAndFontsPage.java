@@ -53,6 +53,7 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
             new AttributesDescriptor("Identifiers",GLSLHighlighter.GLSL_IDENTIFIER[0]),
             new AttributesDescriptor("Identifiers of Uniforms",GLSLHighlighter.GLSL_IDENTIFIER_UNIFORM[0]),
             new AttributesDescriptor("Identifiers of Varyings",GLSLHighlighter.GLSL_IDENTIFIER_VARYING[0]),
+            new AttributesDescriptor("Identifiers of Attributes",GLSLHighlighter.GLSL_IDENTIFIER_ATTRIBUTE[0]),
             new AttributesDescriptor("Text",GLSLHighlighter.GLSL_TEXT[0]),
             new AttributesDescriptor("Directives",GLSLHighlighter.GLSL_PREPROCESSOR_DIRECTIVE[0])
         };

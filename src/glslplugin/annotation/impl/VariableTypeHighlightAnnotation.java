@@ -28,6 +28,9 @@ public class VariableTypeHighlightAnnotation extends Annotator<GLSLIdentifierExp
         } else if (qualifiedType.hasQualifier(GLSLQualifier.Qualifier.VARYING)) {
             Annotation annotation = holder.createAnnotation(HighlightSeverity.INFORMATION, expr.getTextRange(), null);
             annotation.setTextAttributes(GLSLHighlighter.GLSL_IDENTIFIER_VARYING[0]);
+        } else if (qualifiedType.hasQualifier(GLSLQualifier.Qualifier.ATTRIBUTE)) {
+            Annotation annotation = holder.createAnnotation(HighlightSeverity.INFORMATION, expr.getTextRange(), null);
+            annotation.setTextAttributes(GLSLHighlighter.GLSL_IDENTIFIER_ATTRIBUTE[0]);
         }
     }
 
