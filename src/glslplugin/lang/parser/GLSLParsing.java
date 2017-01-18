@@ -94,13 +94,13 @@ public final class GLSLParsing extends GLSLParsingBase {
                 //Can use non-b b.advanceLexer here, to allow "nested" defines
                 b.advanceLexer();//Get past identifier
 
-                List<IElementType> definition = new ArrayList<IElementType>();
+                List<ForeignLeafType> definition = new ArrayList<ForeignLeafType>();
                 StringBuilder definitionText = new StringBuilder();
 
                 while (b.getTokenType() != PREPROCESSOR_END && !b.eof()) {
                     //Suppressed warning that getTokenType/Text may be null, because it won't be (.eof() is checked).
                     //noinspection ConstantConditions
-                    definition.add(new ForeignLeafType(b.getTokenType(), b.getTokenText()));
+                    definition.add(new RedefinedTokenType(b.getTokenType(), b.getTokenText(), b.getNamesThroughWhichThisTokenWasRedefined()));
                     definitionText.append(b.getTokenText()).append(' ');
                     b.advanceLexer();
                 }

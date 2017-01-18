@@ -1,14 +1,15 @@
 package glslplugin.lang.parser;
 
+import com.intellij.lang.ForeignLeafType;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.TokenWrapper;
 import com.intellij.lang.impl.PsiBuilderAdapter;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 /**
  * A PsiBuilderAdapter in which each token can be remapped to an arbitrary number of tokens.
@@ -46,6 +47,19 @@ public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
         return "";
     }
 
+    private static final String[] NO_NAMES = {};
+
+    @NotNull
+    public String[] getNamesThroughWhichThisTokenWasRedefined() {
+        if (waitingTokens.isEmpty()) return NO_NAMES;
+        final IElementType type = waitingTokens.get(0);
+        if (type instanceof RedefinedTokenType) {
+            return ((RedefinedTokenType) type).redefinedThrough;
+        } else {
+            return NO_NAMES;
+        }
+    }
+
     @Override
     public void advanceLexer() {
         if (waitingTokens.isEmpty()) {
@@ -61,20 +75,33 @@ public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
         }
     }
 
+    /** @see #remapCurrentToken(List, String), does that but without redefining */
     @Override
     public void remapCurrentToken(IElementType type) {
-        remapCurrentToken(Collections.singletonList(type));
+        remapCurrentTokenAdvanceLexer();
+        waitingTokens.add(0, type);
     }
 
     protected void remapCurrentTokenAdvanceLexer(){
         advanceLexer();
     }
 
-    public void remapCurrentToken(Collection<IElementType> types) {
+    public void remapCurrentToken(List<ForeignLeafType> remapToTypes, String remappedThrough) {
         remapCurrentTokenAdvanceLexer();
-        waitingTokens.addAll(0, types);
+        final ArrayList<IElementType> tagged = new ArrayList<IElementType>(remapToTypes.size());
+        for (final ForeignLeafType type : remapToTypes) {
+            final IElementType taggedType;
+            if (type instanceof RedefinedTokenType) {
+                taggedType = ((RedefinedTokenType) type).redefineAlsoThrough(remappedThrough);
+            } else {
+                taggedType = new RedefinedTokenType(type, remappedThrough);
+            }
+            tagged.add(taggedType);
+        }
+        waitingTokens.addAll(0, tagged);
     }
 
+    @NotNull
     @Override
     public Marker mark() {
         return new DelegateMarker(super.mark());
@@ -98,9 +125,11 @@ public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
 
         public DelegateMarker(Marker delegate) {
             super(delegate);
+            //noinspection unchecked
             rollbackWaitingTokens = (ArrayList<IElementType>) waitingTokens.clone();
         }
 
+        @NotNull
         @Override
         public Marker precede() {
             Marker precedent = super.precede();

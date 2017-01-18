@@ -27,8 +27,13 @@
     <idea-version since-build="139.1117"/>
     <depends>com.intellij.modules.lang</depends>
 
-    <version>1.14</version>
+    <version>1.15</version>
     <change-notes><![CDATA[
+        <p>1.15</p>
+        <ul>
+            <li>Fix '#define's which contain their name freezing IDE</li>
+        </ul>
+
         <p>1.14</p>
         <ul>
             <li>Allow custom highlighting for uniforms, varyings and attributes</li>
@@ -167,7 +172,7 @@
         <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
         <fileTypeFactory implementation="glslplugin.GLSLSupportLoader"/>
         <colorSettingsPage implementation="glslplugin.GLSLColorAndFontsPage"/>
-        <lang.syntaxHighlighterFactory key="GLSL" implementationClass="glslplugin.GLSLHighlighterFactory"/>
+        <lang.syntaxHighlighterFactory language="GLSL" implementationClass="glslplugin.GLSLHighlighterFactory"/>
         <lang.braceMatcher language="GLSL" implementationClass="glslplugin.GLSLPairedBraceMatcher"/>
         <lang.parserDefinition language="GLSL" implementationClass="glslplugin.lang.GLSLParserDefinition"/>
         <lang.foldingBuilder language="GLSL" implementationClass="glslplugin.GLSLFoldingBuilder"/>

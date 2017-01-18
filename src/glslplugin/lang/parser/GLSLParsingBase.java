@@ -19,6 +19,7 @@
 
 package glslplugin.lang.parser;
 
+import com.intellij.lang.ForeignLeafType;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -45,7 +46,7 @@ abstract class GLSLParsingBase {
      */
     protected final GLSLPsiBuilderAdapter b;
 
-    protected Map<String, List<IElementType>> definitions = new HashMap<String, List<IElementType>>();
+    protected Map<String, List<ForeignLeafType>> definitions = new HashMap<String, List<ForeignLeafType>>();
     protected Map<String, String> definitionTexts = new HashMap<String, String>();
 
     GLSLParsingBase(PsiBuilder builder) {
@@ -79,12 +80,20 @@ abstract class GLSLParsingBase {
 
         public void advanceLexer_remapTokens(){
             final String tokenText = getTokenText();
-            final List<IElementType> definition = definitions.get(tokenText);
+            final String[] namesThroughWhichThisTokenWasRedefined = getNamesThroughWhichThisTokenWasRedefined();
+            for (String name : namesThroughWhichThisTokenWasRedefined) {
+                if (name != null && name.equals(tokenText)) {
+                    // Happens for #define name .*name.*
+                    // We must not replace it with itself, as it would lead to much tears (and probably is't up to spec anyway)
+                    return;
+                }
+            }
+            final List<ForeignLeafType> definition = definitions.get(tokenText);
             if (definition != null) {
                 Marker macro = mark();
-                remapCurrentTokenAdvanceLexer_redefineTokens = false;
-                remapCurrentToken(definition);
-                remapCurrentTokenAdvanceLexer_redefineTokens = true;
+                remapCurrentTokenAdvanceLexer_remapTokens = false;
+                remapCurrentToken(definition, tokenText); //This will advance the lexer which will eat the (real or substituted) token and replace it with redefinition
+                remapCurrentTokenAdvanceLexer_remapTokens = true;
                 macro.done(new RedefinedTokenElementType(definitionTexts.get(tokenText)));
                 advanceLexer_remapTokens();
             }
@@ -94,11 +103,11 @@ abstract class GLSLParsingBase {
         //Used in advanceLexer_remapTokens to not remap immediately after advancing in remapCurrentToken
         //That prevents two redefined tokens merging together (second becomes child of first)
         //I know that it sounds complicated, but you will have to trust me.
-        private boolean remapCurrentTokenAdvanceLexer_redefineTokens = true;
+        private boolean remapCurrentTokenAdvanceLexer_remapTokens = true;
 
         @Override
         protected void remapCurrentTokenAdvanceLexer() {
-            advanceLexer(false, remapCurrentTokenAdvanceLexer_redefineTokens);
+            advanceLexer(false, remapCurrentTokenAdvanceLexer_remapTokens);
         }
     }
 
