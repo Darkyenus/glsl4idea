@@ -1019,24 +1019,26 @@ public final class GLSLParsing extends GLSLParsingBase {
             return false;
         }
 
-        OperatorLevelTraits operatorLevel = operatorPrecedence[level];
+        final OperatorLevelTraits operatorLevel = operatorPrecedence[level];
         while (tryMatch(operatorLevel.getOperatorTokens())) {
             if (parseOperatorExpressionLevel(level + 1)) {
                 mark.done(operatorLevel.getElementType());
                 mark = mark.precede();
             } else {
                 PsiBuilder.Marker operatorMark = b.mark();
+                outOfPlace:
                 if (tryMatch(OPERATORS)) {
                     do {
                         operatorMark.error("Operator out of place.");
                         if (parseOperatorExpressionLevel(level + 1)) {
                             mark.done(operatorLevel.getElementType());
                             mark = mark.precede();
-                            break;
+                            break outOfPlace;
                         } else {
                             operatorMark = b.mark();
                         }
                     } while (tryMatch(OPERATORS));
+                    operatorMark.drop();
                 } else {
                     operatorMark.drop();
                     mark.error("Expected a(n) " + operatorLevel.getPartName() + ".");

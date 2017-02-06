@@ -23,22 +23,39 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.LightPsiParser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.psi.text.BlockSupport;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class GLSLParser implements PsiParser, LightPsiParser {
+
+    private boolean crashing = false;
 
     @Override
     @NotNull
-    public ASTNode parse(IElementType root, PsiBuilder builder) {
-        //builder.setDebugMode(true);
-        parseLight(root, builder);
-        return builder.getTreeBuilt();
+    public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {
+        try {
+            parseLight(root, builder);
+            return builder.getTreeBuilt();
+        } catch (ProcessCanceledException | BlockSupport.ReparsedSuccessfullyException ignore) {
+            // Not a problem
+            throw ignore;
+        } catch (Exception ex) {
+            crashing = true;
+            Logger.getLogger("GLSLParser").log(Level.WARNING, "Crashed while trying to parse "+root, ex);
+            throw ex;
+        }
     }
 
     @Override
     public void parseLight(IElementType root, PsiBuilder builder) {
-        // builder.setDebugMode(true);
+        if (crashing) {
+            builder.setDebugMode(true);
+        }
         final PsiBuilder.Marker rootMarker = builder.mark();
         if (!builder.eof()) { //Empty file is not an error
             final GLSLParsing theRealParser = new GLSLParsing(builder);
