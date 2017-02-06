@@ -27,11 +27,16 @@
     <idea-version since-build="139.1117"/>
     <depends>com.intellij.modules.lang</depends>
 
-    <version>1.15</version>
+    <version>1.16</version>
     <change-notes><![CDATA[
+        <p>1.16</p>
+        <ul>
+            <li>Fix certain operator sequences freezing the IDE</li>
+        </ul>
+
         <p>1.15</p>
         <ul>
-            <li>Fix '#define's which contain their name freezing IDE</li>
+            <li>Fix '#define's which contain their name freezing the IDE</li>
         </ul>
 
         <p>1.14</p>
