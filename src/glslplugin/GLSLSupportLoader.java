@@ -33,7 +33,9 @@ public class GLSLSupportLoader extends FileTypeFactory {
 
     private static final String FILETYPES = "glsl" + FileTypeConsumer.EXTENSION_DELIMITER
                                           + "frag" + FileTypeConsumer.EXTENSION_DELIMITER
+                                          + "fsh"  + FileTypeConsumer.EXTENSION_DELIMITER
                                           + "vert" + FileTypeConsumer.EXTENSION_DELIMITER
+                                          + "vsh"  + FileTypeConsumer.EXTENSION_DELIMITER
                                           + "tesc" + FileTypeConsumer.EXTENSION_DELIMITER
                                           + "tese" + FileTypeConsumer.EXTENSION_DELIMITER
                                           + "geom" + FileTypeConsumer.EXTENSION_DELIMITER
