@@ -307,7 +307,8 @@ public class GLSLTokenTypes {
     public static final TokenSet INTERFACE_QUALIFIER_TOKENS = TokenSet.create(
             IN_KEYWORD,
             OUT_KEYWORD,
-            UNIFORM_KEYWORD
+            UNIFORM_KEYWORD,
+            BUFFER_KEYWORD
     );
 
     public static final TokenSet COMMENTS = TokenSet.create(COMMENT_BLOCK, COMMENT_LINE);
