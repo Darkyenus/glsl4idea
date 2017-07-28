@@ -1371,7 +1371,11 @@ public final class GLSLParsing extends GLSLParsingBase {
             parseIdentifier();
         }
 
-        match(LEFT_BRACE, "'{' expected after 'struct'.");
+        if (!match(LEFT_BRACE, "'{' expected after 'struct'.")) {
+            // It is unlikely that { is missing and } is not.
+            // This prevents breakdown on parsing something like: struct Foobar;
+            return;
+        }
 
         parseStructDeclarationList();
 
@@ -1388,24 +1392,31 @@ public final class GLSLParsing extends GLSLParsingBase {
             b.error("Empty struct is not allowed.");
         }
 
-        while (GLSLTokenTypes.TYPE_SPECIFIER_NONARRAY_TOKENS.contains(b.getTokenType()) ||
-                b.getTokenType() == GLSLTokenTypes.IDENTIFIER) {
-            parseStructDeclaration();
+        while (!b.eof() && b.getTokenType() != RIGHT_BRACE) {
+            if(!parseStructDeclaration()) {
+                final PsiBuilder.Marker invalidTokenSkip = b.mark();
+                b.advanceLexer();
+                invalidTokenSkip.error("Expected struct member declaration");
+            }
         }
 
         mark.done(STRUCT_DECLARATION_LIST);
     }
 
-    private void parseStructDeclaration() {
+    private boolean parseStructDeclaration() {
         // type_specifier struct_declarator_list ';'
 
         final PsiBuilder.Marker mark = b.mark();
 
-        parseQualifiedTypeSpecifier();
+        if (!parseQualifiedTypeSpecifier()) {
+            mark.rollbackTo();
+            return false;
+        }
         parseStructDeclaratorList();
         match(SEMICOLON, "Expected ';' after struct declaration.");
 
         mark.done(STRUCT_DECLARATION);
+        return true;
     }
 
     private void parseStructDeclaratorList() {
