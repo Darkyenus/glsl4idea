@@ -23,14 +23,14 @@ import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
 
 /**
- * NewStructDeclaration is ...
+ * Element for structure members.
  *
  * @author Yngve Devik Hammersland
  *         Date: Feb 2, 2009
  *         Time: 3:52:15 PM
  */
-public class GLSLStructDeclaration extends GLSLDeclarationImpl {
-    public GLSLStructDeclaration(@NotNull ASTNode astNode) {
+public class GLSLStructMemberDeclaration extends GLSLDeclarationImpl {
+    public GLSLStructMemberDeclaration(@NotNull ASTNode astNode) {
         super(astNode);
     }
 

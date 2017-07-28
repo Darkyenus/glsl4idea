@@ -138,7 +138,7 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.TYPE_SPECIFIER_STRUCT) return new GLSLTypeDefinition(node);
 
         if (type == GLSLElementTypes.STRUCT_DECLARATION_LIST) return new GLSLDeclarationList(node);
-        if (type == GLSLElementTypes.STRUCT_DECLARATION) return new GLSLStructDeclaration(node);
+        if (type == GLSLElementTypes.STRUCT_MEMBER_DECLARATION) return new GLSLStructMemberDeclaration(node);
         if (type == GLSLElementTypes.STRUCT_DECLARATOR_LIST) return new GLSLDeclaratorList(node);
         if (type == GLSLElementTypes.STRUCT_DECLARATOR) return new GLSLDeclarator(node);
 

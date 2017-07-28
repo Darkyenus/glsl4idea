@@ -273,7 +273,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                 if (!parseTypeSpecifier()) b.advanceLexer();
                 parseDeclaratorList();
                 match(SEMICOLON, "Expected ';'");
-                member.done(STRUCT_DECLARATION);//TODO Should we call interface block members struct members?
+                member.done(STRUCT_MEMBER_DECLARATION);//TODO Should we call interface block members struct members?
             }
 
             if (b.getTokenType() == IDENTIFIER) {
@@ -1415,7 +1415,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         parseStructDeclaratorList();
         match(SEMICOLON, "Expected ';' after struct declaration.");
 
-        mark.done(STRUCT_DECLARATION);
+        mark.done(STRUCT_MEMBER_DECLARATION);
         return true;
     }
 

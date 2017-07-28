@@ -48,7 +48,7 @@ public class GLSLElementTypes {
     public static final IElementType FUNCTION_DECLARATION = new GLSLElementType("FUNCTION_DECLARATION");
 
     public static final IElementType STRUCT_DECLARATION_LIST = new GLSLElementType("STRUCT_DECLARATION_LIST");
-    public static final IElementType STRUCT_DECLARATION = new GLSLElementType("STRUCT_DECLARATION");
+    public static final IElementType STRUCT_MEMBER_DECLARATION = new GLSLElementType("STRUCT_MEMBER_DECLARATION");
     public static final IElementType STRUCT_DECLARATOR = new GLSLElementType("STRUCT_DECLARATOR");
     public static final IElementType STRUCT_DECLARATOR_LIST = new GLSLElementType("STRUCT_DECLARATOR_LIST");
 
