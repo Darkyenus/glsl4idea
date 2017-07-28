@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GLSLVariableReference is ...
+ * Base for inter-element references.
  *
  * @author Yngve Devik Hammersland
  *         Date: Feb 4, 2009
@@ -42,16 +42,17 @@ import java.util.List;
  */
 public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_TYPE extends GLSLElement> implements PsiReference {
     protected SOURCE_TYPE source;
-    protected TARGET_TYPE target;
 
     public GLSLReferenceBase(SOURCE_TYPE source) {
         this.source = source;
     }
 
+    @Override
     public SOURCE_TYPE getElement() {
         return source;
     }
 
+    @Override
     public TextRange getRangeInElement() {
         return new TextRange(0, source == null ? 0 : source.getTextLength());
     }
@@ -62,11 +63,16 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
 
     @NotNull
     public String getCanonicalText() {
-        return target.getText();
+        final TARGET_TYPE resolve = resolve();
+        if (resolve == null) {
+            return source.getText();
+        } else {
+            return resolve.getText();
+        }
     }
 
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-        if(source == null) throw new IncorrectOperationException("Reference is invalid");
+        if (source == null) throw new IncorrectOperationException("Reference is invalid");
         if (source instanceof PsiNamedElement) {
             return ((PsiNamedElement) source).setName(newElementName);
         }
@@ -74,7 +80,7 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
     }
 
     public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
-        throw new IncorrectOperationException("Not supported!");
+        throw new IncorrectOperationException("Not supported");
     }
 
     public boolean isReferenceTo(PsiElement element) {
@@ -83,7 +89,7 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
 
     @NotNull
     public Object[] getVariants() {
-        List<PsiNamedElement> elements = new ArrayList<PsiNamedElement>();
+        List<PsiNamedElement> elements = new ArrayList<>();
         NamedElementCollector collector = new NamedElementCollector(elements);
         PsiTreeUtil.treeWalkUp(collector, source, null, ResolveState.initial());
         return elements.toArray();
