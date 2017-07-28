@@ -206,6 +206,7 @@ public class GLSLTokenTypes {
     public static final IElementType PREPROCESSOR_DEFINED = new GLSLElementType("PREPROCESSOR_DEFINED");
     public static final IElementType PREPROCESSOR_CONCAT = new GLSLElementType("PREPROCESSOR_CONCAT");
     public static final IElementType PREPROCESSOR_STRING = new GLSLElementType("PREPROCESSOR_STRING");
+    public static final IElementType PREPROCESSOR_RAW = new GLSLElementType("PREPROCESSOR_RAW");
 
     /** Not returned by lexer but used instead of PREPROCESSOR_[something] when the kind of directive is unknown */
     public static final IElementType PREPROCESSOR_OTHER = new GLSLElementType("PREPROCESSOR_OTHER");
