@@ -16,7 +16,7 @@
   ~     You should have received a copy of the GNU General Public License
   ~     along with glsl4idea.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<idea-plugin version="2">
+<idea-plugin>
 
     <name>GLSL Support</name>
     <id>GLSL</id>
