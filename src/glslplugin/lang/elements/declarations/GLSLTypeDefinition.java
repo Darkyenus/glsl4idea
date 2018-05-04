@@ -113,7 +113,7 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
     }
 
     @Override
-    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
         if (!processor.execute(this, state)) return false;
 
         for (GLSLDeclarator declarator : getDeclarators()) {

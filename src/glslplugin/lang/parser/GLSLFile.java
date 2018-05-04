@@ -29,6 +29,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.GLSLSupportLoader;
 import glslplugin.lang.elements.preprocessor.GLSLVersionDirective;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GLSLFile extends PsiFileBase {
     /**
@@ -61,7 +62,10 @@ public class GLSLFile extends PsiFileBase {
     }
 
     @Override
-    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
+        if (lastParent == null) {
+            return true;
+        }
         PsiElement child = lastParent.getPrevSibling();
         while (child != null) {
             if (!child.processDeclarations(processor, state, lastParent, place)) return false;

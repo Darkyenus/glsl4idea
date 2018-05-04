@@ -89,7 +89,7 @@ public class GLSLTypeSpecifier extends GLSLElementImpl {
     }
 
     @Override
-    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
         GLSLTypeDefinition typeDefinition = getTypeDefinition();
         if (typeDefinition != null && !typeDefinition.processDeclarations(processor, state, lastParent, place)) return false;
         return true;

@@ -25,6 +25,7 @@ import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLCompoundStatement is ...
@@ -61,7 +62,10 @@ public class GLSLCompoundStatement extends GLSLStatement {
     }
 
     @Override
-    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
+        if (lastParent == null) {
+            return true;
+        }
         PsiElement child = lastParent.getPrevSibling();
         while (child != null) {
             if (!child.processDeclarations(processor, state, lastParent, place)) return false;
