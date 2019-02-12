@@ -38,6 +38,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+import static glslplugin.Utils.escapeHtml;
+
 /**
  * GLSLDeduceExpressionTypeAction is ...
  *
@@ -85,7 +87,7 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
         if(psiFile != null){
             e.getPresentation().setEnabledAndVisible(GLSLLanguage.GLSL_LANGUAGE.equals(psiFile.getLanguage()));
@@ -107,7 +109,6 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
         type = makeTypenameHtml(type);
         value = escapeHtml(value);
 
-        //noinspection StringBufferReplaceableByString
         StringBuilder b = new StringBuilder();
         b.append("<html><table>");
 
@@ -125,10 +126,6 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
         b.append("</table></html>");
 
         return b.toString();
-    }
-
-    private static String escapeHtml(String text){
-        return org.apache.commons.lang.StringEscapeUtils.escapeHtml(text);
     }
 
     private static String makeTypenameHtml(String type) {
