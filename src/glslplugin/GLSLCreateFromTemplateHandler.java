@@ -47,7 +47,7 @@ public class GLSLCreateFromTemplateHandler extends DefaultCreateFromTemplateHand
      * This map is obtained from taking all internal templates and overriding them with existing custom templates.
      */
     private static Map<String, FileTemplate> getTemplates(Project project){
-        final Map<String, FileTemplate> result = new HashMap<String, FileTemplate>();
+        final Map<String, FileTemplate> result = new HashMap<>();
         FileTemplateManager manager = FileTemplateManager.getInstance(project);
         addTemplates(result,manager.getInternalTemplates());
         addTemplates(result,manager.getAllTemplates());
@@ -55,16 +55,16 @@ public class GLSLCreateFromTemplateHandler extends DefaultCreateFromTemplateHand
     }
 
     @Override
-    public boolean handlesTemplate(FileTemplate template) {
+    public boolean handlesTemplate(@NotNull FileTemplate template) {
         return template.isTemplateOfType(GLSLSupportLoader.GLSL);
     }
 
     //Copied and modified from parent class
     @NotNull
     @Override
-    public PsiFile createFromTemplate(final Project project, final PsiDirectory directory, String fileName, FileTemplate template,
-                                         String templateText,
-                                         @NotNull final Map<String, Object> props) throws IncorrectOperationException {
+    public PsiFile createFromTemplate(@NotNull final Project project, @NotNull final PsiDirectory directory, String fileName, @NotNull FileTemplate template,
+                                      @NotNull String templateText,
+                                      @NotNull final Map<String, Object> props) throws IncorrectOperationException {
         Map<String, FileTemplate> templates = getTemplates(project);
         //Make sure it has some extension
         int extensionDot = fileName.lastIndexOf('.');

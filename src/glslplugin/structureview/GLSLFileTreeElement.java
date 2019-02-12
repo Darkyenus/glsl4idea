@@ -21,7 +21,6 @@ package glslplugin.structureview;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.declarations.*;
 
 import java.util.ArrayList;
@@ -40,9 +39,9 @@ class GLSLFileTreeElement extends GLSLStructureViewTreeElement<PsiFile> {
     }
 
     protected void createChildren(PsiFile file) {
-        Set<GLSLTypeDefinition> definitions = new LinkedHashSet<GLSLTypeDefinition>();
-        List<GLSLVariableDeclaration> variableDeclarations = new ArrayList<GLSLVariableDeclaration>();
-        List<GLSLFunctionDeclaration> functions = new ArrayList<GLSLFunctionDeclaration>();
+        Set<GLSLTypeDefinition> definitions = new LinkedHashSet<>();
+        List<GLSLVariableDeclaration> variableDeclarations = new ArrayList<>();
+        List<GLSLFunctionDeclaration> functions = new ArrayList<>();
 
         PsiElement[] baseNodes = file.getChildren();
         for (PsiElement baseNode : baseNodes) {
@@ -52,10 +51,9 @@ class GLSLFileTreeElement extends GLSLStructureViewTreeElement<PsiFile> {
                 final GLSLTypeSpecifier typeSpecifier = declaration.getTypeSpecifierNode();
 
                 if (typeSpecifier != null) {
-                    final GLSLTypedElement typedef = typeSpecifier.getTypeDefinition();
+                    final GLSLTypeDefinition typedef = typeSpecifier.getTypeDefinition();
                     if (typedef != null) {
-                        final GLSLTypeDefinition definition = (GLSLTypeDefinition) typedef;
-                        definitions.add(definition);
+                        definitions.add(typedef);
                     }
 
                     if (declaration.getDeclarators().length > 0) {

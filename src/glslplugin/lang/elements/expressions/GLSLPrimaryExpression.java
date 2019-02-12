@@ -19,9 +19,8 @@
 
 package glslplugin.lang.elements.expressions;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
-import glslplugin.lang.elements.expressions.GLSLExpression;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * GLSLPrimaryExpression is ...

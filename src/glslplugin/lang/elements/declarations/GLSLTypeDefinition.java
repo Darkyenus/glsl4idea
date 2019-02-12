@@ -72,11 +72,11 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
 
     @NotNull
     public GLSLDeclarator[] getDeclarators() {
-        List<GLSLDeclarator> declarators = new ArrayList<GLSLDeclarator>();
+        List<GLSLDeclarator> declarators = new ArrayList<>();
         for (GLSLDeclaration declaration : getDeclarations()) {
             Collections.addAll(declarators, declaration.getDeclarators());
         }
-        return declarators.toArray(new GLSLDeclarator[declarators.size()]);
+        return declarators.toArray(GLSLDeclarator.NO_DECLARATORS);
     }
 
     @Override

@@ -94,12 +94,11 @@ public final class GLSLParsing extends GLSLParsingBase {
                 //Can use non-b b.advanceLexer here, to allow "nested" defines
                 b.advanceLexer();//Get past identifier
 
-                List<ForeignLeafType> definition = new ArrayList<ForeignLeafType>();
+                List<ForeignLeafType> definition = new ArrayList<>();
                 StringBuilder definitionText = new StringBuilder();
 
                 while (b.getTokenType() != PREPROCESSOR_END && !b.eof()) {
                     //Suppressed warning that getTokenType/Text may be null, because it won't be (.eof() is checked).
-                    //noinspection ConstantConditions
                     definition.add(new RedefinedTokenType(b.getTokenType(), b.getTokenText(), b.getNamesThroughWhichThisTokenWasRedefined()));
                     definitionText.append(b.getTokenText()).append(' ');
                     b.advanceLexer();
@@ -155,7 +154,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         }
         b.advanceLexer(false, false);//Get past PREPROCESSOR_END
         //false -> don't check for PREPROCESSOR_BEGIN, we will handle that ourselves
-        if(directiveType == null || !PREPROCESSOR_DIRECTIVES.contains(directiveType)){
+        if(!PREPROCESSOR_DIRECTIVES.contains(directiveType)){
             //Happens when typing new directive at the end of the file
             //or when malformed directive is created (eg #foo)
             preprocessor.done(PREPROCESSOR_OTHER);

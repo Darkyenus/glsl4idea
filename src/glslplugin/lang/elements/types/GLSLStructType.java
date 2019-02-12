@@ -38,7 +38,7 @@ public final class GLSLStructType extends GLSLType {
 
     private final GLSLTypeDefinition definition;
     private final String typename;
-    private final Map<String, GLSLType> members = new HashMap<String, GLSLType>();
+    private final Map<String, GLSLType> members = new HashMap<>();
     private final GLSLFunctionType[] constructors = new GLSLFunctionType[1];
 
     public GLSLStructType(GLSLTypeDefinition definition) {
@@ -87,9 +87,7 @@ public final class GLSLStructType extends GLSLType {
 
             // typename should be enough as only a single struct can have any given name
             // TODO: Check definition reference instead? NOTE: It may be null
-            if (getTypename().equals(other.typename)) {
-                return true;
-            }
+            return getTypename().equals(other.typename);
         }
         return false;
 

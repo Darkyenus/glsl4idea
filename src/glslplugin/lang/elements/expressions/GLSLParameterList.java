@@ -48,7 +48,7 @@ public class GLSLParameterList extends GLSLElementImpl implements Iterable<GLSLE
     public GLSLExpression[] getParameters() {
         // convert the list of children to a list of GLSLStatement objects while performing sanity check.
         PsiElement[] children = getChildren();
-        List<GLSLExpression> result = new ArrayList<GLSLExpression>(children.length);
+        List<GLSLExpression> result = new ArrayList<>(children.length);
         for (PsiElement child : children) {
             if (child instanceof GLSLExpression) {
                 result.add((GLSLExpression) child);
@@ -62,14 +62,14 @@ public class GLSLParameterList extends GLSLElementImpl implements Iterable<GLSLE
                 }
             }
         }
-        return result.toArray(new GLSLExpression[result.size()]);
+        return result.toArray(new GLSLExpression[0]);
     }
 
     @NotNull
     public GLSLType[] getParameterTypes() {
         // convert the list of children to a list of GLSLStatement objects while performing sanity check.
         PsiElement[] children = getChildren();
-        List<GLSLType> result = new ArrayList<GLSLType>(children.length);
+        List<GLSLType> result = new ArrayList<>(children.length);
         for (PsiElement child : children) {
             if (child instanceof GLSLExpression) {
                 result.add(((GLSLExpression) child).getType());
@@ -83,9 +83,11 @@ public class GLSLParameterList extends GLSLElementImpl implements Iterable<GLSLE
                 }
             }
         }
-        return result.toArray(new GLSLType[result.size()]);
+        return result.toArray(GLSLType.EMPTY_ARRAY);
     }
 
+    @NotNull
+    @Override
     public Iterator<GLSLExpression> iterator() {
         return java.util.Arrays.asList(getParameters()).iterator();
     }

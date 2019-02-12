@@ -36,9 +36,9 @@ public class GLSLFoldingBuilder implements FoldingBuilder {
 
     @NotNull
     public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
-        List<FoldingDescriptor> descriptors = new ArrayList<FoldingDescriptor>();
+        List<FoldingDescriptor> descriptors = new ArrayList<>();
         appendDescriptors(node, descriptors);
-        return descriptors.toArray(new FoldingDescriptor[descriptors.size()]);
+        return descriptors.toArray(new FoldingDescriptor[0]);
     }
 
     private void appendDescriptors(final ASTNode node, final List<FoldingDescriptor> descriptors) {

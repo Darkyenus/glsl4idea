@@ -50,7 +50,7 @@ public class GLSLCompletionContributor extends DefaultCompletionContributor {
         // Add field selection completion
         extend(CompletionType.BASIC, FIELD_SELECTION, new CompletionProvider<CompletionParameters>() {
             @Override
-            protected void addCompletions(@NotNull CompletionParameters completionParameters, ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
+            protected void addCompletions(@NotNull CompletionParameters completionParameters, @NotNull ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
                 GLSLFieldSelectionExpression fieldSelection = (GLSLFieldSelectionExpression) completionParameters.getPosition().getParent().getParent();
 
                 GLSLExpression leftHandExpression = fieldSelection.getLeftHandExpression();

@@ -1,7 +1,6 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.util.containers.HashSet;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.statements.GLSLCaseStatement;
@@ -12,6 +11,7 @@ import glslplugin.lang.elements.types.GLSLScalarType;
 import glslplugin.lang.elements.types.GLSLType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -47,7 +47,7 @@ public class SwitchAnnotation extends Annotator<GLSLSwitchStatement> {
         final List<GLSLLabelStatement> labelStatements = expr.getLabelStatements();
 
 
-        Set<Object> encounteredCases = new HashSet<Object>();
+        Set<Object> encounteredCases = new HashSet<>();
         boolean defaultFound = false;
 
         for (GLSLLabelStatement label : labelStatements) {

@@ -15,8 +15,9 @@ import java.util.*;
 public class StatementParentAnnotation extends Annotator<GLSLStatement> {
 
     static class AcceptableParents {
+        @SafeVarargs
         AcceptableParents(String message, Class<? extends PsiElement>... parents) {
-            this.parents = new HashSet<Class<? extends PsiElement>>(Arrays.asList(parents));
+            this.parents = new HashSet<>(Arrays.asList(parents));
             this.message = message;
         }
         Set<Class<? extends PsiElement>> parents;
@@ -26,7 +27,7 @@ public class StatementParentAnnotation extends Annotator<GLSLStatement> {
     static Map<Class<? extends PsiElement>, AcceptableParents> parentsForClass;
 
     static {
-        parentsForClass = new HashMap<Class<? extends PsiElement>, AcceptableParents>();
+        parentsForClass = new HashMap<>();
         parentsForClass.put(GLSLBreakStatement.class,
                 new AcceptableParents("Break statement must be inside a loop or switch statement",
                         GLSLWhileStatement.class, GLSLForStatement.class, GLSLDoStatement.class, GLSLSwitchStatement.class));
@@ -39,7 +40,7 @@ public class StatementParentAnnotation extends Annotator<GLSLStatement> {
         parentsForClass.put(GLSLReturnStatement.class,
                 new AcceptableParents("Return statement must be inside a function definition",
                         GLSLFunctionDefinition.class));
-    };
+    }
 
     @Override
     public void annotate(GLSLStatement expr, AnnotationHolder holder) {

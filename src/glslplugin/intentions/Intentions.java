@@ -62,9 +62,9 @@ public abstract class Intentions extends PsiElementBaseIntentionAction {
         return false;
     }
 
-    protected GLSLIdentifier replaceIdentifierElement(GLSLIdentifier identifier, String value) {
+    protected void replaceIdentifierElement(GLSLIdentifier identifier, String value) {
         GLSLIdentifier newIdentifier = createIdentifierFromText(identifier, value);
-        return (GLSLIdentifier) replaceExpression(identifier, newIdentifier);
+        replaceExpression(identifier, newIdentifier);
     }
 
     @NotNull
@@ -77,8 +77,7 @@ public abstract class Intentions extends PsiElementBaseIntentionAction {
         return result;
     }
 
-    protected GLSLElement replaceExpression(GLSLElement from, GLSLElement to) {
-
+    protected void replaceExpression(GLSLElement from, GLSLElement to) {
         final ASTNode newExpressionNode = to.getNode();
         final ASTNode oldExpressionNode = from.getNode();
         final PsiElement parentNode = from.getParent();
@@ -87,9 +86,7 @@ public abstract class Intentions extends PsiElementBaseIntentionAction {
         if (!(grandParentNode == null || oldExpressionNode == null || newExpressionNode == null)) {
             grandParentNode.replaceChild(oldExpressionNode, newExpressionNode);
             reformat(parentNode);
-            return (GLSLElement) newExpressionNode.getPsi();
         }
-        return null;
     }
 
     protected PsiElement createExpressionFromText(PsiElement element, String expression) {

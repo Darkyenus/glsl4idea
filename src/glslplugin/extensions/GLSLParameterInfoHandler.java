@@ -10,6 +10,7 @@ import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLParameterDeclaration;
 import glslplugin.lang.elements.expressions.GLSLFunctionCallExpression;
+import glslplugin.lang.elements.expressions.GLSLParameterList;
 import glslplugin.lang.elements.reference.GLSLFunctionReference;
 import glslplugin.lang.elements.reference.GLSLReferenceBase;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
@@ -37,6 +38,7 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
         return EMPTY_ARRAY;
     }
 
+    @SuppressWarnings("deprecation") // Kept for compatibility
     @Nullable
     @Override
     public Object[] getParametersForDocumentation(Object p, ParameterInfoContext context) {
@@ -58,9 +60,9 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
 
         Object[] items = reference.multiResolve(false);
         if (items.length == 0) {
-            List<GLSLFunctionDeclaration> declarations = new ArrayList<GLSLFunctionDeclaration>();
+            List<GLSLFunctionDeclaration> declarations = new ArrayList<>();
             for (Object variant : reference.getVariants()) {
-                if (variant == null || !(variant instanceof GLSLDeclarator)) continue;
+                if (!(variant instanceof GLSLDeclarator)) continue;
                 GLSLDeclarator declarator = (GLSLDeclarator) variant;
                 if (declarator.getParentDeclaration() instanceof GLSLFunctionDeclaration) {
                     String name = declarator.getName();
@@ -99,16 +101,22 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
             return;
         }
 
-        int index = ParameterInfoUtils.getCurrentParameterIndex(call.getParameterList().getNode(), context.getOffset(), GLSLTokenTypes.COMMA);
+        final GLSLParameterList parameterList = call.getParameterList();
+        if (parameterList == null) {
+            return;
+        }
+        int index = ParameterInfoUtils.getCurrentParameterIndex(parameterList.getNode(), context.getOffset(), GLSLTokenTypes.COMMA);
         context.setCurrentParameter(index);
     }
 
+    @SuppressWarnings("deprecation") // Kept for compatibility
     @Nullable
     @Override
     public String getParameterCloseChars() {
         return ParameterInfoUtils.DEFAULT_PARAMETER_CLOSE_CHARS;
     }
 
+    @SuppressWarnings("deprecation") // Kept for compatibility
     @Override
     public boolean tracksParameterIndex() {
         return false;

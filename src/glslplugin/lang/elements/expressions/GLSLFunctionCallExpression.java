@@ -20,10 +20,7 @@
 package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiCheckedRenameElement;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.GLSLReferenceElement;
@@ -74,7 +71,7 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
         return findChildByClass(GLSLTypeSpecifier.class);
     }
 
-    @Nullable
+    @NotNull
     private GLSLArraySpecifier[] getConstructorArraySpecifiers(){
         return findChildrenByClass(GLSLArraySpecifier.class);
     }
@@ -198,7 +195,7 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
     //region Function only
     @NotNull
     private List<GLSLFunctionType> findDefinedFunctions(String name, GLSLType[] parameterTypes){
-        ArrayList<GLSLFunctionType> result = new ArrayList<GLSLFunctionType>();
+        ArrayList<GLSLFunctionType> result = new ArrayList<>();
         PsiElement current = findParentByClass(GLSLFunctionDefinition.class);
         while (current != null) {
             if (current instanceof GLSLFunctionDeclaration) {

@@ -39,8 +39,8 @@ import java.util.List;
 public class GLSLAnnotator implements com.intellij.lang.annotation.Annotator {
     //This is optimal for small amount of annotators, if the list grows, change to map.
     //These two instances form something like map. Add only through add(Annotator) method.
-    private final static List<Class<? extends PsiElement>> annotationTypes = new ArrayList<Class<? extends PsiElement>>();
-    private final static List<Annotator<? extends PsiElement>> annotators = new ArrayList<Annotator<? extends PsiElement>>();
+    private final static List<Class<? extends PsiElement>> annotationTypes = new ArrayList<>();
+    private final static List<Annotator<? extends PsiElement>> annotators = new ArrayList<>();
 
     private static void add(Annotator<?> annotator) {
         annotationTypes.add(annotator.getElementType());

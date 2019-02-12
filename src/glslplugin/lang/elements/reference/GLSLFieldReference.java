@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
  *         Time: 11:07:52 PM
  */
 public class GLSLFieldReference extends GLSLReferenceBase<GLSLIdentifier, GLSLDeclarator> {
-    GLSLFieldSelectionExpression sourceExpression = null;
+    private final GLSLFieldSelectionExpression sourceExpression;
 
     public GLSLFieldReference(GLSLFieldSelectionExpression source) {
         super(source.getMemberIdentifier());

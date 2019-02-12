@@ -31,11 +31,7 @@ import java.io.IOException;
  */
 public final class GLSLFlexAdapter extends LexerBase {
 
-    public GLSLFlexAdapter() {
-        myFlex = new GLSLFlexLexer(null);
-    }
-
-    private GLSLFlexLexer myFlex = null;
+    private final GLSLFlexLexer myFlex = new GLSLFlexLexer(null);
     private IElementType myTokenType = null;
     private CharSequence myText;
 

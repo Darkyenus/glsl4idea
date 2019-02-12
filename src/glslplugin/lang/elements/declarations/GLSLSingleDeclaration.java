@@ -19,7 +19,6 @@
 
 package glslplugin.lang.elements.declarations;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**

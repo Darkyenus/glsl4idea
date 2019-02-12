@@ -44,19 +44,13 @@ public class GLSLDeclaratorList extends GLSLElementImpl implements Iterable<GLSL
         return findChildrenByClass(GLSLDeclarator.class);
     }
 
-    @Nullable
-    public GLSLVariableDeclaration getParentDeclaration() {
-        PsiElement parent = getParent();
-        if(parent instanceof GLSLVariableDeclaration){
-            return (GLSLVariableDeclaration)parent;
-        }else return null;
-    }
-
     @Override
     public String toString() {
         return "Declarator List (" + getDeclarators().length + " declarators)";
     }
 
+    @NotNull
+    @Override
     public Iterator<GLSLDeclarator> iterator() {
         return java.util.Arrays.asList(getDeclarators()).iterator();
     }

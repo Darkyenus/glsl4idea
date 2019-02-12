@@ -44,6 +44,8 @@ public class GLSLQualifierList extends GLSLElementImpl implements Iterable<GLSLQ
         return findChildrenByClass(GLSLQualifier.class);
     }
 
+    @Override
+    @NotNull
     public Iterator<GLSLQualifier> iterator() {
         return java.util.Arrays.asList(getQualifiers()).iterator();
     }
@@ -53,12 +55,4 @@ public class GLSLQualifierList extends GLSLElementImpl implements Iterable<GLSLQ
         return "Qualifier List: (" + getQualifiers().length + " qualifiers)";
     }
 
-    public boolean containsQualifier(GLSLQualifier.Qualifier qualifier) {
-        for (GLSLQualifier qualifierElement : getQualifiers()) {
-            if (qualifierElement.getQualifier() == qualifier) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

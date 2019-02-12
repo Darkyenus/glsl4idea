@@ -32,6 +32,7 @@ import java.util.Map;
  *         Date: Feb 26, 2009
  *         Time: 4:00:42 PM
  */
+@SuppressWarnings("unused")
 public class GLSLTypes {
     // Scalars
     public static final GLSLScalarType INT = register(GLSLScalarType.INT);
@@ -120,7 +121,7 @@ public class GLSLTypes {
         }
     };
 
-    private static final Map<String, GLSLType> undefinedTypes = new HashMap<String, GLSLType>();
+    private static final Map<String, GLSLType> undefinedTypes = new HashMap<>();
 
     public static GLSLType getUndefinedType(final String text) {
         if (!undefinedTypes.containsKey(text)) {
@@ -162,7 +163,7 @@ public class GLSLTypes {
     }
 
     static <T extends GLSLType> T register(String name, T type) {
-        if (types == null) types = new HashMap<String, GLSLType>();
+        if (types == null) types = new HashMap<>();
         types.put(name, type);
         return type;
     }

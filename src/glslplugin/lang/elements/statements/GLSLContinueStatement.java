@@ -19,9 +19,8 @@
 
 package glslplugin.lang.elements.statements;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
-import glslplugin.lang.elements.statements.GLSLStatement;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * GLSLDeclarationStatement is ...

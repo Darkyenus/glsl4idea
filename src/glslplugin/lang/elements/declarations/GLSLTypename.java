@@ -25,10 +25,8 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.*;
 import glslplugin.lang.elements.reference.GLSLTypeReference;
-import glslplugin.lang.elements.statements.GLSLDeclarationStatement;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
-import glslplugin.lang.parser.GLSLFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,16 +83,6 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
 
         Logger.getLogger("GLSLTypename").warning("Unknown element type: '" + type + "'");
         return GLSLTypes.UNKNOWN_TYPE;
-    }
-
-    @Nullable
-    public GLSLDeclarationList getDeclarationList() {
-        final GLSLTypeDefinition definition = getTypeDefinition();
-        if (definition != null) {
-            return definition.getDeclarationList();
-        } else {
-            return null;
-        }
     }
 
     @NotNull

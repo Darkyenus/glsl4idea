@@ -27,7 +27,7 @@ public class ConstModificationAnnotation extends Annotator<GLSLAssignmentExpress
         if (reference == null) return;
 
         PsiElement declarator = reference.resolve();
-        if (declarator == null || !(declarator instanceof GLSLDeclarator)) return;
+        if (!(declarator instanceof GLSLDeclarator)) return;
 
         if (((GLSLDeclarator) declarator).getQualifiedType().hasQualifier(GLSLQualifier.Qualifier.CONST)) {
             holder.createErrorAnnotation(expr, "Cannot assign to const variable");

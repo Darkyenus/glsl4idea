@@ -76,7 +76,6 @@ public class GLSLPsiElementFactory {
                 type == GLSLElementTypes.LOGICAL_AND_EXPRESSION ||
                 type == GLSLElementTypes.LOGICAL_OR_EXPRESSION ||
                 type == GLSLElementTypes.LOGICAL_XOR_EXPRESSION ||
-                type == GLSLElementTypes.ADDITIVE_EXPRESSION ||
                 type == GLSLElementTypes.BIT_SHIFT_EXPRESSION ||
                 type == GLSLElementTypes.BINARY_AND_EXPRESSION ||
                 type == GLSLElementTypes.BINARY_XOR_EXPRESSION ||
@@ -105,7 +104,6 @@ public class GLSLPsiElementFactory {
         // statements:
         if (type == GLSLElementTypes.EXPRESSION_STATEMENT) return new GLSLExpressionStatement(node);
         if (type == GLSLElementTypes.COMPOUND_STATEMENT) return new GLSLCompoundStatement(node);
-        if (type == GLSLElementTypes.DECLARATION_STATEMENT) return new GLSLDeclarationStatement(node);
         if (type == GLSLElementTypes.IF_STATEMENT) return new GLSLIfStatement(node);
         if (type == GLSLElementTypes.FOR_STATEMENT) return new GLSLForStatement(node);
         if (type == GLSLElementTypes.WHILE_STATEMENT) return new GLSLWhileStatement(node);

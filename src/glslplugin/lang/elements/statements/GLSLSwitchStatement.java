@@ -33,7 +33,7 @@ public class GLSLSwitchStatement extends GLSLStatement {
 
     @NotNull
     public List<GLSLLabelStatement> getLabelStatements() {
-        List<GLSLLabelStatement> result = new ArrayList<GLSLLabelStatement>();
+        List<GLSLLabelStatement> result = new ArrayList<>();
         for (GLSLStatement statement : getSwitchBodyStatements()) {
             if (statement instanceof GLSLLabelStatement) {
                 result.add((GLSLLabelStatement) statement);

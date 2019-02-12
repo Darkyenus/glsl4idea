@@ -18,19 +18,15 @@ import java.util.logging.Logger;
  */
 public class GLSLUnaryOperatorExpression extends GLSLOperatorExpression {
 
-    private final boolean prefix;
+    /**
+     * Prefix operator has the operator before operand, postfix is reversed.
+     * True if prefix operator, false if postfix operator
+     */
+    public final boolean prefix;
 
     public GLSLUnaryOperatorExpression(@NotNull ASTNode astNode, boolean prefix) {
         super(astNode);
         this.prefix = prefix;
-    }
-
-    /**
-     * Prefix operator has the operator before operand, postfix is reversed.
-     * @return True if prefix operator, false if postfix operator
-     */
-    public boolean isPrefix() {
-        return prefix;
     }
 
     @Nullable
@@ -70,7 +66,7 @@ public class GLSLUnaryOperatorExpression extends GLSLOperatorExpression {
         GLSLExpression operand = getOperand();
         if(operand == null || !operand.isConstantValue())return null;
         GLSLOperator operator = getOperator();
-        if(operator == null || !(operator instanceof GLSLOperator.GLSLUnaryOperator))return null;
+        if(!(operator instanceof GLSLOperator.GLSLUnaryOperator))return null;
         GLSLOperator.GLSLUnaryOperator unaryOperator = (GLSLOperator.GLSLUnaryOperator) operator;
         GLSLType operandType = operand.getType();
         if(!operandType.isValidType())return null;
@@ -84,7 +80,7 @@ public class GLSLUnaryOperatorExpression extends GLSLOperatorExpression {
     public GLSLType getType() {
         GLSLOperator operator = getOperator();
         GLSLExpression operand = getOperand();
-        if(operator == null || operand == null || !(operator instanceof GLSLOperator.GLSLUnaryOperator)){
+        if(operand == null || !(operator instanceof GLSLOperator.GLSLUnaryOperator)){
             return GLSLTypes.UNKNOWN_TYPE;
         }else{
             GLSLOperator.GLSLUnaryOperator unaryOperator = (GLSLOperator.GLSLUnaryOperator) operator;

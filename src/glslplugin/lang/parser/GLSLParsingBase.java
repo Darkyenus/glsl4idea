@@ -46,8 +46,8 @@ abstract class GLSLParsingBase {
      */
     protected final GLSLPsiBuilderAdapter b;
 
-    protected Map<String, List<ForeignLeafType>> definitions = new HashMap<String, List<ForeignLeafType>>();
-    protected Map<String, String> definitionTexts = new HashMap<String, String>();
+    protected Map<String, List<ForeignLeafType>> definitions = new HashMap<>();
+    protected Map<String, String> definitionTexts = new HashMap<>();
 
     GLSLParsingBase(PsiBuilder builder) {
         b = new GLSLPsiBuilderAdapter(builder);

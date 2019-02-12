@@ -53,7 +53,7 @@ public class GLSLMatrixType extends GLSLType {
     }
 
     private static final int MIN_MATRIX_DIM = 2, MAX_MATRIX_DIM = 4;
-    private static final Map<GLSLType, GLSLMatrixType[][]> MATRIX_TYPES = new HashMap<GLSLType, GLSLMatrixType[][]>(BaseType.values().length);
+    private static final Map<GLSLType, GLSLMatrixType[][]> MATRIX_TYPES = new HashMap<>(BaseType.values().length);
 
     static {
         final int len = MAX_MATRIX_DIM - MIN_MATRIX_DIM + 1;

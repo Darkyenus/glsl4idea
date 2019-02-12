@@ -40,10 +40,7 @@ public abstract class GLSLSingleDeclarationImpl extends GLSLDeclarationImpl impl
     public String getName() {
         final GLSLDeclarator declarator = getDeclarator();
         if(declarator != null){
-            String name = declarator.getName();
-            if(name != null){
-                return name;
-            }
+            return declarator.getName();
         }
         return "(unknown)";
     }

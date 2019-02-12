@@ -23,6 +23,7 @@ import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclarationImpl;
 import glslplugin.lang.elements.declarations.GLSLFunctionDefinitionImpl;
@@ -47,10 +48,12 @@ public class GLSLLineMarkerProvider implements LineMarkerProvider {
         //todo: add navigation support for guttericons and tooltips
         if (expr instanceof GLSLFunctionDefinitionImpl) {
             //todo: check if a prototype exists
-            return new LineMarkerInfo<GLSLFunctionDefinitionImpl>((GLSLFunctionDefinitionImpl) expr, expr.getTextOffset(), implementing, Pass.UPDATE_ALL, null, null);
+            return new LineMarkerInfo<>((GLSLFunctionDefinitionImpl) expr, expr.getTextRange(),
+                    implementing, Pass.UPDATE_ALL, null, null, GutterIconRenderer.Alignment.RIGHT);
         } else if (expr instanceof GLSLFunctionDeclarationImpl) {
             //todo: check if it is implemented
-            return new LineMarkerInfo<GLSLFunctionDeclarationImpl>((GLSLFunctionDeclarationImpl) expr, expr.getTextOffset(), implemented, Pass.UPDATE_ALL, null, null);
+            return new LineMarkerInfo<>((GLSLFunctionDeclarationImpl) expr, expr.getTextRange(),
+                    implemented, Pass.UPDATE_ALL, null, null, GutterIconRenderer.Alignment.RIGHT);
         }
         return null;
     }

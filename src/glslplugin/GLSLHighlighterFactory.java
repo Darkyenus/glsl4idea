@@ -27,8 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class GLSLHighlighterFactory extends SyntaxHighlighterFactory {
 
-    public GLSLHighlighterFactory()
-    {
+    public GLSLHighlighterFactory() {
         super();
     }
 

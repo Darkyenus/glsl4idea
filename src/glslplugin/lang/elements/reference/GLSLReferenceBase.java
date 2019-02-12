@@ -47,11 +47,13 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
         this.source = source;
     }
 
+    @NotNull
     @Override
     public SOURCE_TYPE getElement() {
         return source;
     }
 
+    @NotNull
     @Override
     public TextRange getRangeInElement() {
         return new TextRange(0, source == null ? 0 : source.getTextLength());
@@ -71,7 +73,7 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
         }
     }
 
-    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
         if (source == null) throw new IncorrectOperationException("Reference is invalid");
         if (source instanceof PsiNamedElement) {
             return ((PsiNamedElement) source).setName(newElementName);
@@ -83,8 +85,8 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
         throw new IncorrectOperationException("Not supported");
     }
 
-    public boolean isReferenceTo(PsiElement element) {
-        return element == resolve();
+    public boolean isReferenceTo(@Nullable PsiElement element) {
+        return element != null && element == resolve();
     }
 
     @NotNull

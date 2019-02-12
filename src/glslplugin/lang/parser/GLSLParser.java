@@ -41,9 +41,9 @@ public class GLSLParser implements PsiParser, LightPsiParser {
         try {
             parseLight(root, builder);
             return builder.getTreeBuilt();
-        } catch (ProcessCanceledException | BlockSupport.ReparsedSuccessfullyException ignore) {
+        } catch (ProcessCanceledException | BlockSupport.ReparsedSuccessfullyException expected) {
             // Not a problem
-            throw ignore;
+            throw expected;
         } catch (Exception ex) {
             crashing = true;
             Logger.getLogger("GLSLParser").log(Level.WARNING, "Crashed while trying to parse "+root, ex);

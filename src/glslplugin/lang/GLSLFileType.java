@@ -35,7 +35,7 @@ import java.util.Set;
  */
 public class GLSLFileType extends LanguageFileType {
 
-    public static final Set<String> EXTENSIONS = new HashSet<String>();
+    public static final Set<String> EXTENSIONS = new HashSet<>();
 
     static {
         EXTENSIONS.add("glsl");

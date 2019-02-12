@@ -113,7 +113,7 @@ public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifier
 
         {   //Try clarifying using initializer list
             GLSLInitializer rawInitializer = getInitializer();
-            if (rawInitializer != null && rawInitializer instanceof GLSLInitializerList) {
+            if (rawInitializer instanceof GLSLInitializerList) {
                 //Clarify using initializer list
                 GLSLInitializerList initializerList = (GLSLInitializerList) rawInitializer;
                 for (int i = 0; i < myDimensions.length; i++) {

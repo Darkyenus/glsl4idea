@@ -19,7 +19,7 @@ import java.util.List;
  * Created by abigail on 30/06/15.
  */
 public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
-    protected ArrayList<IElementType> waitingTokens = new ArrayList<IElementType>();
+    protected ArrayList<IElementType> waitingTokens = new ArrayList<>();
 
     public MultiRemapPsiBuilderAdapter(PsiBuilder delegate) {
         super(delegate);
@@ -88,7 +88,7 @@ public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
 
     public void remapCurrentToken(List<ForeignLeafType> remapToTypes, String remappedThrough) {
         remapCurrentTokenAdvanceLexer();
-        final ArrayList<IElementType> tagged = new ArrayList<IElementType>(remapToTypes.size());
+        final ArrayList<IElementType> tagged = new ArrayList<>(remapToTypes.size());
         for (final ForeignLeafType type : remapToTypes) {
             final IElementType taggedType;
             if (type instanceof RedefinedTokenType) {
@@ -121,12 +121,11 @@ public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
     }
 
     protected class DelegateMarker extends com.intellij.lang.impl.DelegateMarker {
-        protected ArrayList<IElementType> rollbackWaitingTokens = new ArrayList<IElementType>();
+        protected ArrayList<IElementType> rollbackWaitingTokens;
 
         public DelegateMarker(Marker delegate) {
             super(delegate);
-            //noinspection unchecked
-            rollbackWaitingTokens = (ArrayList<IElementType>) waitingTokens.clone();
+            rollbackWaitingTokens = new ArrayList<>(waitingTokens);
         }
 
         @NotNull

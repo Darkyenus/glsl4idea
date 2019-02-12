@@ -51,7 +51,7 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
      */
     @NotNull
     private GLSLElement[] getForElements() {
-        GLSLElement result[] = new GLSLElement[3];
+        GLSLElement[] result = new GLSLElement[3];
         int numberOfSemicolonsPassed = 0;
         PsiElement current = getFirstChild();
         while (current != null) {

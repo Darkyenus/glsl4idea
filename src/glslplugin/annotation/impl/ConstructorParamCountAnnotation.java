@@ -99,8 +99,6 @@ public class ConstructorParamCountAnnotation extends Annotator<GLSLFunctionCallE
         }
     }
 
-
-
     @NotNull
     @Override
     public Class<GLSLFunctionCallExpression> getElementType() {

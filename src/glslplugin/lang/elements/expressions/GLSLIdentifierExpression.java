@@ -22,16 +22,13 @@ package glslplugin.lang.elements.expressions;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.psi.PsiNamedElement;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.GLSLReferenceElement;
-import glslplugin.lang.elements.declarations.*;
+import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.reference.GLSLVariableReference;
-import glslplugin.lang.elements.statements.GLSLDeclarationStatement;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
-import glslplugin.lang.parser.GLSLFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,11 +85,9 @@ public class GLSLIdentifierExpression extends GLSLExpression implements GLSLRefe
     @Override
     public GLSLType getType() {
         GLSLVariableReference ref = getReferenceProxy();
-        if (ref != null) {
-            final GLSLDeclarator declaration = ref.resolve();
-            if (declaration != null) {
-                return declaration.getType();
-            }
+        final GLSLDeclarator declaration = ref.resolve();
+        if (declaration != null) {
+            return declaration.getType();
         }
         return GLSLTypes.UNKNOWN_TYPE;
     }

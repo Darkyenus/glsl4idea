@@ -26,7 +26,6 @@ import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,7 @@ public class GLSLDeclarationList extends GLSLElementImpl {
     public GLSLDeclaration[] getDeclarations() {
         // convert the list of children to a list of GLSLStatement objects while performing sanity check.
         PsiElement[] children = getChildren();
-        List<GLSLDeclaration> result = new ArrayList<GLSLDeclaration>(children.length);
+        List<GLSLDeclaration> result = new ArrayList<>(children.length);
         for (PsiElement child : children) {
             if (child instanceof GLSLDeclaration) {
                 result.add((GLSLDeclaration) child);
@@ -62,21 +61,7 @@ public class GLSLDeclarationList extends GLSLElementImpl {
                 }
             }
         }
-        return result.toArray(new GLSLDeclaration[result.size()]);
-    }
-
-    @Nullable
-    public GLSLDeclaration getLastDeclaration() {
-        GLSLDeclaration[] declarations = getDeclarations();
-        if(declarations.length == 0)return null;
-        else return declarations[declarations.length - 1];
-    }
-
-    @Nullable
-    public GLSLDeclaration getFirstDeclaration() {
-        GLSLDeclaration[] declarations = getDeclarations();
-        if(declarations.length == 0)return null;
-        else return declarations[0];
+        return result.toArray(GLSLDeclaration.NO_DECLARATIONS);
     }
 
     @Override

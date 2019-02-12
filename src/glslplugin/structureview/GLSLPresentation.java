@@ -26,7 +26,6 @@ import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLQualifier;
 import glslplugin.lang.elements.types.GLSLQualifiedType;
-import glslplugin.lang.elements.types.GLSLTypeQualifier;
 
 import javax.swing.*;
 
@@ -96,15 +95,15 @@ class GLSLPresentation implements ItemPresentation {
     }
 
     private static String prettyPrint(String[] names) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         if (names.length > 0) {
             for (int i = 0; i < names.length - 1; i++) {
-                result += names[i] + ", ";
+                result.append(names[i]).append(", ");
             }
-            result += names[names.length - 1];
+            result.append(names[names.length - 1]);
         }
 
-        return result;
+        return result.toString();
     }
 
     public static GLSLPresentation createPrototypePresentation(String name) {

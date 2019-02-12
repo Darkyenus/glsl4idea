@@ -21,19 +21,15 @@ package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.GLSLReferenceElement;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
-import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
 import glslplugin.lang.elements.reference.GLSLFieldReference;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import glslplugin.lang.elements.types.GLSLVectorType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.logging.Logger;
 
 /**
  * GLSLMemberOperator is ...
@@ -70,7 +66,6 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
                 GLSLIdentifier memberIdentifier = getMemberIdentifier();
                 if(memberIdentifier == null)return true; //This should not happen
                 String components = memberIdentifier.getName();
-                if(components == null)return true; // This absolutely shouldn't happen
                 for (int i = 0; i < components.length(); i++) {
                     char c = components.charAt(i);
                     for (int j = i+1; j < components.length(); j++) {

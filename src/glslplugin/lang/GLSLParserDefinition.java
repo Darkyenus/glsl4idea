@@ -81,7 +81,14 @@ public class GLSLParserDefinition implements ParserDefinition {
         return new GLSLFile(fileViewProvider);
     }
 
+    @Override
+    public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
+        return SpaceRequirements.MAY;
+    }
+
+    @SuppressWarnings("deprecation")// Kept for backward compatibility
+    @Override
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
-        return null;
+        return spaceExistenceTypeBetweenTokens(astNode, astNode1);
     }
 }

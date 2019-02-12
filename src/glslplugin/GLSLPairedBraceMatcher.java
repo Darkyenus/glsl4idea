@@ -28,12 +28,13 @@ import org.jetbrains.annotations.Nullable;
 import static glslplugin.lang.elements.GLSLTokenTypes.*;
 
 public class GLSLPairedBraceMatcher implements PairedBraceMatcher {
-    private BracePair[] bracePairs = new BracePair[] {
+    private static final BracePair[] bracePairs = new BracePair[] {
             new BracePair(LEFT_BRACE, RIGHT_BRACE, true),
             new BracePair(LEFT_PAREN, RIGHT_PAREN, false),
             new BracePair(LEFT_BRACKET, RIGHT_BRACKET, false),
     };
 
+    @NotNull
     public BracePair[] getPairs() {
         return bracePairs;
     }

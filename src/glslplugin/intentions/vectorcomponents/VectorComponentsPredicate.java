@@ -35,7 +35,6 @@ public class VectorComponentsPredicate {
     static final Pattern stpq = Pattern.compile("^[stpq]{1,4}$");
 
     public boolean satisfiedBy(PsiElement psiElement) {
-
         if (psiElement instanceof GLSLIdentifier) {
             ASTNode node = psiElement.getNode();
             if (node != null) {
@@ -49,9 +48,7 @@ public class VectorComponentsPredicate {
                     if (leftHandExpression.getType() instanceof GLSLVectorType) {
 
                         String parameters = identifier.getName();
-                        if (checkForMatch(parameters)) {
-                            return true;
-                        }
+                        return checkForMatch(parameters);
                     }
                 }
             }

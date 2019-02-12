@@ -120,9 +120,6 @@ public abstract class GLSLDeclarationImpl extends GLSLElementImpl implements GLS
         }
 
         GLSLTypeSpecifier specifier = getTypeSpecifierNode();
-        if (specifier != null && !specifier.processDeclarations(processor, state, lastParent, place)) return false;
-
-
-        return true;
+        return specifier == null || specifier.processDeclarations(processor, state, lastParent, place);
     }
 }

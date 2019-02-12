@@ -19,13 +19,13 @@
 
 package glslplugin.intentions.vectorcomponents;
 
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.components.JBList;
+import com.intellij.util.ThrowableRunnable;
 import glslplugin.intentions.Intentions;
 import glslplugin.lang.elements.GLSLIdentifier;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +33,8 @@ import org.jetbrains.annotations.NotNull;
 import static glslplugin.intentions.vectorcomponents.VectorComponentsPredicate.*;
 
 public class VectorComponentsIntention extends Intentions {
+
+    private static final Logger LOG = Logger.getInstance(VectorComponentsIntention.class);
 
     private enum Components {
         RGBA("rgba"),
@@ -59,12 +61,12 @@ public class VectorComponentsIntention extends Intentions {
     @NotNull
     @Override
     public String getText() {
-        return "Convert Vector Components";
+        return "Convert vector components";
     }
 
     @NotNull
     public String getFamilyName() {
-        return "GLSL Vector Components";
+        return "GLSL vector components";
     }
 
     protected void processIntention(PsiElement psiElement) {
@@ -89,18 +91,21 @@ public class VectorComponentsIntention extends Intentions {
 
         String[] variants = new String[]{components + " -> " + results[0], components + " -> " + results[1]};
         //http://www.jetbrains.net/devnet/message/5208622#5208622
-        final JBList list = new JBList((Object[])variants);
+        final JBList<String> list = new JBList<>(variants);
         PopupChooserBuilder builder = new PopupChooserBuilder(list);
         builder.setTitle("Select Variant");
         builder.setItemChoosenCallback(new Runnable() {
             public void run() {
-                WriteCommandAction writeAction = new WriteCommandAction(element.getProject(), element.getContainingFile()) {
-                    @Override
-                    protected void run(@NotNull Result result) throws Throwable {
-                        replaceIdentifierElement(element, results[list.getSelectedIndex()]);
-                    }
-                };
-                writeAction.execute();
+                try {
+                    WriteCommandAction.writeCommandAction(element.getProject(), element.getContainingFile()).run(new ThrowableRunnable<Throwable>() {
+                        @Override
+                        public void run() {
+                            replaceIdentifierElement(element, results[list.getSelectedIndex()]);
+                        }
+                    });
+                } catch (Throwable t) {
+                    LOG.error("replaceIdentifierElement failed", t);
+                }
             }
         });
         JBPopup popup = builder.createPopup();

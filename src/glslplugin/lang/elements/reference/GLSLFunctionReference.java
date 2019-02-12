@@ -40,7 +40,7 @@ import java.util.List;
 public class GLSLFunctionReference extends GLSLReferenceBase<GLSLIdentifier, GLSLElement>
         implements PsiPolyVariantReference {
 
-    GLSLFunctionCallExpression sourceExpression = null;
+    private final GLSLFunctionCallExpression sourceExpression;
 
     public GLSLFunctionReference(GLSLFunctionCallExpression source) {
         super(source.getIdentifier());

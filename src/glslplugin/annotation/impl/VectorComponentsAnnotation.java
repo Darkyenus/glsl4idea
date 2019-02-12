@@ -50,7 +50,7 @@ public class VectorComponentsAnnotation extends Annotator<GLSLFieldSelectionExpr
             if(memberIdentifier == null)return;
             String member = memberIdentifier.getName();
 
-            if (member != null && !type.hasMember(member) && member.length() > 0) {
+            if (!type.hasMember(member) && member.length() > 0) {
                 //It has no member like that, why?
                 TextRange mitr = memberIdentifier.getTextRange();
 
@@ -88,12 +88,11 @@ public class VectorComponentsAnnotation extends Annotator<GLSLFieldSelectionExpr
     }
 
     private String getAlternatives(char[] chars, int numComponents) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < numComponents; i++) {
-            result += chars[i];
-
+            result.append(chars[i]);
         }
-        return result;
+        return result.toString();
     }
 
     private boolean checkRange(char[] pattern, int numComponents, char c) {

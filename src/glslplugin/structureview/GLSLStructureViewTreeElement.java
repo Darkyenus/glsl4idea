@@ -31,7 +31,7 @@ import java.util.List;
 
 abstract class GLSLStructureViewTreeElement<T extends PsiElement> implements StructureViewTreeElement {
     private T element;
-    private List<StructureViewTreeElement> children = new ArrayList<StructureViewTreeElement>();
+    private List<StructureViewTreeElement> children = new ArrayList<>();
 
     public GLSLStructureViewTreeElement(T element) {
         this.element = element;
@@ -58,7 +58,7 @@ abstract class GLSLStructureViewTreeElement<T extends PsiElement> implements Str
     public TreeElement[] getChildren() {
         children.clear();
         createChildren(element);
-        return children.toArray(new TreeElement[children.size()]);
+        return children.toArray(new TreeElement[0]);
     }
 
     public void navigate(boolean requestFocus) {

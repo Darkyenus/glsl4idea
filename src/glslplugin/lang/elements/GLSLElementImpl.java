@@ -48,10 +48,10 @@ public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement
     @Override
     @Nullable
     public final <T extends GLSLElement> T findParentByClass(Class<T> clazz) {
-        //noinspection unchecked
         return clazz.cast(findParentByClasses(clazz));
     }
 
+    @SafeVarargs
     @Nullable
     public final PsiElement findParentByClasses(Class<? extends PsiElement>... clazzes) {
         return findParentByClasses(Arrays.asList(clazzes));

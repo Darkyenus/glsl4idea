@@ -43,6 +43,7 @@ public interface GLSLElement extends NavigatablePsiElement {
     /**
      * @return the parent if the parent is one of the given classes or null otherwise
      */
+    @SuppressWarnings("unchecked")
     @Nullable
     PsiElement findParentByClasses(Class<? extends PsiElement>... clazzes);
     @Nullable

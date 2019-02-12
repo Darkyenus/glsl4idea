@@ -57,7 +57,7 @@ public class GLSLVectorType extends GLSLType {
     }
 
     private static final int MIN_VECTOR_DIM = 2, MAX_VECTOR_DIM = 4;
-    private static final Map<GLSLType, GLSLVectorType[]> VECTOR_TYPES = new HashMap<GLSLType, GLSLVectorType[]>(BaseType.values().length);
+    private static final Map<GLSLType, GLSLVectorType[]> VECTOR_TYPES = new HashMap<>(BaseType.values().length);
 
     static {
         for(BaseType type:BaseType.values()){
