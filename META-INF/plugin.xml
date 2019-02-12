@@ -20,7 +20,7 @@
 
     <name>GLSL Support</name>
     <id>GLSL</id>
-    <description>Support for the OpenGL Shading Language</description>
+    <description>Support for GLSL - the OpenGL Shading Language</description>
 
     <category>Custom Languages</category>
     <vendor>Foundation</vendor>
@@ -180,7 +180,6 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
         <fileTypeFactory implementation="glslplugin.GLSLSupportLoader"/>
         <colorSettingsPage implementation="glslplugin.GLSLColorAndFontsPage"/>
         <lang.syntaxHighlighterFactory language="GLSL" implementationClass="glslplugin.GLSLHighlighterFactory"/>
