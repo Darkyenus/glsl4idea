@@ -28,7 +28,7 @@ import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
-import glslplugin.lang.elements.declarations.GLSLStructDeclaration;
+import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
 import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import glslplugin.lang.elements.types.GLSLStructType;
@@ -52,7 +52,7 @@ public class GLSLFormattingBlock extends AbstractBlock {
     }
 
     private static boolean isIndentableBlock(PsiElement psiElement) {
-        return psiElement instanceof GLSLCompoundStatement || psiElement instanceof GLSLStructDeclaration;
+        return psiElement instanceof GLSLCompoundStatement || psiElement instanceof GLSLStructMemberDeclaration;
     }
 
     private static Indent getNodeIndent(ASTNode node) {
