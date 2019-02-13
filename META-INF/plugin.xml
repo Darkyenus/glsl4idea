@@ -212,5 +212,7 @@
         <internalFileTemplate name="GLSL Shader"/>
         <internalFileTemplate name="GLSL Fragment Shader"/>
         <internalFileTemplate name="GLSL Vertex Shader"/>
+
+        <langCodeStyleSettingsProvider implementation="glslplugin.formatter.GLSLCodeStyleSettingsProvider"/>
     </extensions>
 </idea-plugin>

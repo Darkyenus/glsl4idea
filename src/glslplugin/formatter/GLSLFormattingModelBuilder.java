@@ -46,9 +46,11 @@ public class GLSLFormattingModelBuilder implements FormattingModelBuilder {
     }
 
     private SpacingBuilder createSpacingBuilder(CodeStyleSettings codeStyleSettings) {
+        final CommonCodeStyleSettings commonSettings = codeStyleSettings.getCommonSettings(GLSLLanguage.GLSL_LANGUAGE);
+
         return new SpacingBuilder(codeStyleSettings, GLSLLanguage.GLSL_LANGUAGE)
-                .before(COMMA).spaceIf(codeStyleSettings.SPACE_BEFORE_COMMA)
-                .after(COMMA).spaceIf(codeStyleSettings.SPACE_AFTER_COMMA)
+                .before(COMMA).spaceIf(commonSettings.SPACE_BEFORE_COMMA)
+                .after(COMMA).spaceIf(commonSettings.SPACE_AFTER_COMMA)
                 .before(SEMICOLON).none()
 
                 .after(LEFT_BRACKET).none()
@@ -57,9 +59,11 @@ public class GLSLFormattingModelBuilder implements FormattingModelBuilder {
                 .after(LEFT_BRACE).spaces(1)
                 .before(RIGHT_BRACE).spaces(1)
 
-                .withinPair(LEFT_PAREN, RIGHT_PAREN).spaceIf(codeStyleSettings.SPACE_WITHIN_METHOD_CALL_PARENTHESES)
+                .withinPair(LEFT_PAREN, RIGHT_PAREN).spaceIf(commonSettings.SPACE_WITHIN_METHOD_CALL_PARENTHESES)
 
                 .around(FLOW_KEYWORDS).spaces(1)
+
+                .before(COMMENT_LINE).spaceIf(commonSettings.LINE_COMMENT_ADD_SPACE)
                 ;
     }
 

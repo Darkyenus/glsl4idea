@@ -24,14 +24,10 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
-import glslplugin.lang.elements.GLSLElementImpl;
-import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.GLSLTokenTypes;
-import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
 import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
-import glslplugin.lang.elements.types.GLSLStructType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,20 +71,16 @@ public class GLSLFormattingBlock extends AbstractBlock {
 
     @Override
     protected List<Block> buildChildren() {
-        List<Block> blocks = new ArrayList<Block>();
+        List<Block> blocks = new ArrayList<>();
         ASTNode child = myNode.getFirstChildNode();
 
         while (child != null) {
             if (canBeCorrectBlock(child)) {
-                blocks.add(createChildBlock(child, null, null));
+                blocks.add(new GLSLFormattingBlock(child, null, null, spacingBuilder));
             }
             child = child.getTreeNext();
         }
         return blocks;
-    }
-
-    private Block createChildBlock(ASTNode child, Wrap wrap, Alignment alignment) {
-        return new GLSLFormattingBlock(child, wrap, alignment, spacingBuilder);
     }
 
     @Nullable
