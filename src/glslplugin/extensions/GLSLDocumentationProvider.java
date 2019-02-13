@@ -102,14 +102,17 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
                 "<code>" + typename + " <b>" + element.getName() + "</b></code>";
     }
     private static String getNamedTypedElementDocumentation(PsiNamedElement element, GLSLQualifiedType qualifiedType) {
-        String typeString = qualifiedType.getType().getTypename();
+        StringBuilder typeString = new StringBuilder(qualifiedType.getType().getTypename());
         for (GLSLQualifier glslQualifier : qualifiedType.getQualifiers()) {
             GLSLQualifier.Qualifier qualifier = glslQualifier.getQualifier();
             if (qualifier == null) continue;
 
-            typeString = qualifier.toString() + " " + typeString;
+            if (typeString.length() > 0) {
+                typeString.append(' ');
+            }
+            typeString.append(qualifier.toString());
         }
-        return getNamedTypedElementDocumentation(element, typeString);
+        return getNamedTypedElementDocumentation(element, typeString.toString());
     }
 
     private static String getStructDocumentation(PsiNamedElement element) {
