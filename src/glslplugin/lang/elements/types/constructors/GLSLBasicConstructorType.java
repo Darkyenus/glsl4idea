@@ -3,7 +3,9 @@ package glslplugin.lang.elements.types.constructors;
 import glslplugin.lang.elements.types.GLSLFunctionType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypeCompatibilityLevel;
+import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * FunctionType for most constructors (= not functions)
@@ -14,9 +16,10 @@ public class GLSLBasicConstructorType extends GLSLFunctionType {
 
     private final GLSLType[] parameterTypes;
 
-    public GLSLBasicConstructorType(@NotNull GLSLType returnType, @NotNull GLSLType... parameterTypes) {
+    public GLSLBasicConstructorType(@Nullable GLSLTypeDefinition definition, @NotNull GLSLType returnType, @NotNull GLSLType... parameterTypes) {
         super(returnType.getTypename(), returnType);
         this.parameterTypes = parameterTypes;
+        this.definition = definition;
     }
 
     protected String generateTypename() {
@@ -37,5 +40,10 @@ public class GLSLBasicConstructorType extends GLSLFunctionType {
     @NotNull
     public GLSLTypeCompatibilityLevel getParameterCompatibilityLevel(@NotNull GLSLType[] types) {
         return GLSLTypeCompatibilityLevel.getCompatibilityLevel(types, parameterTypes);
+    }
+
+    @NotNull
+    public GLSLType[] getParameterTypes() {
+        return parameterTypes;
     }
 }

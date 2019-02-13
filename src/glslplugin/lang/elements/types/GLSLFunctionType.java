@@ -35,7 +35,7 @@ public abstract class GLSLFunctionType {
 
     private final String name;
     protected final GLSLType returnType;
-    GLSLElement definition;
+    protected GLSLElement definition;
     private String typenameCache;
 
     protected GLSLFunctionType(@NotNull String name, @NotNull GLSLType returnType) {

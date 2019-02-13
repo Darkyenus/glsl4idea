@@ -106,7 +106,7 @@ public class GLSLScalarType extends GLSLType {
         if(constructorsCache == null){
             final GLSLFunctionType[] constructorsCache = this.constructorsCache = new GLSLFunctionType[SCALARS.length];
             for (int i = 0; i < SCALARS.length; i++) {
-                constructorsCache[i] = new GLSLBasicConstructorType(this, SCALARS[i]);
+                constructorsCache[i] = new GLSLBasicConstructorType(null, this, SCALARS[i]);
             }
         }
         return constructorsCache;
