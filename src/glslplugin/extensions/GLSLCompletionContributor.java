@@ -99,7 +99,6 @@ public class GLSLCompletionContributor extends DefaultCompletionContributor {
      *
      * @param type the vector type we're completing
      * @param contextNumComponents how many components does the context expect
-     * @param completionResultSet
      */
     private void completeVectorTypes(GLSLVectorType type, int contextNumComponents, CompletionResultSet completionResultSet) {
         int componentCount = Math.min(contextNumComponents, type.getNumComponents());

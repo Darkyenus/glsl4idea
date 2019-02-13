@@ -37,8 +37,6 @@ public class VectorComponentsIntention extends Intentions {
 
     private static final Logger LOG = Logger.getInstance(VectorComponentsIntention.class);
 
-    private String[] results = new String[2];
-
     public VectorComponentsIntention() {
         super(new VectorComponentsPredicate());
     }
@@ -72,7 +70,7 @@ public class VectorComponentsIntention extends Intentions {
 
         String components = element.getText();
 
-        createComponentVariants(components);
+        final String[] results = createComponentVariants(components);
 
         String[] variants = new String[]{components + " -> " + results[0], components + " -> " + results[1]};
         //http://www.jetbrains.net/devnet/message/5208622#5208622
@@ -97,7 +95,8 @@ public class VectorComponentsIntention extends Intentions {
         popup.showInBestPositionFor(getEditor());
     }
 
-    private void createComponentVariants(String components) {
+    private String[] createComponentVariants(String components) {
+        String[] results = new String[2];
         int i = 0;
         if (!rgba.matcher(components).matches()) {
             results[i++] = convertComponents(components, VectorComponents.RGBA);
@@ -114,6 +113,7 @@ public class VectorComponentsIntention extends Intentions {
         if (i != 2) {
             throw new RuntimeException("Unknown components!");
         }
+        return results;
     }
 
     private String convertComponents(String vectorComponents, VectorComponents components) {
