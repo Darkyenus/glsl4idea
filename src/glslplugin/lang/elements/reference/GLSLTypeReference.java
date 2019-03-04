@@ -33,20 +33,20 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Feb 4, 2009
  *         Time: 1:29:50 AM
  */
-public class GLSLTypeReference extends GLSLReferenceBase<GLSLTypename, GLSLTypeDefinition> {
+public class GLSLTypeReference extends GLSLReferenceBase<GLSLTypename, GLSLStructDefinition> {
     public GLSLTypeReference(GLSLTypename source) {
         super(source);
     }
 
     @Nullable
     @Override
-    public GLSLTypeDefinition resolve() {
+    public GLSLStructDefinition resolve() {
         return findTypeDefinition(source, source.getTypename());
     }
 
-    public static GLSLTypeDefinition findTypeDefinition(GLSLElement from, String typeName){
+    public static GLSLStructDefinition findTypeDefinition(GLSLElement from, String typeName){
         PsiElement current = from.getPrevSibling();
-        GLSLTypeDefinition result = null;
+        GLSLStructDefinition result = null;
         if (current == null) {
             current = from.getParent();
         }
@@ -101,10 +101,10 @@ public class GLSLTypeReference extends GLSLReferenceBase<GLSLTypename, GLSLTypeD
     }
 
     @Nullable
-    private static GLSLTypeDefinition checkDeclarationForType(GLSLDeclaration declaration, String typeName) {
+    private static GLSLStructDefinition checkDeclarationForType(GLSLDeclaration declaration, String typeName) {
         final GLSLTypeSpecifier specifier = declaration.getTypeSpecifierNode();
         if(specifier == null)return null;
-        GLSLTypeDefinition definition = specifier.getTypeDefinition();
+        GLSLStructDefinition definition = specifier.getEmbeddedStructDefinition();
         if (definition != null) {
             if (typeName.equals(definition.getName())) return definition;
         }

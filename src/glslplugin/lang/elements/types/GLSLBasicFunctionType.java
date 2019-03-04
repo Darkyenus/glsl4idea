@@ -19,11 +19,9 @@
 
 package glslplugin.lang.elements.types;
 
-import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
-import glslplugin.lang.elements.declarations.GLSLParameterDeclaration;
-import glslplugin.lang.elements.declarations.GLSLTypeSpecifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * FunctionType for functions (= not constructors)
@@ -36,34 +34,16 @@ public class GLSLBasicFunctionType extends GLSLFunctionType {
 
     private final GLSLType[] parameterTypes;
 
-    private static GLSLType findReturnType(GLSLFunctionDeclaration declaration){
-        //Using getTypeSpecifierNode() is safe here, because this is not about variables
-        GLSLTypeSpecifier typeSpecifier = declaration.getTypeSpecifierNode();
-        if(typeSpecifier == null){
-            return GLSLTypes.UNKNOWN_TYPE;
-        }else{
-            return typeSpecifier.getType();
-        }
+    public GLSLBasicFunctionType(@Nullable GLSLFunctionDeclaration definition,
+                                 @NotNull String name, @NotNull GLSLType returnType,
+                                 @NotNull GLSLType... parameterTypes) {
+        super(name, returnType, definition);
+        this.parameterTypes = parameterTypes;
     }
 
-    public GLSLBasicFunctionType(GLSLFunctionDeclaration declaration) {
-        super(declaration.getName() == null ? "<null>" : declaration.getName(), findReturnType(declaration));
-        final GLSLParameterDeclaration[] parameterDeclarations = declaration.getParameters();
-        definition = declaration;
-
-        parameterTypes = new GLSLType[parameterDeclarations.length];
-        for (int i = 0; i < parameterDeclarations.length; i++) {
-            GLSLDeclarator declarator = parameterDeclarations[i].getDeclarator();
-            if(declarator == null){
-                parameterTypes[i] = GLSLTypes.UNKNOWN_TYPE;
-            }else{
-                parameterTypes[i] = declarator.getType();
-            }
-        }
-    }
-
-    public GLSLBasicFunctionType(@NotNull String name, @NotNull GLSLType returnType, @NotNull GLSLType... parameterTypes) {
-        super(name, returnType);
+    public GLSLBasicFunctionType(@NotNull String name, @NotNull GLSLType returnType,
+                                 @NotNull GLSLType... parameterTypes) {
+        super(name, returnType, null);
         this.parameterTypes = parameterTypes;
     }
 

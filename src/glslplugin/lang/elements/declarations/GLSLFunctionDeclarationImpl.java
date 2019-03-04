@@ -27,6 +27,8 @@ import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.types.GLSLBasicFunctionType;
 import glslplugin.lang.elements.types.GLSLFunctionType;
+import glslplugin.lang.elements.types.GLSLType;
+import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,6 +47,17 @@ public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl imple
         GLSLDeclarationList parameterList = getParameterList();
         if(parameterList == null)return GLSLParameterDeclaration.NO_PARAMETER_DECLARATIONS;
         return castToParameters(parameterList.getDeclarations());
+    }
+
+    @NotNull
+    @Override
+    public GLSLType getReturnType() {
+        GLSLTypeSpecifier typeSpecifier = findChildByClass(GLSLTypeSpecifier.class);
+        if(typeSpecifier == null){
+            return GLSLTypes.UNKNOWN_TYPE;
+        }else{
+            return typeSpecifier.getType();
+        }
     }
 
     @Nullable
@@ -92,7 +105,17 @@ public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl imple
     }
 
     private GLSLFunctionType createType() {
-        return new GLSLBasicFunctionType(this);
+        final GLSLParameterDeclaration[] parameterDeclarations = getParameters();
+        final GLSLType[] parameterTypes = new GLSLType[parameterDeclarations.length];
+        for (int i = 0; i < parameterDeclarations.length; i++) {
+            GLSLDeclarator declarator = parameterDeclarations[i].getDeclarator();
+            if(declarator == null){
+                parameterTypes[i] = GLSLTypes.UNKNOWN_TYPE;
+            }else{
+                parameterTypes[i] = declarator.getType();
+            }
+        }
+        return new GLSLBasicFunctionType(this, getName(), getReturnType(), parameterTypes);
     }
 
     @NotNull

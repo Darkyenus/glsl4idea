@@ -28,7 +28,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import glslplugin.lang.elements.declarations.GLSLDeclarationImpl;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclarationImpl;
-import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
+import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import org.jetbrains.annotations.NotNull;
 
 class GLSLStructureViewModel extends TextEditorBasedStructureViewModel {
@@ -67,6 +67,6 @@ class GLSLStructureViewModel extends TextEditorBasedStructureViewModel {
     @NotNull
     @Override
     protected Class[] getSuitableClasses() {
-        return new Class[]{GLSLFunctionDeclarationImpl.class, PsiFile.class, GLSLTypeDefinition.class, GLSLDeclarationImpl.class};
+        return new Class[]{GLSLFunctionDeclarationImpl.class, PsiFile.class, GLSLStructDefinition.class, GLSLDeclarationImpl.class};
     }
 }

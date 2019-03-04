@@ -21,23 +21,29 @@ package glslplugin.structureview;
 
 import glslplugin.lang.elements.declarations.GLSLDeclaration;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
-import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
+import glslplugin.lang.elements.declarations.GLSLStructDefinition;
+import org.jetbrains.annotations.NotNull;
 
-public class GLSLStructTreeElement extends GLSLStructureViewTreeElement<GLSLTypeDefinition> {
-    public GLSLStructTreeElement(GLSLTypeDefinition definition) {
+public class GLSLStructTreeElement extends GLSLStructureViewTreeElement<GLSLStructDefinition> {
+    public GLSLStructTreeElement(GLSLStructDefinition definition) {
         super(definition);
     }
 
-    protected GLSLPresentation createPresentation(GLSLTypeDefinition definition) {
+    protected GLSLPresentation createPresentation(@NotNull GLSLStructDefinition definition) {
         return GLSLPresentation.createStructPresentation(definition.getName());
     }
 
-    protected void createChildren(GLSLTypeDefinition definition) {
+    protected void createChildren(@NotNull GLSLStructDefinition definition) {
         GLSLDeclaration[] glslDeclarations = definition.getDeclarations();
         for (GLSLDeclaration declaration : glslDeclarations) {
             for (GLSLDeclarator declarator : declaration.getDeclarators()) {
                 addChild(new GLSLDeclaratorTreeElement(declarator));
             }
         }
+    }
+
+    @Override
+    protected int visualTreeOrder() {
+        return VISUAL_TREE_ORDER_STRUCT;
     }
 }

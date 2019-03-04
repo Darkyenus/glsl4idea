@@ -118,7 +118,7 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
     private static String getStructDocumentation(PsiNamedElement element) {
         return getNamedTypedElementDocumentation(element, "struct");
     }
-    private static String getStructDocumentation(GLSLTypeDefinition typeDefinition) {
+    private static String getStructDocumentation(GLSLStructDefinition typeDefinition) {
         return getStructDocumentation((PsiNamedElement)typeDefinition);
     }
 
@@ -131,7 +131,7 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
 
         // For some reason opening documentation on a struct constructor returns GLSLTypeDefinition while we want
         // to consider it a constructor call.
-        if (element instanceof GLSLTypeDefinition && originalElement != null) {
+        if (element instanceof GLSLStructDefinition && originalElement != null) {
             GLSLFunctionCallExpression ctorCall = PsiTreeUtil.getParentOfType(originalElement, GLSLFunctionCallExpression.class);
             if (ctorCall != null) {
                 return getConstructorDocumentation(ctorCall);
@@ -147,7 +147,7 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
             if (reference == null && parent instanceof GLSLReferenceBase) reference = ((GLSLReferenceBase) parent);
 
             if (reference instanceof GLSLTypeReference) {
-                GLSLTypeDefinition typeDef = ((GLSLTypeReference) reference).resolve();
+                GLSLStructDefinition typeDef = ((GLSLTypeReference) reference).resolve();
                 if (typeDef == null) return null;
 
                 GLSLStructType type = typeDef.getType();
@@ -155,16 +155,16 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
             } else {
                 return null;
             }
-        } else if (element instanceof GLSLTypeDefinition) {
-            return getStructDocumentation(((GLSLTypeDefinition) element));
+        } else if (element instanceof GLSLStructDefinition) {
+            return getStructDocumentation(((GLSLStructDefinition) element));
         } else if (element instanceof GLSLFunctionDeclaration) {
             return getFunctionDocumentation(((GLSLFunctionDeclaration) element));
         } else if (element instanceof GLSLDeclarator) {
             GLSLDeclaration elementDeclaration = ((GLSLDeclarator) element).getParentDeclaration();
             if (elementDeclaration instanceof GLSLFunctionDeclaration) {
                 return getFunctionDocumentation(((GLSLFunctionDeclaration) elementDeclaration));
-            } else if (elementDeclaration instanceof GLSLTypeDefinition) {
-                return getStructDocumentation(((GLSLTypeDefinition) elementDeclaration));
+            } else if (elementDeclaration instanceof GLSLStructDefinition) {
+                return getStructDocumentation(((GLSLStructDefinition) elementDeclaration));
             } else if (elementDeclaration instanceof GLSLVariableDeclaration || elementDeclaration instanceof GLSLParameterDeclaration) {
                 return getVariableDocumentation(((GLSLDeclarator) element));
             }
@@ -184,7 +184,7 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
                 }
             }
         } else if (element instanceof GLSLTypename) {
-            GLSLTypeDefinition typeDefinition = ((GLSLTypename) element).getTypeDefinition();
+            GLSLStructDefinition typeDefinition = ((GLSLTypename) element).getTypeDefinition();
             if (typeDefinition != null) {
                 return getStructDocumentation(typeDefinition);
             }

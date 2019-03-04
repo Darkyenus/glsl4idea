@@ -20,10 +20,8 @@
 package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 

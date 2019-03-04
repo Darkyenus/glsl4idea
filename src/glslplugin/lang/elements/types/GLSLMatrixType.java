@@ -88,7 +88,7 @@ public class GLSLMatrixType extends GLSLType {
         this.constructors = new GLSLFunctionType[]{
                 new GLSLScalarParamConstructor(this),
                 new GLSLAggregateParamConstructor(this, false, columns * rows),
-                new GLSLFunctionType(this.typename, this) {
+                new GLSLFunctionType(this.typename, this, null) {
                     @Override
                     protected String generateTypename() {
                         return typename +"(matrix)";

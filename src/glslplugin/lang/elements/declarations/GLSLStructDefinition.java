@@ -37,13 +37,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * GLSLDeclarator is ...
+ * Definition of a struct. Holds its members and name, if any.
  *
  * @author Yngve Devik Hammersland
  *         Date: Jan 27, 2009
  *         Time: 10:31:13 AM
  */
-public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElement, PsiNameIdentifierOwner {
+public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedElement, PsiNameIdentifierOwner {
     // Cache this one to enable equals comparison by ==
     //  this is required to be able to compare types of variables of anonymous types.
     // struct {int x;} x, y; <- how to compare types of x and y?
@@ -51,7 +51,7 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
     /** Struct members are recomputed on getType when dirty */
     private boolean typeCacheDirty = false;
 
-    public GLSLTypeDefinition(@NotNull ASTNode astNode) {
+    public GLSLStructDefinition(@NotNull ASTNode astNode) {
         super(astNode);
     }
 
@@ -96,7 +96,7 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
             typeCache = new GLSLStructType(this);
             typeCacheDirty = false;
         } else if (typeCacheDirty){
-            typeCache.updateMembers();
+            typeCache.updateNameAndMembers();
             typeCacheDirty = false;
         }
         return typeCache;
@@ -128,6 +128,7 @@ public class GLSLTypeDefinition extends GLSLElementImpl implements GLSLTypedElem
         return findChildByClass(GLSLIdentifier.class);
     }
 
+    @Nullable
     @Override
     public String getName() {
         GLSLIdentifier identifier = getNameIdentifier();

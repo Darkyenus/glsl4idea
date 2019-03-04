@@ -20,7 +20,7 @@ public class GLSLAggregateParamConstructor extends GLSLFunctionType {
     private final int requiredElements;
 
     public GLSLAggregateParamConstructor(@NotNull GLSLType returnType, boolean allowMatrices, int requiredElements) {
-        super(returnType.getTypename(), returnType);
+        super(returnType.getTypename(), returnType, null);
         this.allowMatrices = allowMatrices;
         this.requiredElements = requiredElements;
     }

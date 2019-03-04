@@ -20,16 +20,22 @@
 package glslplugin.structureview;
 
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
+import org.jetbrains.annotations.NotNull;
 
 public class GLSLDeclaratorTreeElement extends GLSLStructureViewTreeElement<GLSLDeclarator> {
     public GLSLDeclaratorTreeElement(GLSLDeclarator declarator) {
         super(declarator);
     }
 
-    protected void createChildren(GLSLDeclarator dec) {
+    protected void createChildren(@NotNull GLSLDeclarator dec) {
     }
 
-    protected GLSLPresentation createPresentation(GLSLDeclarator dec) {
+    protected GLSLPresentation createPresentation(@NotNull GLSLDeclarator dec) {
         return GLSLPresentation.createFieldPresentation(dec);
+    }
+
+    @Override
+    protected int visualTreeOrder() {
+        return VISUAL_TREE_ORDER_DECLARATOR;
     }
 }

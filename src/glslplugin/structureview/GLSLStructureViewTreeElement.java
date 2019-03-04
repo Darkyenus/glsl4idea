@@ -27,37 +27,40 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-abstract class GLSLStructureViewTreeElement<T extends PsiElement> implements StructureViewTreeElement {
-    private T element;
-    private List<StructureViewTreeElement> children = new ArrayList<>();
+abstract class GLSLStructureViewTreeElement<T extends PsiElement> implements StructureViewTreeElement, Comparable<GLSLStructureViewTreeElement<?>> {
+    private final T element;
+    private List<GLSLStructureViewTreeElement<?>> children = new ArrayList<>();
 
-    public GLSLStructureViewTreeElement(T element) {
+    public GLSLStructureViewTreeElement(@NotNull T element) {
         this.element = element;
     }
 
-    protected abstract void createChildren(T t);
-
-    protected void addChild(GLSLStructureViewTreeElement child) {
-        children.add(child);
-    }
-
-    protected abstract GLSLPresentation createPresentation(T element);
-
+    @NotNull
     public T getValue() {
         return element;
     }
 
+    protected abstract GLSLPresentation createPresentation(@NotNull T element);
+
     @NotNull
-    public ItemPresentation getPresentation() {
+    public final ItemPresentation getPresentation() {
         return createPresentation(element);
     }
 
+    protected final void addChild(final GLSLStructureViewTreeElement child) {
+        children.add(child);
+    }
+
+    protected abstract void createChildren(@NotNull T t);
+
     @NotNull
-    public TreeElement[] getChildren() {
+    public final TreeElement[] getChildren() {
         children.clear();
         createChildren(element);
+        Collections.sort(children);
         return children.toArray(new TreeElement[0]);
     }
 
@@ -73,5 +76,19 @@ abstract class GLSLStructureViewTreeElement<T extends PsiElement> implements Str
 
     public boolean canNavigateToSource() {
         return element instanceof NavigatablePsiElement && ((NavigatablePsiElement) element).canNavigateToSource();
+    }
+
+    /** Order in which tree elements should appear.
+     * 0 = top, inf = bottom */
+    protected abstract int visualTreeOrder();
+
+    protected static final int VISUAL_TREE_ORDER_FILE = 0;
+    protected static final int VISUAL_TREE_ORDER_STRUCT = 1;
+    protected static final int VISUAL_TREE_ORDER_DECLARATOR = 2;
+    protected static final int VISUAL_TREE_ORDER_FUNCTION = 3;
+
+    @Override
+    public int compareTo(@NotNull GLSLStructureViewTreeElement<?> o) {
+        return Integer.compare(visualTreeOrder(), o.visualTreeOrder());
     }
 }

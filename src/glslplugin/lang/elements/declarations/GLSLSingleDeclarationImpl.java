@@ -24,7 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * NewSingleDeclarationImpl is ...
+ * Base for declaration elements, which carry a single name declaration,
+ * such as function or parameter declarations.
  *
  * @author Yngve Devik Hammersland
  *         Date: Feb 2, 2009

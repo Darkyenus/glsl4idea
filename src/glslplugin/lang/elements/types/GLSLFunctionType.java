@@ -21,6 +21,7 @@ package glslplugin.lang.elements.types;
 
 import glslplugin.lang.elements.GLSLElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Base for all function-call-likes, that is function calls and constructors.
@@ -35,12 +36,14 @@ public abstract class GLSLFunctionType {
 
     private final String name;
     protected final GLSLType returnType;
-    protected GLSLElement definition;
+    @Nullable
+    protected final GLSLElement definition;
     private String typenameCache;
 
-    protected GLSLFunctionType(@NotNull String name, @NotNull GLSLType returnType) {
+    protected GLSLFunctionType(@NotNull String name, @NotNull GLSLType returnType, @Nullable GLSLElement definition) {
         this.returnType = returnType;
         this.name = name;
+        this.definition = definition;
     }
 
     @NotNull
@@ -67,6 +70,7 @@ public abstract class GLSLFunctionType {
         return returnType;
     }
 
+    @Nullable
     public GLSLElement getDefinition() {
         return definition;
     }

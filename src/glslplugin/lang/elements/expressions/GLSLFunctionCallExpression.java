@@ -170,7 +170,7 @@ public class GLSLFunctionCallExpression extends GLSLExpression implements GLSLRe
     //region Struct only
     @Nullable
     private GLSLStructType findDefinedStruct(GLSLIdentifier identifier){
-        final GLSLTypeDefinition typeDefinition = GLSLTypeReference.findTypeDefinition(identifier, identifier.getName());
+        final GLSLStructDefinition typeDefinition = GLSLTypeReference.findTypeDefinition(identifier, identifier.getName());
         if(typeDefinition == null)return null;
         return typeDefinition.getType();
     }

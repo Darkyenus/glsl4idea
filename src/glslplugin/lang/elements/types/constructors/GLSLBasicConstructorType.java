@@ -3,7 +3,7 @@ package glslplugin.lang.elements.types.constructors;
 import glslplugin.lang.elements.types.GLSLFunctionType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypeCompatibilityLevel;
-import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
+import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,10 +16,9 @@ public class GLSLBasicConstructorType extends GLSLFunctionType {
 
     private final GLSLType[] parameterTypes;
 
-    public GLSLBasicConstructorType(@Nullable GLSLTypeDefinition definition, @NotNull GLSLType returnType, @NotNull GLSLType... parameterTypes) {
-        super(returnType.getTypename(), returnType);
+    public GLSLBasicConstructorType(@Nullable GLSLStructDefinition definition, @NotNull GLSLType returnType, @NotNull GLSLType... parameterTypes) {
+        super(returnType.getTypename(), returnType, definition);
         this.parameterTypes = parameterTypes;
-        this.definition = definition;
     }
 
     protected String generateTypename() {

@@ -133,7 +133,7 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.TYPE_SPECIFIER) return new GLSLTypeSpecifier(node);
         if (type == GLSLElementTypes.TYPE_SPECIFIER_PRIMITIVE) return new GLSLTypename(node);
         if (type == GLSLElementTypes.TYPE_SPECIFIER_STRUCT_REFERENCE) return new GLSLTypename(node);
-        if (type == GLSLElementTypes.TYPE_SPECIFIER_STRUCT) return new GLSLTypeDefinition(node);
+        if (type == GLSLElementTypes.TYPE_SPECIFIER_STRUCT) return new GLSLStructDefinition(node);
 
         if (type == GLSLElementTypes.STRUCT_DECLARATION_LIST) return new GLSLDeclarationList(node);
         if (type == GLSLElementTypes.STRUCT_MEMBER_DECLARATION) return new GLSLStructMemberDeclaration(node);

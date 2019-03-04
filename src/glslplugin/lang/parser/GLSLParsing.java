@@ -1361,7 +1361,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private void parseStructSpecifier() {
         // struct_specifier: STRUCT IDENTIFIER LEFT_BRACE struct_declaration_list RIGHT_BRACE
-        //                 | STRUCT LEFT_BRACE struct_delcaration_list RIGHT_BRACE
+        //                 | STRUCT            LEFT_BRACE struct_delcaration_list RIGHT_BRACE
         // note: these are the same except the first is named
 
         match(STRUCT, "Expected 'struct'.");

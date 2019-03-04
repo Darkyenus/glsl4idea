@@ -26,7 +26,7 @@ import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
-import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
+import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,7 +89,7 @@ public class GLSLFormattingBlock extends AbstractBlock {
         PsiElement psiElement = myNode.getPsi();
         // Note: this cannot use isIndentableBlock because when pressing enter after a right brace, the psiElement in question is
         //       a GLSLTypeDefinition instead of a GLSLStructDeclaration
-        return (psiElement instanceof GLSLCompoundStatement || psiElement instanceof GLSLTypeDefinition) ? Indent.getNormalIndent() : Indent.getNoneIndent();
+        return (psiElement instanceof GLSLCompoundStatement || psiElement instanceof GLSLStructDefinition) ? Indent.getNormalIndent() : Indent.getNoneIndent();
     }
 
     private boolean canBeCorrectBlock(ASTNode child) {

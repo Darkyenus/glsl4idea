@@ -22,11 +22,7 @@ package glslplugin.structureview;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import glslplugin.lang.elements.declarations.*;
-
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 
 class GLSLFileTreeElement extends GLSLStructureViewTreeElement<PsiFile> {
 
@@ -34,49 +30,35 @@ class GLSLFileTreeElement extends GLSLStructureViewTreeElement<PsiFile> {
         super(file);
     }
 
-    protected GLSLPresentation createPresentation(PsiFile file) {
+    protected GLSLPresentation createPresentation(@NotNull PsiFile file) {
         return GLSLPresentation.createFilePresentation(file.getName());
     }
 
-    protected void createChildren(PsiFile file) {
-        Set<GLSLTypeDefinition> definitions = new LinkedHashSet<>();
-        List<GLSLVariableDeclaration> variableDeclarations = new ArrayList<>();
-        List<GLSLFunctionDeclaration> functions = new ArrayList<>();
-
+    protected void createChildren(@NotNull PsiFile file) {
         PsiElement[] baseNodes = file.getChildren();
         for (PsiElement baseNode : baseNodes) {
             if (baseNode instanceof GLSLVariableDeclaration) {
                 final GLSLVariableDeclaration declaration = (GLSLVariableDeclaration) baseNode;
-                //TODO Check if this accounts for shortcomings of getTypeSpecifierNode() (probably not)
                 final GLSLTypeSpecifier typeSpecifier = declaration.getTypeSpecifierNode();
 
                 if (typeSpecifier != null) {
-                    final GLSLTypeDefinition typedef = typeSpecifier.getTypeDefinition();
+                    final GLSLStructDefinition typedef = typeSpecifier.getEmbeddedStructDefinition();
                     if (typedef != null) {
-                        definitions.add(typedef);
-                    }
-
-                    if (declaration.getDeclarators().length > 0) {
-                        variableDeclarations.add(declaration);
+                        addChild(new GLSLStructTreeElement(typedef));
                     }
                 }
+
+                for (GLSLDeclarator declarator : declaration.getDeclarators()) {
+                    addChild(new GLSLDeclaratorTreeElement(declarator));
+                }
             } else if (baseNode instanceof GLSLFunctionDeclaration) {
-                functions.add((GLSLFunctionDeclaration) baseNode);
+                addChild(new GLSLFunctionTreeElement((GLSLFunctionDeclaration) baseNode));
             }
         }
+    }
 
-        for (GLSLTypeDefinition definition : definitions) {
-            addChild(new GLSLStructTreeElement(definition));
-        }
-
-        for (GLSLVariableDeclaration declaration : variableDeclarations) {
-            for (GLSLDeclarator declarator : declaration.getDeclarators()) {
-                addChild(new GLSLDeclaratorTreeElement(declarator));
-            }
-        }
-
-        for (GLSLFunctionDeclaration function : functions) {
-            addChild(new GLSLFunctionTreeElement((GLSLFunctionDeclarationImpl) function));
-        }
+    @Override
+    protected int visualTreeOrder() {
+        return VISUAL_TREE_ORDER_FILE;
     }
 }

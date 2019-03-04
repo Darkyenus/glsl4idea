@@ -32,6 +32,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
+ * Element whose role is to specify a type. This may be a built-in type name, struct name,
+ * named or un-named struct declaration, or struct name. Or any array of these.
  *
  * @author Yngve Devik Hammersland
  *         Date: Jan 28, 2009
@@ -65,14 +67,6 @@ public class GLSLTypeSpecifier extends GLSLElementImpl {
         }
     }
 
-    /**
-     * @return true if this type specifier actually defines its own type (as possible with structs)
-     */
-    public boolean isTypeDeclaration(){
-        final GLSLTypedElement reference = findChildByClass(GLSLTypedElement.class);
-        return reference instanceof GLSLTypeDefinition;
-    }
-
     @NotNull
     public String getTypeName() {
         return getType().getTypename();
@@ -83,14 +77,18 @@ public class GLSLTypeSpecifier extends GLSLElementImpl {
         return "Type Specifier: " + getTypeName();
     }
 
+    /**
+     * If this type specifier defines its own type (possible only with structs), returns its definition.
+     * Otherwise returns null.
+     */
     @Nullable
-    public GLSLTypeDefinition getTypeDefinition() {
-        return findChildByClass(GLSLTypeDefinition.class);
+    public GLSLStructDefinition getEmbeddedStructDefinition() {
+        return findChildByClass(GLSLStructDefinition.class);
     }
 
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
-        GLSLTypeDefinition typeDefinition = getTypeDefinition();
+        GLSLStructDefinition typeDefinition = getEmbeddedStructDefinition();
         return typeDefinition == null || typeDefinition.processDeclarations(processor, state, lastParent, place);
     }
 }

@@ -20,6 +20,7 @@
 package glslplugin.lang.elements.declarations;
 
 import glslplugin.lang.elements.types.GLSLFunctionType;
+import glslplugin.lang.elements.types.GLSLType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,6 +32,9 @@ public interface GLSLFunctionDeclaration extends GLSLSingleDeclaration {
 
     @NotNull
     GLSLParameterDeclaration[] getParameters();
+
+    @NotNull
+    GLSLType getReturnType();
 
     @NotNull
     String getSignature();

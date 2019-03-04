@@ -46,13 +46,13 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
     }
 
     @Nullable
-    public GLSLTypeDefinition getTypeDefinition() {
+    public GLSLStructDefinition getTypeDefinition() {
         GLSLIdentifier id = findChildByClass(GLSLIdentifier.class);
         if(id == null)return null;
         PsiReference ref = id.getReference();
         if (ref != null) {
             PsiElement elt = ref.resolve();
-            return (GLSLTypeDefinition) elt;
+            return (GLSLStructDefinition) elt;
         } else {
             // Failed to resolve the type.
             return null;
@@ -65,7 +65,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
         final IElementType type = node.getElementType();
 
         if (type == GLSLElementTypes.TYPE_SPECIFIER_STRUCT_REFERENCE) {
-            GLSLTypeDefinition def = getTypeDefinition();
+            GLSLStructDefinition def = getTypeDefinition();
             if (def != null) {
                 return def.getType();
             } else {
@@ -97,7 +97,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
 
     @NotNull
     public GLSLDeclaration[] getDeclarations() {
-        final GLSLTypeDefinition definition = getTypeDefinition();
+        final GLSLStructDefinition definition = getTypeDefinition();
         if (definition != null) {
             return definition.getDeclarations();
         } else {
@@ -107,7 +107,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
 
     @NotNull
     public GLSLDeclarator[] getDeclarators() {
-        final GLSLTypeDefinition definition = getTypeDefinition();
+        final GLSLStructDefinition definition = getTypeDefinition();
         if (definition != null) {
             return definition.getDeclarators();
         } else {

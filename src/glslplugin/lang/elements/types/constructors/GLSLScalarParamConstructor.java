@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 public class GLSLScalarParamConstructor extends GLSLFunctionType {
 
     public GLSLScalarParamConstructor(@NotNull GLSLType returnType) {
-        super(returnType.getTypename(), returnType);
+        super(returnType.getTypename(), returnType, null);
     }
 
     @Override

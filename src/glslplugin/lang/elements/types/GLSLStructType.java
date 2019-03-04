@@ -20,7 +20,7 @@
 package glslplugin.lang.elements.types;
 
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
-import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
+import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.types.constructors.GLSLBasicConstructorType;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,27 +36,25 @@ import java.util.Map;
  */
 public final class GLSLStructType extends GLSLType {
 
-    private final GLSLTypeDefinition definition;
-    private final String typename;
+    private final GLSLStructDefinition definition;
+    private String typename = "<not-initialized>";
     private final Map<String, GLSLType> members = new HashMap<>();
     private final GLSLFunctionType[] constructors = new GLSLFunctionType[1];
     private String[] memberNames;
 
-    public GLSLStructType(GLSLTypeDefinition definition) {
+    public GLSLStructType(GLSLStructDefinition definition) {
         super(null);
         this.definition = definition;
-
-        typename = definition.getName() != null
-                        ? definition.getName()
-                        : "(anonymous " + System.identityHashCode(this) + ")";
-
-        updateMembers();
+        updateNameAndMembers();
     }
 
     /**
      * Updates internal members containers from the struct type definition.
      */
-    public void updateMembers() {
+    public void updateNameAndMembers() {
+        final String definitionName = definition.getName();
+        typename = definitionName != null ? definitionName  : "(anonymous " + System.identityHashCode(this) + ")";
+
         final GLSLDeclarator[] declarators = definition.getDeclarators();
 
         final GLSLType[] memberTypes = new GLSLType[declarators.length];
@@ -79,7 +77,7 @@ public final class GLSLStructType extends GLSLType {
     }
 
     @Override
-    public GLSLTypeDefinition getDefinition() {
+    public GLSLStructDefinition getDefinition() {
         return definition;
     }
 
@@ -105,6 +103,7 @@ public final class GLSLStructType extends GLSLType {
         return members;
     }
 
+    /** Always returns size 1 array, as structs have only one constructor. */
     @NotNull
     @Override
     public GLSLFunctionType[] getConstructors() {

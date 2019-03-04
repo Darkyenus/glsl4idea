@@ -22,7 +22,7 @@ package glslplugin.lang.elements.reference;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
-import glslplugin.lang.elements.declarations.GLSLTypeDefinition;
+import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
 import glslplugin.lang.elements.types.GLSLType;
@@ -54,12 +54,12 @@ public class GLSLFieldReference extends GLSLReferenceBase<GLSLIdentifier, GLSLDe
             return null;
         }
         GLSLElement definition = type.getDefinition();
-        if (definition instanceof GLSLTypeDefinition) {
+        if (definition instanceof GLSLStructDefinition) {
             GLSLIdentifier memberIdentifier = source;
             if(memberIdentifier == null){
                 return null;
             }else{
-                return ((GLSLTypeDefinition) definition).getDeclarator(memberIdentifier.getName());
+                return ((GLSLStructDefinition) definition).getDeclarator(memberIdentifier.getName());
             }
         } else {
             return null;

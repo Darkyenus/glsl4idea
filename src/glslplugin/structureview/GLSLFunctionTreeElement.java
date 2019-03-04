@@ -19,16 +19,17 @@
 
 package glslplugin.structureview;
 
-import glslplugin.lang.elements.declarations.GLSLFunctionDeclarationImpl;
+import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
+import org.jetbrains.annotations.NotNull;
 
-public class GLSLFunctionTreeElement extends GLSLStructureViewTreeElement<GLSLFunctionDeclarationImpl> {
-    public GLSLFunctionTreeElement(GLSLFunctionDeclarationImpl function) {
+public class GLSLFunctionTreeElement extends GLSLStructureViewTreeElement<GLSLFunctionDeclaration> {
+
+    public GLSLFunctionTreeElement(GLSLFunctionDeclaration function) {
         super(function);
-
     }
 
-    protected GLSLPresentation createPresentation(GLSLFunctionDeclarationImpl function) {
+    protected GLSLPresentation createPresentation(@NotNull GLSLFunctionDeclaration function) {
         if(function instanceof GLSLFunctionDefinition) {
             return GLSLPresentation.createMethodPresentation(function.getSignature());
         } else {
@@ -36,7 +37,10 @@ public class GLSLFunctionTreeElement extends GLSLStructureViewTreeElement<GLSLFu
         }
     }
 
-    protected void createChildren(GLSLFunctionDeclarationImpl glslFunctionDeclaration) {
+    protected void createChildren(@NotNull GLSLFunctionDeclaration glslFunctionDeclaration) {}
 
+    @Override
+    protected int visualTreeOrder() {
+        return VISUAL_TREE_ORDER_FUNCTION;
     }
 }
