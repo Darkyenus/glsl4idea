@@ -27,8 +27,13 @@
     <idea-version since-build="139.1117"/>
     <depends>com.intellij.modules.lang</depends>
 
-    <version>1.17</version>
+    <version>1.18-SNAPSHOT</version>
     <change-notes><![CDATA[
+        <p>1.18</p>
+        <ul>
+            <li></li>
+        </ul>
+
         <p>1.17</p>
         <ul>
             <li><i>buffer</i> is now allowed in layout qualifier statements</li>
