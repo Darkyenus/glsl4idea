@@ -20,7 +20,11 @@
 package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -38,6 +42,23 @@ public class GLSLFunctionDefinitionImpl extends GLSLFunctionDeclarationImpl impl
     @Nullable
     public GLSLCompoundStatement getBody() {
         return findChildByClass(GLSLCompoundStatement.class);
+    }
+
+    @Override
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
+        if (lastParent == null) {
+            // Do not show declarations of parameters to outside scopes
+            return true;
+        }
+
+        for (GLSLParameterDeclaration parameter : getParameters()) {
+            if (parameter == lastParent) // TODO(jp): sloppy, parameter is probably not direct child, so this will fail
+                continue;
+
+            if (!parameter.processDeclarations(processor, state, lastParent, place)) return false;
+        }
+
+        return true;
     }
 
     @Override

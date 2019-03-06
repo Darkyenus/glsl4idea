@@ -28,7 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * GLSLCompoundStatement is ...
+ * A block of statements, surrounded by {@code { and } }.
+ * Appears as a scope creator inside functions and as a function body itself.
  *
  * @author Yngve Devik Hammersland
  *         Date: Jan 28, 2009
@@ -62,15 +63,19 @@ public class GLSLCompoundStatement extends GLSLStatement {
     }
 
     @Override
-    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state,
+                                       @Nullable PsiElement lastParent, @NotNull PsiElement place) {
         if (lastParent == null) {
+            // Do not show declarations of nested variables to outside scopes
             return true;
         }
-        PsiElement child = lastParent.getPrevSibling();
-        while (child != null) {
-            if (!child.processDeclarations(processor, state, lastParent, place)) return false;
-            child = child.getPrevSibling();
+
+        for (GLSLStatement statement : getStatements()) {
+            if (statement == null)
+                continue;
+            if (!statement.processDeclarations(processor, state, lastParent, place)) return false;
         }
+
         return true;
     }
 }

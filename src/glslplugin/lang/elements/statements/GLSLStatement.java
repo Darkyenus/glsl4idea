@@ -24,7 +24,7 @@ import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * GLSLStatement is ...
+ * Base for all code statements, such as variable declarations, procedure calls, assignments, compound statements, etc.
  *
  * @author Yngve Devik Hammersland
  *         Date: Jan 28, 2009

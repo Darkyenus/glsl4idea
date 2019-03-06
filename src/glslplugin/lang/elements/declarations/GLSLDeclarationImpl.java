@@ -114,10 +114,13 @@ public abstract class GLSLDeclarationImpl extends GLSLElementImpl implements GLS
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
         for (GLSLDeclarator declarator : getDeclarators()) {
-            if (!processor.execute(declarator, state)) return false;
+            if (declarator == lastParent)
+                continue;
+            if (!processor.execute(declarator, state))
+                return false;
         }
 
         GLSLTypeSpecifier specifier = getTypeSpecifierNode();
-        return specifier == null || specifier.processDeclarations(processor, state, lastParent, place);
+        return specifier == null || lastParent == specifier || specifier.processDeclarations(processor, state, lastParent, place);
     }
 }

@@ -114,10 +114,19 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
 
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
-        if (!processor.execute(this, state)) return false;
+        if (!processor.execute(this, state))
+            return false;
+
+        if (lastParent == null) {
+            // Do not show declarations of parameters to outside scopes
+            return true;
+        }
 
         for (GLSLDeclarator declarator : getDeclarators()) {
-            if (!processor.execute(declarator, state)) return false;
+            if (declarator == lastParent)
+                continue;
+            if (!processor.execute(declarator, state))
+                return false;
         }
         return true;
     }
