@@ -31,8 +31,11 @@
     <change-notes><![CDATA[
         <p>1.17</p>
         <ul>
-            <li>Extensions .vsh and .fsh are now supported by default</li>
             <li><i>buffer</i> is now allowed in layout qualifier statements</li>
+            <li>Basic formatter - thanks wyozi!</li>
+            <li>Extensions .vsh and .fsh are now supported by default</li>
+            <li>Improve struct member parsing</li>
+            <li>Improve refactoring and various internal symbol tracking</li>
         </ul>
 
         <p>1.16</p>

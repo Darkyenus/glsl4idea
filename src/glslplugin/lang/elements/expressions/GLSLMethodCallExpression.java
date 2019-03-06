@@ -45,7 +45,7 @@ public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase {
         if (id != null) {
             return id;
         } else {
-            Logger.getLogger("GLSLMethodCallExpression").warning("Method call expression with no method identifier.");
+            // Logger.getLogger("GLSLMethodCallExpression").warning("Method call expression with no method identifier.");
             return null;
         }
     }
