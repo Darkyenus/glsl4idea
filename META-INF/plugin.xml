@@ -24,7 +24,11 @@
 
     <category>Custom Languages</category>
     <vendor>Foundation</vendor>
-    <idea-version since-build="139.1117"/>
+
+    <!-- Since at least 144 (2016), because we require Java 8, which is bundled since then -->
+    <!-- https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under -->
+    <!-- Until build is not set, because we hope it will work. -->
+    <idea-version since-build="144"/>
     <depends>com.intellij.modules.lang</depends>
 
     <version>1.18-SNAPSHOT</version>

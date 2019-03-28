@@ -41,8 +41,8 @@ public abstract class Annotator<T extends PsiElement> {
     /**
      * To be called only from glslplugin.annotation.Annotator
      */
+    @SuppressWarnings("unchecked")
     final void annotateGeneric(PsiElement element, AnnotationHolder holder) {
-        //noinspection unchecked
         annotate((T) element, holder);
     }
 }

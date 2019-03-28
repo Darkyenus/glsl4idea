@@ -16,15 +16,18 @@ import org.jetbrains.annotations.Nullable;
  * Created by abigail on 26/06/15.
  */
 public class GLSLFindUsagesProvider implements FindUsagesProvider {
-    private static final DefaultWordsScanner WORDS_SCANNER =
-            new DefaultWordsScanner(new GLSLFlexAdapter(),
-                    TokenSet.create(GLSLTokenTypes.IDENTIFIER),
-                    TokenSet.create(GLSLTokenTypes.COMMENT_LINE, GLSLTokenTypes.COMMENT_BLOCK),
-                    TokenSet.create(GLSLTokenTypes.PREPROCESSOR_STRING));
+
     @Nullable
     @Override
     public WordsScanner getWordsScanner() {
-        return WORDS_SCANNER;
+        /*
+        This method must either return thread safe instance (which DefaultWordsScanner is not!)
+        or a new instance. This is required, otherwise errors will happen.
+         */
+        return new DefaultWordsScanner(new GLSLFlexAdapter(),
+                TokenSet.create(GLSLTokenTypes.IDENTIFIER),
+                TokenSet.create(GLSLTokenTypes.COMMENT_LINE, GLSLTokenTypes.COMMENT_BLOCK),
+                TokenSet.create(GLSLTokenTypes.PREPROCESSOR_STRING));
     }
 
     @Override
