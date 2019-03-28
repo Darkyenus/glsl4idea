@@ -31,12 +31,10 @@
     <idea-version since-build="144"/>
     <depends>com.intellij.modules.lang</depends>
 
-    <version>1.18</version>
+    <version>1.19-SNAPSHOT</version>
     <change-notes><![CDATA[
         <ul>
-            <li>Fixed bug which prevented some files to be processed at startup</li>
-            <li>Compatibility with 2019.1 IDEs</li>
-            <li>Requires Java 8, dropping support for IDEs older than 2016</li>
+            <li></li>
         </ul>
     ]]></change-notes>
 
