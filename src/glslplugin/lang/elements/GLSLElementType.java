@@ -19,16 +19,32 @@
 
 package glslplugin.lang.elements;
 
+import com.intellij.lang.Language;
+import com.intellij.psi.tree.IFileElementType;
 import glslplugin.GLSLSupportLoader;
+import glslplugin.lang.GLSLLanguage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class GLSLElementType extends com.intellij.psi.tree.IElementType {
+    public static final IFileElementType FILE = new IFileElementType(Language.findInstance(GLSLLanguage.class));
+
     public GLSLElementType(@NotNull @NonNls String s) {
         super(s, GLSLSupportLoader.GLSL.getLanguage());
     }
 
     public GLSLElementType(@NotNull @NonNls String debugName, boolean register) {
         super(debugName, GLSLSupportLoader.GLSL.getLanguage(), register);
+    }
+
+    //Preprocessor dropins
+    public static final class RedefinedTokenElementType extends GLSLElementType {
+
+        public final String text;
+
+        public RedefinedTokenElementType(String text) {
+            super("REDEFINED_TOKEN", false);
+            this.text = text;
+        }
     }
 }

@@ -28,7 +28,7 @@ import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.scanner.GLSLFlexAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import static glslplugin.lang.elements.GLSLElementTypes.RedefinedTokenElementType;
+import static glslplugin.lang.elements.GLSLElementType.RedefinedTokenElementType;
 import static glslplugin.lang.elements.GLSLTokenTypes.*;
 
 public class GLSLHighlighter extends SyntaxHighlighterBase {

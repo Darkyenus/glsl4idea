@@ -23,12 +23,12 @@ import com.intellij.lang.ForeignLeafType;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import glslplugin.lang.elements.GLSLElementType;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static glslplugin.lang.elements.GLSLElementTypes.*;
 import static glslplugin.lang.elements.GLSLTokenTypes.*;
 
 /**
@@ -94,7 +94,7 @@ abstract class GLSLParsingBase {
                 remapCurrentTokenAdvanceLexer_remapTokens = false;
                 remapCurrentToken(definition, tokenText); //This will advance the lexer which will eat the (real or substituted) token and replace it with redefinition
                 remapCurrentTokenAdvanceLexer_remapTokens = true;
-                macro.done(new RedefinedTokenElementType(definitionTexts.get(tokenText)));
+                macro.done(new GLSLElementType.RedefinedTokenElementType(definitionTexts.get(tokenText)));
                 advanceLexer_remapTokens();
             }
         }

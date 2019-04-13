@@ -19,16 +19,9 @@
 
 package glslplugin.lang.elements;
 
-import com.intellij.lang.Language;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.IFileElementType;
-import glslplugin.lang.GLSLLanguage;
 
 public class GLSLElementTypes {
-    public static final IFileElementType FILE = new IFileElementType(Language.findInstance(GLSLLanguage.class));
-
-    //Workaround before proper text redefinition of remapped tokens is implemented, see RedefinedTokenElementType below
-    //public static final IElementType REDEFINED_TOKEN = new GLSLElementType("REDEFINED_TOKEN");
 
     public static final IElementType VARIABLE_NAME_EXPRESSION = new GLSLElementType("VARIABLE_NAME_EXPRESSION");
     public static final IElementType EXPRESSION = new GLSLElementType("EXPRESSION");
@@ -113,15 +106,4 @@ public class GLSLElementTypes {
     public static final IElementType PRECISION_STATEMENT = new GLSLElementType("PRECISION_STATEMENT");
 
     public static final IElementType CONDITION = new GLSLElementType("CONDITION");
-
-    //Preprocessor dropins
-    public static final class RedefinedTokenElementType extends GLSLElementType {
-
-        public final String text;
-
-        public RedefinedTokenElementType(String text) {
-            super("REDEFINED_TOKEN", false);
-            this.text = text;
-        }
-    }
 }

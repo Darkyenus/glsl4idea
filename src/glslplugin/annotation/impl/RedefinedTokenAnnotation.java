@@ -5,7 +5,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.GLSLHighlighter;
 import glslplugin.annotation.Annotator;
-import glslplugin.lang.elements.GLSLElementTypes;
+import glslplugin.lang.elements.GLSLElementType;
 import glslplugin.lang.elements.preprocessor.GLSLDefineDirective;
 import glslplugin.lang.elements.preprocessor.GLSLRedefinedToken;
 import glslplugin.lang.elements.reference.GLSLMacroReference;
@@ -21,8 +21,8 @@ public class RedefinedTokenAnnotation extends Annotator<GLSLRedefinedToken> {
         String definition;
 
         final IElementType identifierType = identifier.getNode().getElementType();
-        if (identifierType instanceof GLSLElementTypes.RedefinedTokenElementType) {
-            definition = ((GLSLElementTypes.RedefinedTokenElementType) identifierType).text;
+        if (identifierType instanceof GLSLElementType.RedefinedTokenElementType) {
+            definition = ((GLSLElementType.RedefinedTokenElementType) identifierType).text;
         } else {
             GLSLMacroReference reference = identifier.getReference();
             GLSLDefineDirective referent = (reference != null) ? reference.resolve() : null;

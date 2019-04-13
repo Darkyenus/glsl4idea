@@ -48,7 +48,7 @@ public class GLSLParserDefinition implements ParserDefinition {
     }
 
     public IFileElementType getFileNodeType() {
-        return GLSLElementTypes.FILE;
+        return GLSLElementType.FILE;
     }
 
     @NotNull
