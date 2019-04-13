@@ -46,7 +46,9 @@ public class GLSLFoldingBuilder implements FoldingBuilder {
 
         final TextRange textRange = node.getTextRange();
         //Don't add folding to 0-length nodes, crashes in new FoldingDescriptor
-        if(textRange.getLength() <= 0)return;
+        if(textRange.getLength() <= 0) {
+            return;
+        }
 
         if (type == GLSLTokenTypes.COMMENT_BLOCK || type == GLSLElementTypes.COMPOUND_STATEMENT) {
             descriptors.add(new FoldingDescriptor(node, textRange));

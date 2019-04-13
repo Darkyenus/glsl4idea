@@ -41,13 +41,17 @@ public class VectorComponentsAnnotation extends Annotator<GLSLFieldSelectionExpr
 
     public void annotate(GLSLFieldSelectionExpression expr, AnnotationHolder holder) {
         GLSLExpression leftHandExpression = expr.getLeftHandExpression();
-        if(leftHandExpression == null)return;
+        if (leftHandExpression == null) {
+            return;
+        }
         GLSLType leftHandType = leftHandExpression.getType();
 
         if (leftHandType instanceof GLSLVectorType) {
             GLSLVectorType type = (GLSLVectorType) leftHandType;
             GLSLIdentifier memberIdentifier = expr.getMemberIdentifier();
-            if(memberIdentifier == null)return;
+            if (memberIdentifier == null) {
+                return;
+            }
             String member = memberIdentifier.getName();
 
             if (!type.hasMember(member) && member.length() > 0) {
@@ -61,7 +65,6 @@ public class VectorComponentsAnnotation extends Annotator<GLSLFieldSelectionExpr
                     TextRange tr = new TextRange(mitr.getStartOffset(), mitr.getStartOffset() + 1);
                     holder.createErrorAnnotation(tr, "'" + member.charAt(0) + "' is not one of: " + getAllAlternatives(numComponents));
                 } else {
-
                     for (int i = 0; i < member.length(); i++) {
                         char cm = member.charAt(i);
                         char[] pattern = getPattern(cm);

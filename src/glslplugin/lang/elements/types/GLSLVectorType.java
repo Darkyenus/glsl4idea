@@ -60,7 +60,7 @@ public class GLSLVectorType extends GLSLType {
     private static final Map<GLSLType, GLSLVectorType[]> VECTOR_TYPES = new HashMap<>(BaseType.values().length);
 
     static {
-        for(BaseType type:BaseType.values()){
+        for (BaseType type:BaseType.values()) {
             GLSLVectorType[] dimensions = new GLSLVectorType[MAX_VECTOR_DIM - MIN_VECTOR_DIM + 1];
             for (int i = 0; i < dimensions.length; i++) {
                 dimensions[i] = new GLSLVectorType(type, i + MIN_VECTOR_DIM);
@@ -85,9 +85,10 @@ public class GLSLVectorType extends GLSLType {
         this.baseType = baseType.type;
         this.numComponents = numComponents;
         this.typeName = baseType.name + numComponents;
-        this.constructor = new GLSLFunctionType[]{
+        this.constructor = new GLSLFunctionType[] {
                 new GLSLScalarParamConstructor(this),
-                new GLSLAggregateParamConstructor(this, true, numComponents)};
+                new GLSLAggregateParamConstructor(this, true, numComponents)
+        };
     }
 
     @NotNull
@@ -104,7 +105,7 @@ public class GLSLVectorType extends GLSLType {
 
     @Override
     public boolean isIndexable() {
-        return true;//Vectors are indexable
+        return true; //Vectors are indexable
     }
 
     @Override
@@ -113,12 +114,16 @@ public class GLSLVectorType extends GLSLType {
     }
 
     @SuppressWarnings("SpellCheckingInspection")
-    private static final String[] SWIZZLE_SETS = new String[]{"xyzw","rgba","stpq"};
+    private static final String[] SWIZZLE_SETS = new String[] {"xyzw", "rgba", "stpq"};
 
     @Override
     public boolean hasMember(String member) {
-        if(member == null || member.isEmpty())return false; //Just in case
-        if(member.length() > MAX_VECTOR_DIM)return false; //There is no vec5 or more elements
+        if (member == null || member.isEmpty()) {
+            return false; //Just in case
+        }
+        if (member.length() > MAX_VECTOR_DIM) {
+            return false; //There is no vec5 or more elements
+        }
         String swizzleSet = null;
         // Determine swizzle set
         {
@@ -130,19 +135,23 @@ public class GLSLVectorType extends GLSLType {
                 }
             }
         }
-        if(swizzleSet == null)return false; //Not selecting any component
+        if (swizzleSet == null) {
+            return false; //Not selecting any component
+        }
         //Check for just component selection, no swizzling then
-        if(member.length() == 1) return true;
+        if (member.length() == 1) {
+            return true;
+        }
         //Check if all remaining components are from the same swizzle set
         for (int i = 1; i < member.length(); i++) {
-            if(swizzleSet.indexOf(member.charAt(i)) == -1){
+            if (swizzleSet.indexOf(member.charAt(i)) == -1) {
                 //Component is not from this swizzle set (or completely invalid)
                 return false;
             }
         }
         //Check if not accessing member of larger vector (ie .b on vec2)
         for (int i = 0; i < member.length(); i++) {
-            if(swizzleSet.indexOf(member.charAt(i)) >= numComponents){
+            if (swizzleSet.indexOf(member.charAt(i)) >= numComponents) {
                 //This is only part of larger vectors
                 return false;
             }
@@ -153,13 +162,13 @@ public class GLSLVectorType extends GLSLType {
     @NotNull
     @Override
     public GLSLType getMemberType(String member) {
-        if(hasMember(member)){
-            if(member.length() == 1){
+        if (hasMember(member)) {
+            if (member.length() == 1) {
                 return baseType;
-            }else{
+            } else {
                 return getType(baseType, member.length());
             }
-        }else{
+        } else {
             return GLSLTypes.UNKNOWN_TYPE;
         }
     }
@@ -167,7 +176,7 @@ public class GLSLVectorType extends GLSLType {
     @NotNull
     @Override
     public Map<String, GLSLFunctionType> getMemberFunctions() {
-        return GLSLArrayType.ARRAY_LIKE_FUNCTIONS;//Vectors have, like arrays, .length() function
+        return GLSLArrayType.ARRAY_LIKE_FUNCTIONS; //Vectors have, like arrays, .length() function
     }
 
     @NotNull
@@ -182,10 +191,11 @@ public class GLSLVectorType extends GLSLType {
 
     @Override
     public boolean isConvertibleTo(GLSLType otherType) {
-        if (!(otherType instanceof GLSLVectorType)) return false;
+        if (!(otherType instanceof GLSLVectorType)) {
+            return false;
+        }
 
         GLSLVectorType other = (GLSLVectorType) otherType;
-        return other.numComponents == numComponents
-                && baseType.isConvertibleTo(other.baseType);
+        return other.numComponents == numComponents && baseType.isConvertibleTo(other.baseType);
     }
 }

@@ -71,8 +71,12 @@ public class GLSLSubscriptExpression extends GLSLOperatorExpression {
     public boolean isLValue() {
         GLSLExpression arrExpr = getArrayExpression();
         //noinspection SimplifiableIfStatement
-        if(arrExpr != null)return arrExpr.isLValue();
-        else return true;
+        if (arrExpr != null) {
+            return arrExpr.isLValue();
+        }
+        else {
+            return true;
+        }
     }
 
     @Override
@@ -84,7 +88,9 @@ public class GLSLSubscriptExpression extends GLSLOperatorExpression {
     @Override
     public GLSLType getType() {
         GLSLExpression left = getArrayExpression();
-        if(left == null)return GLSLTypes.UNKNOWN_TYPE;
+        if (left == null) {
+            return GLSLTypes.UNKNOWN_TYPE;
+        }
         GLSLType type = left.getType();
         if (type != GLSLTypes.UNKNOWN_TYPE) {
             if (type.isIndexable()) {

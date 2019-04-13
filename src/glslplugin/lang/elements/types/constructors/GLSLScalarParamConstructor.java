@@ -31,6 +31,8 @@ public class GLSLScalarParamConstructor extends GLSLFunctionType {
     public GLSLTypeCompatibilityLevel getParameterCompatibilityLevel(@NotNull GLSLType[] types) {
         if (types.length == 1 && GLSLTypes.isScalar(types[0])){
             return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
-        } else return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
+        } else {
+            return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
+        }
     }
 }

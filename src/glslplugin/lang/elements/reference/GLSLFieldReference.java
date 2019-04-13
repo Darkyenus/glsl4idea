@@ -48,7 +48,9 @@ public class GLSLFieldReference extends GLSLReferenceBase<GLSLIdentifier, GLSLDe
     @Nullable
     public GLSLDeclarator resolve() {
         GLSLExpression left = sourceExpression.getLeftHandExpression();
-        if(left == null)return null;
+        if (left == null) {
+            return null;
+        }
         GLSLType type = left.getType();
         if (type == GLSLTypes.UNKNOWN_TYPE) {
             return null;
@@ -56,9 +58,9 @@ public class GLSLFieldReference extends GLSLReferenceBase<GLSLIdentifier, GLSLDe
         GLSLElement definition = type.getDefinition();
         if (definition instanceof GLSLStructDefinition) {
             GLSLIdentifier memberIdentifier = source;
-            if(memberIdentifier == null){
+            if (memberIdentifier == null) {
                 return null;
-            }else{
+            } else {
                 return ((GLSLStructDefinition) definition).getDeclarator(memberIdentifier.getName());
             }
         } else {

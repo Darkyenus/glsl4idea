@@ -16,7 +16,9 @@ public class GLSLVersionDirective extends GLSLPreprocessorDirective {
     public PsiElement getVersionLiteral() {
         PsiElement child = getFirstChild();
         while (child != null) { // we can't iterate over getChildren(), as that ignores leaf elements
-            if (child.getNode().getElementType() == GLSLTokenTypes.INTEGER_CONSTANT) return child;
+            if (child.getNode().getElementType() == GLSLTokenTypes.INTEGER_CONSTANT) {
+                return child;
+            }
             child = child.getNextSibling();
         }
         return null;
@@ -27,7 +29,9 @@ public class GLSLVersionDirective extends GLSLPreprocessorDirective {
      */
     public int getVersionLiteralNumber() {
         PsiElement versionLiteral = getVersionLiteral();
-        if (versionLiteral == null) return -1;
+        if (versionLiteral == null) {
+            return -1;
+        }
 
         return Integer.parseInt(versionLiteral.getText());
     }

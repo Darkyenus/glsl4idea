@@ -63,9 +63,9 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
     @NotNull
     public GLSLDeclaration[] getDeclarations() {
         GLSLDeclarationList declarationList = getDeclarationList();
-        if(declarationList == null){
+        if (declarationList == null) {
             return GLSLDeclaration.NO_DECLARATIONS;
-        }else{
+        } else {
             return declarationList.getDeclarations();
         }
     }
@@ -81,7 +81,9 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
 
     @Override
     public String toString() {
-        if (getName() == null) return "Anonymous struct";
+        if (getName() == null) {
+            return "Anonymous struct";
+        }
         return "Struct Type: '" + getName() + "'";
     }
 
@@ -95,7 +97,7 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
         if (typeCache == null) {
             typeCache = new GLSLStructType(this);
             typeCacheDirty = false;
-        } else if (typeCacheDirty){
+        } else if (typeCacheDirty) {
             typeCache.updateNameAndMembers();
             typeCacheDirty = false;
         }
@@ -114,8 +116,9 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
 
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
-        if (!processor.execute(this, state))
+        if (!processor.execute(this, state)){
             return false;
+        }
 
         if (lastParent == null) {
             // Do not show declarations of parameters to outside scopes
@@ -123,10 +126,12 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
         }
 
         for (GLSLDeclarator declarator : getDeclarators()) {
-            if (declarator == lastParent)
+            if (declarator == lastParent) {
                 continue;
-            if (!processor.execute(declarator, state))
+            }
+            if (!processor.execute(declarator, state)) {
                 return false;
+            }
         }
         return true;
     }
@@ -141,14 +146,18 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
     @Override
     public String getName() {
         GLSLIdentifier identifier = getNameIdentifier();
-        if (identifier == null) return null;
+        if (identifier == null) {
+            return null;
+        }
         return identifier.getName();
     }
 
     @Override
     public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
         GLSLIdentifier identifier = getNameIdentifier();
-        if (identifier == null) return null;
+        if (identifier == null) {
+            return null;
+        }
         return identifier.setName(name);
     }
 

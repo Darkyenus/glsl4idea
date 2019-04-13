@@ -51,10 +51,14 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
         GLSLFunctionCallExpression call =
                 ParameterInfoUtils.findParentOfTypeWithStopElements(context.getFile(), context.getOffset(),
                         GLSLFunctionCallExpression.class, GLSLCompoundStatement.class);
-        if (call == null) return null;
+        if (call == null) {
+            return null;
+        }
 
         final GLSLReferenceBase<GLSLIdentifier, ? extends GLSLElement> rawReference = call.getReferenceProxy();
-        if (!(rawReference instanceof GLSLFunctionReference))return null;
+        if (!(rawReference instanceof GLSLFunctionReference)) {
+            return null;
+        }
 
        GLSLFunctionReference reference = ((GLSLFunctionReference) rawReference);
 
@@ -124,8 +128,12 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
 
     @Override
     public void updateUI(Object p, @NotNull ParameterInfoUIContext context) {
-        if (p instanceof PsiElementResolveResult) p = ((PsiElementResolveResult) p).getElement();
-        if (!(p instanceof GLSLFunctionDeclaration)) return;
+        if (p instanceof PsiElementResolveResult) {
+            p = ((PsiElementResolveResult) p).getElement();
+        }
+        if (!(p instanceof GLSLFunctionDeclaration)) {
+            return;
+        }
         GLSLFunctionDeclaration declaration = (GLSLFunctionDeclaration) p;
         GLSLParameterDeclaration[] parameters = declaration.getParameters();
 
@@ -137,10 +145,16 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
         int highlightStartOffset = -1, highlightEndOffset = -1;
 
         for (int i = 0; i < parameters.length; i++) {
-            if (i == currentParameter) highlightStartOffset = buffer.length();
+            if (i == currentParameter) {
+                highlightStartOffset = buffer.length();
+            }
             buffer.append(parameters[i].getText());
-            if (i == currentParameter) highlightEndOffset = buffer.length();
-            if (i < parameters.length - 1) buffer.append(", ");
+            if (i == currentParameter) {
+                highlightEndOffset = buffer.length();
+            }
+            if (i < parameters.length - 1) {
+                buffer.append(", ");
+            }
         }
         buffer.append(')');
 

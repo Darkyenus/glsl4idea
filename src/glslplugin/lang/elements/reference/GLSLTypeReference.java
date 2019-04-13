@@ -44,7 +44,7 @@ public class GLSLTypeReference extends GLSLReferenceBase<GLSLTypename, GLSLStruc
         return findTypeDefinition(source, source.getTypename());
     }
 
-    public static GLSLStructDefinition findTypeDefinition(GLSLElement from, String typeName){
+    public static GLSLStructDefinition findTypeDefinition(GLSLElement from, String typeName) {
         PsiElement current = from.getPrevSibling();
         GLSLStructDefinition result = null;
         if (current == null) {
@@ -103,10 +103,14 @@ public class GLSLTypeReference extends GLSLReferenceBase<GLSLTypename, GLSLStruc
     @Nullable
     private static GLSLStructDefinition checkDeclarationForType(GLSLDeclaration declaration, String typeName) {
         final GLSLTypeSpecifier specifier = declaration.getTypeSpecifierNode();
-        if(specifier == null)return null;
+        if (specifier == null) {
+            return null;
+        }
         GLSLStructDefinition definition = specifier.getEmbeddedStructDefinition();
         if (definition != null) {
-            if (typeName.equals(definition.getName())) return definition;
+            if (typeName.equals(definition.getName())) {
+                return definition;
+            }
         }
         return null;
     }

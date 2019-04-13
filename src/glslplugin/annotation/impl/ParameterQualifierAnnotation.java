@@ -23,7 +23,10 @@ public class ParameterQualifierAnnotation extends Annotator<GLSLParameterDeclara
                     || q == GLSLQualifier.Qualifier.CONST
                     || q == GLSLQualifier.Qualifier.IN
                     || q == GLSLQualifier.Qualifier.OUT
-                    || q == GLSLQualifier.Qualifier.INOUT) continue;
+                    || q == GLSLQualifier.Qualifier.INOUT
+            ) {
+                continue;
+            }
 
             holder.createErrorAnnotation(parameter, "'" + q.toString() + "' qualifier not allowed. " +
             "Expected precision qualifier, memory qualifier, 'const', 'in', 'out', or 'inout'.");

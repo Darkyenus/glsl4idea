@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 public class GLSLStructureViewFactory implements PsiStructureViewFactory {
     public StructureViewBuilder getStructureViewBuilder(@NotNull final PsiFile psiFile) {
         return new TreeBasedStructureViewBuilder() {
-
             @NotNull
             @Override
             public StructureViewModel createStructureViewModel(Editor editor) {

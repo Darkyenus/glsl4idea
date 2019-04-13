@@ -17,15 +17,21 @@ public class GLSLMacroReference extends GLSLReferenceBase<GLSLRedefinedToken, GL
     @Override
     public GLSLDefineDirective resolve() {
         PsiElement current = source.getPrevSibling();
-        if (current == null) current = source.getParent();
+        if (current == null) {
+            current = source.getParent();
+        }
 
         while (current != null) {
             final GLSLDefineDirective found = resolveDeeperIn(current);
-            if(found != null)return found;
+            if (found != null) {
+                return found;
+            }
 
             if (current.getPrevSibling() == null) {
                 current = current.getParent();
-                if (current instanceof PsiFile) return null;
+                if (current instanceof PsiFile) {
+                    return null;
+                }
             } else {
                 current = current.getPrevSibling();
             }
@@ -34,13 +40,17 @@ public class GLSLMacroReference extends GLSLReferenceBase<GLSLRedefinedToken, GL
     }
 
     private GLSLDefineDirective resolveDeeperIn(PsiElement current){
-        while(current != null){
+        while (current != null) {
             if (current instanceof GLSLDefineDirective) {
                 GLSLDefineDirective directive = (GLSLDefineDirective) current;
-                if (source.getName().equals(directive.getName())) return directive;
-            }else{
+                if (source.getName().equals(directive.getName())) {
+                    return directive;
+                }
+            } else {
                 final GLSLDefineDirective deeper = resolveDeeperIn(current.getLastChild());
-                if(deeper != null)return deeper;
+                if (deeper != null) {
+                    return deeper;
+                }
             }
             current = current.getPrevSibling();
         }

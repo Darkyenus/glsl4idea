@@ -45,7 +45,9 @@ public class StatementParentAnnotation extends Annotator<GLSLStatement> {
     @Override
     public void annotate(GLSLStatement expr, AnnotationHolder holder) {
         AcceptableParents acceptableParents = parentsForClass.get(expr.getClass());
-        if (acceptableParents == null) return;
+        if (acceptableParents == null) {
+            return;
+        }
         PsiElement parent = expr.findParentByClasses(acceptableParents.parents);
         if (parent == null) { // we needed a parent and we couldn't find one - this is a compile-time error
             holder.createErrorAnnotation(expr, acceptableParents.message);

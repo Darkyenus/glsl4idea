@@ -42,7 +42,9 @@ public class UnreachableAnnotation extends Annotator<GLSLStatement> {
 
     public void annotate(GLSLStatement expr, AnnotationHolder holder) {
         GLSLStatement.TerminatorScope scope = expr.getTerminatorScope();
-        if (scope == GLSLStatement.TerminatorScope.NONE) return;
+        if (scope == GLSLStatement.TerminatorScope.NONE) {
+            return;
+        }
 
         if (expr.getParent() == null
                 || expr.getParent().getNode().getElementType() != GLSLElementTypes.COMPOUND_STATEMENT) {
@@ -55,19 +57,21 @@ public class UnreachableAnnotation extends Annotator<GLSLStatement> {
                 if (element instanceof GLSLLabelStatement) return;
                 PsiElement child = element.getFirstChild();
 
-                if(child == null){
+                if (child == null) {
                     Annotation annotation = holder.createWarningAnnotation(element, "Unreachable expression");
                     annotation.setTextAttributes(unreachableAttributes);
-                }else{
+                } else {
                     do {
                         IElementType type = child.getNode().getElementType();
-                        if(!GLSLTokenTypes.PREPROCESSOR_DIRECTIVES.contains(type) && type != TokenType.WHITE_SPACE){
-                            if (child instanceof GLSLLabelStatement) return;
+                        if (!GLSLTokenTypes.PREPROCESSOR_DIRECTIVES.contains(type) && type != TokenType.WHITE_SPACE) {
+                            if (child instanceof GLSLLabelStatement) {
+                                return;
+                            }
                             Annotation annotation = holder.createWarningAnnotation(child, "Unreachable expression");
                             annotation.setTextAttributes(unreachableAttributes);
                         }
                         child = child.getNextSibling();
-                    }while(child != null);
+                    } while (child != null);
                 }
 
             }

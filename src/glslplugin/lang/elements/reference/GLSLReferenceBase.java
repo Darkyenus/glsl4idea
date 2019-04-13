@@ -74,7 +74,9 @@ public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_
     }
 
     public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
-        if (source == null) throw new IncorrectOperationException("Reference is invalid");
+        if (source == null) {
+            throw new IncorrectOperationException("Reference is invalid");
+        }
         if (source instanceof PsiNamedElement) {
             return ((PsiNamedElement) source).setName(newElementName);
         }

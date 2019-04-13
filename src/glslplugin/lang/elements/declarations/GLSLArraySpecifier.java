@@ -47,19 +47,19 @@ public class GLSLArraySpecifier extends GLSLElementImpl {
      * For dimension of yet unknown length, {@link glslplugin.lang.elements.types.GLSLArrayType#UNDEFINED_SIZE_DIMENSION} is returned.
      * For dimension of length known only at runtime, {@link glslplugin.lang.elements.types.GLSLArrayType#DYNAMIC_SIZE_DIMENSION} is returned.
      */
-    public int getDimensionSize(){
+    public int getDimensionSize() {
         GLSLExpression sizeExpression = getSizeExpression();
-        if(sizeExpression != null){
+        if (sizeExpression != null) {
             //Check if it is a constant value
-            if(sizeExpression.isConstantValue()){
+            if (sizeExpression.isConstantValue()) {
                 Object constantValue = sizeExpression.getConstantValue();
-                if(constantValue instanceof Long){
-                    return ((Long)constantValue).intValue();
+                if (constantValue instanceof Long) {
+                    return ((Long) constantValue).intValue();
                 }
             }
             //It is not a constant value, assume it is dynamic
             return GLSLArrayType.DYNAMIC_SIZE_DIMENSION;
-        }else{
+        } else {
             return GLSLArrayType.UNDEFINED_SIZE_DIMENSION;
         }
     }
@@ -67,12 +67,12 @@ public class GLSLArraySpecifier extends GLSLElementImpl {
     @Override
     public String toString() {
         int dimensionSize = getDimensionSize();
-        if(dimensionSize == GLSLArrayType.DYNAMIC_SIZE_DIMENSION){
+        if (dimensionSize == GLSLArrayType.DYNAMIC_SIZE_DIMENSION) {
             return "Array Declarator [?]";
-        }else if(dimensionSize == GLSLArrayType.UNDEFINED_SIZE_DIMENSION){
+        } else if (dimensionSize == GLSLArrayType.UNDEFINED_SIZE_DIMENSION) {
             return "Array Declarator []";
-        }else {
-            return "Array Declarator ["+dimensionSize+"]";
+        } else {
+            return "Array Declarator [" + dimensionSize + "]";
         }
     }
 }

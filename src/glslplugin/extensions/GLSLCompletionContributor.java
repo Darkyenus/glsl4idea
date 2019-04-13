@@ -61,7 +61,9 @@ public class GLSLCompletionContributor extends DefaultCompletionContributor {
                 GLSLFieldSelectionExpression fieldSelection = (GLSLFieldSelectionExpression) completionParameters.getPosition().getParent().getParent();
 
                 GLSLExpression leftHandExpression = fieldSelection.getLeftHandExpression();
-                if (leftHandExpression == null) return;
+                if (leftHandExpression == null) {
+                    return;
+                }
 
                 // Struct member completion
                 GLSLType type = leftHandExpression.getType();

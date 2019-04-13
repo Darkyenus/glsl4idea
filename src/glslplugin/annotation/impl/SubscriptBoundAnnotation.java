@@ -15,8 +15,12 @@ public class SubscriptBoundAnnotation extends Annotator<GLSLSubscriptExpression>
     public void annotate(GLSLSubscriptExpression expr, AnnotationHolder holder) {
         GLSLExpression expression = expr.getArrayExpression();
         GLSLExpression subscript = expr.getSubscript();
-        if (expression == null || subscript == null) return;
-        if (!expression.getType().isValidType() || !subscript.getType().isValidType()) return;
+        if (expression == null || subscript == null) {
+            return;
+        }
+        if (!expression.getType().isValidType() || !subscript.getType().isValidType()) {
+            return;
+        }
 
         GLSLType type = subscript.getType();
         if (!type.typeEquals(GLSLTypes.INT) && !type.typeEquals(GLSLTypes.UINT)) {
@@ -44,8 +48,12 @@ public class SubscriptBoundAnnotation extends Annotator<GLSLSubscriptExpression>
             return;
         }
 
-        if (dimension == GLSLArrayType.UNDEFINED_SIZE_DIMENSION || dimension == GLSLArrayType.DYNAMIC_SIZE_DIMENSION) return;
-        if (!subscript.isConstantValue()) return;
+        if (dimension == GLSLArrayType.UNDEFINED_SIZE_DIMENSION || dimension == GLSLArrayType.DYNAMIC_SIZE_DIMENSION) {
+            return;
+        }
+        if (!subscript.isConstantValue()) {
+            return;
+        }
 
         Long value = (Long) subscript.getConstantValue();
         assert value != null; // if !isConstantValue we've already returned

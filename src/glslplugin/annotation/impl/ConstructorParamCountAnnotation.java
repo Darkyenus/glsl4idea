@@ -34,11 +34,15 @@ public class ConstructorParamCountAnnotation extends Annotator<GLSLFunctionCallE
 
     @Override
     public void annotate(GLSLFunctionCallExpression expr, AnnotationHolder holder) {
-        if (!expr.isConstructor()) return;
+        if (!expr.isConstructor()) {
+            return;
+        }
         final GLSLType constructorType = expr.getType();
 
         // We don't handle array constructors
-        if (constructorType instanceof GLSLArrayType) return;
+        if (constructorType instanceof GLSLArrayType) {
+            return;
+        }
 
         final GLSLType[] parameters = expr.getParameterTypes();
 
@@ -50,20 +54,22 @@ public class ConstructorParamCountAnnotation extends Annotator<GLSLFunctionCallE
         }
 
         final GLSLFunctionType[] constructors = constructorType.getConstructors();
-        if(constructors.length == 0) return; //Huh, this one does not have any constructors, don't report anything then
+        if(constructors.length == 0) {
+            return; //Huh, this one does not have any constructors, don't report anything then
+        }
 
         boolean found = false;
         for (GLSLFunctionType constructor : constructors) {
-            if(constructor.getParameterCompatibilityLevel(parameters) != GLSLTypeCompatibilityLevel.INCOMPATIBLE){
+            if (constructor.getParameterCompatibilityLevel(parameters) != GLSLTypeCompatibilityLevel.INCOMPATIBLE) {
                 found = true;
                 break;
             }
         }
 
-        if(!found){
+        if (!found) {
             StringBuilder sb = new StringBuilder();
             sb.append("Cannot resolve constructor '").append(constructorType.getTypename()).append('(');
-            if(parameters.length != 0){
+            if (parameters.length != 0) {
                 final String PARAMETER_SEPARATOR = ", ";
                 for (GLSLType parameter : parameters) {
                     sb.append(parameter.getTypename()).append(PARAMETER_SEPARATOR);
@@ -79,9 +85,9 @@ public class ConstructorParamCountAnnotation extends Annotator<GLSLFunctionCallE
             sb.append(baseMessage);
             sb.append("<br/>");
 
-            if((constructorType instanceof GLSLMatrixType) && GLSLAggregateParamConstructor.containsMatrixType(parameters) && parameters.length > 1){
+            if ((constructorType instanceof GLSLMatrixType) && GLSLAggregateParamConstructor.containsMatrixType(parameters) && parameters.length > 1) {
                 sb.append("Matrix constructor from matrix may not contain any other parameters<br/>");
-            } else if(constructorType instanceof GLSLVectorType || constructorType instanceof GLSLMatrixType){
+            } else if (constructorType instanceof GLSLVectorType || constructorType instanceof GLSLMatrixType) {
                 sb.append(GLSLAggregateParamConstructor.countVectorOrMatrixConstructorElements(parameters));
                 sb.append(" elements found<br/>");
             }

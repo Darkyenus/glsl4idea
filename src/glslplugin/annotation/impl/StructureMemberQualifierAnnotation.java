@@ -16,7 +16,9 @@ public class StructureMemberQualifierAnnotation extends Annotator<GLSLStructMemb
     public void annotate(GLSLStructMemberDeclaration expr, AnnotationHolder holder) {
         for (GLSLQualifier qualifier : expr.getQualifiers()) {
             final GLSLTypeQualifier type = qualifier.getQualifierType();
-            if (type == null) continue;
+            if (type == null) {
+                continue;
+            }
             if (type != GLSLTypeQualifier.PRECISION_QUALIFIER) {
                 holder.createWarningAnnotation(qualifier,
                         "GLSL 4.50: Member declarators may contain precision qualifiers, " +

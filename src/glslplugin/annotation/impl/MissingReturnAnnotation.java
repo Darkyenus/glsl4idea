@@ -37,10 +37,14 @@ import org.jetbrains.annotations.NotNull;
 public class MissingReturnAnnotation extends Annotator<GLSLFunctionDefinition> {
     @Override
     public void annotate(GLSLFunctionDefinition expr, AnnotationHolder holder) {
-        if (expr.getType().getReturnType() == GLSLTypes.VOID) return;
+        if (expr.getType().getReturnType() == GLSLTypes.VOID) {
+            return;
+        }
 
         final GLSLCompoundStatement body = expr.getBody();
-        if(body == null)return;
+        if (body == null) {
+            return;
+        }
 
         if (body.getTerminatorScope() == GLSLStatement.TerminatorScope.NONE) {
             PsiElement annotationPlace = body;
@@ -52,11 +56,11 @@ public class MissingReturnAnnotation extends Annotator<GLSLFunctionDefinition> {
             Also don't use getChildren() because it doesn't return all children for some reason and is slower anyway.
              */
             PsiElement e = body.getLastChild();
-            while(e != null){
-                if(e.getNode().getElementType() == GLSLTokenTypes.RIGHT_BRACE){
+            while (e != null) {
+                if (e.getNode().getElementType() == GLSLTokenTypes.RIGHT_BRACE) {
                     annotationPlace = e;
                     break;
-                }else{
+                } else {
                     e = e.getPrevSibling();
                 }
             }

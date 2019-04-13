@@ -23,7 +23,9 @@ public class NamedElementCollector implements PsiScopeProcessor {
 
     @Override
     public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
-        if (element instanceof PsiNamedElement) identifiers.add((PsiNamedElement) element);
+        if (element instanceof PsiNamedElement) {
+            identifiers.add((PsiNamedElement) element);
+        }
         return true;
     }
 

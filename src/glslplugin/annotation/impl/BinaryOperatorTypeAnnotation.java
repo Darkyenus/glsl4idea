@@ -40,10 +40,12 @@ public class BinaryOperatorTypeAnnotation extends Annotator<GLSLBinaryOperatorEx
         final GLSLExpression left = expr.getLeftOperand();
         final GLSLExpression right = expr.getRightOperand();
         final GLSLOperator operator = expr.getOperator();
-        if(left == null || right == null || operator == null)return; //There are bigger problems than type compatibility
+        if (left == null || right == null || operator == null) {
+            return; //There are bigger problems than type compatibility
+        }
 
-        if(!(operator instanceof GLSLOperator.GLSLBinaryOperator)){
-            holder.createErrorAnnotation(expr, '\''+operator.getTextRepresentation()+"' is not a binary operator");
+        if (!(operator instanceof GLSLOperator.GLSLBinaryOperator)) {
+            holder.createErrorAnnotation(expr, '\'' + operator.getTextRepresentation() + "' is not a binary operator");
             return;
         }
         GLSLOperator.GLSLBinaryOperator binaryOperator = (GLSLOperator.GLSLBinaryOperator) operator;
@@ -52,7 +54,7 @@ public class BinaryOperatorTypeAnnotation extends Annotator<GLSLBinaryOperatorEx
         final GLSLType leftType = left.getType();
 
         if (leftType.isValidType() && rightType.isValidType()) {
-            if(!binaryOperator.isValidInput(leftType, rightType)){
+            if (!binaryOperator.isValidInput(leftType, rightType)) {
                 holder.createErrorAnnotation(expr, "Incompatible types as operands of '" + operator.getTextRepresentation() + "': '"
                         + leftType.getTypename() + "' and '" + rightType.getTypename() + "'");
             }

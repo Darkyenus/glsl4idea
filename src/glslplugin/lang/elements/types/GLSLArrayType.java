@@ -41,7 +41,7 @@ public class GLSLArrayType extends GLSLType {
     private final GLSLType baseType;
     private final int[] dimensions;
 
-    public GLSLArrayType(@NotNull GLSLType baseType, int...dimensions) {
+    public GLSLArrayType(@NotNull GLSLType baseType, int... dimensions) {
         super(null);
         this.baseType = baseType;
         this.dimensions = dimensions;
@@ -55,9 +55,9 @@ public class GLSLArrayType extends GLSLType {
     @Override
     @NotNull
     public GLSLType getIndexType() {
-        if(dimensions.length == 1){
+        if (dimensions.length == 1) {
             return baseType;
-        }else{
+        } else {
             int[] indexTypeDimensions = new int[dimensions.length - 1];
             System.arraycopy(dimensions, 1, indexTypeDimensions, 0, indexTypeDimensions.length);
             return new GLSLArrayType(baseType, indexTypeDimensions);
@@ -76,11 +76,11 @@ public class GLSLArrayType extends GLSLType {
         for (int dimension : dimensions) {
             result.append('[');
             //noinspection StatementWithEmptyBody
-            if(dimension == UNDEFINED_SIZE_DIMENSION){
+            if (dimension == UNDEFINED_SIZE_DIMENSION) {
                 // Unknown during declaration: []
-            }else if(dimension == DYNAMIC_SIZE_DIMENSION){
+            } else if(dimension == DYNAMIC_SIZE_DIMENSION) {
                 result.append('?');
-            }else{
+            } else {
                 result.append(dimension);
             }
             result.append(']');
@@ -108,24 +108,24 @@ public class GLSLArrayType extends GLSLType {
         return ARRAY_LIKE_FUNCTIONS;
     }
 
-    private boolean dimensionSizeEquals(int first, int second){
-        if(first == UNDEFINED_SIZE_DIMENSION || first == DYNAMIC_SIZE_DIMENSION
-                || second == UNDEFINED_SIZE_DIMENSION || second == DYNAMIC_SIZE_DIMENSION){
+    private boolean dimensionSizeEquals(int first, int second) {
+        if (first == UNDEFINED_SIZE_DIMENSION || first == DYNAMIC_SIZE_DIMENSION
+                || second == UNDEFINED_SIZE_DIMENSION || second == DYNAMIC_SIZE_DIMENSION) {
             //If the size is not known, consider them same, because they might be the same
             //So don't show error if not 100% certain there is one
             return true;
-        }else{
+        } else {
             return first == second;
         }
     }
 
     @Override
     public boolean typeEquals(GLSLType otherType) {
-        if(otherType instanceof GLSLArrayType){
+        if (otherType instanceof GLSLArrayType) {
             GLSLArrayType other = (GLSLArrayType) otherType;
-            if(dimensions.length == other.dimensions.length){
+            if (dimensions.length == other.dimensions.length) {
                 for (int i = 0; i < dimensions.length; i++) {
-                    if(!dimensionSizeEquals(dimensions[i], other.dimensions[i])){
+                    if (!dimensionSizeEquals(dimensions[i], other.dimensions[i])) {
                         return false;
                     }
                 }

@@ -48,7 +48,9 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
     @Nullable
     public GLSLStructDefinition getTypeDefinition() {
         GLSLIdentifier id = findChildByClass(GLSLIdentifier.class);
-        if(id == null)return null;
+        if (id == null) {
+            return null;
+        }
         PsiReference ref = id.getReference();
         if (ref != null) {
             PsiElement elt = ref.resolve();
@@ -77,7 +79,9 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
         if (type == GLSLElementTypes.TYPE_SPECIFIER_PRIMITIVE) {
             final ASTNode child = node.getFirstChildNode();
             GLSLType t = GLSLTypes.getTypeFromName(child.getText());
-            if (t != null) return t;
+            if (t != null) {
+                return t;
+            }
             return GLSLTypes.UNKNOWN_TYPE;
         }
 

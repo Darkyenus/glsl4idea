@@ -44,9 +44,10 @@ public class VectorComponentsPredicate {
 
                     GLSLFieldSelectionExpression fse = (GLSLFieldSelectionExpression) parent;
                     GLSLExpression leftHandExpression = fse.getLeftHandExpression();
-                    if(leftHandExpression == null)return false;
+                    if (leftHandExpression == null) {
+                        return false;
+                    }
                     if (leftHandExpression.getType() instanceof GLSLVectorType) {
-
                         String parameters = identifier.getName();
                         return checkForMatch(parameters);
                     }

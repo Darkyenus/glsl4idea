@@ -129,7 +129,11 @@ public final class GLSLStructType extends GLSLType {
     @Override
     public GLSLType getMemberType(String member) {
         GLSLType type = members.get(member);
-        if(type == null)return GLSLTypes.UNKNOWN_TYPE;
-        else return type;
+        if (type == null) {
+            return GLSLTypes.UNKNOWN_TYPE;
+        }
+        else {
+            return type;
+        }
     }
 }

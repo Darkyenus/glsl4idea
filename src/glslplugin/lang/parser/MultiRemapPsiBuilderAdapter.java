@@ -51,7 +51,9 @@ public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
 
     @NotNull
     public String[] getNamesThroughWhichThisTokenWasRedefined() {
-        if (waitingTokens.isEmpty()) return NO_NAMES;
+        if (waitingTokens.isEmpty()) {
+            return NO_NAMES;
+        }
         final IElementType type = waitingTokens.get(0);
         if (type instanceof RedefinedTokenType) {
             return ((RedefinedTokenType) type).redefinedThrough;
@@ -110,12 +112,12 @@ public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
     @Override
     public IElementType lookAhead(int steps) {
         final Marker lookaheadMark = mark();
-        try{
+        try {
             for (int i = 0; i < steps; i++) {
                 advanceLexer();
             }
             return getTokenType();
-        }finally {
+        } finally {
             lookaheadMark.rollbackTo();
         }
     }
@@ -143,7 +145,5 @@ public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
             super.rollbackTo();
             waitingTokens = rollbackWaitingTokens;
         }
-
-
     }
 }

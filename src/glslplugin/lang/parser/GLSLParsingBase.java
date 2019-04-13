@@ -64,7 +64,7 @@ abstract class GLSLParsingBase {
             advanceLexer(true, true);
         }
 
-        public void advanceLexer(boolean checkForPreprocessor, boolean remapTokens){
+        public void advanceLexer(boolean checkForPreprocessor, boolean remapTokens) {
             super.advanceLexer();
 
             if(checkForPreprocessor) {

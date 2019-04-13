@@ -55,7 +55,9 @@ public class GLSLIfStatement extends GLSLStatement implements ConditionStatement
         // The terminator scope of an if statement is NONE if it only has one branch, otherwise it's the minimum
         // terminator scope of its two branches.
         GLSLStatement[] branches = PsiTreeUtil.getChildrenOfType(this, GLSLStatement.class);
-        if (branches == null || branches.length < 2) return TerminatorScope.NONE;
+        if (branches == null || branches.length < 2) {
+            return TerminatorScope.NONE;
+        }
 
         TerminatorScope minScope = TerminatorScope.SHADER;
         for (GLSLStatement statement : branches) {

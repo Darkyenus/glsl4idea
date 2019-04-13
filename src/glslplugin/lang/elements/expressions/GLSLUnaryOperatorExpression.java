@@ -50,8 +50,12 @@ public class GLSLUnaryOperatorExpression extends GLSLOperatorExpression {
     @Nullable
     protected GLSLOperator getOperatorFromType(IElementType type) {
         GLSLOperator op = super.getOperatorFromType(type);
-        if (op == GLSLOperators.ADDITION) op = GLSLOperators.PLUS;
-        if (op == GLSLOperators.SUBTRACTION) op = GLSLOperators.MINUS;
+        if (op == GLSLOperators.ADDITION) {
+            op = GLSLOperators.PLUS;
+        }
+        if (op == GLSLOperators.SUBTRACTION) {
+            op = GLSLOperators.MINUS;
+        }
         return op;
     }
 
@@ -64,13 +68,21 @@ public class GLSLUnaryOperatorExpression extends GLSLOperatorExpression {
     @Override
     public Object getConstantValue() {
         GLSLExpression operand = getOperand();
-        if(operand == null || !operand.isConstantValue())return null;
+        if (operand == null || !operand.isConstantValue()) {
+            return null;
+        }
         GLSLOperator operator = getOperator();
-        if(!(operator instanceof GLSLOperator.GLSLUnaryOperator))return null;
+        if (!(operator instanceof GLSLOperator.GLSLUnaryOperator)) {
+            return null;
+        }
         GLSLOperator.GLSLUnaryOperator unaryOperator = (GLSLOperator.GLSLUnaryOperator) operator;
         GLSLType operandType = operand.getType();
-        if(!operandType.isValidType())return null;
-        if(!unaryOperator.isValidInput(operandType))return null;
+        if (!operandType.isValidType()) {
+            return null;
+        }
+        if (!unaryOperator.isValidInput(operandType)) {
+            return null;
+        }
 
         return unaryOperator.getResultValue(operand.getConstantValue(), prefix);
     }
@@ -80,9 +92,9 @@ public class GLSLUnaryOperatorExpression extends GLSLOperatorExpression {
     public GLSLType getType() {
         GLSLOperator operator = getOperator();
         GLSLExpression operand = getOperand();
-        if(operand == null || !(operator instanceof GLSLOperator.GLSLUnaryOperator)){
+        if (operand == null || !(operator instanceof GLSLOperator.GLSLUnaryOperator)) {
             return GLSLTypes.UNKNOWN_TYPE;
-        }else{
+        } else {
             GLSLOperator.GLSLUnaryOperator unaryOperator = (GLSLOperator.GLSLUnaryOperator) operator;
             return unaryOperator.getResultType(operand.getType());
         }
@@ -90,9 +102,9 @@ public class GLSLUnaryOperatorExpression extends GLSLOperatorExpression {
 
     public String toString() {
         GLSLOperator operator = getOperator();
-        if(operator != null){
+        if (operator != null) {
             return "Unary Operator Expression '" + operator.getTextRepresentation() + "'";
-        }else{
+        } else {
             return "Unary Operator Expression '(unknown)'";
         }
     }

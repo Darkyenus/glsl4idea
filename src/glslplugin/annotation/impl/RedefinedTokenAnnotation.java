@@ -21,9 +21,9 @@ public class RedefinedTokenAnnotation extends Annotator<GLSLRedefinedToken> {
         String definition;
 
         final IElementType identifierType = identifier.getNode().getElementType();
-        if(identifierType instanceof GLSLElementTypes.RedefinedTokenElementType){
+        if (identifierType instanceof GLSLElementTypes.RedefinedTokenElementType) {
             definition = ((GLSLElementTypes.RedefinedTokenElementType) identifierType).text;
-        }else{
+        } else {
             GLSLMacroReference reference = identifier.getReference();
             GLSLDefineDirective referent = (reference != null) ? reference.resolve() : null;
             definition = (referent != null) ? referent.getBoundText() : null;

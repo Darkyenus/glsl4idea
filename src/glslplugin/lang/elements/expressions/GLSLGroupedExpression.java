@@ -51,9 +51,9 @@ public class GLSLGroupedExpression extends GLSLPrimaryExpression {
     @Override
     public GLSLType getType() {
         GLSLExpression expression = getExpression();
-        if(expression != null){
+        if (expression != null) {
             return expression.getType();
-        }else{
+        } else {
             return GLSLTypes.UNKNOWN_TYPE;
         }
     }

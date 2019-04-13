@@ -31,13 +31,17 @@ import org.jetbrains.annotations.NotNull;
 public class MemberCheckAnnotation extends Annotator<GLSLFieldSelectionExpression> {
     public void annotate(GLSLFieldSelectionExpression expr, AnnotationHolder holder) {
         GLSLExpression leftHandExpression = expr.getLeftHandExpression();
-        if(leftHandExpression == null)return;
+        if (leftHandExpression == null) {
+            return;
+        }
 
         GLSLType leftHandType = leftHandExpression.getType();
 
         if (leftHandType instanceof GLSLStructType) {
             GLSLIdentifier memberIdentifier = expr.getMemberIdentifier();
-            if(memberIdentifier == null)return;
+            if (memberIdentifier == null) {
+                return;
+            }
             if (!leftHandType.hasMember(memberIdentifier.getName())) {
                 holder.createErrorAnnotation(memberIdentifier, "Unknown member for " + leftHandType.getTypename());
             }

@@ -85,8 +85,12 @@ class GLSLPresentation implements ItemPresentation {
         String dec = prettyPrint(stringify(declarators, new Stringifyer<GLSLDeclarator>() {
             public String stringify(GLSLDeclarator glslDeclarator) {
                 GLSLIdentifier identifier = glslDeclarator.getNameIdentifier();
-                if(identifier == null)return "(unknown)";
-                else return identifier.getName();
+                if (identifier == null) {
+                    return "(unknown)";
+                }
+                else {
+                    return identifier.getName();
+                }
             }
         }));
         GLSLPresentation presentation = new GLSLPresentation(dec + " : " + type);
@@ -121,7 +125,7 @@ class GLSLPresentation implements ItemPresentation {
         if (qualifiers.length > 0) {
             result += prettyPrint(stringify(qualifiers, new Stringifyer<GLSLQualifier>() {
                 public String stringify(GLSLQualifier glslQualifier) {
-                    return glslQualifier == null?"null":glslQualifier.getText();
+                    return glslQualifier == null ? "null" : glslQualifier.getText();
                 }
             }));
             result += " ";

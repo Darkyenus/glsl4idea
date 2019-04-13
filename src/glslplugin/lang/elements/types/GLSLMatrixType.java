@@ -85,7 +85,7 @@ public class GLSLMatrixType extends GLSLType {
         this.columns = columns;
         this.rows = rows;
         this.typename = baseType.name + (columns == rows ? columns : columns + "x" + rows);
-        this.constructors = new GLSLFunctionType[]{
+        this.constructors = new GLSLFunctionType[] {
                 new GLSLScalarParamConstructor(this),
                 new GLSLAggregateParamConstructor(this, false, columns * rows),
                 new GLSLFunctionType(this.typename, this, null) {
@@ -101,7 +101,8 @@ public class GLSLMatrixType extends GLSLType {
                             return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
                         } else return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
                     }
-                }};
+                }
+        };
     }
 
     @Override
@@ -151,11 +152,11 @@ public class GLSLMatrixType extends GLSLType {
 
     @Override
     public boolean isConvertibleTo(GLSLType otherType) {
-        if (!(otherType instanceof GLSLMatrixType)) return false;
+        if (!(otherType instanceof GLSLMatrixType)) {
+            return false;
+        }
 
         GLSLMatrixType other = (GLSLMatrixType) otherType;
-        return rows == other.rows
-                && columns == other.columns
-                && baseType.isConvertibleTo(other.baseType);
+        return rows == other.rows && columns == other.columns && baseType.isConvertibleTo(other.baseType);
     }
 }

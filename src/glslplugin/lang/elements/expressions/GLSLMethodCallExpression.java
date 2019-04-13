@@ -53,7 +53,7 @@ public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase {
     @NotNull
     public String getMethodName() {
         GLSLIdentifier methodIdentifier = getMethodIdentifier();
-        if(methodIdentifier != null){
+        if (methodIdentifier != null) {
             return methodIdentifier.getName();
         }
         return "(unknown)";
@@ -62,9 +62,9 @@ public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase {
     @Nullable
     public GLSLParameterList getParameterList() {
         final PsiElement last = getLastChild();
-        if(last instanceof GLSLParameterList){
+        if (last instanceof GLSLParameterList) {
             return (GLSLParameterList) last;
-        }else{
+        } else {
             return null;
         }
     }

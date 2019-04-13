@@ -33,12 +33,12 @@ public class GLSLAggregateParamConstructor extends GLSLFunctionType {
     @NotNull
     @Override
     public GLSLTypeCompatibilityLevel getParameterCompatibilityLevel(@NotNull GLSLType[] types) {
-        if(!allowMatrices && containsMatrixType(types)){
+        if (!allowMatrices && containsMatrixType(types)) {
             return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
         }
 
         final int numComponents = countVectorOrMatrixConstructorElements(types);
-        if(numComponents == -1){
+        if (numComponents == -1) {
             return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
         } else if (numComponents == requiredElements) {
             return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
@@ -47,7 +47,7 @@ public class GLSLAggregateParamConstructor extends GLSLFunctionType {
         } else {
             //Shortening is allowed, but no extra elements can be present
             final int componentsWithoutLast = countVectorOrMatrixConstructorElements(types, types.length - 1);
-            if(componentsWithoutLast < requiredElements){
+            if (componentsWithoutLast < requiredElements) {
                 //Does not fit into the limit without the last element => valid
                 return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
             } else {
@@ -59,7 +59,9 @@ public class GLSLAggregateParamConstructor extends GLSLFunctionType {
 
     public static boolean containsMatrixType(@NotNull GLSLType[] types){
         for (GLSLType type : types) {
-            if(type instanceof GLSLMatrixType) return true;
+            if (type instanceof GLSLMatrixType) {
+                return true;
+            }
         }
         return false;
     }

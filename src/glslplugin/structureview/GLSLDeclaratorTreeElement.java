@@ -27,8 +27,7 @@ public class GLSLDeclaratorTreeElement extends GLSLStructureViewTreeElement<GLSL
         super(declarator);
     }
 
-    protected void createChildren(@NotNull GLSLDeclarator dec) {
-    }
+    protected void createChildren(@NotNull GLSLDeclarator dec) { }
 
     protected GLSLPresentation createPresentation(@NotNull GLSLDeclarator dec) {
         return GLSLPresentation.createFieldPresentation(dec);

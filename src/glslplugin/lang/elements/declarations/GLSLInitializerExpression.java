@@ -41,9 +41,11 @@ public class GLSLInitializerExpression extends GLSLElementImpl implements GLSLIn
     @Nullable
     public GLSLExpression getInitializerExpression() {
         PsiElement result = getFirstChild();
-        if(result instanceof GLSLExpression){
-            return (GLSLExpression)result;
-        }else return null;
+        if (result instanceof GLSLExpression) {
+            return (GLSLExpression) result;
+        } else {
+            return null;
+        }
     }
 
     @Override

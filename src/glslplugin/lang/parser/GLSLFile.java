@@ -48,10 +48,14 @@ public class GLSLFile extends PsiFileBase {
      */
     public int getGLSLVersion() {
         GLSLVersionDirective versionDirective = PsiTreeUtil.findChildOfType(this, GLSLVersionDirective.class);
-        if (versionDirective == null) return GLSL_DEFAULT_VERSION;
+        if (versionDirective == null) {
+            return GLSL_DEFAULT_VERSION;
+        }
 
         int versionLiteralNumber = versionDirective.getVersionLiteralNumber();
-        if (versionLiteralNumber == -1) return GLSL_DEFAULT_VERSION;
+        if (versionLiteralNumber == -1) {
+            return GLSL_DEFAULT_VERSION;
+        }
 
         return versionLiteralNumber;
     }
@@ -68,7 +72,9 @@ public class GLSLFile extends PsiFileBase {
         }
         PsiElement child = lastParent.getPrevSibling();
         while (child != null) {
-            if (!child.processDeclarations(processor, state, lastParent, place)) return false;
+            if (!child.processDeclarations(processor, state, lastParent, place)) {
+                return false;
+            }
             child = child.getPrevSibling();
         }
         return true;

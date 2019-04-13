@@ -44,9 +44,9 @@ public abstract class GLSLDeclarationImpl extends GLSLElementImpl implements GLS
     @NotNull
     public GLSLQualifier[] getQualifiers() {
         final GLSLQualifierList qualifierList = getQualifierList();
-        if(qualifierList == null){
+        if (qualifierList == null) {
             return NO_QUALIFIERS;
-        }else{
+        } else {
             return qualifierList.getQualifiers();
         }
     }
@@ -71,11 +71,11 @@ public abstract class GLSLDeclarationImpl extends GLSLElementImpl implements GLS
      * @return result of getTypeSpecifierNode().getTypeName()
      */
     @NotNull
-    public String getTypeSpecifierNodeTypeName(){
+    public String getTypeSpecifierNodeTypeName() {
         GLSLTypeSpecifier specifier = getTypeSpecifierNode();
-        if(specifier != null){
+        if (specifier != null) {
             return specifier.getTypeName();
-        }else {
+        } else {
             return "(unknown)";
         }
     }
@@ -88,8 +88,12 @@ public abstract class GLSLDeclarationImpl extends GLSLElementImpl implements GLS
     @NotNull
     public GLSLDeclarator[] getDeclarators() {
         final GLSLDeclaratorList list = findChildByClass(GLSLDeclaratorList.class);
-        if(list == null)return GLSLDeclarator.NO_DECLARATORS;
-        else return list.getDeclarators();
+        if (list == null) {
+            return GLSLDeclarator.NO_DECLARATORS;
+        }
+        else {
+            return list.getDeclarators();
+        }
     }
 
     @NotNull
@@ -101,7 +105,7 @@ public abstract class GLSLDeclarationImpl extends GLSLElementImpl implements GLS
                 b.append(", ");
             }
             GLSLIdentifier identifier = declarator.getNameIdentifier();
-            if(identifier == null){
+            if (identifier == null) {
                 b.append("(unknown)");
             } else {
                 b.append(identifier.getName());
@@ -114,10 +118,12 @@ public abstract class GLSLDeclarationImpl extends GLSLElementImpl implements GLS
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
         for (GLSLDeclarator declarator : getDeclarators()) {
-            if (declarator == lastParent)
+            if (declarator == lastParent){
                 continue;
-            if (!processor.execute(declarator, state))
+            }
+            if (!processor.execute(declarator, state)){
                 return false;
+            }
         }
 
         GLSLTypeSpecifier specifier = getTypeSpecifierNode();

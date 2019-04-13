@@ -57,14 +57,16 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
     public boolean isLValue() {
         // A member is L-Value only if its container also is L-Value
         GLSLExpression leftExpression = getLeftHandExpression();
-        //noinspection SimplifiableIfStatement
-        if(leftExpression == null)return true; //It might be, but right now it is broken.
-        else {
-            if(isSwizzle()){
+        if (leftExpression == null) {
+            return true; //It might be, but right now it is broken.
+        } else {
+            if (isSwizzle()) {
                 //It is a swizzle, so it may or may not be a L value
                 //If any of the components are repeated, it is not a L value
                 GLSLIdentifier memberIdentifier = getMemberIdentifier();
-                if(memberIdentifier == null)return true; //This should not happen
+                if (memberIdentifier == null) {
+                    return true; //This should not happen
+                }
                 String components = memberIdentifier.getName();
                 for (int i = 0; i < components.length(); i++) {
                     char c = components.charAt(i);
@@ -76,7 +78,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
                     }
                 }
                 return true;
-            }else{
+            } else {
                 return leftExpression.isLValue();
             }
         }
@@ -86,13 +88,19 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
      * Reports whether this selection operates on vector and selects more than one component.
      * Returns false if it failed to find out.
      */
-    public boolean isSwizzle(){
+    public boolean isSwizzle() {
         GLSLExpression leftHandExpression = getLeftHandExpression();
         GLSLIdentifier memberIdentifier = getMemberIdentifier();
-        if(leftHandExpression == null || memberIdentifier == null)return false;
+        if (leftHandExpression == null || memberIdentifier == null) {
+            return false;
+        }
         GLSLType leftHandType = leftHandExpression.getType();
-        if(!leftHandType.isValidType())return false;
-        if(!(leftHandType instanceof GLSLVectorType))return false;
+        if (!leftHandType.isValidType()) {
+            return false;
+        }
+        if (!(leftHandType instanceof GLSLVectorType)) {
+            return false;
+        }
         //If it got here, it is picking a component(s) from a vector. But how many?
         return memberIdentifier.getName().length() > 1;
         //Because all vector components are marked as only one letter, having more letters means swizzling
@@ -112,7 +120,9 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
         } else {
             // No declarator, check for built-in type
             GLSLExpression left = getLeftHandExpression();
-            if(left == null)return GLSLTypes.UNKNOWN_TYPE;
+            if (left == null) {
+                return GLSLTypes.UNKNOWN_TYPE;
+            }
             GLSLType type = left.getType();
             if (type == GLSLTypes.UNKNOWN_TYPE) {
                 return GLSLTypes.UNKNOWN_TYPE;
@@ -121,16 +131,18 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
                 return GLSLTypes.UNKNOWN_TYPE;
             }
             GLSLIdentifier memberIdentifier = getMemberIdentifier();
-            if(memberIdentifier == null)return GLSLTypes.UNKNOWN_TYPE;
+            if (memberIdentifier == null) {
+                return GLSLTypes.UNKNOWN_TYPE;
+            }
             else return type.getMemberType(memberIdentifier.getName());
         }
     }
 
     public String toString() {
         GLSLIdentifier memberIdentifier = getMemberIdentifier();
-        if(memberIdentifier == null){
+        if (memberIdentifier == null) {
             return "Field selection: '(unknown)'";
-        }else{
+        } else {
             return "Field selection: '" + memberIdentifier.getName() + "'";
         }
     }

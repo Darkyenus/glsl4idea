@@ -44,8 +44,9 @@ import java.util.List;
  */
 public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
     private static String getElementDocHeader(@Nullable PsiElement element) {
-        if (element == null)
+        if (element == null){
             return "<u>internal</u><br><br>";
+        }
         return "<b><u>" + element.getContainingFile().getName() + "</u></b><br><br>";
     }
 
@@ -105,7 +106,9 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
         StringBuilder typeString = new StringBuilder(qualifiedType.getType().getTypename());
         for (GLSLQualifier glslQualifier : qualifiedType.getQualifiers()) {
             GLSLQualifier.Qualifier qualifier = glslQualifier.getQualifier();
-            if (qualifier == null) continue;
+            if (qualifier == null) {
+                continue;
+            }
 
             if (typeString.length() > 0) {
                 typeString.append(' ');
@@ -140,15 +143,20 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
 
         if (element instanceof GLSLIdentifier) {
             String parentDoc = getDocumentation(parent, null);
-            if (parentDoc != null)
+            if (parentDoc != null){
                 return parentDoc;
+            }
 
             PsiReference reference = element.getReference();
-            if (reference == null && parent instanceof GLSLReferenceBase) reference = ((GLSLReferenceBase) parent);
+            if (reference == null && parent instanceof GLSLReferenceBase) {
+                reference = ((GLSLReferenceBase) parent);
+            }
 
             if (reference instanceof GLSLTypeReference) {
                 GLSLStructDefinition typeDef = ((GLSLTypeReference) reference).resolve();
-                if (typeDef == null) return null;
+                if (typeDef == null) {
+                    return null;
+                }
 
                 GLSLStructType type = typeDef.getType();
                 return getNamedTypedElementDocumentation(((GLSLIdentifier) element), type.getTypename());

@@ -52,10 +52,12 @@ public class GLSLFunctionDefinitionImpl extends GLSLFunctionDeclarationImpl impl
         }
 
         for (GLSLParameterDeclaration parameter : getParameters()) {
-            if (parameter == lastParent) // TODO(jp): sloppy, parameter is probably not direct child, so this will fail
+            if (parameter == lastParent) { // TODO(jp): sloppy, parameter is probably not direct child, so this will fail
                 continue;
-
-            if (!parameter.processDeclarations(processor, state, lastParent, place)) return false;
+            }
+            if (!parameter.processDeclarations(processor, state, lastParent, place)) {
+                return false;
+            }
         }
 
         return true;

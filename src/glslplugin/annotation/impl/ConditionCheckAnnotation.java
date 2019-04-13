@@ -36,8 +36,10 @@ public class ConditionCheckAnnotation extends Annotator<GLSLStatement> {
 
             if (condition != null) {
                 GLSLType conditionExpressionType = condition.getType();
-                if(!conditionExpressionType.isValidType())return;
-                if(conditionExpressionType != GLSLTypes.BOOL){
+                if (!conditionExpressionType.isValidType()) {
+                    return;
+                }
+                if (conditionExpressionType != GLSLTypes.BOOL) {
                     holder.createErrorAnnotation(condition, "Condition must be a boolean expression.");
                 }
             }

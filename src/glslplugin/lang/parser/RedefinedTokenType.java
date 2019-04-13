@@ -34,6 +34,6 @@ public class RedefinedTokenType extends ForeignLeafType {
 
     @Override
     public String toString() {
-        return "RedefinedTokenType("+getDelegate()+", '"+getValue()+"', "+ Arrays.toString(redefinedThrough)+")";
+        return "RedefinedTokenType(" + getDelegate() + ", '" + getValue() + "', " + Arrays.toString(redefinedThrough) + ")";
     }
 }

@@ -30,11 +30,11 @@ public class GLSLCreateFromTemplateHandler extends DefaultCreateFromTemplateHand
 
     public static final String DEFAULT_EXTENSION = "glsl";
 
-    private static void addTemplates(Map<String, FileTemplate> result, FileTemplate[] templates){
-        for(FileTemplate template:templates){
-            if(template.isTemplateOfType(GLSLSupportLoader.GLSL) && GLSLFileType.EXTENSIONS.contains(template.getExtension())){
+    private static void addTemplates(Map<String, FileTemplate> result, FileTemplate[] templates) {
+        for (FileTemplate template : templates) {
+            if (template.isTemplateOfType(GLSLSupportLoader.GLSL) && GLSLFileType.EXTENSIONS.contains(template.getExtension())) {
                 FileTemplate existing = result.get(template.getExtension());
-                if(existing == null){
+                if (existing == null) {
                     //Do not replace existing templates to keep well defined priority order
                     result.put(template.getExtension(), template);
                 }
@@ -46,7 +46,7 @@ public class GLSLCreateFromTemplateHandler extends DefaultCreateFromTemplateHand
      * Return map of extensions and their preferred template.
      * This map is obtained from taking all internal templates and overriding them with existing custom templates.
      */
-    private static Map<String, FileTemplate> getTemplates(Project project){
+    private static Map<String, FileTemplate> getTemplates(Project project) {
         final Map<String, FileTemplate> result = new HashMap<>();
         FileTemplateManager manager = FileTemplateManager.getInstance(project);
         addTemplates(result,manager.getInternalTemplates());
@@ -69,30 +69,30 @@ public class GLSLCreateFromTemplateHandler extends DefaultCreateFromTemplateHand
         //Make sure it has some extension
         int extensionDot = fileName.lastIndexOf('.');
         String extension;
-        if(extensionDot == -1){
+        if (extensionDot == -1) {
             extension = template.getExtension();
-            fileName = fileName+"."+extension;
-        }else{
-            extension = fileName.substring(extensionDot+1);
-            if(extension.isEmpty()){
+            fileName = fileName + "." + extension;
+        } else {
+            extension = fileName.substring(extensionDot + 1);
+            if (extension.isEmpty()) {
                 //Filename ends with a dot
                 extension = template.getExtension();
                 fileName = fileName + extension;
             } else {
                 //Do template replacement
                 FileTemplate alternateTemplate = templates.get(extension.toLowerCase());
-                if(alternateTemplate != null){
+                if (alternateTemplate != null) {
                     //There is a template defined for this
                     try {
                         templateText = alternateTemplate.getText(props);
                     } catch (IOException e) {
-                        throw new IncorrectOperationException("Failed to load template file.", (Throwable)e);
+                        throw new IncorrectOperationException("Failed to load template file.", (Throwable) e);
                     }
                 }
             }
         }
         //Make sure that the extension is valid
-        if(!templates.containsKey(extension.toLowerCase())){
+        if (!templates.containsKey(extension.toLowerCase())) {
             //Extension is not recognized, add recognized default one
             fileName = fileName + "." + DEFAULT_EXTENSION;
         }

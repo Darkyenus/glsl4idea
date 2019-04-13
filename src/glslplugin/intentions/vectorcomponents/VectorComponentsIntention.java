@@ -54,16 +54,16 @@ public class VectorComponentsIntention extends Intentions {
 
     protected void processIntention(PsiElement psiElement) {
         GLSLIdentifier elementTemp = null;
-        if(psiElement instanceof GLSLIdentifier){
+        if (psiElement instanceof GLSLIdentifier) {
             elementTemp = (GLSLIdentifier) psiElement;
-        }else{
+        } else {
             PsiElement parent = psiElement.getParent();
-            if(parent instanceof GLSLIdentifier){
+            if (parent instanceof GLSLIdentifier) {
                 elementTemp = (GLSLIdentifier) parent;
             }
         }
-        if(elementTemp == null){
-            Logger.getInstance(VectorComponentsIntention.class).warn("Could not find GLSLIdentifier for psiElement: "+psiElement);
+        if (elementTemp == null) {
+            Logger.getInstance(VectorComponentsIntention.class).warn("Could not find GLSLIdentifier for psiElement: " + psiElement);
             return;
         }
         final GLSLIdentifier element = elementTemp;

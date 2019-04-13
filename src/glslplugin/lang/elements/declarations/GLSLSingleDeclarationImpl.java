@@ -40,7 +40,7 @@ public abstract class GLSLSingleDeclarationImpl extends GLSLDeclarationImpl impl
     @NotNull
     public String getName() {
         final GLSLDeclarator declarator = getDeclarator();
-        if(declarator != null){
+        if (declarator != null) {
             return declarator.getName();
         }
         return "(unknown)";
@@ -61,9 +61,9 @@ public abstract class GLSLSingleDeclarationImpl extends GLSLDeclarationImpl impl
     @Nullable
     public GLSLDeclarator getDeclarator() {
         GLSLDeclarator[] declarators = getDeclarators();
-        if(declarators.length == 0){
+        if (declarators.length == 0) {
             return null;
-        }else{
+        } else {
             return declarators[0];
         }
     }

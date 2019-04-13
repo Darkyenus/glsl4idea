@@ -41,15 +41,17 @@ public class DeclarationAssignmentTypeAnnotation extends Annotator<GLSLVariableD
 
     @Override
     public void annotate(GLSLVariableDeclaration expr, AnnotationHolder holder) {
-        for(final GLSLDeclarator declarator:expr.getDeclarators()){
+        for (final GLSLDeclarator declarator : expr.getDeclarators()) {
             final GLSLType variableType = declarator.getType();
             final GLSLExpression initializer = declarator.getInitializerExpression();
 
-            if(variableType.isValidType() && initializer != null){
+            if (variableType.isValidType() && initializer != null) {
                 final GLSLType assignedType = initializer.getType();
-                if(!assignedType.isValidType())continue;
-                if(GLSLTypeCompatibilityLevel.getCompatibilityLevel(assignedType, variableType) == GLSLTypeCompatibilityLevel.INCOMPATIBLE){
-                    holder.createErrorAnnotation(initializer,"Can't assign '"+assignedType.getTypename()+"' to '"+variableType.getTypename()+"'");
+                if (!assignedType.isValidType()) {
+                    continue;
+                }
+                if (GLSLTypeCompatibilityLevel.getCompatibilityLevel(assignedType, variableType) == GLSLTypeCompatibilityLevel.INCOMPATIBLE) {
+                    holder.createErrorAnnotation(initializer, "Can't assign '" + assignedType.getTypename() + "' to '" + variableType.getTypename() + "'");
                 }
             }
         }

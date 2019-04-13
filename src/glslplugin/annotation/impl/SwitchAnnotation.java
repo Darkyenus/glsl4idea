@@ -33,10 +33,14 @@ public class SwitchAnnotation extends Annotator<GLSLSwitchStatement> {
     @Override
     public void annotate(GLSLSwitchStatement expr, AnnotationHolder holder) {
         final GLSLExpression switchCondition = expr.getSwitchCondition();
-        if (switchCondition == null) return;
+        if (switchCondition == null) {
+            return;
+        }
 
         final GLSLType switchConditionType = switchCondition.getType();
-        if (!switchConditionType.isValidType()) return;
+        if (!switchConditionType.isValidType()) {
+            return;
+        }
 
         if (!GLSLScalarType.isIntegerScalar(switchConditionType)) {
             holder.createErrorAnnotation(switchCondition, "Expression must be of integer scalar type");

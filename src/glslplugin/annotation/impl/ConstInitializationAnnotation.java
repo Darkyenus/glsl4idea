@@ -13,8 +13,12 @@ import org.jetbrains.annotations.NotNull;
 public class ConstInitializationAnnotation extends Annotator<GLSLDeclarator> {
     @Override
     public void annotate(GLSLDeclarator declarator, AnnotationHolder holder) {
-        if (declarator.findParentByClass(GLSLVariableDeclaration.class) == null) return;
-        if (declarator.getInitializer() != null || declarator.getInitializerExpression() != null) return;
+        if (declarator.findParentByClass(GLSLVariableDeclaration.class) == null) {
+            return;
+        }
+        if (declarator.getInitializer() != null || declarator.getInitializerExpression() != null) {
+            return;
+        }
 
         if (declarator.getQualifiedType().hasQualifier(GLSLQualifier.Qualifier.CONST)) {
             holder.createErrorAnnotation(declarator, "Const variable declared with no initializer");

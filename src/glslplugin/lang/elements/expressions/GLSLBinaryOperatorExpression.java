@@ -68,14 +68,22 @@ public class GLSLBinaryOperatorExpression extends GLSLOperatorExpression {
     public Object getConstantValue() {
         GLSLExpression leftOperand = getLeftOperand();
         GLSLExpression rightOperand = getRightOperand();
-        if (leftOperand == null || rightOperand == null || !leftOperand.isConstantValue() || !rightOperand.isConstantValue()) return null;
+        if (leftOperand == null || rightOperand == null || !leftOperand.isConstantValue() || !rightOperand.isConstantValue()) {
+            return null;
+        }
         GLSLOperator operator = getOperator();
-        if (!(operator instanceof GLSLOperator.GLSLBinaryOperator)) return null;
+        if (!(operator instanceof GLSLOperator.GLSLBinaryOperator)) {
+            return null;
+        }
         GLSLOperator.GLSLBinaryOperator binaryOperator = (GLSLOperator.GLSLBinaryOperator) operator;
         GLSLType leftOperandType = leftOperand.getType();
         GLSLType rightOperandType = rightOperand.getType();
-        if (!leftOperandType.isValidType() || !rightOperandType.isValidType()) return null;
-        if (!binaryOperator.isValidInput(leftOperandType, rightOperandType)) return null;
+        if (!leftOperandType.isValidType() || !rightOperandType.isValidType()) {
+            return null;
+        }
+        if (!binaryOperator.isValidInput(leftOperandType, rightOperandType)) {
+            return null;
+        }
 
         return binaryOperator.getResultValue(leftOperand.getConstantValue(), rightOperand.getConstantValue());
     }

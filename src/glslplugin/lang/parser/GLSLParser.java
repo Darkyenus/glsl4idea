@@ -61,8 +61,9 @@ public class GLSLParser implements PsiParser, LightPsiParser {
             final GLSLParsing theRealParser = new GLSLParsing(builder);
 
             theRealParser.parseTranslationUnit();
-            while (!builder.eof()) // exhaust the file if unable to parse everything
+            while (!builder.eof()) { // exhaust the file if unable to parse everything
                 builder.advanceLexer();
+            }
         }
 
         rootMarker.done(root);

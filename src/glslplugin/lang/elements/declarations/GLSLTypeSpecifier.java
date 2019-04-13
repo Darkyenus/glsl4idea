@@ -51,10 +51,10 @@ public class GLSLTypeSpecifier extends GLSLElementImpl {
         GLSLArraySpecifier[] arrayDimensions = findChildrenByClass(GLSLArraySpecifier.class);
         if (reference != null) {
             final GLSLType type = reference.getType();
-            if(arrayDimensions.length == 0){
+            if (arrayDimensions.length == 0) {
                 //It is not an array type
                 return type;
-            }else{
+            } else {
                 //It is an array type
                 int[] dimensions = new int[arrayDimensions.length];
                 for (int i = 0; i < dimensions.length; i++) {

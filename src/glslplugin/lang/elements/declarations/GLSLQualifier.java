@@ -116,16 +116,22 @@ public class GLSLQualifier extends GLSLElementImpl {
     @Nullable
     public Qualifier getQualifier() {
         PsiElement qualifier = getFirstChild();
-        if(qualifier == null)return null;
+        if (qualifier == null) {
+            return null;
+        }
         ASTNode qualifierNode = qualifier.getNode();
-        if(qualifierNode == null)return null;
+        if (qualifierNode == null) {
+            return null;
+        }
         return getQualifierFromType(qualifierNode.getElementType());
     }
 
     @Nullable
     public GLSLTypeQualifier getQualifierType() {
         Qualifier qualifier = getQualifier();
-        if(qualifier == null)return null;
+        if (qualifier == null) {
+            return null;
+        }
         return qualifier.getType();
     }
 

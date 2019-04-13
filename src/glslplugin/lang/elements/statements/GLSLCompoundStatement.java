@@ -57,7 +57,9 @@ public class GLSLCompoundStatement extends GLSLStatement {
 
         for (GLSLStatement statement : getStatements()) {
             TerminatorScope childScope = statement.getTerminatorScope();
-            if (childScope != TerminatorScope.NONE) return childScope;
+            if (childScope != TerminatorScope.NONE) {
+                return childScope;
+            }
         }
         return TerminatorScope.NONE;
     }
@@ -71,9 +73,12 @@ public class GLSLCompoundStatement extends GLSLStatement {
         }
 
         for (GLSLStatement statement : getStatements()) {
-            if (statement == null)
+            if (statement == null) {
                 continue;
-            if (!statement.processDeclarations(processor, state, lastParent, place)) return false;
+            }
+            if (!statement.processDeclarations(processor, state, lastParent, place)) {
+                return false;
+            }
         }
 
         return true;

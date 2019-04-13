@@ -38,10 +38,11 @@ public class GLSLCondition extends GLSLElementImpl implements GLSLTypedElement {
     @Nullable
     private GLSLDeclarator getDeclarator() {
         GLSLVariableDeclaration declaration = getVariableDeclaration();
-        if(declaration != null) {
+        if (declaration != null) {
             GLSLDeclarator[] declarators = declaration.getDeclarators();
-            if(declarators.length > 0)
+            if (declarators.length > 0) {
                 return declarators[0];
+            }
         }
         return null;
     }
@@ -49,8 +50,9 @@ public class GLSLCondition extends GLSLElementImpl implements GLSLTypedElement {
     @Nullable
     public GLSLExpression getConditionExpression() {
         GLSLDeclarator declarator = getDeclarator();
-        if(declarator != null)
+        if(declarator != null) {
             return declarator.getInitializerExpression();
+        }
         return findChildByClass(GLSLExpression.class);
     }
 
@@ -66,20 +68,20 @@ public class GLSLCondition extends GLSLElementImpl implements GLSLTypedElement {
     @Override
     public GLSLType getType() {
         GLSLVariableDeclaration declaration = getVariableDeclaration();
-        if(declaration != null) {
+        if (declaration != null) {
             GLSLDeclarator[] declarators = declaration.getDeclarators();
-            if(declarators.length == 0){
+            if (declarators.length == 0) {
                 return GLSLTypes.UNKNOWN_TYPE;
-            }else{
+            } else {
                 //There should be only one declarator, but if there is more, use the type of the last one
                 return declarators[declarators.length - 1].getType();
             }
         }
 
         GLSLExpression conditionExpression = getConditionExpression();
-        if(conditionExpression == null){
+        if (conditionExpression == null) {
             return GLSLTypes.UNKNOWN_TYPE;
-        }else{
+        } else {
             return conditionExpression.getType();
         }
     }

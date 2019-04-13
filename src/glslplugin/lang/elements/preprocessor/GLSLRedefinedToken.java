@@ -38,7 +38,9 @@ public class GLSLRedefinedToken extends GLSLElementImpl implements PsiNameIdenti
 
         //It shouldn't happen anymore though
         final PsiElement name = getNameIdentifier();
-        if(name == null)return getText();
+        if (name == null) {
+            return getText();
+        }
         return name.getText();
     }
 
@@ -46,7 +48,9 @@ public class GLSLRedefinedToken extends GLSLElementImpl implements PsiNameIdenti
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
         //TODO Check name by spec
         final PsiElement currentIdentifier = getNameIdentifier();
-        if (currentIdentifier == null) throw new IncorrectOperationException("Invalid reference");
+        if (currentIdentifier == null) {
+            throw new IncorrectOperationException("Invalid reference");
+        }
         PsiElement newName = GLSLPsiElementFactory.createLeafElement(getProject(), name);
         getNode().replaceChild(currentIdentifier.getNode(), newName.getNode());
         return newName;

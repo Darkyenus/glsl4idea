@@ -18,16 +18,23 @@ public class ConstModificationAnnotation extends Annotator<GLSLAssignmentExpress
     @Override
     public void annotate(GLSLAssignmentExpression assignment, AnnotationHolder holder) {
         GLSLExpression expr = assignment.getLeftOperand();
-        if (expr == null) return;
+        if (expr == null) {
+            return;
+        }
 
         PsiReference reference = expr.getReference();
-        if (reference == null && expr instanceof GLSLReferenceElement)
+        if (reference == null && expr instanceof GLSLReferenceElement){
             reference = ((GLSLReferenceElement) expr).getReferenceProxy();
+        }
 
-        if (reference == null) return;
+        if (reference == null) {
+            return;
+        }
 
         PsiElement declarator = reference.resolve();
-        if (!(declarator instanceof GLSLDeclarator)) return;
+        if (!(declarator instanceof GLSLDeclarator)) {
+            return;
+        }
 
         if (((GLSLDeclarator) declarator).getQualifiedType().hasQualifier(GLSLQualifier.Qualifier.CONST)) {
             holder.createErrorAnnotation(expr, "Cannot assign to const variable");

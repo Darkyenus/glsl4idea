@@ -36,7 +36,9 @@ public class LValueAnnotator extends Annotator<GLSLAssignmentExpression> {
 
     public void annotate(GLSLAssignmentExpression expr, AnnotationHolder holder) {
         GLSLExpression left = expr.getLeftOperand();
-        if(left == null)return;
+        if (left == null) {
+            return;
+        }
 
         if (!left.isLValue()) {
             holder.createErrorAnnotation(left, "Left operand of assignment expression is not L-Value.");

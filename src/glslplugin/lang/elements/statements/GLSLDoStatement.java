@@ -53,10 +53,14 @@ public class GLSLDoStatement extends GLSLStatement implements ConditionStatement
         // The terminator scope of a do-while loop is the scope of its inner statement, unless its scope is LOOP
         // (which would be breaking out of this loop, and so wouldn't affect any outer loop)
         GLSLStatement statement = PsiTreeUtil.getChildOfType(this, GLSLStatement.class);
-        if (statement == null) return TerminatorScope.NONE;
+        if (statement == null) {
+            return TerminatorScope.NONE;
+        }
 
         TerminatorScope scope = statement.getTerminatorScope();
-        if (scope == TerminatorScope.LOOP) scope = TerminatorScope.NONE;
+        if (scope == TerminatorScope.LOOP) {
+            scope = TerminatorScope.NONE;
+        }
         return scope;
     }
 }

@@ -30,14 +30,14 @@ public class GLSLFunctionTreeElement extends GLSLStructureViewTreeElement<GLSLFu
     }
 
     protected GLSLPresentation createPresentation(@NotNull GLSLFunctionDeclaration function) {
-        if(function instanceof GLSLFunctionDefinition) {
+        if (function instanceof GLSLFunctionDefinition) {
             return GLSLPresentation.createMethodPresentation(function.getSignature());
         } else {
             return GLSLPresentation.createPrototypePresentation(function.getSignature());
         }
     }
 
-    protected void createChildren(@NotNull GLSLFunctionDeclaration glslFunctionDeclaration) {}
+    protected void createChildren(@NotNull GLSLFunctionDeclaration glslFunctionDeclaration) { }
 
     @Override
     protected int visualTreeOrder() {

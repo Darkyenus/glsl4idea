@@ -15,7 +15,7 @@ public class Utils {
 	}
 
 	/** Escapes given text to be used directly inside HTML. */
-	public static String escapeHtml(String text){
+	public static String escapeHtml(String text) {
 		// https://www.w3.org/International/questions/qa-escapes
 		StringBuilder escaped = null;
 		for (int i = 0; i < text.length(); i++) {

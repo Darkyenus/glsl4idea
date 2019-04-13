@@ -81,9 +81,11 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
     @Nullable
     public GLSLElement getInitializerElement() {
         GLSLElement[] forElements = getForElements();
-        if(forElements.length > 0){
+        if (forElements.length > 0) {
             return forElements[0];
-        }else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -95,9 +97,11 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
     @Nullable
     public GLSLCondition getCondition() {
         GLSLElement[] forElements = getForElements();
-        if(forElements.length > 1 && forElements[1] instanceof GLSLCondition){
+        if (forElements.length > 1 && forElements[1] instanceof GLSLCondition) {
             return (GLSLCondition) forElements[1];
-        }else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -109,9 +113,11 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
     @Nullable
     public GLSLExpression getCountExpression() {
         GLSLElement[] forElements = getForElements();
-        if(forElements.length > 2 && forElements[2] instanceof GLSLExpression){
+        if (forElements.length > 2 && forElements[2] instanceof GLSLExpression) {
             return (GLSLExpression) forElements[2];
-        }else return null;
+        } else {
+            return null;
+        }
     }
 
     @Nullable

@@ -63,7 +63,9 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
         IElementType type = getNode().getFirstChildNode().getElementType();
 
         Type result = getLiteralType(type);
-        if(result != null)return result;
+        if (result != null) {
+            return result;
+        }
 
         Logger.getLogger("GLSLLiteral").warning("Unsupported literal type. ("+type+")");
         return null;
@@ -83,9 +85,9 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
     @Override
     public GLSLType getType() {
         Type literalType = getLiteralType();
-        if(literalType != null){
+        if (literalType != null) {
             return literalType.type;
-        }else{
+        } else {
             return GLSLTypes.UNKNOWN_TYPE;
         }
     }
@@ -105,24 +107,32 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
     public Object getConstantValue() {
         final Type literalType = getLiteralType();
         final String text = getText();
-        if(literalType == null)return null;
-        switch (literalType){
+        if (literalType == null) {
+            return null;
+        }
+        switch (literalType) {
             case BOOL:
-                if("true".equals(text))return true;
-                else if("false".equals(text))return false;
-                else return null;
+                if ("true".equals(text)) {
+                    return true;
+                }
+                else if ("false".equals(text)) {
+                    return false;
+                }
+                else {
+                    return null;
+                }
             case INTEGER:
             case UINT:
-                try{
+                try {
                     return Long.parseLong(text);
-                }catch (NumberFormatException nfe){
+                } catch (NumberFormatException nfe) {
                     return null;
                 }
             case FLOAT:
             case DOUBLE:
-                try{
+                try {
                     return Double.parseDouble(text);
-                }catch (NumberFormatException nfe){
+                } catch (NumberFormatException nfe) {
                     return null;
                 }
             default:

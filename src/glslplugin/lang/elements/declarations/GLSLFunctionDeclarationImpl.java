@@ -45,7 +45,9 @@ public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl imple
     @NotNull
     public GLSLParameterDeclaration[] getParameters() {
         GLSLDeclarationList parameterList = getParameterList();
-        if(parameterList == null)return GLSLParameterDeclaration.NO_PARAMETER_DECLARATIONS;
+        if (parameterList == null) {
+            return GLSLParameterDeclaration.NO_PARAMETER_DECLARATIONS;
+        }
         return castToParameters(parameterList.getDeclarations());
     }
 
@@ -53,9 +55,9 @@ public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl imple
     @Override
     public GLSLType getReturnType() {
         GLSLTypeSpecifier typeSpecifier = findChildByClass(GLSLTypeSpecifier.class);
-        if(typeSpecifier == null){
+        if (typeSpecifier == null) {
             return GLSLTypes.UNKNOWN_TYPE;
-        }else{
+        } else {
             return typeSpecifier.getType();
         }
     }
@@ -109,9 +111,9 @@ public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl imple
         final GLSLType[] parameterTypes = new GLSLType[parameterDeclarations.length];
         for (int i = 0; i < parameterDeclarations.length; i++) {
             GLSLDeclarator declarator = parameterDeclarations[i].getDeclarator();
-            if(declarator == null){
+            if (declarator == null) {
                 parameterTypes[i] = GLSLTypes.UNKNOWN_TYPE;
-            }else{
+            } else {
                 parameterTypes[i] = declarator.getType();
             }
         }
@@ -128,21 +130,27 @@ public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl imple
     @Override
     public GLSLIdentifier getNameIdentifier() {
         final GLSLDeclarator declarator = getDeclarator();
-        if(declarator == null)return null;
+        if (declarator == null) {
+            return null;
+        }
         return declarator.getNameIdentifier();
     }
 
     @Override
     public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
         final GLSLIdentifier nameIdentifier = getNameIdentifier();
-        if(nameIdentifier == null)throw new IncorrectOperationException("GLSLDeclarator is null");
+        if (nameIdentifier == null) {
+            throw new IncorrectOperationException("GLSLDeclarator is null");
+        }
         return nameIdentifier.setName(name);
     }
 
     @Override
     public void checkSetName(String name) throws IncorrectOperationException {
         final GLSLIdentifier nameIdentifier = getNameIdentifier();
-        if(nameIdentifier == null)throw new IncorrectOperationException("GLSLDeclarator is null");
+        if (nameIdentifier == null) {
+            throw new IncorrectOperationException("GLSLDeclarator is null");
+        }
         nameIdentifier.checkSetName(name);
     }
 }

@@ -23,7 +23,9 @@ public class GLSLDefineDirective extends GLSLPreprocessorDirective implements Ps
     public PsiElement getNameIdentifier() {
         PsiElement child = getFirstChild();
         while (child != null) { // we can't iterate over getChildren(), as that ignores leaf elements
-            if (child.getNode().getElementType() == GLSLTokenTypes.IDENTIFIER) return child;
+            if (child.getNode().getElementType() == GLSLTokenTypes.IDENTIFIER) {
+                return child;
+            }
             child = child.getNextSibling();
         }
         return null;
@@ -41,19 +43,25 @@ public class GLSLDefineDirective extends GLSLPreprocessorDirective implements Ps
     @NotNull
     public String getBoundText(){
         final PsiElement name = getNameIdentifier();
-        if(name == null)return "";
+        if (name == null) {
+            return "";
+        }
 
         int textStart = name.getTextOffset() + name.getTextLength();
         int textEnd = getTextOffset() + getTextLength();
         final String text = getContainingFile().getText();
-        if(textStart >= textEnd || textStart < 0 || textEnd > text.length()) return "";
+        if (textStart >= textEnd || textStart < 0 || textEnd > text.length()) {
+            return "";
+        }
         return text.substring(textStart, textEnd).trim();
     }
 
     @Override
     public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
         final PsiElement oldName = getNameIdentifier();
-        if (oldName == null) throw new IncorrectOperationException();
+        if (oldName == null) {
+            throw new IncorrectOperationException();
+        }
         PsiElement newName = GLSLPsiElementFactory.createLeafElement(getProject(), name);
         getNode().replaceChild(oldName.getNode(), newName.getNode());
         return this;

@@ -57,7 +57,9 @@ public class GLSLDeclarationStatement extends GLSLStatement {
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
         GLSLVariableDeclaration declaration = getDeclaration();
-        if (declaration == null) return true;
+        if (declaration == null) {
+            return true;
+        }
         return declaration.processDeclarations(processor, state, lastParent, place);
     }
 }

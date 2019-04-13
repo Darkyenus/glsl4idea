@@ -27,8 +27,12 @@ public class GLSLSwitchStatement extends GLSLStatement {
     @NotNull
     public GLSLStatement[] getSwitchBodyStatements() {
         final GLSLCompoundStatement body = findChildByClass(GLSLCompoundStatement.class);
-        if (body != null) return body.getStatements();
-        else return GLSLStatement.NO_STATEMENTS;
+        if (body != null) {
+            return body.getStatements();
+        }
+        else {
+            return GLSLStatement.NO_STATEMENTS;
+        }
     }
 
     @NotNull

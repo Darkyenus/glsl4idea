@@ -71,15 +71,15 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
             GLSLType type = expr.getType();
             typename = type.getTypename();
 
-            if(expr.isConstantValue()){
+            if (expr.isConstantValue()) {
                 final Object constValue = expr.getConstantValue();
-                if(constValue != null){
+                if (constValue != null) {
                     value = constValue.toString();
                 }
             }
         }
 
-        if(expressionText == null && element != null){
+        if (expressionText == null && element != null) {
             expressionText = element.getText();
         }
 
@@ -89,14 +89,16 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
-        if(psiFile != null){
+        if (psiFile != null) {
             e.getPresentation().setEnabledAndVisible(GLSLLanguage.GLSL_LANGUAGE.equals(psiFile.getLanguage()));
         }
     }
 
     private void showBalloon(AnActionEvent e, String html) {
         final Editor editor = e.getData(CommonDataKeys.EDITOR_EVEN_IF_INACTIVE);
-        if(editor == null) return;
+        if (editor == null) {
+            return;
+        }
         final JBPopupFactory factory = JBPopupFactory.getInstance();
         final BalloonBuilder builder = factory.createBalloonBuilder(new JLabel(html));
         Balloon balloon = builder.createBalloon();
@@ -118,7 +120,7 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
         b.append("<tr><th align='right'>Type:</th>");
         b.append("<td>").append(type).append("</td></tr>");
 
-        if(value != null){
+        if (value != null) {
             b.append("<tr><th align='right'>Value:</th>");
             b.append("<td>").append(value).append("</td></tr>");
         }
@@ -129,16 +131,18 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
     }
 
     private static String makeTypenameHtml(String type) {
-        if (type == null) return  "unable to deduce type";
+        if (type == null) {
+            return  "unable to deduce type";
+        }
         else return  "<code>" + escapeHtml(type) + "</code>";
     }
 
     private static String makeExpressionTextHtml(String expression, boolean valid) {
-        if(valid){
+        if (valid) {
             return "<code>" + escapeHtml(expression) + "</code>";
-        }else if(expression != null){
+        } else if (expression != null) {
             return "<code>" + escapeHtml(expression) + "</code> (Not an expression)";
-        }else{
+        } else {
             return "selection is not an expression";
         }
     }
@@ -163,7 +167,9 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
     private static PsiElement getElementInclusiveRange(PsiElement scope, TextRange range) {
         PsiElement psiElement = scope.findElementAt(range.getStartOffset());
         while (psiElement != null && !psiElement.getTextRange().contains(range)) {
-            if (psiElement == scope) return null;
+            if (psiElement == scope) {
+                return null;
+            }
             psiElement = psiElement.getParent();
         }
         return psiElement;

@@ -60,7 +60,9 @@ public class GLSLQualifiedType {
 
     public boolean hasQualifier(GLSLQualifier.Qualifier qualifier) {
         for (GLSLQualifier candidate : getQualifiers()) {
-            if (candidate.getQualifier() == qualifier) return true;
+            if (candidate.getQualifier() == qualifier) {
+                return true;
+            }
         }
         return false;
     }

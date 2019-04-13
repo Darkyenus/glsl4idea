@@ -106,8 +106,10 @@ public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifier
      * Clarifies array dimensions if this defines implicitly sized array by initializer.
      * Does nothing otherwise.
      */
-    private GLSLType clarifyArrayType(GLSLType baseType){
-        if(!(baseType instanceof GLSLArrayType))return baseType; //No need to clarify non-array types
+    private GLSLType clarifyArrayType(GLSLType baseType) {
+        if (!(baseType instanceof GLSLArrayType)) {
+            return baseType; //No need to clarify non-array types
+        }
         final GLSLArrayType myArrayType = (GLSLArrayType) baseType;
         final int[] myDimensions = myArrayType.getDimensions();
 
@@ -135,14 +137,14 @@ public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifier
 
         {   //Try clarifying using expression
             GLSLExpression rawExpression = getInitializerExpression();
-            if(rawExpression != null){
+            if (rawExpression != null) {
                 GLSLType type = rawExpression.getType();
-                if(type instanceof GLSLArrayType){
+                if (type instanceof GLSLArrayType) {
                     GLSLArrayType arrayType = (GLSLArrayType) type;
                     //Great, it is being correctly initialized, try to copy as many missing dimensions as we can
                     final int[] dimensions = arrayType.getDimensions();
                     for (int i = 0; i < myDimensions.length && i < dimensions.length; i++) {
-                        if(myDimensions[i] == GLSLArrayType.UNDEFINED_SIZE_DIMENSION){
+                        if (myDimensions[i] == GLSLArrayType.UNDEFINED_SIZE_DIMENSION) {
                             //Copy that
                             myDimensions[i] = dimensions[i];
                         }
@@ -158,20 +160,26 @@ public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifier
     @NotNull
     public GLSLType getType() {
         GLSLDeclaration declaration = getParentDeclaration();
-        if(declaration == null)return GLSLTypes.UNKNOWN_TYPE;
+        if (declaration == null) {
+            return GLSLTypes.UNKNOWN_TYPE;
+        }
         GLSLTypeSpecifier declarationType = declaration.getTypeSpecifierNode();
-        if(declarationType == null)return GLSLTypes.UNKNOWN_TYPE;
+        if (declarationType == null) {
+            return GLSLTypes.UNKNOWN_TYPE;
+        }
 
         GLSLType declaredType = declarationType.getType();
-        if(!declaredType.isValidType())return GLSLTypes.UNKNOWN_TYPE;
+        if (!declaredType.isValidType()) {
+            return GLSLTypes.UNKNOWN_TYPE;
+        }
 
         GLSLArraySpecifier[] arraySpecifiers = findChildrenByClass(GLSLArraySpecifier.class);
-        if(arraySpecifiers.length == 0){
+        if (arraySpecifiers.length == 0) {
             return clarifyArrayType(declaredType);
-        }else{
+        } else {
             //Must _prepend_ some dimensions to the type
             //In: "vec4[2][4] b[3]" b is "vec4[3][2][4]", not "vec4[2][4][3]"
-            if(declaredType instanceof GLSLArrayType){
+            if (declaredType instanceof GLSLArrayType) {
                 //Already an array, must append the dimensions
                 GLSLArrayType declaredArrayType = (GLSLArrayType) declaredType;
                 int[] existingDimensions = declaredArrayType.getDimensions();
@@ -181,7 +189,7 @@ public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifier
                     combinedDimensions[i] = arraySpecifiers[i].getDimensionSize();
                 }
                 return clarifyArrayType(new GLSLArrayType(declaredArrayType.getBaseType(), combinedDimensions));
-            }else{
+            } else {
                 int[] dimensions = new int[arraySpecifiers.length];
                 for (int i = 0; i < dimensions.length; i++) {
                     dimensions[i] = arraySpecifiers[i].getDimensionSize();
@@ -195,7 +203,9 @@ public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifier
     public GLSLQualifiedType getQualifiedType() {
         final GLSLType type = getType();
         final GLSLDeclaration declaration = getParentDeclaration();
-        if(declaration == null || declaration.getQualifierList() == null)return new GLSLQualifiedType(type);
+        if (declaration == null || declaration.getQualifierList() == null) {
+            return new GLSLQualifiedType(type);
+        }
         return new GLSLQualifiedType(type, declaration.getQualifierList().getQualifiers());
     }
 

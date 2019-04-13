@@ -67,8 +67,7 @@ public class GLSLScalarType extends GLSLType {
     }
 
     public boolean isConvertibleTo(GLSLType otherType) {
-        return otherType.isValidType() &&
-                (typeEquals(otherType) || implicitConversions.contains(otherType));
+        return otherType.isValidType() && (typeEquals(otherType) || implicitConversions.contains(otherType));
     }
 
     @Override
@@ -87,9 +86,9 @@ public class GLSLScalarType extends GLSLType {
     @NotNull
     @Override
     public GLSLType getMemberType(String member) {
-        if(hasMember(member)){
+        if (hasMember(member)) {
             return this;
-        }else{
+        } else {
             return GLSLTypes.UNKNOWN_TYPE;
         }
     }
@@ -103,7 +102,7 @@ public class GLSLScalarType extends GLSLType {
     @NotNull
     @Override
     public GLSLFunctionType[] getConstructors() {
-        if(constructorsCache == null){
+        if (constructorsCache == null) {
             final GLSLFunctionType[] constructorsCache = this.constructorsCache = new GLSLFunctionType[SCALARS.length];
             for (int i = 0; i < SCALARS.length; i++) {
                 constructorsCache[i] = new GLSLBasicConstructorType(null, this, SCALARS[i]);
