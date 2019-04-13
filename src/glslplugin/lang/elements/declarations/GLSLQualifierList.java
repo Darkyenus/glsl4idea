@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -47,7 +48,7 @@ public class GLSLQualifierList extends GLSLElementImpl implements Iterable<GLSLQ
     @Override
     @NotNull
     public Iterator<GLSLQualifier> iterator() {
-        return java.util.Arrays.asList(getQualifiers()).iterator();
+        return Arrays.asList(getQualifiers()).iterator();
     }
 
     @Override

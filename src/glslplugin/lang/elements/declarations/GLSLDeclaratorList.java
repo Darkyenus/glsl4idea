@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -50,6 +51,6 @@ public class GLSLDeclaratorList extends GLSLElementImpl implements Iterable<GLSL
     @NotNull
     @Override
     public Iterator<GLSLDeclarator> iterator() {
-        return java.util.Arrays.asList(getDeclarators()).iterator();
+        return Arrays.asList(getDeclarators()).iterator();
     }
 }

@@ -20,13 +20,14 @@
 package glslplugin.lang.elements;
 
 import com.intellij.lang.Language;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import glslplugin.GLSLSupportLoader;
 import glslplugin.lang.GLSLLanguage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public class GLSLElementType extends com.intellij.psi.tree.IElementType {
+public class GLSLElementType extends IElementType {
     public static final IFileElementType FILE = new IFileElementType(Language.findInstance(GLSLLanguage.class));
 
     public GLSLElementType(@NotNull @NonNls String s) {

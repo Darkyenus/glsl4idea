@@ -22,6 +22,10 @@ package glslplugin.lang.scanner;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
+
+import java.io.IOException;
+import java.io.Reader;
+
 import static glslplugin.lang.elements.GLSLTokenTypes.*;
 
 
@@ -1029,7 +1033,7 @@ class GLSLFlexLexer implements FlexLexer {
   }
 
   /** the input device */
-  private java.io.Reader zzReader;
+  private Reader zzReader;
 
   /** the current state of the DFA */
   private int zzState;
@@ -1073,7 +1077,7 @@ class GLSLFlexLexer implements FlexLexer {
    *
    * @param   in  the java.io.Reader to read input from.
    */
-  GLSLFlexLexer(java.io.Reader in) {
+  GLSLFlexLexer(Reader in) {
     this.zzReader = in;
   }
 
@@ -1122,9 +1126,9 @@ class GLSLFlexLexer implements FlexLexer {
    *
    * @return      <code>false</code>, iff there was new input.
    *
-   * @exception   java.io.IOException  if any I/O-Error occurs
+   * @exception   IOException  if any I/O-Error occurs
    */
-  private boolean zzRefill() throws java.io.IOException {
+  private boolean zzRefill() throws IOException {
     return true;
   }
 
@@ -1227,9 +1231,9 @@ class GLSLFlexLexer implements FlexLexer {
    * the end of input is encountered or an I/O-Error occurs.
    *
    * @return      the next token
-   * @exception   java.io.IOException  if any I/O-Error occurs
+   * @exception   IOException  if any I/O-Error occurs
    */
-  public IElementType advance() throws java.io.IOException {
+  public IElementType advance() throws IOException {
     int zzInput;
     int zzAction;
 

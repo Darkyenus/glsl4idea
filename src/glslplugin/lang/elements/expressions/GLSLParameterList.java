@@ -28,6 +28,7 @@ import glslplugin.lang.elements.types.GLSLType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -89,7 +90,7 @@ public class GLSLParameterList extends GLSLElementImpl implements Iterable<GLSLE
     @NotNull
     @Override
     public Iterator<GLSLExpression> iterator() {
-        return java.util.Arrays.asList(getParameters()).iterator();
+        return Arrays.asList(getParameters()).iterator();
     }
 
     @Override

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Base class for all annotators.
- * Registered in {@link glslplugin.annotation.Annotator}.
+ * Registered in {@link Annotator}.
  */
 public abstract class Annotator<T extends PsiElement> {
 

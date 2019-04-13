@@ -57,7 +57,7 @@ public abstract class GLSLDeclarationImpl extends GLSLElementImpl implements GLS
      * <b>WARNING!</b>
      * <p/>
      * This is not a complete type of any variable as a declarator may contain an array specifier.
-     * For the complete type use {@link glslplugin.lang.elements.declarations.GLSLDeclarator#getType()} instead.
+     * For the complete type use {@link GLSLDeclarator#getType()} instead.
      *
      * @return the type specifier or null if declaration is malformed
      */

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * GLSLFunctionDeclaration represents a function declaration.
- * It inherits the name, qualifier and (return) type from {@link glslplugin.lang.elements.declarations.GLSLDeclaration}
+ * It inherits the name, qualifier and (return) type from {@link GLSLDeclaration}
  * and adds the parameter list.
  */
 public interface GLSLFunctionDeclaration extends GLSLSingleDeclaration {

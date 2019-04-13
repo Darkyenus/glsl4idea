@@ -44,8 +44,8 @@ public class GLSLArraySpecifier extends GLSLElementImpl {
 
     /**
      * Size of dimension which this specifier denotes.
-     * For dimension of yet unknown length, {@link glslplugin.lang.elements.types.GLSLArrayType#UNDEFINED_SIZE_DIMENSION} is returned.
-     * For dimension of length known only at runtime, {@link glslplugin.lang.elements.types.GLSLArrayType#DYNAMIC_SIZE_DIMENSION} is returned.
+     * For dimension of yet unknown length, {@link GLSLArrayType#UNDEFINED_SIZE_DIMENSION} is returned.
+     * For dimension of length known only at runtime, {@link GLSLArrayType#DYNAMIC_SIZE_DIMENSION} is returned.
      */
     public int getDimensionSize() {
         GLSLExpression sizeExpression = getSizeExpression();
