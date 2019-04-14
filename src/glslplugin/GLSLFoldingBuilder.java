@@ -50,7 +50,7 @@ public class GLSLFoldingBuilder implements FoldingBuilder {
             return;
         }
 
-        if (type == GLSLTokenTypes.COMMENT_BLOCK || type == GLSLElementTypes.COMPOUND_STATEMENT) {
+        if (type == GLSLTokenTypes.COMMENT_BLOCK || type == GLSLElementTypes.COMPOUND_STATEMENT || type == GLSLElementTypes.PREPROCESSOR_CONDITIONAL_BLOCK) {
             descriptors.add(new FoldingDescriptor(node, textRange));
         }
 
@@ -65,7 +65,7 @@ public class GLSLFoldingBuilder implements FoldingBuilder {
         if (node.getElementType() == GLSLTokenTypes.COMMENT_BLOCK) {
             return "/*...*/";
         }
-        if (node.getElementType() == GLSLElementTypes.COMPOUND_STATEMENT) {
+        if (node.getElementType() == GLSLElementTypes.COMPOUND_STATEMENT || node.getElementType() == GLSLElementTypes.PREPROCESSOR_CONDITIONAL_BLOCK) {
             return "{...}";
         }
         return null;

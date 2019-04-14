@@ -92,11 +92,12 @@ public final class GLSLParsing extends GLSLParsingBase {
             if (conditionalBlockMarkers.empty()) {
                 b.error("Missing corresponding #if");
             } else {
-                conditionalBlockMarkers.pop().done(PREPROCESSOR_CONDITIONAL_BLOCK);
+                PsiBuilder.Marker startMarker = preprocessor;
+                if (startMarker instanceof MultiRemapPsiBuilderAdapter.DelegateMarker) {
+                    startMarker = ((MultiRemapPsiBuilderAdapter.DelegateMarker) startMarker).getDelegate();
+                }
+                conditionalBlockMarkers.pop().doneBefore(PREPROCESSOR_CONDITIONAL_BLOCK, startMarker);
             }
-            consumeRestOfPreprocessor();
-        } else if (PREPROCESSOR_CONDITIONAL_BLOCK_BEGIN.contains(directiveType)) {
-            conditionalBlockMarkers.push(b.mark());
             consumeRestOfPreprocessor();
         } else {
             //Some other directive, no work here
@@ -112,6 +113,10 @@ public final class GLSLParsing extends GLSLParsingBase {
             preprocessor.done(directiveType);
         }
         b.advanceLexer_remapTokens(); //Remap explicitly after advancing without remapping, makes mess otherwise
+
+        if (PREPROCESSOR_CONDITIONAL_BLOCK_BEGIN.contains(directiveType)) {
+            conditionalBlockMarkers.push(b.mark());
+        }
 
         if (b.getTokenType() == PREPROCESSOR_BEGIN) {
             parsePreprocessor();
