@@ -106,4 +106,6 @@ public class GLSLElementTypes {
     public static final IElementType PRECISION_STATEMENT = new GLSLElementType("PRECISION_STATEMENT");
 
     public static final IElementType CONDITION = new GLSLElementType("CONDITION");
+
+    public static final IElementType PREPROCESSOR_CONDITIONAL_BLOCK = new GLSLElementType("PREPROCESSOR_CONDITIONAL_BLOCK");
 }

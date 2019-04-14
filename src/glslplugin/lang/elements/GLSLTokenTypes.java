@@ -233,6 +233,20 @@ public class GLSLTokenTypes {
             PREPROCESSOR_CONCAT,
             PREPROCESSOR_OTHER);
 
+    public static final TokenSet PREPROCESSOR_CONDITIONAL_BLOCK_BEGIN = TokenSet.create(
+            PREPROCESSOR_IF,
+            PREPROCESSOR_IFDEF,
+            PREPROCESSOR_IFNDEF,
+            PREPROCESSOR_ELIF,
+            PREPROCESSOR_ELSE
+    );
+
+    public static final TokenSet PREPROCESSOR_CONDITIONAL_BLOCK_END = TokenSet.create(
+            PREPROCESSOR_ELSE,
+            PREPROCESSOR_ELIF,
+            PREPROCESSOR_ENDIF
+    );
+
     // Type specifiers
     public static final TokenSet FLOAT_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
             FLOAT_TYPE, VEC2_TYPE, VEC3_TYPE, VEC4_TYPE,

@@ -88,6 +88,16 @@ public final class GLSLParsing extends GLSLParsingBase {
             parseDefine();
         } else if (directiveType == PREPROCESSOR_UNDEF) {
             parseUndef();
+        } else if (PREPROCESSOR_CONDITIONAL_BLOCK_END.contains(directiveType)) {
+            if (conditionalBlockMarkers.empty()) {
+                b.error("Missing corresponding #if");
+            } else {
+                conditionalBlockMarkers.pop().done(PREPROCESSOR_CONDITIONAL_BLOCK);
+            }
+            consumeRestOfPreprocessor();
+        } else if (PREPROCESSOR_CONDITIONAL_BLOCK_BEGIN.contains(directiveType)) {
+            conditionalBlockMarkers.push(b.mark());
+            consumeRestOfPreprocessor();
         } else {
             //Some other directive, no work here
             consumeRestOfPreprocessor();
@@ -208,6 +218,10 @@ public final class GLSLParsing extends GLSLParsingBase {
                 b.advanceLexer();
                 b.error("Unable to parse external declaration.");
             }
+        }
+
+        while (!conditionalBlockMarkers.empty()) {
+            conditionalBlockMarkers.pop().done(PREPROCESSOR_CONDITIONAL_BLOCK);
         }
     }
 
