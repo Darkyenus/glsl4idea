@@ -15,7 +15,7 @@ import java.util.List;
  * A PsiBuilderAdapter in which each token can be remapped to an arbitrary number of tokens.
  *
  * In order to preserve the functionality of getTokenText(), it is necessary to remap tokens
- * to an instance of {#link com.intellij.lang.TokenWrapper}.
+ * to an instance of {@link TokenWrapper}.
  * Created by abigail on 30/06/15.
  */
 public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
@@ -69,8 +69,8 @@ public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
         } else {
             // The underlying PsiBuilder doesn't know about the replaced elements and so doesn't know to create
             // LeafPsiElement instances for all the tokens.
-            // TODO this should use {#link com.intellij.lang.ForeignLeafType}, which is what the waiting token
-            // will probably be, in order to create leaves with valid text.
+            // TODO this should use {@link com.intellij.lang.ForeignLeafType}, which is what the waiting token
+            //      will probably be, in order to create leaves with valid text.
             Marker foreignLeaf = super.mark();
             foreignLeaf.done(getTokenType());
             waitingTokens.remove(0);

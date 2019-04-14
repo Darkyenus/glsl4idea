@@ -85,72 +85,12 @@ public final class GLSLParsing extends GLSLParsingBase {
         IElementType directiveType = b.getTokenType();
 
         if (directiveType == PREPROCESSOR_DEFINE) {
-            //Parse define
-            b.advanceLexer(false, false); //Get past DEFINE
-
-            if (isValidDefineIdentifier(b.getTokenText())) {
-                //Valid
-                final String defineIdentifier = b.getTokenText();
-                //Can use non-b b.advanceLexer here, to allow "nested" defines
-                b.advanceLexer(); //Get past identifier
-
-                List<ForeignLeafType> definition = new ArrayList<>();
-                StringBuilder definitionText = new StringBuilder();
-
-                while (b.getTokenType() != PREPROCESSOR_END && !b.eof()) {
-                    //Suppressed warning that getTokenType/Text may be null, because it won't be (.eof() is checked).
-                    definition.add(new RedefinedTokenType(b.getTokenType(), b.getTokenText(), b.getNamesThroughWhichThisTokenWasRedefined()));
-                    definitionText.append(b.getTokenText()).append(' ');
-                    b.advanceLexer();
-                }
-                definitions.put(defineIdentifier, definition);
-                if (definitionText.length() >= 1) {
-                    definitionText.setLength(definitionText.length()-1);
-                }
-                definitionTexts.put(defineIdentifier, definitionText.toString());
-            } else {
-                //Invalid
-                b.error("Identifier expected.");
-                //Eat rest
-                while (!b.eof()) {
-                    if (b.getTokenType() == PREPROCESSOR_END) {
-                        break;
-                    }
-                    b.advanceLexer();
-                }
-            }
+            parseDefine();
         } else if (directiveType == PREPROCESSOR_UNDEF) {
-            //Parse undefine
-            b.advanceLexer(false, false); //Get past UNDEF
-
-            if (isValidDefineIdentifier(b.getTokenText())) {
-                //Valid
-                final String defineIdentifier = b.getTokenText();
-                definitions.remove(defineIdentifier);
-                definitionTexts.remove(defineIdentifier);
-
-                b.advanceLexer(); //Get past IDENTIFIER
-            } else {
-                //Invalid
-                b.error("Identifier expected.");
-            }
-            //Eat rest
-            while (!b.eof()) {
-                if (b.getTokenType() == PREPROCESSOR_END) {
-                    break;
-                } else {
-                    b.error("Unexpected token.");
-                }
-                b.advanceLexer();
-            }
+            parseUndef();
         } else {
             //Some other directive, no work here
-            while (!b.eof()) {
-                if (b.getTokenType() == PREPROCESSOR_END) {
-                    break;
-                }
-                b.advanceLexer();
-            }
+            consumeRestOfPreprocessor();
         }
         b.advanceLexer(false, false); //Get past PREPROCESSOR_END
         //false -> don't check for PREPROCESSOR_BEGIN, we will handle that ourselves
@@ -165,6 +105,81 @@ public final class GLSLParsing extends GLSLParsingBase {
 
         if (b.getTokenType() == PREPROCESSOR_BEGIN) {
             parsePreprocessor();
+        }
+    }
+
+    private void consumeRestOfPreprocessor() {
+        while (!b.eof()) {
+            if (b.getTokenType() == PREPROCESSOR_END) {
+                break;
+            }
+            b.advanceLexer();
+        }
+    }
+
+    /**
+     * Parses the undefine directive and removes it from definitions storage.
+     *
+     * Expects {@code b.getTokenType()} to be at {@code PREPROCESSOR_UNDEF}.
+     */
+    private void parseUndef() {
+        b.advanceLexer(false, false); //Get past UNDEF
+
+        if (isValidDefineIdentifier(b.getTokenText())) {
+            //Valid
+            final String defineIdentifier = b.getTokenText();
+            definitions.remove(defineIdentifier);
+            definitionTexts.remove(defineIdentifier);
+
+            b.advanceLexer(); //Get past IDENTIFIER
+        } else {
+            //Invalid
+            b.error("Identifier expected.");
+        }
+        //Eat rest
+        while (!b.eof()) {
+            if (b.getTokenType() == PREPROCESSOR_END) {
+                break;
+            } else {
+                b.error("Unexpected token.");
+            }
+            b.advanceLexer();
+        }
+    }
+
+    /**
+     * Parses the define directive and adds it to definitions storage.
+     *
+     * Expects {@code b.getTokenType()} to be at {@code PREPROCESSOR_DEFINE}.
+     */
+    private void parseDefine() {
+        b.advanceLexer(false, false); //Get past DEFINE
+
+        if (isValidDefineIdentifier(b.getTokenText())) {
+            //Valid
+            final String defineIdentifier = b.getTokenText();
+            //Can use non-b b.advanceLexer here, to allow "nested" defines
+            b.advanceLexer(); //Get past identifier
+
+            List<ForeignLeafType> definition = new ArrayList<>();
+            StringBuilder definitionText = new StringBuilder();
+
+            while (b.getTokenType() != PREPROCESSOR_END && !b.eof()) {
+                //Suppressed warning that getTokenType/Text may be null, because it won't be (.eof() is checked).
+                definition.add(new RedefinedTokenType(b.getTokenType(), b.getTokenText(), b.getNamesThroughWhichThisTokenWasRedefined()));
+                definitionText.append(b.getTokenText()).append(' ');
+                b.advanceLexer();
+            }
+            definitions.put(defineIdentifier, definition);
+            if (definitionText.length() >= 1) {
+                definitionText.setLength(definitionText.length()-1);
+            }
+            definitionTexts.put(defineIdentifier, definitionText.toString());
+        } else {
+            //Invalid
+            b.error("Identifier expected.");
+            //Eat rest
+            consumeRestOfPreprocessor();
         }
     }
 
