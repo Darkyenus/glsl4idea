@@ -27,6 +27,7 @@ import com.intellij.psi.tree.TokenSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import static glslplugin.lang.elements.GLSLElementTypes.*;
 import static glslplugin.lang.elements.GLSLTokenTypes.*;
@@ -48,6 +49,7 @@ abstract class GLSLParsingBase {
 
     protected Map<String, List<ForeignLeafType>> definitions = new HashMap<>();
     protected Map<String, String> definitionTexts = new HashMap<>();
+    protected Stack<PsiBuilder.Marker> preprocessorConditionalBlockMarkers = new Stack<>();
 
     GLSLParsingBase(PsiBuilder builder) {
         b = new GLSLPsiBuilderAdapter(builder);

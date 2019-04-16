@@ -25,6 +25,8 @@ import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
+import glslplugin.lang.elements.GLSLElementType;
 import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +35,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GLSLFoldingBuilder implements FoldingBuilder {
+    private static final TokenSet FOLDABLE_ELEMENTS = TokenSet.create(
+            GLSLTokenTypes.COMMENT_BLOCK,
+            GLSLElementTypes.COMPOUND_STATEMENT,
+            GLSLElementTypes.PREPROCESSOR_CONDITIONAL_BLOCK
+    );
 
     @NotNull
     public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
@@ -48,7 +55,7 @@ public class GLSLFoldingBuilder implements FoldingBuilder {
         //Don't add folding to 0-length nodes, crashes in new FoldingDescriptor
         if(textRange.getLength() <= 0)return;
 
-        if (type == GLSLTokenTypes.COMMENT_BLOCK || type == GLSLElementTypes.COMPOUND_STATEMENT) {
+        if (FOLDABLE_ELEMENTS.contains(type)) {
             descriptors.add(new FoldingDescriptor(node, textRange));
         }
 
@@ -60,10 +67,11 @@ public class GLSLFoldingBuilder implements FoldingBuilder {
     }
 
     public String getPlaceholderText(@NotNull ASTNode node) {
-        if (node.getElementType() == GLSLTokenTypes.COMMENT_BLOCK) {
+        final IElementType type = node.getElementType();
+        if (type == GLSLTokenTypes.COMMENT_BLOCK) {
             return "/*...*/";
         }
-        if (node.getElementType() == GLSLElementTypes.COMPOUND_STATEMENT) {
+        if (type == GLSLElementTypes.COMPOUND_STATEMENT || type == GLSLElementTypes.PREPROCESSOR_CONDITIONAL_BLOCK) {
             return "{...}";
         }
         return null;

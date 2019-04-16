@@ -143,7 +143,25 @@ public final class GLSLParsing extends GLSLParsingBase {
                 }
                 b.advanceLexer();
             }
-        }else{
+        } else if(PREPROCESSOR_CONDITIONAL_BLOCK_END.contains(directiveType)) {
+            if (preprocessorConditionalBlockMarkers.empty()) {
+                b.error("Missing corresponding #if");
+            } else {
+                PsiBuilder.Marker startMarker = preprocessor;
+                //Although it doesn't seem so from the function definition, doneBefore requires StartMarker
+                if (startMarker instanceof MultiRemapPsiBuilderAdapter.DelegateMarker) {
+                    startMarker = ((MultiRemapPsiBuilderAdapter.DelegateMarker) startMarker).getDelegate();
+                }
+                preprocessorConditionalBlockMarkers.pop().doneBefore(PREPROCESSOR_CONDITIONAL_BLOCK, startMarker);
+            }
+            //Eat rest
+            while (!b.eof()) {
+                if (b.getTokenType() == PREPROCESSOR_END) {
+                    break;
+                }
+                b.advanceLexer();
+            }
+        } else {
             //Some other directive, no work here
             while (!b.eof()) {
                 if (b.getTokenType() == PREPROCESSOR_END) {
@@ -161,6 +179,11 @@ public final class GLSLParsing extends GLSLParsingBase {
         }else{
             preprocessor.done(directiveType);
         }
+
+        if (PREPROCESSOR_CONDITIONAL_BLOCK_BEGIN.contains(directiveType)) {
+            preprocessorConditionalBlockMarkers.push(b.mark());
+        }
+
         b.advanceLexer_remapTokens(); //Remap explicitly after advancing without remapping, makes mess otherwise
 
         if (b.getTokenType() == PREPROCESSOR_BEGIN) {
@@ -191,6 +214,10 @@ public final class GLSLParsing extends GLSLParsingBase {
                 b.advanceLexer();
                 b.error("Unable to parse external declaration.");
             }
+        }
+
+        while (!preprocessorConditionalBlockMarkers.empty()) {
+            preprocessorConditionalBlockMarkers.pop().done(PREPROCESSOR_CONDITIONAL_BLOCK);
         }
     }
 
@@ -266,13 +293,25 @@ public final class GLSLParsing extends GLSLParsingBase {
                 b.error("Empty interface block is not allowed.");
             }
 
+            while (b.getTokenType() == PREPROCESSOR_BEGIN) {
+                parsePreprocessor();
+            }
+
             while (!tryMatch(RIGHT_BRACE) && !eof()) {
+
                 final PsiBuilder.Marker member = b.mark();
                 parseQualifierList(true);
                 if (!parseTypeSpecifier()) b.advanceLexer();
                 parseDeclaratorList();
-                match(SEMICOLON, "Expected ';'");
+                if (b.getTokenType() == SEMICOLON) {
+                    b.advanceLexer(false, true); // we need to check for preprocessor ourselves here
+                } else {
+                    b.error("Expected ';'");
+                }
                 member.done(STRUCT_MEMBER_DECLARATION);//TODO Should we call interface block members struct members?
+                while (b.getTokenType() == PREPROCESSOR_BEGIN) {
+                    parsePreprocessor();
+                }
             }
 
             if (b.getTokenType() == IDENTIFIER) {
