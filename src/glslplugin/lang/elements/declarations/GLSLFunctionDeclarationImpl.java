@@ -25,10 +25,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLIdentifier;
-import glslplugin.lang.elements.types.GLSLBasicFunctionType;
-import glslplugin.lang.elements.types.GLSLFunctionType;
-import glslplugin.lang.elements.types.GLSLType;
-import glslplugin.lang.elements.types.GLSLTypes;
+import glslplugin.lang.elements.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +33,8 @@ import org.jetbrains.annotations.Nullable;
  * GLSLFunctionDeclarationImpl is the psi implementation of a function declaration.
  */
 public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl implements GLSLFunctionDeclaration, PsiNameIdentifierOwner, PsiCheckedRenameElement {
-    private GLSLFunctionType type;
+    private GLSLFunctionType typeCache;
+    private boolean typeCacheDirty = false;
 
     public GLSLFunctionDeclarationImpl(@NotNull ASTNode astNode) {
         super(astNode);
@@ -98,10 +96,11 @@ public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl imple
 
     @NotNull
     public GLSLFunctionType getType() {
-        if (type == null) {
-            type = createType();
+        if (typeCache == null || typeCacheDirty) {
+            typeCache = createType();
+            typeCacheDirty = false;
         }
-        return type;
+        return typeCache;
     }
 
     private GLSLFunctionType createType() {
@@ -144,5 +143,11 @@ public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl imple
         final GLSLIdentifier nameIdentifier = getNameIdentifier();
         if(nameIdentifier == null)throw new IncorrectOperationException("GLSLDeclarator is null");
         nameIdentifier.checkSetName(name);
+    }
+
+    @Override
+    public void subtreeChanged() {
+        super.subtreeChanged();
+        typeCacheDirty = true;
     }
 }
