@@ -39,7 +39,8 @@ public class GLSLSupportLoader extends FileTypeFactory {
                                           + "tesc" + FileTypeConsumer.EXTENSION_DELIMITER
                                           + "tese" + FileTypeConsumer.EXTENSION_DELIMITER
                                           + "geom" + FileTypeConsumer.EXTENSION_DELIMITER
-                                          + "comp";
+                                          + "comp" + FileTypeConsumer.EXTENSION_DELIMITER
+                                          + "shader";
 
     public void createFileTypes(@NotNull FileTypeConsumer consumer) {
         consumer.consume(GLSL, FILETYPES);
