@@ -56,7 +56,7 @@ public class GLSLDoStatement extends GLSLStatement implements ConditionStatement
         if (statement == null) return TerminatorScope.NONE;
 
         TerminatorScope scope = statement.getTerminatorScope();
-        if (scope == TerminatorScope.LOOP) scope = TerminatorScope.NONE;
+        if (scope == TerminatorScope.LOOP || scope == TerminatorScope.LOOP_OR_SWITCH) scope = TerminatorScope.NONE;
         return scope;
     }
 }

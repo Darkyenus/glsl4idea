@@ -42,6 +42,6 @@ public class GLSLBreakStatement extends GLSLStatement {
     @NotNull
     @Override
     public TerminatorScope getTerminatorScope() {
-        return TerminatorScope.LOOP;
+        return TerminatorScope.LOOP_OR_SWITCH;
     }
 }
