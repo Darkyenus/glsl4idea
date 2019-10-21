@@ -31,12 +31,10 @@
     <idea-version since-build="144"/>
     <depends>com.intellij.modules.lang</depends>
 
-    <version>1.19</version>
+    <version>1.20-SNAPSHOT</version>
     <change-notes><![CDATA[
         <ul>
-            <li>Fix type caching bug (thanks Tasemo)</li>
-            <li>Fix return statements inside switch being ignored for "Missing return statement" annotation</li>
-            <li><i>.shader</i> extension is now being recognized automatically</li>
+            <li></li>
         </ul>
     ]]></change-notes>
 
