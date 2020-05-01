@@ -22,7 +22,8 @@ Licensed under GNU LGPL, see license file.
   - Or from [releases](https://github.com/Darkyenus/glsl4idea/releases)
   - Or compile it yourself (see -Development-)
 2. Install plugin (Tested on IntelliJ CE 14, similar versions may work) (Preferences -> Plugins -> Install plugin from disk)
-3. Create .glsl file and enjoy
+3. Create .glsl file or use [language injections](https://www.jetbrains.com/help/idea/using-language-injections.html) to treat a string literal as GLSL code.
+
 
 # Development
 
