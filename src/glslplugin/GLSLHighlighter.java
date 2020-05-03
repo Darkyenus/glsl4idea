@@ -49,6 +49,8 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
             { TextAttributesKey.createTextAttributesKey("GLSL.BRACES", DefaultLanguageHighlighterColors.BRACES) };
     static final TextAttributesKey[] GLSL_DOT =
             { TextAttributesKey.createTextAttributesKey("GLSL.DOT", DefaultLanguageHighlighterColors.DOT) };
+    static final TextAttributesKey[] GLSL_OPERATOR =
+            { TextAttributesKey.createTextAttributesKey("GLSL.OPERATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN) };
     static final TextAttributesKey[] GLSL_SEMICOLON =
             { TextAttributesKey.createTextAttributesKey("GLSL.SEMICOLON", DefaultLanguageHighlighterColors.SEMICOLON) };
     static final TextAttributesKey[] GLSL_COMMA =
@@ -85,7 +87,7 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
 
     @NotNull
     public TextAttributesKey[] getTokenHighlights(IElementType type) {
-        if(type == WHITE_SPACE) return GLSL_TEXT;
+        if (type == WHITE_SPACE) return GLSL_TEXT;
         if (CONSTANT_TOKENS.contains(type)) return GLSL_NUMBER;
         if (type == COMMENT_BLOCK) return GLSL_BLOCK_COMMENT;
         if (type == COMMENT_LINE) return GLSL_LINE_COMMENT;
@@ -106,6 +108,7 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
         if (type == UNKNOWN) return GLSL_UNKNOWN;
         if (type == RESERVED_KEYWORD) return GLSL_FLOW_KEYWORDS;
         if (type instanceof RedefinedTokenElementType /*== REDEFINED_TOKEN*/) return GLSL_REDEFINED_TOKEN;
+        if (OPERATORS.contains(type)) return GLSL_OPERATOR;
         return GLSL_TEXT;
     }
 }
