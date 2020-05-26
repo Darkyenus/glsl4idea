@@ -114,6 +114,12 @@ public class GLSLElementTypes {
 
     public static final IElementType CONDITION = new GLSLElementType("CONDITION");
 
+    /**
+     * Single {@code PREPROCESSOR_CONDITIONAL_BLOCK} is formed between each respective pair of {@link GLSLTokenTypes#PREPROCESSOR_CONDITIONAL_BLOCK_BEGIN}
+     * and {@link GLSLTokenTypes#PREPROCESSOR_CONDITIONAL_BLOCK_END} tokens.
+     */
+    public static final IElementType PREPROCESSOR_CONDITIONAL_BLOCK = new GLSLElementType("PREPROCESSOR_CONDITIONAL_BLOCK");
+
     //Preprocessor dropins
     public static final class RedefinedTokenElementType extends GLSLElementType {
 
