@@ -1,6 +1,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.declarations.GLSLInitializerList;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,7 @@ public class InitializerListEmptyAnnotation extends Annotator<GLSLInitializerLis
     @Override
     public void annotate(GLSLInitializerList expr, AnnotationHolder holder) {
         if (expr.getInitializers().length == 0) {
-            holder.createErrorAnnotation(expr, "Empty initializer lists are not allowed");
+            holder.newAnnotation(HighlightSeverity.ERROR, "Empty initializer lists are not allowed").create();
         }
     }
 

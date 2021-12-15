@@ -20,6 +20,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.TextRange;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.GLSLIdentifier;
@@ -59,7 +60,7 @@ public class VectorComponentsAnnotation extends Annotator<GLSLFieldSelectionExpr
 
                 if (basePattern == null) {
                     TextRange tr = new TextRange(mitr.getStartOffset(), mitr.getStartOffset() + 1);
-                    holder.createErrorAnnotation(tr, "'" + member.charAt(0) + "' is not one of: " + getAllAlternatives(numComponents));
+                    holder.newAnnotation(HighlightSeverity.ERROR, "'" + member.charAt(0) + "' is not one of: " + getAllAlternatives(numComponents)).range(tr).create();
                 } else {
 
                     for (int i = 0; i < member.length(); i++) {
@@ -69,12 +70,12 @@ public class VectorComponentsAnnotation extends Annotator<GLSLFieldSelectionExpr
                         TextRange tr = new TextRange(mitr.getStartOffset() + i, mitr.getStartOffset() + i + 1);
 
                         if (pattern == null) {
-                            holder.createErrorAnnotation(tr, "'" + cm + "' is not one of: " + getAlternatives(basePattern, numComponents));
+                            holder.newAnnotation(HighlightSeverity.ERROR, "'" + cm + "' is not one of: " + getAlternatives(basePattern, numComponents)).range(tr).create();
                         } else {
                             if (basePattern != pattern) {
-                                holder.createErrorAnnotation(tr, "Can not mix " + getAlternatives(pattern, numComponents) + " with " + getAlternatives(basePattern, numComponents));
+                                holder.newAnnotation(HighlightSeverity.ERROR, "Can not mix " + getAlternatives(pattern, numComponents) + " with " + getAlternatives(basePattern, numComponents)).range(tr).create();
                             } else if (!checkRange(pattern, numComponents, cm)) {
-                                holder.createErrorAnnotation(tr, "'" + cm + "' is out of range of: " + getAlternatives(basePattern, numComponents));
+                                holder.newAnnotation(HighlightSeverity.ERROR, "'" + cm + "' is out of range of: " + getAlternatives(basePattern, numComponents)).range(tr).create();
                             }
                         }
                     }

@@ -1,6 +1,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import glslplugin.annotation.Annotator;
@@ -30,7 +31,7 @@ public class ConstModificationAnnotation extends Annotator<GLSLAssignmentExpress
         if (!(declarator instanceof GLSLDeclarator)) return;
 
         if (((GLSLDeclarator) declarator).getQualifiedType().hasQualifier(GLSLQualifier.Qualifier.CONST)) {
-            holder.createErrorAnnotation(expr, "Cannot assign to const variable");
+            holder.newAnnotation(HighlightSeverity.ERROR,  "Cannot assign to const variable").range(expr).create();
         }
     }
 

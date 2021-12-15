@@ -20,6 +20,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.expressions.GLSLCondition;
 import glslplugin.lang.elements.statements.ConditionStatement;
@@ -38,7 +39,7 @@ public class ConditionCheckAnnotation extends Annotator<GLSLStatement> {
                 GLSLType conditionExpressionType = condition.getType();
                 if(!conditionExpressionType.isValidType())return;
                 if(conditionExpressionType != GLSLTypes.BOOL){
-                    holder.createErrorAnnotation(condition, "Condition must be a boolean expression.");
+                    holder.newAnnotation(HighlightSeverity.ERROR, "Condition must be a boolean expression.").range(condition).create();
                 }
             }
         }

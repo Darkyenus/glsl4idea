@@ -1,7 +1,7 @@
 package glslplugin.annotation.impl;
 
-import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.GLSLHighlighter;
 import glslplugin.annotation.Annotator;
@@ -29,8 +29,10 @@ public class RedefinedTokenAnnotation extends Annotator<GLSLRedefinedToken> {
             definition = (referent != null) ? referent.getBoundText() : null;
         }
 
-        Annotation annotation = holder.createInfoAnnotation(identifier, definition);
-        annotation.setTextAttributes(GLSLHighlighter.GLSL_REDEFINED_TOKEN[0]);
+        if (definition == null) {
+            return;
+        }
+        holder.newAnnotation(HighlightSeverity.INFORMATION, definition).textAttributes(GLSLHighlighter.GLSL_REDEFINED_TOKEN[0]).create();
     }
 
     @NotNull

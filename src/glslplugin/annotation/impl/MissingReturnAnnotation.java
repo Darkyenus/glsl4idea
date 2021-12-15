@@ -20,6 +20,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.psi.PsiElement;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.GLSLTokenTypes;
@@ -40,7 +41,7 @@ public class MissingReturnAnnotation extends Annotator<GLSLFunctionDefinition> {
         if (expr.getType().getReturnType() == GLSLTypes.VOID) return;
 
         final GLSLCompoundStatement body = expr.getBody();
-        if(body == null)return;
+        if(body == null) return;
 
         if (body.getTerminatorScope() == GLSLStatement.TerminatorScope.NONE) {
             PsiElement annotationPlace = body;
@@ -60,7 +61,7 @@ public class MissingReturnAnnotation extends Annotator<GLSLFunctionDefinition> {
                     e = e.getPrevSibling();
                 }
             }
-            holder.createErrorAnnotation(annotationPlace, "Missing return statement");
+            holder.newAnnotation(HighlightSeverity.ERROR, "Missing return statement").range(annotationPlace).create();
         }
     }
 

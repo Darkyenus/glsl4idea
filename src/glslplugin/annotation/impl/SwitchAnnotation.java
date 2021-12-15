@@ -1,6 +1,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.statements.GLSLCaseStatement;
@@ -39,9 +40,9 @@ public class SwitchAnnotation extends Annotator<GLSLSwitchStatement> {
         if (!switchConditionType.isValidType()) return;
 
         if (!GLSLScalarType.isIntegerScalar(switchConditionType)) {
-            holder.createErrorAnnotation(switchCondition, "Expression must be of integer scalar type");
+            holder.newAnnotation(HighlightSeverity.ERROR, "Expression must be of integer scalar type").range(switchCondition).create();
         } else if (switchCondition.isConstantValue()) {
-            holder.createWeakWarningAnnotation(switchCondition, "Expression is constant");
+            holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "Expression is constant").range(switchCondition).create();
         }
 
         final List<GLSLLabelStatement> labelStatements = expr.getLabelStatements();
@@ -53,7 +54,7 @@ public class SwitchAnnotation extends Annotator<GLSLSwitchStatement> {
         for (GLSLLabelStatement label : labelStatements) {
             if (label instanceof GLSLDefaultStatement) {
                 if (defaultFound) {
-                    holder.createErrorAnnotation(label, "Multiple default labels are not allowed");
+                    holder.newAnnotation(HighlightSeverity.ERROR, "Multiple default labels are not allowed").range(label).create();
                 }
                 defaultFound = true;
             } else if (label instanceof GLSLCaseStatement) {//This _should_ be the only possible way
@@ -63,14 +64,14 @@ public class SwitchAnnotation extends Annotator<GLSLSwitchStatement> {
                     final GLSLType caseExpressionType = caseExpression.getType();
                     if (caseExpressionType.isValidType()) {
                         if (!GLSLScalarType.isIntegerScalar(caseExpressionType)) {
-                            holder.createErrorAnnotation(caseExpression, "Case expression must be of integer scalar type");
+                            holder.newAnnotation(HighlightSeverity.ERROR, "Case expression must be of integer scalar type").range(caseExpression).create();
                         } else {
                             //It is a valid type, do dupe check
                             if (caseExpression.isConstantValue()) {
                                 Object constantValue = caseExpression.getConstantValue();
                                 //constantValue should be Long, but don't dwell on that
                                 if (encounteredCases.contains(constantValue)) {
-                                    holder.createWarningAnnotation(caseExpression, "Duplicate case label (" + constantValue + ")");
+                                    holder.newAnnotation(HighlightSeverity.WARNING, "Duplicate case label (" + constantValue + ")").range(caseExpression).create();
                                 }
                                 encounteredCases.add(constantValue);
                             }

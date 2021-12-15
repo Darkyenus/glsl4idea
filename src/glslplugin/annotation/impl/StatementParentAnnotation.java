@@ -1,6 +1,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.psi.PsiElement;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
@@ -48,7 +49,7 @@ public class StatementParentAnnotation extends Annotator<GLSLStatement> {
         if (acceptableParents == null) return;
         PsiElement parent = expr.findParentByClasses(acceptableParents.parents);
         if (parent == null) { // we needed a parent and we couldn't find one - this is a compile-time error
-            holder.createErrorAnnotation(expr, acceptableParents.message);
+            holder.newAnnotation(HighlightSeverity.ERROR, acceptableParents.message).create();
         }
     }
 

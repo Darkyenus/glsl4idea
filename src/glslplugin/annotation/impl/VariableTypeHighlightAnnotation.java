@@ -1,6 +1,5 @@
 package glslplugin.annotation.impl;
 
-import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.GLSLHighlighter;
@@ -23,14 +22,11 @@ public class VariableTypeHighlightAnnotation extends Annotator<GLSLIdentifierExp
         if (declarator == null) return;
         final GLSLQualifiedType qualifiedType = declarator.getQualifiedType();
         if (qualifiedType.hasQualifier(GLSLQualifier.Qualifier.UNIFORM)) {
-            Annotation annotation = holder.createAnnotation(HighlightSeverity.INFORMATION, expr.getTextRange(), null);
-            annotation.setTextAttributes(GLSLHighlighter.GLSL_IDENTIFIER_UNIFORM[0]);
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(GLSLHighlighter.GLSL_IDENTIFIER_UNIFORM[0]).create();
         } else if (qualifiedType.hasQualifier(GLSLQualifier.Qualifier.VARYING)) {
-            Annotation annotation = holder.createAnnotation(HighlightSeverity.INFORMATION, expr.getTextRange(), null);
-            annotation.setTextAttributes(GLSLHighlighter.GLSL_IDENTIFIER_VARYING[0]);
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(GLSLHighlighter.GLSL_IDENTIFIER_VARYING[0]).create();
         } else if (qualifiedType.hasQualifier(GLSLQualifier.Qualifier.ATTRIBUTE)) {
-            Annotation annotation = holder.createAnnotation(HighlightSeverity.INFORMATION, expr.getTextRange(), null);
-            annotation.setTextAttributes(GLSLHighlighter.GLSL_IDENTIFIER_ATTRIBUTE[0]);
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(GLSLHighlighter.GLSL_IDENTIFIER_ATTRIBUTE[0]).create();
         }
     }
 

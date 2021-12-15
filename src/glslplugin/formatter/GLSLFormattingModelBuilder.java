@@ -19,10 +19,13 @@
 
 package glslplugin.formatter;
 
-import com.intellij.formatting.*;
+import com.intellij.formatting.FormattingContext;
+import com.intellij.formatting.FormattingModel;
+import com.intellij.formatting.FormattingModelBuilder;
+import com.intellij.formatting.FormattingModelProvider;
+import com.intellij.formatting.SpacingBuilder;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
@@ -30,18 +33,28 @@ import glslplugin.lang.GLSLLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static glslplugin.lang.elements.GLSLTokenTypes.*;
+import static glslplugin.lang.elements.GLSLTokenTypes.COMMA;
+import static glslplugin.lang.elements.GLSLTokenTypes.COMMENT_LINE;
+import static glslplugin.lang.elements.GLSLTokenTypes.FLOW_KEYWORDS;
+import static glslplugin.lang.elements.GLSLTokenTypes.LEFT_BRACE;
+import static glslplugin.lang.elements.GLSLTokenTypes.LEFT_BRACKET;
+import static glslplugin.lang.elements.GLSLTokenTypes.LEFT_PAREN;
+import static glslplugin.lang.elements.GLSLTokenTypes.RIGHT_BRACE;
+import static glslplugin.lang.elements.GLSLTokenTypes.RIGHT_BRACKET;
+import static glslplugin.lang.elements.GLSLTokenTypes.RIGHT_PAREN;
+import static glslplugin.lang.elements.GLSLTokenTypes.SEMICOLON;
 
 /**
  * @author Wyozi
  */
 public class GLSLFormattingModelBuilder implements FormattingModelBuilder {
-    @NotNull
+
     @Override
-    public FormattingModel createModel(PsiElement psiElement, CodeStyleSettings codeStyleSettings) {
+    public @NotNull FormattingModel createModel(@NotNull FormattingContext formattingContext) {
+        final CodeStyleSettings codeStyleSettings = formattingContext.getCodeStyleSettings();
         return FormattingModelProvider.createFormattingModelForPsiFile(
-                psiElement.getContainingFile(),
-                new GLSLFormattingBlock(psiElement.getNode(), null, null, createSpacingBuilder(codeStyleSettings)),
+                formattingContext.getContainingFile(),
+                new GLSLFormattingBlock(formattingContext.getNode(), null, null, createSpacingBuilder(codeStyleSettings)),
                 codeStyleSettings);
     }
 

@@ -1,7 +1,10 @@
 package glslplugin.extensions;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.lang.parameterInfo.*;
+import com.intellij.lang.parameterInfo.CreateParameterInfoContext;
+import com.intellij.lang.parameterInfo.ParameterInfoHandler;
+import com.intellij.lang.parameterInfo.ParameterInfoUIContext;
+import com.intellij.lang.parameterInfo.ParameterInfoUtils;
+import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
 import com.intellij.psi.PsiElementResolveResult;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLIdentifier;
@@ -24,26 +27,6 @@ import java.util.List;
  * Created by abigail on 08/07/15.
  */
 public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFunctionCallExpression, Object> {
-
-    private static final Object[] EMPTY_ARRAY = new Object[0];
-
-    @Override
-    public boolean couldShowInLookup() {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public Object[] getParametersForLookup(LookupElement item, ParameterInfoContext context) {
-        return EMPTY_ARRAY;
-    }
-
-    @SuppressWarnings("deprecation") // Kept for compatibility
-    @Nullable
-    @Override
-    public Object[] getParametersForDocumentation(Object p, ParameterInfoContext context) {
-        return EMPTY_ARRAY;
-    }
 
     @Nullable
     @Override
@@ -107,19 +90,6 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
         }
         int index = ParameterInfoUtils.getCurrentParameterIndex(parameterList.getNode(), context.getOffset(), GLSLTokenTypes.COMMA);
         context.setCurrentParameter(index);
-    }
-
-    @SuppressWarnings("deprecation") // Kept for compatibility
-    @Nullable
-    @Override
-    public String getParameterCloseChars() {
-        return ParameterInfoUtils.DEFAULT_PARAMETER_CLOSE_CHARS;
-    }
-
-    @SuppressWarnings("deprecation") // Kept for compatibility
-    @Override
-    public boolean tracksParameterIndex() {
-        return false;
     }
 
     @Override

@@ -20,6 +20,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.expressions.GLSLAssignmentExpression;
 import glslplugin.lang.elements.expressions.GLSLExpression;
@@ -39,7 +40,7 @@ public class LValueAnnotator extends Annotator<GLSLAssignmentExpression> {
         if(left == null)return;
 
         if (!left.isLValue()) {
-            holder.createErrorAnnotation(left, "Left operand of assignment expression is not L-Value.");
+            holder.newAnnotation(HighlightSeverity.ERROR, "Left operand of assignment expression is not L-Value.").range(left).create();
         }
     }
 

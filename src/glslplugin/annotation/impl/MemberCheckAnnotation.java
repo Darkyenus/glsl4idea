@@ -20,6 +20,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.expressions.GLSLExpression;
@@ -39,7 +40,7 @@ public class MemberCheckAnnotation extends Annotator<GLSLFieldSelectionExpressio
             GLSLIdentifier memberIdentifier = expr.getMemberIdentifier();
             if(memberIdentifier == null)return;
             if (!leftHandType.hasMember(memberIdentifier.getName())) {
-                holder.createErrorAnnotation(memberIdentifier, "Unknown member for " + leftHandType.getTypename());
+                holder.newAnnotation(HighlightSeverity.ERROR, "Unknown member for " + leftHandType.getTypename()).range(memberIdentifier).create();
             }
 
         }

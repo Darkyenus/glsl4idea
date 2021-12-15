@@ -1,6 +1,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.expressions.GLSLUnaryOperatorExpression;
@@ -20,7 +21,7 @@ public class UnaryOperatorTypeAnnotation extends Annotator<GLSLUnaryOperatorExpr
         if(operand == null || operator == null)return;
 
         if(!(operator instanceof GLSLOperator.GLSLUnaryOperator)){
-            holder.createErrorAnnotation(expr, '\''+operator.getTextRepresentation()+"' is not an unary operator");
+            holder.newAnnotation(HighlightSeverity.ERROR, '\''+operator.getTextRepresentation()+"' is not an unary operator").create();
             return;
         }
 
@@ -28,8 +29,8 @@ public class UnaryOperatorTypeAnnotation extends Annotator<GLSLUnaryOperatorExpr
         final GLSLType operandType = operand.getType();
         if(operandType.isValidType()){
             if(!unaryOperator.isValidInput(operandType)){
-                holder.createErrorAnnotation(expr,
-                        "'" + operator.getTextRepresentation() + "' does not operate on '" + operandType.getTypename() + "'");
+                holder.newAnnotation(HighlightSeverity.ERROR,
+                        "'" + operator.getTextRepresentation() + "' does not operate on '" + operandType.getTypename() + "'").create();
             }
         }
     }

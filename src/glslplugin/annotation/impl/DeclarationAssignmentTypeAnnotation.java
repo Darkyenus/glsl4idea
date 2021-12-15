@@ -20,6 +20,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
@@ -49,7 +50,7 @@ public class DeclarationAssignmentTypeAnnotation extends Annotator<GLSLVariableD
                 final GLSLType assignedType = initializer.getType();
                 if(!assignedType.isValidType())continue;
                 if(GLSLTypeCompatibilityLevel.getCompatibilityLevel(assignedType, variableType) == GLSLTypeCompatibilityLevel.INCOMPATIBLE){
-                    holder.createErrorAnnotation(initializer,"Can't assign '"+assignedType.getTypename()+"' to '"+variableType.getTypename()+"'");
+                    holder.newAnnotation(HighlightSeverity.ERROR, "Can't assign '"+assignedType.getTypename()+"' to '"+variableType.getTypename()+"'").range(initializer).create();
                 }
             }
         }

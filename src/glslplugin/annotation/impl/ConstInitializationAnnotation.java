@@ -1,6 +1,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLQualifier;
@@ -17,7 +18,7 @@ public class ConstInitializationAnnotation extends Annotator<GLSLDeclarator> {
         if (declarator.getInitializer() != null || declarator.getInitializerExpression() != null) return;
 
         if (declarator.getQualifiedType().hasQualifier(GLSLQualifier.Qualifier.CONST)) {
-            holder.createErrorAnnotation(declarator, "Const variable declared with no initializer");
+            holder.newAnnotation(HighlightSeverity.ERROR,  "Const variable declared with no initializer").create();
         }
     }
 

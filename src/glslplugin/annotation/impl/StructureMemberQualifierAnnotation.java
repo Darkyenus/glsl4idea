@@ -1,6 +1,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.declarations.GLSLQualifier;
 import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
@@ -18,10 +19,10 @@ public class StructureMemberQualifierAnnotation extends Annotator<GLSLStructMemb
             final GLSLTypeQualifier type = qualifier.getQualifierType();
             if (type == null) continue;
             if (type != GLSLTypeQualifier.PRECISION_QUALIFIER) {
-                holder.createWarningAnnotation(qualifier,
+                holder.newAnnotation(HighlightSeverity.WARNING,
                         "GLSL 4.50: Member declarators may contain precision qualifiers, " +
                                 "but use of any other qualifier results in a compile-time error." +
-                                " (You may put the qualifier on the whole struct.)");
+                                " (You may put the qualifier on the whole struct.)").range(qualifier).create();
             }
         }
     }

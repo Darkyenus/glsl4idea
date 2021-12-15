@@ -1,6 +1,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.declarations.GLSLParameterDeclaration;
 import glslplugin.lang.elements.declarations.GLSLQualifier;
@@ -25,8 +26,8 @@ public class ParameterQualifierAnnotation extends Annotator<GLSLParameterDeclara
                     || q == GLSLQualifier.Qualifier.OUT
                     || q == GLSLQualifier.Qualifier.INOUT) continue;
 
-            holder.createErrorAnnotation(parameter, "'" + q.toString() + "' qualifier not allowed. " +
-            "Expected precision qualifier, memory qualifier, 'const', 'in', 'out', or 'inout'.");
+            holder.newAnnotation(HighlightSeverity.ERROR,  "'" + q + "' qualifier not allowed. " +
+            "Expected precision qualifier, memory qualifier, 'const', 'in', 'out', or 'inout'.").create();
         }
     }
 

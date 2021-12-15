@@ -1,6 +1,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.expressions.GLSLSubscriptExpression;
@@ -20,7 +21,7 @@ public class SubscriptBoundAnnotation extends Annotator<GLSLSubscriptExpression>
 
         GLSLType type = subscript.getType();
         if (!type.typeEquals(GLSLTypes.INT) && !type.typeEquals(GLSLTypes.UINT)) {
-            holder.createErrorAnnotation(expr, "Subscript must be of int or uint type, found " + type.getTypename());
+            holder.newAnnotation(HighlightSeverity.ERROR, "Subscript must be of int or uint type, found " + type.getTypename()).create();
             return;
         }
 
@@ -31,7 +32,7 @@ public class SubscriptBoundAnnotation extends Annotator<GLSLSubscriptExpression>
 
             if (!subscript.isConstantValue()) {
                 if (dimension == GLSLArrayType.UNDEFINED_SIZE_DIMENSION) {
-                    holder.createErrorAnnotation(expr, "Unsized arrays may only be indexed with constant expressions");
+                    holder.newAnnotation(HighlightSeverity.ERROR, "Unsized arrays may only be indexed with constant expressions").create();
                     return;
                 }
             }
@@ -40,7 +41,7 @@ public class SubscriptBoundAnnotation extends Annotator<GLSLSubscriptExpression>
         } else if (expression.getType() instanceof GLSLMatrixType) {
             dimension = ((GLSLMatrixType) expression.getType()).getNumColumns();
         } else {
-            holder.createErrorAnnotation(expr, "Subscripted expression must be of array, matrix or vector type");
+            holder.newAnnotation(HighlightSeverity.ERROR, "Subscripted expression must be of array, matrix or vector type").create();
             return;
         }
 
@@ -50,7 +51,7 @@ public class SubscriptBoundAnnotation extends Annotator<GLSLSubscriptExpression>
         Long value = (Long) subscript.getConstantValue();
         assert value != null; // if !isConstantValue we've already returned
         if (value < 0 || value >= dimension) {
-            holder.createErrorAnnotation(expr, "Subscript index out-of-bounds");
+            holder.newAnnotation(HighlightSeverity.ERROR, "Subscript index out-of-bounds").create();
         }
     }
 

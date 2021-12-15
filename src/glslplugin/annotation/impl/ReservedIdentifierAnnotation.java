@@ -1,6 +1,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.GLSLIdentifier;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,7 @@ public class ReservedIdentifierAnnotation extends Annotator<GLSLIdentifier> {
     public void annotate(GLSLIdentifier identifier, AnnotationHolder holder) {
         String name = identifier.getName();
         if (name.startsWith("__")) {
-            holder.createWarningAnnotation(identifier, "This identifier is reserved for use by underlying software layers and may result in undefined behavior.");
+            holder.newAnnotation(HighlightSeverity.WARNING, "This identifier is reserved for use by underlying software layers and may result in undefined behavior.").create();
         }
     }
 

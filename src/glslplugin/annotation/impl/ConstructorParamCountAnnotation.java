@@ -94,8 +94,7 @@ public class ConstructorParamCountAnnotation extends Annotator<GLSLFunctionCallE
 
             sb.append("</code></body></html>");
 
-
-            holder.createAnnotation(HighlightSeverity.ERROR, expr.getTextRange(), baseMessage, sb.toString());
+            holder.newAnnotation(HighlightSeverity.ERROR, baseMessage).tooltip(sb.toString()).create();
         }
     }
 

@@ -20,6 +20,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.expressions.GLSLBinaryOperatorExpression;
 import glslplugin.lang.elements.expressions.GLSLExpression;
@@ -42,8 +43,8 @@ public class BinaryOperatorTypeAnnotation extends Annotator<GLSLBinaryOperatorEx
         final GLSLOperator operator = expr.getOperator();
         if(left == null || right == null || operator == null)return; //There are bigger problems than type compatibility
 
-        if(!(operator instanceof GLSLOperator.GLSLBinaryOperator)){
-            holder.createErrorAnnotation(expr, '\''+operator.getTextRepresentation()+"' is not a binary operator");
+        if(!(operator instanceof GLSLOperator.GLSLBinaryOperator)) {
+            holder.newAnnotation(HighlightSeverity.ERROR, "'"+operator.getTextRepresentation()+"' is not a binary operator").create();
             return;
         }
         GLSLOperator.GLSLBinaryOperator binaryOperator = (GLSLOperator.GLSLBinaryOperator) operator;
@@ -53,8 +54,8 @@ public class BinaryOperatorTypeAnnotation extends Annotator<GLSLBinaryOperatorEx
 
         if (leftType.isValidType() && rightType.isValidType()) {
             if(!binaryOperator.isValidInput(leftType, rightType)){
-                holder.createErrorAnnotation(expr, "Incompatible types as operands of '" + operator.getTextRepresentation() + "': '"
-                        + leftType.getTypename() + "' and '" + rightType.getTypename() + "'");
+                holder.newAnnotation(HighlightSeverity.ERROR, "Incompatible types as operands of '" + operator.getTextRepresentation() + "': '"
+                        + leftType.getTypename() + "' and '" + rightType.getTypename() + "'").create();
             }
         }
     }

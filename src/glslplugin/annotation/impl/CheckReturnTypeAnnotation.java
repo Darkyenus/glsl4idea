@@ -20,6 +20,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
 import glslplugin.lang.elements.statements.GLSLReturnStatement;
@@ -39,7 +40,7 @@ public class CheckReturnTypeAnnotation extends Annotator<GLSLStatement> {
                 GLSLType returnType = ((GLSLReturnStatement) expr).getReturnType();
 
                 if (returnType.isValidType() && !returnType.isConvertibleTo(functionType)) {
-                    holder.createErrorAnnotation(expr, "Incompatible types. Required: " + functionType.getTypename() + ", found: " + returnType.getTypename());
+                    holder.newAnnotation(HighlightSeverity.ERROR,  "Incompatible types. Required: " + functionType.getTypename() + ", found: " + returnType.getTypename()).create();
                 }
             }
         }

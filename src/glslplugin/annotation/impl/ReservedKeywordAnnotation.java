@@ -1,6 +1,7 @@
 package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.psi.PsiElement;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.GLSLTokenTypes;
@@ -13,7 +14,7 @@ public class ReservedKeywordAnnotation extends Annotator<PsiElement> {
     @Override
     public void annotate(PsiElement element, AnnotationHolder holder) {
         if (element.getNode().getElementType() == GLSLTokenTypes.RESERVED_KEYWORD) {
-            holder.createErrorAnnotation(element, "Reserved keyword");
+            holder.newAnnotation(HighlightSeverity.ERROR, "Reserved keyword").create();
         }
     }
 
