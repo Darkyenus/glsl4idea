@@ -35,8 +35,7 @@ class GLSLPresentation implements ItemPresentation {
     public static final Icon FUNCTION = PlatformIcons.METHOD_ICON;
     public static final Icon STRUCT = PlatformIcons.ANNOTATION_TYPE_ICON;
 
-    private String name;
-    private Icon openIcon = null;
+    private final String name;
     private Icon icon = null;
 
     public GLSLPresentation(String name) {
@@ -52,10 +51,6 @@ class GLSLPresentation implements ItemPresentation {
     }
 
     public Icon getIcon(boolean open) {
-        if (open && openIcon != null) {
-            return openIcon;
-        }
-
         return icon;
     }
 
@@ -119,11 +114,7 @@ class GLSLPresentation implements ItemPresentation {
         GLSLQualifier[] qualifiers = type.getQualifiers();
 
         if (qualifiers.length > 0) {
-            result += prettyPrint(stringify(qualifiers, new Stringifyer<GLSLQualifier>() {
-                public String stringify(GLSLQualifier glslQualifier) {
-                    return glslQualifier == null?"null":glslQualifier.getText();
-                }
-            }));
+            result += prettyPrint(stringify(qualifiers, glslQualifier -> glslQualifier == null ? "null" : glslQualifier.getText()));
             result += " ";
         }
 

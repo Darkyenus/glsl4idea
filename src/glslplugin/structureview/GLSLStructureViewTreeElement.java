@@ -32,7 +32,7 @@ import java.util.List;
 
 abstract class GLSLStructureViewTreeElement<T extends PsiElement> implements StructureViewTreeElement, Comparable<GLSLStructureViewTreeElement<?>> {
     private final T element;
-    private List<GLSLStructureViewTreeElement<?>> children = new ArrayList<>();
+    private final List<GLSLStructureViewTreeElement<?>> children = new ArrayList<>();
 
     public GLSLStructureViewTreeElement(@NotNull T element) {
         this.element = element;
@@ -50,7 +50,7 @@ abstract class GLSLStructureViewTreeElement<T extends PsiElement> implements Str
         return createPresentation(element);
     }
 
-    protected final void addChild(final GLSLStructureViewTreeElement child) {
+    protected final void addChild(final GLSLStructureViewTreeElement<?> child) {
         children.add(child);
     }
 

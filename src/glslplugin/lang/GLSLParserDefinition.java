@@ -43,10 +43,12 @@ public class GLSLParserDefinition implements ParserDefinition {
         return new GLSLFlexAdapter();
     }
 
+    @NotNull
     public PsiParser createParser(Project project) {
         return new GLSLParser();
     }
 
+    @NotNull
     public IFileElementType getFileNodeType() {
         return GLSLElementTypes.FILE;
     }
@@ -77,15 +79,18 @@ public class GLSLParserDefinition implements ParserDefinition {
         }
     }
 
-    public PsiFile createFile(FileViewProvider fileViewProvider) {
+    @NotNull
+    public PsiFile createFile(@NotNull FileViewProvider fileViewProvider) {
         return new GLSLFile(fileViewProvider);
     }
 
+    @NotNull
     @Override
     public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
         return SpaceRequirements.MAY;
     }
 
+    @NotNull
     @SuppressWarnings("deprecation")// Kept for backward compatibility
     @Override
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {

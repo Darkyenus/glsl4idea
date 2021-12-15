@@ -73,7 +73,7 @@ public final class GLSLParsing extends GLSLParsingBase {
      * This may cause trouble during working with the PSI tree, so be careful.
      */
     @Override
-    protected final void parsePreprocessor() {
+    protected void parsePreprocessor() {
         // We can't use tryMatch etc. in here because we'll end up
         // potentially parsing a preprocessor directive inside this one.
         PsiBuilder.Marker preprocessor = b.mark();
@@ -168,7 +168,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         }
     }
 
-    private static Pattern IDENTIFIER_REGEX = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
+    private static final Pattern IDENTIFIER_REGEX = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
     private boolean isValidDefineIdentifier(String text){
         if(text == null)return false;
         return IDENTIFIER_REGEX.matcher(text).matches();

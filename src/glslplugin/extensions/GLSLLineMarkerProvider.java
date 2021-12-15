@@ -30,8 +30,6 @@ import glslplugin.lang.elements.declarations.GLSLFunctionDefinitionImpl;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * This annotation will show gutter icons for prototypes that are implemented and implementations of prototypes.
@@ -40,11 +38,7 @@ public class GLSLLineMarkerProvider implements LineMarkerProvider {
     private static final Icon implemented = AllIcons.Gutter.ImplementedMethod;
     private static final Icon implementing = AllIcons.Gutter.ImplementingMethod;
 
-    public GLSLLineMarkerProvider() {
-
-    }
-
-    public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement expr) {
+    public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement expr) {
         //todo: add navigation support for guttericons and tooltips
         if (expr instanceof GLSLFunctionDefinitionImpl) {
             //todo: check if a prototype exists
@@ -56,10 +50,5 @@ public class GLSLLineMarkerProvider implements LineMarkerProvider {
                     implemented, Pass.UPDATE_ALL, null, null, GutterIconRenderer.Alignment.RIGHT);
         }
         return null;
-    }
-
-    public void collectSlowLineMarkers(@NotNull List<PsiElement> psiElements, @NotNull Collection<LineMarkerInfo> lineMarkerInfos) {
-        //not sure about the difference
-
     }
 }

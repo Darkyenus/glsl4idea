@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class Intentions extends PsiElementBaseIntentionAction {
-    private VectorComponentsPredicate predicate;
+    private final VectorComponentsPredicate predicate;
     private Editor editor;
 
     public Intentions(VectorComponentsPredicate predicate) {

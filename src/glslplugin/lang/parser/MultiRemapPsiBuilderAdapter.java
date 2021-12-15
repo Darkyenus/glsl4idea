@@ -70,7 +70,12 @@ public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {
             // TODO this should use {#link com.intellij.lang.ForeignLeafType}, which is what the waiting token
             // will probably be, in order to create leaves with valid text.
             Marker foreignLeaf = super.mark();
-            foreignLeaf.done(getTokenType());
+            final IElementType tokenType = getTokenType();
+            if (tokenType != null) {
+                foreignLeaf.done(tokenType);
+            } else {
+                foreignLeaf.drop();
+            }
             waitingTokens.remove(0);
         }
     }

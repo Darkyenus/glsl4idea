@@ -21,17 +21,31 @@ package glslplugin.extensions;
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import glslplugin.lang.elements.GLSLIdentifier;
-import glslplugin.lang.elements.declarations.*;
+import glslplugin.lang.elements.declarations.GLSLDeclaration;
+import glslplugin.lang.elements.declarations.GLSLDeclarator;
+import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
+import glslplugin.lang.elements.declarations.GLSLParameterDeclaration;
+import glslplugin.lang.elements.declarations.GLSLQualifier;
+import glslplugin.lang.elements.declarations.GLSLSingleDeclarationImpl;
+import glslplugin.lang.elements.declarations.GLSLStructDefinition;
+import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
+import glslplugin.lang.elements.declarations.GLSLTypename;
+import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
 import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
 import glslplugin.lang.elements.expressions.GLSLFunctionCallExpression;
 import glslplugin.lang.elements.reference.GLSLReferenceBase;
 import glslplugin.lang.elements.reference.GLSLTypeReference;
-import glslplugin.lang.elements.types.*;
+import glslplugin.lang.elements.types.GLSLBasicFunctionType;
+import glslplugin.lang.elements.types.GLSLFunctionType;
+import glslplugin.lang.elements.types.GLSLQualifiedType;
+import glslplugin.lang.elements.types.GLSLStructType;
+import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.constructors.GLSLBasicConstructorType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,12 +94,7 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
                 "<code>" + type.getReturnType().getTypename() + " <b>" + type.getName() + "</b>(" + paramsString + ")</code>";
     }
     private static String getFunctionDocumentation(@NotNull GLSLFunctionDeclaration decl) {
-        return getFunctionDocumentation(decl.getType(), ContainerUtil.map(decl.getParameters(), new Function<GLSLParameterDeclaration, String>() {
-            @Override
-            public String fun(GLSLParameterDeclaration glslParameterDeclaration) {
-                return glslParameterDeclaration.getName();
-            }
-        }));
+        return getFunctionDocumentation(decl.getType(), ContainerUtil.map(decl.getParameters(), GLSLSingleDeclarationImpl::getName));
     }
 
     private static String getConstructorDocumentation(GLSLFunctionCallExpression ctorCall) {
@@ -110,7 +119,7 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
             if (typeString.length() > 0) {
                 typeString.append(' ');
             }
-            typeString.append(qualifier.toString());
+            typeString.append(qualifier);
         }
         return getNamedTypedElementDocumentation(element, typeString.toString());
     }
@@ -144,7 +153,7 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
                 return parentDoc;
 
             PsiReference reference = element.getReference();
-            if (reference == null && parent instanceof GLSLReferenceBase) reference = ((GLSLReferenceBase) parent);
+            if (reference == null && parent instanceof GLSLReferenceBase) reference = ((PsiReference) parent);
 
             if (reference instanceof GLSLTypeReference) {
                 GLSLStructDefinition typeDef = ((GLSLTypeReference) reference).resolve();

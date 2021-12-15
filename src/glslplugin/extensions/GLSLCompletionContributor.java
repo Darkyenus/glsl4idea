@@ -120,7 +120,7 @@ public class GLSLCompletionContributor extends DefaultCompletionContributor {
 
     public static class GLSLLookupElement extends LookupElement {
         private final String str;
-        private GLSLType type;
+        private final GLSLType type;
 
         public GLSLLookupElement(String str, GLSLType type) {
             this.str = str;

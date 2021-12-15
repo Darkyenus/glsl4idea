@@ -75,20 +75,16 @@ public class VectorComponentsIntention extends Intentions {
         String[] variants = new String[]{components + " -> " + results[0], components + " -> " + results[1]};
         //http://www.jetbrains.net/devnet/message/5208622#5208622
         final JBList<String> list = new JBList<>(variants);
-        PopupChooserBuilder builder = new PopupChooserBuilder(list);
+        PopupChooserBuilder<String> builder = new PopupChooserBuilder<>(list);
         builder.setTitle("Select Variant");
-        builder.setItemChoosenCallback(new Runnable() {
-            public void run() {
-                try {
-                    WriteCommandAction.writeCommandAction(element.getProject(), element.getContainingFile()).run(new ThrowableRunnable<Throwable>() {
-                        @Override
-                        public void run() {
-                            replaceIdentifierElement(element, results[list.getSelectedIndex()]);
-                        }
-                    });
-                } catch (Throwable t) {
-                    LOG.error("replaceIdentifierElement failed", t);
-                }
+        builder.setItemChoosenCallback(() -> {
+            try {
+                WriteCommandAction.writeCommandAction(element.getProject(), element.getContainingFile())
+                        .run((ThrowableRunnable<Throwable>) () ->
+                                replaceIdentifierElement(element, results[list.getSelectedIndex()])
+                        );
+            } catch (Throwable t) {
+                LOG.error("replaceIdentifierElement failed", t);
             }
         });
         JBPopup popup = builder.createPopup();

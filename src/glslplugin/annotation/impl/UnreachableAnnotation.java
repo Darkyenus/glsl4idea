@@ -34,7 +34,7 @@ import glslplugin.lang.elements.statements.*;
 import org.jetbrains.annotations.NotNull;
 
 public class UnreachableAnnotation extends Annotator<GLSLStatement> {
-    private TextAttributesKey unreachableAttributes;
+    private final TextAttributesKey unreachableAttributes;
 
     public UnreachableAnnotation() {
         unreachableAttributes = TextAttributesKey.createTextAttributesKey("GLSL.UNREACHABLE", CodeInsightColors.NOT_USED_ELEMENT_ATTRIBUTES);

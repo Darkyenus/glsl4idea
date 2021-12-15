@@ -32,7 +32,7 @@ import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import org.jetbrains.annotations.NotNull;
 
 class GLSLStructureViewModel extends TextEditorBasedStructureViewModel {
-    private PsiElement rootElement;
+    private final PsiElement rootElement;
 
     public GLSLStructureViewModel(PsiElement element) {
         super(element.getContainingFile());
@@ -66,7 +66,7 @@ class GLSLStructureViewModel extends TextEditorBasedStructureViewModel {
 
     @NotNull
     @Override
-    protected Class[] getSuitableClasses() {
+    protected Class<?>[] getSuitableClasses() {
         return new Class[]{GLSLFunctionDeclarationImpl.class, PsiFile.class, GLSLStructDefinition.class, GLSLDeclarationImpl.class};
     }
 }

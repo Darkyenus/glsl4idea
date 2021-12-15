@@ -33,11 +33,8 @@ public class GLSLCreateFromTemplateHandler extends DefaultCreateFromTemplateHand
     private static void addTemplates(Map<String, FileTemplate> result, FileTemplate[] templates){
         for(FileTemplate template:templates){
             if(template.isTemplateOfType(GLSLSupportLoader.GLSL) && GLSLFileType.EXTENSIONS.contains(template.getExtension())){
-                FileTemplate existing = result.get(template.getExtension());
-                if(existing == null){
-                    //Do not replace existing templates to keep well defined priority order
-                    result.put(template.getExtension(), template);
-                }
+                //Do not replace existing templates to keep well defined priority order
+                result.putIfAbsent(template.getExtension(), template);
             }
         }
     }

@@ -28,6 +28,7 @@ import glslplugin.lang.elements.expressions.GLSLFunctionCallExpression;
 import glslplugin.lang.elements.types.GLSLFunctionType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,8 +52,16 @@ public class GLSLFunctionReference extends GLSLReferenceBase<GLSLIdentifier, GLS
     public ResolveResult[] multiResolve(boolean incompleteCode) {
         final List<GLSLFunctionType> functions = sourceExpression.getPossibleCalledFunctions();
         ResolveResult[] result = new ResolveResult[functions.size()];
+        int outI = 0;
         for (int i = 0; i < result.length; i++) {
-            result[i] = new PsiElementResolveResult(functions.get(i).getDefinition());
+            final GLSLElement definition = functions.get(i).getDefinition();
+            if (definition == null) {
+                continue;
+            }
+            result[outI++] = new PsiElementResolveResult(definition);
+        }
+        if (outI < result.length) {
+            return Arrays.copyOf(result, outI);
         }
         return result;
     }

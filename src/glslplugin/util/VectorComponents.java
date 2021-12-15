@@ -5,7 +5,7 @@ public enum VectorComponents {
     RGBA("rgba"),
     STPQ("stpq");
 
-    private String components;
+    private final String components;
 
     VectorComponents(String components) {
         this.components = components;
