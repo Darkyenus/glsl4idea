@@ -19,16 +19,22 @@
 
 package glslplugin.extensions;
 
+import com.intellij.codeInsight.daemon.DefaultGutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
-import glslplugin.lang.elements.declarations.GLSLFunctionDeclarationImpl;
-import glslplugin.lang.elements.declarations.GLSLFunctionDefinitionImpl;
+import com.intellij.psi.util.PsiTreeUtil;
+import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
+import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.function.Supplier;
 
 /**
  * This annotation will show gutter icons for prototypes that are implemented and implementations of prototypes.
@@ -37,16 +43,57 @@ public class GLSLLineMarkerProvider implements LineMarkerProvider {
     private static final Icon implemented = AllIcons.Gutter.ImplementedMethod;
     private static final Icon implementing = AllIcons.Gutter.ImplementingMethod;
 
-    public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement expr) {
-        //todo: add navigation support for guttericons and tooltips
-        if (expr instanceof GLSLFunctionDefinitionImpl) {
-            //todo: check if a prototype exists
-            return new LineMarkerInfo<>(expr, expr.getTextRange(), implementing, null, null, GutterIconRenderer.Alignment.RIGHT, () -> "implementing");
-        } else if (expr instanceof GLSLFunctionDeclarationImpl) {
-            //todo: check if it is implemented
-            return new LineMarkerInfo<>((GLSLFunctionDeclarationImpl) expr, expr.getTextRange(),
-                    implemented,null, null, GutterIconRenderer.Alignment.RIGHT, () -> "implemented");
+    private static Collection<GLSLFunctionDeclaration> findOtherFunctionDeclarations(GLSLFunctionDeclaration basedOn, boolean declarations, boolean definitions) {
+        final Collection<GLSLFunctionDeclaration> possibilities = PsiTreeUtil.findChildrenOfType(basedOn.getContainingFile(), GLSLFunctionDeclaration.class);
+        final String targetSignature = basedOn.getSignature();
+        final ArrayList<GLSLFunctionDeclaration> result = new ArrayList<>(possibilities.size() - 1);
+        for (GLSLFunctionDeclaration possibility : possibilities) {
+            if (possibility == basedOn) {
+                continue;
+            }
+            final boolean isDefinition = possibility instanceof GLSLFunctionDefinition;
+            if (isDefinition && !definitions || !isDefinition && !declarations) {
+                continue;
+            }
+            if (targetSignature.equals(possibility.getSignature())) {
+                result.add(possibility);
+            }
         }
-        return null;
+        return result;
+    }
+
+    private static final Supplier<String> implementedAccessibilityName = () -> "implemented";
+    private static final Supplier<String> implementingAccessibilityName = () -> "implementing";
+
+    public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement expr) {
+        if (!(expr instanceof GLSLIdentifier)) {
+            return null;
+        }
+
+        final GLSLFunctionDeclaration functionDeclaration = ((GLSLIdentifier) expr).findParentByClass(GLSLFunctionDeclaration.class);
+        if (functionDeclaration == null || functionDeclaration.getNameIdentifier() != expr) {
+            return null;
+        }
+
+        final boolean isDefinition = functionDeclaration instanceof GLSLFunctionDefinition;
+        final Collection<GLSLFunctionDeclaration> navigationTargets = findOtherFunctionDeclarations(functionDeclaration, isDefinition, !isDefinition);
+        if (navigationTargets.isEmpty()) {
+            return null;
+        }
+
+        // GLSLIdentifier wraps PsiElement(IDENTIFIER), which is what we should pass in
+        PsiElement targetElement = ((GLSLIdentifier) expr).getNameIdentifier();
+        if (targetElement == null) {
+            targetElement = expr;
+        }
+
+        final String signature = functionDeclaration.getSignature();
+        return new LineMarkerInfo<>(targetElement,
+                targetElement.getTextRange(),
+                isDefinition ? implementing : implemented,
+                (element) -> signature + (isDefinition ? " has forward declaration" : " has definition"),
+                new DefaultGutterIconNavigationHandler<>(navigationTargets, (isDefinition ? "Declarations of " : "Definitions of ") + signature),
+                GutterIconRenderer.Alignment.RIGHT,
+                isDefinition ? implementingAccessibilityName : implementedAccessibilityName);
     }
 }

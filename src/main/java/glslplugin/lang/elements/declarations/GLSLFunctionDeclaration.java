@@ -19,6 +19,7 @@
 
 package glslplugin.lang.elements.declarations;
 
+import com.intellij.psi.PsiNameIdentifierOwner;
 import glslplugin.lang.elements.types.GLSLFunctionType;
 import glslplugin.lang.elements.types.GLSLType;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  * It inherits the name, qualifier and (return) type from {@link glslplugin.lang.elements.declarations.GLSLDeclaration}
  * and adds the parameter list.
  */
-public interface GLSLFunctionDeclaration extends GLSLSingleDeclaration {
+public interface GLSLFunctionDeclaration extends GLSLSingleDeclaration, PsiNameIdentifierOwner {
 
     @NotNull
     GLSLParameterDeclaration[] getParameters();
