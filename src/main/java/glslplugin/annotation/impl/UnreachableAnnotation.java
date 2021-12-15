@@ -26,57 +26,64 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.GLSLTokenTypes;
+import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
 import glslplugin.lang.elements.statements.GLSLLabelStatement;
 import glslplugin.lang.elements.statements.GLSLStatement;
 import org.jetbrains.annotations.NotNull;
 
-public class UnreachableAnnotation extends Annotator<GLSLStatement> {
+import java.util.Collection;
+
+public class UnreachableAnnotation extends Annotator<GLSLFunctionDefinition> {
     private final TextAttributesKey unreachableAttributes;
 
     public UnreachableAnnotation() {
         unreachableAttributes = TextAttributesKey.createTextAttributesKey("GLSL.UNREACHABLE", CodeInsightColors.NOT_USED_ELEMENT_ATTRIBUTES);
     }
 
-    public void annotate(GLSLStatement expr, AnnotationHolder holder) {
-        GLSLStatement.TerminatorScope scope = expr.getTerminatorScope();
-        if (scope == GLSLStatement.TerminatorScope.NONE) return;
+    public void annotate(GLSLFunctionDefinition function, AnnotationHolder holder) {
+        final Collection<GLSLStatement> statements = PsiTreeUtil.findChildrenOfType(function, GLSLStatement.class);
+        for (GLSLStatement statement : statements) {
+            GLSLStatement.TerminatorScope scope = statement.getTerminatorScope();
+            if (scope == GLSLStatement.TerminatorScope.NONE) continue;
 
-        if (expr.getParent() == null
-                || expr.getParent().getNode().getElementType() != GLSLElementTypes.COMPOUND_STATEMENT) {
-            return;
-        }
-
-        PsiElement element = expr.getNextSibling();
-        while (element != null) {
-            if (element instanceof GLSLElement && !GLSLTokenTypes.PREPROCESSOR_DIRECTIVES.contains(element.getNode().getElementType())) {
-                if (element instanceof GLSLLabelStatement) return;
-                PsiElement child = element.getFirstChild();
-
-                if(child == null){
-                    holder.newAnnotation(HighlightSeverity.WARNING, "Unreachable expression").range(element).textAttributes(unreachableAttributes).create();
-                }else{
-                    do {
-                        IElementType type = child.getNode().getElementType();
-                        if(!GLSLTokenTypes.PREPROCESSOR_DIRECTIVES.contains(type) && type != TokenType.WHITE_SPACE){
-                            if (child instanceof GLSLLabelStatement) return;
-                            holder.newAnnotation(HighlightSeverity.WARNING, "Unreachable expression").range(child).textAttributes(unreachableAttributes).create();
-                        }
-                        child = child.getNextSibling();
-                    }while(child != null);
-                }
-
+            final PsiElement parent = statement.getParent();
+            if (parent == null || parent.getNode().getElementType() != GLSLElementTypes.COMPOUND_STATEMENT) {
+                continue;
             }
-            element = element.getNextSibling();
+
+            PsiElement element = statement.getNextSibling();
+            while (element != null) {
+                if (element instanceof GLSLElement && !GLSLTokenTypes.PREPROCESSOR_DIRECTIVES.contains(element.getNode().getElementType())) {
+                    if (element instanceof GLSLLabelStatement) break;
+                    PsiElement child = element.getFirstChild();
+
+                    if (child == null) {
+                        holder.newAnnotation(HighlightSeverity.WARNING, "Unreachable expression").range(element).textAttributes(unreachableAttributes).create();
+                    } else {
+                        do {
+                            IElementType type = child.getNode().getElementType();
+                            if(!GLSLTokenTypes.PREPROCESSOR_DIRECTIVES.contains(type) && type != TokenType.WHITE_SPACE){
+                                if (child instanceof GLSLLabelStatement) break;
+                                holder.newAnnotation(HighlightSeverity.WARNING, "Unreachable expression").range(child).textAttributes(unreachableAttributes).create();
+                            }
+                            child = child.getNextSibling();
+                        } while(child != null);
+                    }
+
+                }
+                element = element.getNextSibling();
+            }
         }
     }
 
     @NotNull
     @Override
-    public Class<GLSLStatement> getElementType() {
-        return GLSLStatement.class;
+    public Class<GLSLFunctionDefinition> getElementType() {
+        return GLSLFunctionDefinition.class;
     }
 }

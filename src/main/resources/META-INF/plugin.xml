@@ -31,6 +31,7 @@
     <!-- https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under -->
     <!-- Until build is not set, because we hope it will work. -->
     <idea-version since-build="203.5981.155"/>
+    <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
 
     <change-notes><![CDATA[
