@@ -36,7 +36,8 @@
 
     <change-notes><![CDATA[
         <ul>
-            <li></li>
+            <li>IDE compatibility fixes</li>
+            <li>Improved gutter navigation between function declaration and definition</li>
         </ul>
     ]]></change-notes>
 
