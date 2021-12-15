@@ -9,3 +9,6 @@ GLSLPlugin.jar
 /piglit-repo
 .idea
 GLSLFlexLexer.java~
+.gradle
+.qodana
+build
