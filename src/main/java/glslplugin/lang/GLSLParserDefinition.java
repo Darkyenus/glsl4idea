@@ -89,11 +89,4 @@ public class GLSLParserDefinition implements ParserDefinition {
     public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
         return SpaceRequirements.MAY;
     }
-
-    @NotNull
-    @SuppressWarnings("deprecation")// Kept for backward compatibility
-    @Override
-    public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
-        return spaceExistenceTypeBetweenTokens(astNode, astNode1);
-    }
 }

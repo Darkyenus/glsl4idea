@@ -34,9 +34,9 @@ tasks {
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion
     }
-    /*withType<KotlinCompile> {
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = javaVersion
-    }*/
+    }
 
     wrapper {
         // https://github.com/gradle/gradle/releases
