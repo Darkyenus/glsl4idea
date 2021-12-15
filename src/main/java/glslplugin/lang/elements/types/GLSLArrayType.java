@@ -97,8 +97,8 @@ public class GLSLArrayType extends GLSLType {
      *
      * For example for "int[3] exampleArray", this will return "new int[]{3}".
      */
-    @NotNull
-    public int[] getDimensions() {
+
+    public int @NotNull [] getDimensions() {
         return dimensions;
     }
 

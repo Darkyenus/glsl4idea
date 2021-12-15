@@ -32,7 +32,7 @@ public class GLSLCreateFromTemplateHandler extends DefaultCreateFromTemplateHand
 
     private static void addTemplates(Map<String, FileTemplate> result, FileTemplate[] templates){
         for(FileTemplate template:templates){
-            if(template.isTemplateOfType(GLSLSupportLoader.GLSL) && GLSLFileType.EXTENSIONS.contains(template.getExtension())){
+            if(template.isTemplateOfType(GLSLFileType.INSTANCE) && GLSLFileType.EXTENSIONS.contains(template.getExtension())){
                 //Do not replace existing templates to keep well defined priority order
                 result.putIfAbsent(template.getExtension(), template);
             }
@@ -53,7 +53,7 @@ public class GLSLCreateFromTemplateHandler extends DefaultCreateFromTemplateHand
 
     @Override
     public boolean handlesTemplate(@NotNull FileTemplate template) {
-        return template.isTemplateOfType(GLSLSupportLoader.GLSL);
+        return template.isTemplateOfType(GLSLFileType.INSTANCE);
     }
 
     //Copied and modified from parent class

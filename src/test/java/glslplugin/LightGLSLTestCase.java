@@ -3,6 +3,7 @@ package glslplugin;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import glslplugin.lang.GLSLFileType;
 import glslplugin.lang.parser.GLSLFile;
 
 import java.io.File;
@@ -31,6 +32,6 @@ public abstract class LightGLSLTestCase extends LightPlatformCodeInsightFixtureT
             throw new RuntimeException(e);
         }
 
-        return ((GLSLFile) PsiFileFactory.getInstance(getProject()).createFileFromText("dummy.glsl", GLSLSupportLoader.GLSL, testFileContent));
+        return ((GLSLFile) PsiFileFactory.getInstance(getProject()).createFileFromText("dummy.glsl", GLSLFileType.INSTANCE, testFileContent));
     }
 }

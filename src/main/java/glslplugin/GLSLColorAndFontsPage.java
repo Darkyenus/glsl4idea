@@ -20,10 +20,12 @@
 package glslplugin;
 
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
+import glslplugin.lang.GLSLFileType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,16 +69,16 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
 
     @Nullable
     public Icon getIcon() {
-        return GLSLSupportLoader.GLSL.getIcon();
+        return ((LanguageFileType) GLSLFileType.INSTANCE).getIcon();
     }
 
     @NotNull
-    public AttributesDescriptor[] getAttributeDescriptors() {
+    public AttributesDescriptor @NotNull [] getAttributeDescriptors() {
         return ATTRIBUTES;
     }
 
     @NotNull
-    public ColorDescriptor[] getColorDescriptors() {
+    public ColorDescriptor @NotNull [] getColorDescriptors() {
         return new ColorDescriptor[0];
     }
 

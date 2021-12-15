@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,26 +34,31 @@ import java.util.Set;
  */
 public class GLSLFileType extends LanguageFileType {
 
+    public static final GLSLFileType INSTANCE = new GLSLFileType();
+
     public static final Set<String> EXTENSIONS = new HashSet<>();
 
     static {
         EXTENSIONS.add("glsl");
         EXTENSIONS.add("frag");
+        EXTENSIONS.add("fsh");
         EXTENSIONS.add("vert");
+        EXTENSIONS.add("vsh");
         EXTENSIONS.add("tesc");
         EXTENSIONS.add("tese");
         EXTENSIONS.add("geom");
         EXTENSIONS.add("comp");
+        EXTENSIONS.add("shader");
     }
 
-    public GLSLFileType() {
+    private GLSLFileType() {
         super(GLSLLanguage.GLSL_LANGUAGE);
     }
 
     @NotNull
     @NonNls
     public String getName() {
-        return "GLSL shader file";
+        return "GLSL shader";
     }
 
     @NotNull
@@ -70,6 +74,6 @@ public class GLSLFileType extends LanguageFileType {
 
     @Nullable
     public Icon getIcon() {
-        return IconLoader.getIcon("/icons/GLSLmini.png");
+        return IconLoader.getIcon("/icons/GLSLmini.png", GLSLFileType.class);
     }
 }

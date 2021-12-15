@@ -28,8 +28,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.util.IncorrectOperationException;
-import glslplugin.GLSLSupportLoader;
 import glslplugin.intentions.vectorcomponents.VectorComponentsPredicate;
+import glslplugin.lang.GLSLFileType;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
@@ -92,7 +92,7 @@ public abstract class Intentions extends PsiElementBaseIntentionAction {
     protected PsiElement createExpressionFromText(PsiElement element, String expression) {
         String name = "dummy.glsl";
         //todo: parser must be able to handle this somehow...
-        PsiFile dummyFile = PsiFileFactory.getInstance(element.getProject()).createFileFromText(name, GLSLSupportLoader.GLSL.getLanguage(), expression);
+        PsiFile dummyFile = PsiFileFactory.getInstance(element.getProject()).createFileFromText(name, GLSLFileType.INSTANCE.getLanguage(), expression);
         return dummyFile.getFirstChild();
     }
 

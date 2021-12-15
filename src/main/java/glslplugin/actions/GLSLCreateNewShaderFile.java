@@ -2,9 +2,10 @@ package glslplugin.actions;
 
 import com.intellij.ide.actions.CreateFileFromTemplateAction;
 import com.intellij.ide.actions.CreateFileFromTemplateDialog;
+import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
-import glslplugin.GLSLSupportLoader;
+import glslplugin.lang.GLSLFileType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class GLSLCreateNewShaderFile extends CreateFileFromTemplateAction {
 
     public GLSLCreateNewShaderFile() {
-        super("GLSL Shader", "Create new GLSL shader file", GLSLSupportLoader.GLSL.getIcon());
+        super("GLSL Shader", "Create new GLSL shader file", ((LanguageFileType) GLSLFileType.INSTANCE).getIcon());
     }
 
     @Override

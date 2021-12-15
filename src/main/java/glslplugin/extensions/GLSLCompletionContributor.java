@@ -22,11 +22,12 @@ package glslplugin.extensions;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import glslplugin.GLSLSupportLoader;
+import glslplugin.lang.GLSLFileType;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.expressions.GLSLAssignmentExpression;
@@ -55,7 +56,7 @@ public class GLSLCompletionContributor extends DefaultCompletionContributor {
 
     public GLSLCompletionContributor() {
         // Add field selection completion
-        extend(CompletionType.BASIC, FIELD_SELECTION, new CompletionProvider<CompletionParameters>() {
+        extend(CompletionType.BASIC, FIELD_SELECTION, new CompletionProvider<>() {
             @Override
             protected void addCompletions(@NotNull CompletionParameters completionParameters, @NotNull ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
                 GLSLFieldSelectionExpression fieldSelection = (GLSLFieldSelectionExpression) completionParameters.getPosition().getParent().getParent();
@@ -130,7 +131,7 @@ public class GLSLCompletionContributor extends DefaultCompletionContributor {
         @Override
         public void renderElement(LookupElementPresentation presentation) {
             super.renderElement(presentation);
-            presentation.setIcon(GLSLSupportLoader.GLSL.getIcon());
+            presentation.setIcon(((LanguageFileType) GLSLFileType.INSTANCE).getIcon());
 
             if (type != null) {
                 presentation.setTypeText(this.type.getTypename());

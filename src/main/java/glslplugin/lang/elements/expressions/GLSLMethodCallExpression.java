@@ -25,8 +25,6 @@ import glslplugin.lang.elements.GLSLIdentifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.logging.Logger;
-
 /**
  * GLSLMethodCall is ...
  *

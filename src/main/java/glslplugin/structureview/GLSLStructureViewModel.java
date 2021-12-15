@@ -49,24 +49,24 @@ class GLSLStructureViewModel extends TextEditorBasedStructureViewModel {
     }
 
     @NotNull
-    public Grouper[] getGroupers() {
+    public Grouper @NotNull [] getGroupers() {
         return Grouper.EMPTY_ARRAY;
     }
 
     @NotNull
-    public Sorter[] getSorters() {
+    public Sorter @NotNull [] getSorters() {
         return new Sorter[]{Sorter.ALPHA_SORTER};
     }
 
     @NotNull
-    public Filter[] getFilters() {
+    public Filter @NotNull [] getFilters() {
         return Filter.EMPTY_ARRAY;
     }
 
 
     @NotNull
     @Override
-    protected Class<?>[] getSuitableClasses() {
+    protected Class<?> @NotNull [] getSuitableClasses() {
         return new Class[]{GLSLFunctionDeclarationImpl.class, PsiFile.class, GLSLStructDefinition.class, GLSLDeclarationImpl.class};
     }
 }

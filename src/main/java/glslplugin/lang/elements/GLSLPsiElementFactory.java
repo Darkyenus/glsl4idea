@@ -24,7 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.tree.IElementType;
-import glslplugin.GLSLSupportLoader;
+import glslplugin.lang.GLSLFileType;
 import glslplugin.lang.elements.declarations.*;
 import glslplugin.lang.elements.expressions.*;
 import glslplugin.lang.elements.preprocessor.*;
@@ -146,7 +146,7 @@ public class GLSLPsiElementFactory {
     @NotNull
     public static PsiElement createLeafElement(Project project, String name) {
         PsiElement element = PsiFileFactory.getInstance(project).
-                createFileFromText("dummy.glsl", GLSLSupportLoader.GLSL, name);
+                createFileFromText("dummy.glsl", GLSLFileType.INSTANCE, name);
         while (element.getFirstChild() != null) element = element.getFirstChild();
         return element;
     }

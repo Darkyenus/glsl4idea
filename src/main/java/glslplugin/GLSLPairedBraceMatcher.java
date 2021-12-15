@@ -35,7 +35,7 @@ public class GLSLPairedBraceMatcher implements PairedBraceMatcher {
     };
 
     @NotNull
-    public BracePair[] getPairs() {
+    public BracePair @NotNull [] getPairs() {
         return bracePairs;
     }
 

@@ -20,9 +20,9 @@
 package glslplugin.structureview;
 
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.util.PlatformIcons;
-import glslplugin.GLSLSupportLoader;
-import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.GLSLFileType;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLQualifier;
 import glslplugin.lang.elements.types.GLSLQualifiedType;
@@ -66,26 +66,13 @@ class GLSLPresentation implements ItemPresentation {
 
     public static GLSLPresentation createFilePresentation(String name) {
         GLSLPresentation presentation = new GLSLPresentation(name);
-        presentation.setIcon(GLSLSupportLoader.GLSL.getIcon());
+        presentation.setIcon(((LanguageFileType) GLSLFileType.INSTANCE).getIcon());
         return presentation;
     }
 
     public static GLSLPresentation createStructPresentation(String structName) {
         GLSLPresentation presentation = new GLSLPresentation(structName);
         presentation.setIcon(STRUCT);
-        return presentation;
-    }
-
-    public static GLSLPresentation createFieldPresentation(String type, GLSLDeclarator[] declarators) {
-        String dec = prettyPrint(stringify(declarators, new Stringifyer<GLSLDeclarator>() {
-            public String stringify(GLSLDeclarator glslDeclarator) {
-                GLSLIdentifier identifier = glslDeclarator.getNameIdentifier();
-                if(identifier == null)return "(unknown)";
-                else return identifier.getName();
-            }
-        }));
-        GLSLPresentation presentation = new GLSLPresentation(dec + " : " + type);
-        presentation.setIcon(FIELD);
         return presentation;
     }
 

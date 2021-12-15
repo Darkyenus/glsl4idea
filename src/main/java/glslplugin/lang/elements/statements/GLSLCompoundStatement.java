@@ -41,7 +41,7 @@ public class GLSLCompoundStatement extends GLSLStatement {
     }
 
     @NotNull
-    public GLSLStatement[] getStatements() {
+    public GLSLStatement @NotNull [] getStatements() {
         GLSLStatement[] statements = PsiTreeUtil.getChildrenOfType(this, GLSLStatement.class);
         return (statements == null) ? GLSLStatement.NO_STATEMENTS : statements;
     }
@@ -71,8 +71,6 @@ public class GLSLCompoundStatement extends GLSLStatement {
         }
 
         for (GLSLStatement statement : getStatements()) {
-            if (statement == null)
-                continue;
             if (!statement.processDeclarations(processor, state, lastParent, place)) return false;
         }
 

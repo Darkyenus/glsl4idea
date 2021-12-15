@@ -57,7 +57,7 @@ abstract class GLSLStructureViewTreeElement<T extends PsiElement> implements Str
     protected abstract void createChildren(@NotNull T t);
 
     @NotNull
-    public final TreeElement[] getChildren() {
+    public final TreeElement @NotNull [] getChildren() {
         children.clear();
         createChildren(element);
         Collections.sort(children);

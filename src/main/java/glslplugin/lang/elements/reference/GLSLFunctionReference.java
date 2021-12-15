@@ -49,7 +49,7 @@ public class GLSLFunctionReference extends GLSLReferenceBase<GLSLIdentifier, GLS
     }
 
     @NotNull
-    public ResolveResult[] multiResolve(boolean incompleteCode) {
+    public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
         final List<GLSLFunctionType> functions = sourceExpression.getPossibleCalledFunctions();
         ResolveResult[] result = new ResolveResult[functions.size()];
         int outI = 0;

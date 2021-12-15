@@ -26,7 +26,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
-import glslplugin.GLSLSupportLoader;
+import glslplugin.lang.GLSLFileType;
 import glslplugin.lang.elements.preprocessor.GLSLVersionDirective;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +40,7 @@ public class GLSLFile extends PsiFileBase {
     public static final int GLSL_DEFAULT_VERSION = 110;
 
     public GLSLFile(FileViewProvider fileViewProvider) {
-        super(fileViewProvider, GLSLSupportLoader.GLSL.getLanguage());
+        super(fileViewProvider, GLSLFileType.INSTANCE.getLanguage());
     }
 
     /**
@@ -58,7 +58,7 @@ public class GLSLFile extends PsiFileBase {
 
     @NotNull
     public FileType getFileType() {
-        return GLSLSupportLoader.GLSL;
+        return GLSLFileType.INSTANCE;
     }
 
     @Override

@@ -19,16 +19,16 @@
 
 package glslplugin.lang.elements;
 
-import glslplugin.GLSLSupportLoader;
+import glslplugin.lang.GLSLFileType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class GLSLElementType extends com.intellij.psi.tree.IElementType {
     public GLSLElementType(@NotNull @NonNls String s) {
-        super(s, GLSLSupportLoader.GLSL.getLanguage());
+        super(s, GLSLFileType.INSTANCE.getLanguage());
     }
 
     public GLSLElementType(@NotNull @NonNls String debugName, boolean register) {
-        super(debugName, GLSLSupportLoader.GLSL.getLanguage(), register);
+        super(debugName, GLSLFileType.INSTANCE.getLanguage(), register);
     }
 }
