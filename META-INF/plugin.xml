@@ -81,7 +81,7 @@
         <lang.documentationProvider language="GLSL" implementationClass="glslplugin.extensions.GLSLDocumentationProvider"/>
         <completion.contributor language="GLSL" implementationClass="glslplugin.extensions.GLSLCompletionContributor" />
         <elementDescriptionProvider implementation="glslplugin.extensions.GLSLDescriptionProvider" />
-        <enterHandlerDelegate implementation="glslplugin.extensions.GLSLEnterHandlerDelegate" />
+        <enterBetweenBracesDelegate language="GLSL" implementationClass="glslplugin.extensions.GLSLEnterHandlerDelegate" />
         <lang.formatter language="GLSL" implementationClass="glslplugin.formatter.GLSLFormattingModelBuilder" />
 
         <createFromTemplateHandler implementation="glslplugin.GLSLCreateFromTemplateHandler"/>
