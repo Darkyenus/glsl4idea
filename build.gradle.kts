@@ -5,7 +5,7 @@ plugins {
     // Kotlin support
     id("org.jetbrains.kotlin.jvm") version "1.6.0"
     // Gradle IntelliJ Plugin
-    id("org.jetbrains.intellij") version "1.3.0"
+    id("org.jetbrains.intellij") version "1.5.2"
 }
 
 val pluginVersion = "1.21-SNAPSHOT"
@@ -21,7 +21,8 @@ repositories {
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellij {
     type.set("IC")
-    version.set("2020.3.4")
+    //version.set("2020.3.4")
+    version.set("IC-212.4746.92")
     updateSinceUntilBuild.set(false)
     instrumentCode.set(false)
 }
@@ -36,11 +37,6 @@ tasks {
     }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = javaVersion
-    }
-
-    wrapper {
-        // https://github.com/gradle/gradle/releases
-        gradleVersion = "7.3"
     }
 
     patchPluginXml {
