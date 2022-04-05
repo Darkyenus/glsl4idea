@@ -29,10 +29,12 @@ public class GLSLDefineDirective extends GLSLPreprocessorDirective implements Ps
         return null;
     }
 
+    @NotNull
     @Override
     public String getName() {
         PsiElement nameIdentifier = getNameIdentifier();
-        return (nameIdentifier != null) ? nameIdentifier.getText() : null;
+        if (nameIdentifier == null) return "";
+        return nameIdentifier.getText();
     }
 
     /**

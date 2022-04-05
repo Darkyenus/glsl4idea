@@ -81,8 +81,9 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
 
     @Override
     public String toString() {
-        if (getName() == null) return "Anonymous struct";
-        return "Struct Type: '" + getName() + "'";
+        final String name = getName();
+        if (name.isEmpty()) return "Anonymous struct";
+        return "Struct Type: '" + name + "'";
     }
 
     /**
@@ -137,11 +138,11 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
         return findChildByClass(GLSLIdentifier.class);
     }
 
-    @Nullable
+    @NotNull
     @Override
     public String getName() {
         GLSLIdentifier identifier = getNameIdentifier();
-        if (identifier == null) return null;
+        if (identifier == null) return "";
         return identifier.getName();
     }
 

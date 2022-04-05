@@ -21,8 +21,8 @@ repositories {
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellij {
     type.set("IC")
-    //version.set("2020.3.4")
-    version.set("IC-212.4746.92")
+    version.set("2020.3.4")
+    //version.set("IC-212.4746.92")
     updateSinceUntilBuild.set(false)
     instrumentCode.set(false)
 }

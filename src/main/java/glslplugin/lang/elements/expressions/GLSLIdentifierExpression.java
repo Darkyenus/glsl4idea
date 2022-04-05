@@ -59,11 +59,8 @@ public class GLSLIdentifierExpression extends GLSLExpression implements GLSLRefe
     @Override
     public String getName() {
         GLSLIdentifier identifier = getNameIdentifier();
-        if(identifier != null){
-            return identifier.getName();
-        }else{
-            return "(unknown)";
-        }
+        if (identifier == null) return null;
+        return identifier.getName();
     }
 
     @Override

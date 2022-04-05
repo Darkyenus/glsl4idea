@@ -38,7 +38,7 @@ public class GLSLRedefinedToken extends GLSLElementImpl implements PsiNameIdenti
 
         //It shouldn't happen anymore though
         final PsiElement name = getNameIdentifier();
-        if(name == null)return getText();
+        if (name == null) return getText();
         return name.getText();
     }
 

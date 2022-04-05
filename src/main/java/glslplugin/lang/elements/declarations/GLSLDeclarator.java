@@ -80,11 +80,8 @@ public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifier
     @NotNull
     public String getName() {
         GLSLIdentifier identifier = getNameIdentifier();
-        if (identifier != null) {
-            return identifier.getName();
-        } else {
-            return "(anonymous)";
-        }
+        if (identifier == null) return "";
+        return identifier.getName();
     }
 
     @Override
