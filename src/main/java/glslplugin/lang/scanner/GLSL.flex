@@ -47,7 +47,8 @@ WHITE_SPACE         = [ \t\f]
 
 IDENTIFIER          = {NON_DIGIT}({NON_DIGIT} | {DIGIT})*
 
-UINT_SUFFIX      = [Uu]
+UINT_SUFFIX         = [Uu]
+INT64_SUFFIX        = [Ll]
 INTEGER_CONSTANT    = ({DECIMAL_CONSTANT} | {HEX_CONSTANT} | {OCTAL_CONSTANT})
 DECIMAL_CONSTANT    = (0|([1-9]({DIGIT})*))
 HEX_CONSTANT        = 0[Xx]({HEX_DIGIT})*
@@ -118,6 +119,8 @@ float                   {return FLOAT_TYPE; }
 double                  {return DOUBLE_TYPE; }
 int                     {return INT_TYPE; }
 uint                    {return UINT_TYPE; }
+int64_t                 {return INT64_TYPE; }
+uint64_t                {return UINT64_TYPE; }
 bool                    {return BOOL_TYPE; }
 vec2                    {return VEC2_TYPE; }
 vec3                    {return VEC3_TYPE; }
@@ -131,6 +134,12 @@ ivec4                   {return IVEC4_TYPE; }
 uvec2                   {return UVEC2_TYPE; }
 uvec3                   {return UVEC3_TYPE; }
 uvec4                   {return UVEC4_TYPE; }
+i64vec2                 {return I64VEC2_TYPE; }
+i64vec3                 {return I64VEC3_TYPE; }
+i64vec4                 {return I64VEC4_TYPE; }
+u64vec2                 {return U64VEC2_TYPE; }
+u64vec3                 {return U64VEC3_TYPE; }
+u64vec4                 {return U64VEC4_TYPE; }
 bvec2                   {return BVEC2_TYPE; }
 bvec3                   {return BVEC3_TYPE; }
 bvec4                   {return BVEC4_TYPE; }
@@ -318,8 +327,10 @@ using { return RESERVED_KEYWORD; }
 
 {IDENTIFIER}            {return IDENTIFIER;}
 
-{INTEGER_CONSTANT}{UINT_SUFFIX} {return UINT_CONSTANT; }
-{INTEGER_CONSTANT}      {return INTEGER_CONSTANT; }
+{INTEGER_CONSTANT}{UINT_SUFFIX}{INT64_SUFFIX} {return UINT64_CONSTANT; }
+{INTEGER_CONSTANT}{UINT_SUFFIX}               {return UINT_CONSTANT; }
+{INTEGER_CONSTANT}{INT64_SUFFIX}              {return INT64_CONSTANT; }
+{INTEGER_CONSTANT}                            {return INTEGER_CONSTANT; }
 {FLOATING_CONSTANT}{DOUBLE_SUFFIX}     {return DOUBLE_CONSTANT; }
 {FLOATING_CONSTANT}{FLOAT_SUFFIX}?     {return FLOAT_CONSTANT; }
 {STRING_CONSTANT}                      {return STRING_CONSTANT; }

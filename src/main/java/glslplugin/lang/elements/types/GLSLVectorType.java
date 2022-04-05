@@ -44,7 +44,10 @@ public class GLSLVectorType extends GLSLType {
         UINT(GLSLScalarType.UINT, "uvec"),
         BOOL(GLSLScalarType.BOOL, "bvec"),
         FLOAT(GLSLScalarType.FLOAT, "vec"),
-        DOUBLE(GLSLScalarType.DOUBLE, "dvec");
+        DOUBLE(GLSLScalarType.DOUBLE, "dvec"),
+        INT64(GLSLScalarType.INT64, "i64vec"),
+        UINT64(GLSLScalarType.UINT64, "u64vec"),
+        ;
 
         final GLSLType type;
         final String name;

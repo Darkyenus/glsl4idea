@@ -41,8 +41,10 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
         BOOL("Bool", GLSLTypes.BOOL),
         FLOAT("Float", GLSLTypes.FLOAT),
         DOUBLE("Double", GLSLTypes.DOUBLE),
-        INTEGER("Integer", GLSLTypes.INT),
+        INT("Integer", GLSLTypes.INT),
         UINT("Unsigned integer", GLSLTypes.UINT),
+        INT64("64-bit Integer", GLSLTypes.INT),
+        UINT64("Unsigned 64-bit integer", GLSLTypes.UINT),
         // https://github.com/KhronosGroup/GLSL/blob/master/extensions/ext/GLSL_EXT_debug_printf.txt
         // does not define any GLSL type, just the literal.
         STRING("String", null),
@@ -77,8 +79,10 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
     @Nullable
     public static Type getLiteralType(IElementType type){
         if (type == GLSLTokenTypes.BOOL_CONSTANT) return Type.BOOL;
-        if (type == GLSLTokenTypes.INTEGER_CONSTANT) return Type.INTEGER;
+        if (type == GLSLTokenTypes.INTEGER_CONSTANT) return Type.INT;
         if (type == GLSLTokenTypes.UINT_CONSTANT) return Type.UINT;
+        if (type == GLSLTokenTypes.INT64_CONSTANT) return Type.INT64;
+        if (type == GLSLTokenTypes.UINT64_CONSTANT) return Type.UINT64;
         if (type == GLSLTokenTypes.FLOAT_CONSTANT) return Type.FLOAT;
         if (type == GLSLTokenTypes.DOUBLE_CONSTANT) return Type.DOUBLE;
         if (type == GLSLTokenTypes.STRING_CONSTANT) return Type.STRING;
@@ -117,8 +121,10 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
                 if("true".equals(text))return true;
                 else if("false".equals(text))return false;
                 else return null;
-            case INTEGER:
+            case INT:
             case UINT:
+            case INT64:
+            case UINT64:
                 try{
                     return Long.parseLong(text);
                 }catch (NumberFormatException nfe){

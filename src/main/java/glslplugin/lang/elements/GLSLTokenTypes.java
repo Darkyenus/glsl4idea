@@ -28,6 +28,8 @@ public class GLSLTokenTypes {
 
     public static final IElementType INTEGER_CONSTANT = new GLSLElementType("INTEGER_CONSTANT");
     public static final IElementType UINT_CONSTANT = new GLSLElementType("UINT_CONSTANT");
+    public static final IElementType INT64_CONSTANT = new GLSLElementType("INT64_CONSTANT");
+    public static final IElementType UINT64_CONSTANT = new GLSLElementType("UINT64_CONSTANT");
     public static final IElementType FLOAT_CONSTANT = new GLSLElementType("FLOAT_CONSTANT");
     public static final IElementType DOUBLE_CONSTANT = new GLSLElementType("DOUBLE_CONSTANT");
     public static final IElementType BOOL_CONSTANT = new GLSLElementType("BOOL_CONSTANT");
@@ -39,6 +41,8 @@ public class GLSLTokenTypes {
     public static final IElementType DOUBLE_TYPE = new GLSLElementType("DOUBLE_TYPE");
     public static final IElementType INT_TYPE = new GLSLElementType("INT_TYPE");
     public static final IElementType UINT_TYPE = new GLSLElementType("UINT_TYPE");
+    public static final IElementType INT64_TYPE = new GLSLElementType("INT64_TYPE");
+    public static final IElementType UINT64_TYPE = new GLSLElementType("UINT64_TYPE");
     public static final IElementType BOOL_TYPE = new GLSLElementType("BOOL_TYPE");
     public static final IElementType VEC2_TYPE = new GLSLElementType("VEC2_TYPE");
     public static final IElementType VEC3_TYPE = new GLSLElementType("VEC3_TYPE");
@@ -52,6 +56,12 @@ public class GLSLTokenTypes {
     public static final IElementType UVEC2_TYPE = new GLSLElementType("UVEC2_TYPE");
     public static final IElementType UVEC3_TYPE = new GLSLElementType("UVEC3_TYPE");
     public static final IElementType UVEC4_TYPE = new GLSLElementType("UVEC4_TYPE");
+    public static final IElementType I64VEC2_TYPE = new GLSLElementType("I64VEC2_TYPE");
+    public static final IElementType I64VEC3_TYPE = new GLSLElementType("I64VEC3_TYPE");
+    public static final IElementType I64VEC4_TYPE = new GLSLElementType("I64VEC4_TYPE");
+    public static final IElementType U64VEC2_TYPE = new GLSLElementType("U64VEC2_TYPE");
+    public static final IElementType U64VEC3_TYPE = new GLSLElementType("U64VEC3_TYPE");
+    public static final IElementType U64VEC4_TYPE = new GLSLElementType("U64VEC4_TYPE");
     public static final IElementType BVEC2_TYPE = new GLSLElementType("BVEC2_TYPE");
     public static final IElementType BVEC3_TYPE = new GLSLElementType("BVEC3_TYPE");
     public static final IElementType BVEC4_TYPE = new GLSLElementType("BVEC4_TYPE");
@@ -242,7 +252,9 @@ public class GLSLTokenTypes {
 
     public static final TokenSet INTEGER_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
             INT_TYPE, IVEC2_TYPE, IVEC3_TYPE, IVEC4_TYPE,
-            UINT_TYPE, UVEC2_TYPE, UVEC3_TYPE, UVEC4_TYPE);
+            UINT_TYPE, UVEC2_TYPE, UVEC3_TYPE, UVEC4_TYPE,
+            INT64_TYPE, I64VEC2_TYPE, I64VEC3_TYPE, I64VEC4_TYPE,
+            UINT64_TYPE, U64VEC2_TYPE, U64VEC3_TYPE, U64VEC4_TYPE);
 
     public static final TokenSet BOOL_TYPE_SPECIFIER_NONARRAY = TokenSet.create(BOOL_TYPE, BVEC2_TYPE, BVEC3_TYPE, BVEC4_TYPE);
 
@@ -341,7 +353,7 @@ public class GLSLTokenTypes {
             BIT_WISE_OPERATORS, LOGICAL_OPERATORS, ASSIGNMENT_OPERATORS);
 
     public static final TokenSet CONSTANT_TOKENS = TokenSet.create(
-            BOOL_CONSTANT, INTEGER_CONSTANT, UINT_CONSTANT, FLOAT_CONSTANT, DOUBLE_CONSTANT, STRING_CONSTANT);
+            BOOL_CONSTANT, INTEGER_CONSTANT, UINT_CONSTANT, INT64_CONSTANT, UINT64_CONSTANT, FLOAT_CONSTANT, DOUBLE_CONSTANT, STRING_CONSTANT);
 
     public static final TokenSet EXPRESSION_FIRST_SET = merge(TokenSet.create(
                     INTEGER_CONSTANT, FLOAT_CONSTANT, BOOL_CONSTANT, STRING_CONSTANT, // constants

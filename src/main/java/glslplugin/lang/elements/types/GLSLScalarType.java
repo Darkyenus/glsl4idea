@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Scalar type is a type that has only magnitude, no members or elements.
@@ -37,9 +38,20 @@ public class GLSLScalarType extends GLSLType {
     //region Static
     public static final GLSLScalarType BOOL = new GLSLScalarType("bool", Boolean.class);
     public static final GLSLScalarType DOUBLE = new GLSLScalarType("double", Double.class);
-    public static final GLSLScalarType FLOAT = new GLSLScalarType("float", Double.class, DOUBLE);
-    public static final GLSLScalarType UINT = new GLSLScalarType("uint", Long.class, FLOAT, DOUBLE);
-    public static final GLSLScalarType INT = new GLSLScalarType("int", Long.class, UINT, FLOAT, DOUBLE);
+    public static final GLSLScalarType FLOAT = new GLSLScalarType("float", Double.class);
+    public static final GLSLScalarType UINT = new GLSLScalarType("uint", Long.class);
+    public static final GLSLScalarType INT = new GLSLScalarType("int", Long.class);
+    // https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_gpu_shader_int64.txt
+    public static final GLSLScalarType UINT64 = new GLSLScalarType("uint64_t", Long.class);
+    public static final GLSLScalarType INT64 = new GLSLScalarType("int64_t", Long.class);
+
+    static {
+        INT.implicitConversions = Arrays.asList(UINT, INT64, UINT64, FLOAT, DOUBLE);
+        UINT.implicitConversions = Arrays.asList(UINT64, FLOAT, DOUBLE);
+        INT64.implicitConversions = Arrays.asList(UINT64, DOUBLE);
+        UINT64.implicitConversions = List.of(DOUBLE);
+        FLOAT.implicitConversions = List.of(DOUBLE);
+    }
 
     private static final GLSLScalarType[] SCALARS = {BOOL, DOUBLE, FLOAT, UINT, INT};
 
@@ -49,12 +61,11 @@ public class GLSLScalarType extends GLSLType {
     //endregion
 
     private final String typename;
-    private final Collection<GLSLType> implicitConversions;
+    private List<GLSLType> implicitConversions;
 
-    private GLSLScalarType(String typename, Class<?> javaType, GLSLType... implicitlyConvertibleTo) {
+    private GLSLScalarType(String typename, Class<?> javaType) {
         super(javaType);
         this.typename = typename;
-        this.implicitConversions = Arrays.asList(implicitlyConvertibleTo);
     }
 
     @NotNull

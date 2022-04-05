@@ -86,6 +86,17 @@ public class GLSLTypes {
     public static final GLSLMatrixType DMAT3 = register("dmat3", DMAT3x3);
     public static final GLSLMatrixType DMAT4 = register("dmat4", DMAT4x4);
 
+    // https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_gpu_shader_int64.txt
+    public static final GLSLScalarType INT64 = register(GLSLScalarType.INT64);
+    public static final GLSLVectorType I64VEC2 = register(GLSLVectorType.getType(INT64,   2));
+    public static final GLSLVectorType I64VEC3 = register(GLSLVectorType.getType(INT64,   3));
+    public static final GLSLVectorType I64VEC4 = register(GLSLVectorType.getType(INT64,   4));
+    public static final GLSLScalarType UINT64 = register(GLSLScalarType.UINT64);
+    public static final GLSLVectorType U64VEC2 = register(GLSLVectorType.getType(UINT64,   2));
+    public static final GLSLVectorType U64VEC3 = register(GLSLVectorType.getType(UINT64,   3));
+    public static final GLSLVectorType U64VEC4 = register(GLSLVectorType.getType(UINT64,   4));
+
+
     // Specials
     public static final GLSLOpaqueType VOID = GLSLOpaqueType.VOID;
 
@@ -153,7 +164,7 @@ public class GLSLTypes {
     }
 
     public static boolean isScalar(GLSLType type) {
-        return type == INT || type == FLOAT || type == BOOL || type == DOUBLE || type == UINT;
+        return type == INT || type == FLOAT || type == BOOL || type == DOUBLE || type == UINT || type == UINT64 || type == INT64;
     }
 
     private static Map<String, GLSLType> types;
