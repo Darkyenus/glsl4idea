@@ -62,6 +62,9 @@ FLOATING_CONSTANT3  = ({DIGIT})+({EXPONENT_PART})
 FLOATING_CONSTANT4  = ({DIGIT})+
 EXPONENT_PART       = [Ee]["+""-"]?({DIGIT})*
 
+/* See https://github.com/KhronosGroup/GLSL/blob/master/extensions/ext/GLSL_EXT_debug_printf.txt */
+STRING_CONSTANT     = \"([^\"\\]|\\[\"\'?\\abfnrtv]|\\x{HEX_DIGIT}{HEX_DIGIT}?|\\{OCTAL_DIGIT}{OCTAL_DIGIT}?{OCTAL_DIGIT}?)*\"
+
 LINE_COMMENT        = "//"[^\r\n]*
 BLOCK_COMMENT       = "/*"([^"*"]|("*"+[^"*""/"]))*("*"+"/")?
 
@@ -319,6 +322,7 @@ using { return RESERVED_KEYWORD; }
 {INTEGER_CONSTANT}      {return INTEGER_CONSTANT; }
 {FLOATING_CONSTANT}{DOUBLE_SUFFIX}     {return DOUBLE_CONSTANT; }
 {FLOATING_CONSTANT}{FLOAT_SUFFIX}?     {return FLOAT_CONSTANT; }
+{STRING_CONSTANT}                      {return STRING_CONSTANT; }
 {LINE_COMMENT}          {return COMMENT_LINE; }
 {BLOCK_COMMENT}         {return COMMENT_BLOCK; }
 .                       {return UNKNOWN; }

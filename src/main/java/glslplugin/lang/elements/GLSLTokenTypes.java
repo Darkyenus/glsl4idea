@@ -31,6 +31,8 @@ public class GLSLTokenTypes {
     public static final IElementType FLOAT_CONSTANT = new GLSLElementType("FLOAT_CONSTANT");
     public static final IElementType DOUBLE_CONSTANT = new GLSLElementType("DOUBLE_CONSTANT");
     public static final IElementType BOOL_CONSTANT = new GLSLElementType("BOOL_CONSTANT");
+    /** As specified in https://github.com/KhronosGroup/GLSL/blob/master/extensions/ext/GLSL_EXT_debug_printf.txt */
+    public static final IElementType STRING_CONSTANT = new GLSLElementType("STRING_CONSTANT");
 
     public static final IElementType VOID_TYPE = new GLSLElementType("VOID_TYPE");
     public static final IElementType FLOAT_TYPE = new GLSLElementType("FLOAT_TYPE");
@@ -339,10 +341,10 @@ public class GLSLTokenTypes {
             BIT_WISE_OPERATORS, LOGICAL_OPERATORS, ASSIGNMENT_OPERATORS);
 
     public static final TokenSet CONSTANT_TOKENS = TokenSet.create(
-            BOOL_CONSTANT, INTEGER_CONSTANT, UINT_CONSTANT, FLOAT_CONSTANT, DOUBLE_CONSTANT);
+            BOOL_CONSTANT, INTEGER_CONSTANT, UINT_CONSTANT, FLOAT_CONSTANT, DOUBLE_CONSTANT, STRING_CONSTANT);
 
     public static final TokenSet EXPRESSION_FIRST_SET = merge(TokenSet.create(
-                    INTEGER_CONSTANT, FLOAT_CONSTANT, BOOL_CONSTANT, // constants
+                    INTEGER_CONSTANT, FLOAT_CONSTANT, BOOL_CONSTANT, STRING_CONSTANT, // constants
                     INC_OP, DEC_OP, PLUS, DASH, BANG, TILDE, // unary operators
                     IDENTIFIER, // function call, variable name, typename
                     LEFT_PAREN, // group

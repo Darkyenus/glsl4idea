@@ -42,15 +42,20 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
         FLOAT("Float", GLSLTypes.FLOAT),
         DOUBLE("Double", GLSLTypes.DOUBLE),
         INTEGER("Integer", GLSLTypes.INT),
-        UINT("Unsigned integer", GLSLTypes.UINT);
+        UINT("Unsigned integer", GLSLTypes.UINT),
+        // https://github.com/KhronosGroup/GLSL/blob/master/extensions/ext/GLSL_EXT_debug_printf.txt
+        // does not define any GLSL type, just the literal.
+        STRING("String", null),
+        ;
 
 
-        Type(String name, GLSLType type) {
+        Type(String name, @Nullable GLSLType type) {
             this.textRepresentation = name;
             this.type = type;
         }
 
         final String textRepresentation;
+        @Nullable
         final GLSLType type;
     }
 
@@ -63,7 +68,7 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
         IElementType type = getNode().getFirstChildNode().getElementType();
 
         Type result = getLiteralType(type);
-        if(result != null)return result;
+        if(result != null) return result;
 
         Logger.getLogger("GLSLLiteral").warning("Unsupported literal type. ("+type+")");
         return null;
@@ -76,6 +81,7 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
         if (type == GLSLTokenTypes.UINT_CONSTANT) return Type.UINT;
         if (type == GLSLTokenTypes.FLOAT_CONSTANT) return Type.FLOAT;
         if (type == GLSLTokenTypes.DOUBLE_CONSTANT) return Type.DOUBLE;
+        if (type == GLSLTokenTypes.STRING_CONSTANT) return Type.STRING;
         return null;
     }
 
@@ -83,9 +89,9 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
     @Override
     public GLSLType getType() {
         Type literalType = getLiteralType();
-        if(literalType != null){
+        if (literalType != null && literalType.type != null) {
             return literalType.type;
-        }else{
+        } else {
             return GLSLTypes.UNKNOWN_TYPE;
         }
     }
