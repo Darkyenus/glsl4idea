@@ -36,7 +36,11 @@
 
     <change-notes><![CDATA[
         <ul>
-            <li></li>
+            <li>Add basic flow attribute support (e.g. [[unroll]])</li>
+            <li>Add basic 64-bit int support</li>
+            <li>Parse strings for debugPrintfEXT correctly</li>
+            <li>Syntax highlighting for operators</li>
+            <li>Fix some crashes</li>
         </ul>
     ]]></change-notes>
 
