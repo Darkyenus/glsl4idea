@@ -501,6 +501,35 @@ public final class GLSLParsing extends GLSLParsingBase {
         mark.drop();
     }
 
+    // https://github.com/KhronosGroup/GLSL/blob/master/extensions/ext/GL_EXT_control_flow_attributes.txt
+    private void tryParseFlowAttributes() {
+        // These are currently not semantically processed at all
+        final IElementType type = b.getTokenType();
+        if (type != LEFT_BRACKET) {
+            return;
+        }
+        final PsiBuilder.Marker mark = b.mark();
+        b.advanceLexer();
+        if (b.getTokenType() != LEFT_BRACKET) {
+            mark.rollbackTo();
+            return;
+        }
+        b.advanceLexer();
+
+        // We are not very particular about this, just consume tokens until we get to ]]
+        //TODO: More precise parsing
+        while (b.getTokenType() != RIGHT_BRACKET && !b.eof()) {
+            b.advanceLexer();
+        }
+        b.advanceLexer();
+        if (b.getTokenType() != RIGHT_BRACKET) {
+            mark.rollbackTo();
+            return;
+        }
+        b.advanceLexer();
+        mark.done(FLOW_ATTRIBUTE);
+    }
+
     private boolean parseSimpleStatement() {
         // simple_statement: declaration_statement
         //                 | expression_statement
@@ -508,6 +537,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         //                 | switch_statement
         //                 | iteration_statement
         //                 | jump_statement
+        tryParseFlowAttributes();
         eatInvalidOperators();
 
         final IElementType type = b.getTokenType();

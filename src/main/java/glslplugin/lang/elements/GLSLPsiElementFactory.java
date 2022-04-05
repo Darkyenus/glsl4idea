@@ -126,6 +126,7 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.DEFAULT_STATEMENT) return new GLSLDefaultStatement(node);
 
         if (type == GLSLElementTypes.PRECISION_STATEMENT) return new GLSLPrecisionStatement(node);
+        if (type == GLSLElementTypes.FLOW_ATTRIBUTE) return new GLSLFlowAttribute(node);
 
         // types and structs
         if (type == GLSLElementTypes.QUALIFIER) return new GLSLQualifier(node);

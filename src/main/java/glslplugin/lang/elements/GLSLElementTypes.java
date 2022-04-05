@@ -114,6 +114,9 @@ public class GLSLElementTypes {
 
     public static final IElementType CONDITION = new GLSLElementType("CONDITION");
 
+    // https://github.com/KhronosGroup/GLSL/blob/master/extensions/ext/GL_EXT_control_flow_attributes.txt
+    public static final IElementType FLOW_ATTRIBUTE = new GLSLElementType("FLOW_ATTRIBUTE");
+
     //Preprocessor dropins
     public static final class RedefinedTokenElementType extends GLSLElementType {
 

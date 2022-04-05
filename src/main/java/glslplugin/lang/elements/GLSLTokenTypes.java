@@ -146,11 +146,17 @@ public class GLSLTokenTypes {
     public static final IElementType COMMENT_LINE = new GLSLElementType("COMMENT_LINE");
     public static final IElementType COMMENT_BLOCK = new GLSLElementType("COMMENT_BLOCK");
 
-    public static final IElementType LEFT_BRACE = new GLSLElementType("LEFT_BRACE");
-    public static final IElementType RIGHT_BRACE = new GLSLElementType("RIGHT_BRACE");
+    /** ( */
     public static final IElementType LEFT_PAREN = new GLSLElementType("LEFT_PAREN");
+    /** ) */
     public static final IElementType RIGHT_PAREN = new GLSLElementType("RIGHT_PAREN");
+    /** { */
+    public static final IElementType LEFT_BRACE = new GLSLElementType("LEFT_BRACE");
+    /** } */
+    public static final IElementType RIGHT_BRACE = new GLSLElementType("RIGHT_BRACE");
+    /** [ */
     public static final IElementType LEFT_BRACKET = new GLSLElementType("LEFT_BRACKET");
+    /** ] */
     public static final IElementType RIGHT_BRACKET = new GLSLElementType("RIGHT_BRACKET");
 
     public static final IElementType EQUAL = new GLSLElementType("EQUAL");
@@ -368,7 +374,8 @@ public class GLSLTokenTypes {
                     LEFT_BRACE, // compound_statement
                     BREAK_JUMP_STATEMENT, CONTINUE_JUMP_STATEMENT, RETURN_JUMP_STATEMENT, CASE_KEYWORD, DEFAULT_KEYWORD,
                     DISCARD_JUMP_STATEMENT, IF_KEYWORD,
-                    DO_KEYWORD, FOR_KEYWORD, WHILE_KEYWORD, SWITCH_KEYWORD // flow control
+                    DO_KEYWORD, FOR_KEYWORD, WHILE_KEYWORD, SWITCH_KEYWORD, // flow control
+                    LEFT_BRACKET // [[attribute]]
             ),
             QUALIFIER_TOKENS,
             EXPRESSION_FIRST_SET

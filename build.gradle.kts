@@ -25,6 +25,7 @@ intellij {
     //version.set("IC-212.4746.92")
     updateSinceUntilBuild.set(false)
     instrumentCode.set(false)
+    //plugins.add("PsiViewer:203-SNAPSHOT")
 }
 
 tasks {
@@ -45,4 +46,8 @@ tasks {
 
     // Because it is broken and crashes the build
     buildSearchableOptions.get().enabled = false
+
+    runIde.configure {
+        jvmArgs!!.add("-Didea.ProcessCanceledException=disabled")
+    }
 }
