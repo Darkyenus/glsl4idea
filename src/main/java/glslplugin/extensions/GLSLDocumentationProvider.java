@@ -31,7 +31,6 @@ import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLParameterDeclaration;
 import glslplugin.lang.elements.declarations.GLSLQualifier;
-import glslplugin.lang.elements.declarations.GLSLSingleDeclarationImpl;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
 import glslplugin.lang.elements.declarations.GLSLTypename;
@@ -93,7 +92,7 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
                 "<code>" + type.getReturnType().getTypename() + " <b>" + type.getName() + "</b>(" + paramsString + ")</code>";
     }
     private static String getFunctionDocumentation(@NotNull GLSLFunctionDeclaration decl) {
-        return getFunctionDocumentation(decl.getType(), ContainerUtil.map(decl.getParameters(), GLSLSingleDeclarationImpl::getName));
+        return getFunctionDocumentation(decl.getType(), ContainerUtil.map(decl.getParameters(), GLSLParameterDeclaration::getName));
     }
 
     private static String getNamedTypedElementDocumentation(PsiNamedElement element, String typename) {

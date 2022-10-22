@@ -21,6 +21,7 @@ package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * NewParameterDeclaration is ...
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
  *         Date: Feb 2, 2009
  *         Time: 2:04:56 PM
  */
-public class GLSLParameterDeclaration extends GLSLSingleDeclarationImpl {
+public class GLSLParameterDeclaration extends GLSLDeclarationImpl {
     public static final GLSLParameterDeclaration[] NO_PARAMETER_DECLARATIONS = new GLSLParameterDeclaration[0];
 
     public GLSLParameterDeclaration(@NotNull ASTNode astNode) {
@@ -38,6 +39,36 @@ public class GLSLParameterDeclaration extends GLSLSingleDeclarationImpl {
 
     boolean hasDeclarator() {
         return findChildByClass(GLSLDeclarator.class) != null;
+    }
+
+
+    @NotNull
+    public String getName() {
+        final GLSLDeclarator declarator = getDeclarator();
+        if (declarator == null) return "";
+        return declarator.getName();
+    }
+
+    /**
+     * Overridden to provide the single GLSLIdentifier.
+     * It is not packaged in DECLARATOR_LIST like the other declarations.
+     *
+     * @return the declarator list.
+     */
+    @Override
+    @NotNull
+    public GLSLDeclarator[] getDeclarators() {
+        return findChildrenByClass(GLSLDeclarator.class);
+    }
+
+    @Nullable
+    public GLSLDeclarator getDeclarator() {
+        GLSLDeclarator[] declarators = getDeclarators();
+        if(declarators.length == 0){
+            return null;
+        }else{
+            return declarators[0];
+        }
     }
 
     @Override

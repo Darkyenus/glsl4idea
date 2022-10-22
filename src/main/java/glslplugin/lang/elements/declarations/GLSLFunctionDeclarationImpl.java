@@ -32,12 +32,42 @@ import org.jetbrains.annotations.Nullable;
 /**
  * GLSLFunctionDeclarationImpl is the psi implementation of a function declaration.
  */
-public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl implements GLSLFunctionDeclaration, PsiNameIdentifierOwner, PsiCheckedRenameElement {
+public class GLSLFunctionDeclarationImpl extends GLSLDeclarationImpl implements GLSLFunctionDeclaration, PsiNameIdentifierOwner, PsiCheckedRenameElement {
     private GLSLFunctionType typeCache;
     private boolean typeCacheDirty = false;
 
     public GLSLFunctionDeclarationImpl(@NotNull ASTNode astNode) {
         super(astNode);
+    }
+
+
+    @NotNull
+    public String getName() {
+        final GLSLDeclarator declarator = getDeclarator();
+        if (declarator == null) return "";
+        return declarator.getName();
+    }
+
+    /**
+     * Overridden to provide the single GLSLIdentifier.
+     * It is not packaged in DECLARATOR_LIST like the other declarations.
+     *
+     * @return the declarator list.
+     */
+    @Override
+    @NotNull
+    public GLSLDeclarator[] getDeclarators() {
+        return findChildrenByClass(GLSLDeclarator.class);
+    }
+
+    @Nullable
+    public GLSLDeclarator getDeclarator() {
+        GLSLDeclarator[] declarators = getDeclarators();
+        if(declarators.length == 0){
+            return null;
+        }else{
+            return declarators[0];
+        }
     }
 
     @NotNull
