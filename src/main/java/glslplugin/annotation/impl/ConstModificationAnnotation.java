@@ -5,7 +5,6 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import glslplugin.annotation.Annotator;
-import glslplugin.lang.elements.GLSLReferenceElement;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLQualifier;
 import glslplugin.lang.elements.expressions.GLSLAssignmentExpression;
@@ -22,8 +21,6 @@ public class ConstModificationAnnotation extends Annotator<GLSLAssignmentExpress
         if (expr == null) return;
 
         PsiReference reference = expr.getReference();
-        if (reference == null && expr instanceof GLSLReferenceElement)
-            reference = ((GLSLReferenceElement) expr).getReferenceProxy();
 
         if (reference == null) return;
 

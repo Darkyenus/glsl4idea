@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Type for struct types
+ * Type for struct types.
  *
  * @author Yngve Devik Hammersland
  *         Date: Feb 26, 2009
@@ -36,13 +36,14 @@ import java.util.Map;
  */
 public final class GLSLStructType extends GLSLType {
 
+    @NotNull
     private final GLSLStructDefinition definition;
     private String typename = "<not-initialized>";
     private final Map<String, GLSLType> members = new HashMap<>();
     private final GLSLFunctionType[] constructors = new GLSLFunctionType[1];
     private String[] memberNames;
 
-    public GLSLStructType(GLSLStructDefinition definition) {
+    public GLSLStructType(@NotNull GLSLStructDefinition definition) {
         super(null);
         this.definition = definition;
         updateNameAndMembers();
@@ -53,7 +54,7 @@ public final class GLSLStructType extends GLSLType {
      */
     public void updateNameAndMembers() {
         final String definitionName = definition.getName();
-        typename = definitionName != null ? definitionName  : "(anonymous " + System.identityHashCode(this) + ")";
+        typename = !definitionName.isEmpty() ? definitionName  : "(anonymous " + System.identityHashCode(this) + ")";
 
         final GLSLDeclarator[] declarators = definition.getDeclarators();
 
@@ -76,8 +77,12 @@ public final class GLSLStructType extends GLSLType {
         return typename;
     }
 
+    /**
+     * Get the place where the struct was defined.
+     * Note that GLSL does not support forward struct declarations (since it does not have pointers).
+     */
     @Override
-    public GLSLStructDefinition getDefinition() {
+    public @NotNull GLSLStructDefinition getDefinition() {
         return definition;
     }
 

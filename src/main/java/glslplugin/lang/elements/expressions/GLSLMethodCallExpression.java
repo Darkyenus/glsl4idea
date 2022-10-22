@@ -20,19 +20,32 @@
 package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReferenceBase;
 import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
+import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
+import glslplugin.lang.elements.types.GLSLArrayType;
+import glslplugin.lang.elements.types.GLSLMatrixType;
+import glslplugin.lang.elements.types.GLSLType;
+import glslplugin.lang.elements.types.GLSLTypes;
+import glslplugin.lang.elements.types.GLSLVectorType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * GLSLMethodCall is ...
+ * A call of function that is defined as a part of struct.
+ * Standard GLSL defines only one method: length() on vectors, matrices and arrays.
  *
  * @author Yngve Devik Hammersland
  *         Date: Feb 3, 2009
  *         Time: 12:41:53 PM
  */
 public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase {
+
+    private static final Logger LOG = Logger.getInstance(GLSLMethodCallExpression.class);
     public GLSLMethodCallExpression(@NotNull ASTNode astNode) {
         super(astNode);
     }
@@ -43,7 +56,7 @@ public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase {
         if (id != null) {
             return id;
         } else {
-            // Logger.getLogger("GLSLMethodCallExpression").warning("Method call expression with no method identifier.");
+            LOG.warn("Method call expression with no method identifier: "+this);
             return null;
         }
     }
@@ -65,6 +78,91 @@ public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase {
         }else{
             return null;
         }
+    }
+
+    public static final class MethodCallReference extends PsiReferenceBase<GLSLMethodCallExpression> {
+
+        public MethodCallReference(@NotNull GLSLMethodCallExpression element, TextRange range) {
+            super(element, range, true);
+        }
+
+        @Override
+        public @Nullable GLSLFunctionDeclaration resolve() {
+            if (getElement().isValidLengthMethod()) {
+                final GLSLBuiltInPsiUtilService bipus = getElement().getProject().getService(GLSLBuiltInPsiUtilService.class);
+                return bipus.getLengthMethodDeclaration();
+            }
+            return null;
+        }
+    }
+
+    private boolean isValidLengthMethod() {
+        if (!"length".equals(getMethodName())) {
+            return false;
+        }
+
+        final GLSLParameterList parameterList = getParameterList();
+        if (parameterList == null) {
+            return false;
+        }
+        if (parameterList.getParameters().length != 0) {
+            return false;
+        }
+
+        final GLSLExpression target = getLeftHandExpression();
+        if (target == null) {
+            return false;
+        }
+        final GLSLType type = target.getType();
+        return type instanceof GLSLVectorType || type instanceof GLSLArrayType || type instanceof GLSLMatrixType;
+    }
+
+    @Override
+    public MethodCallReference getReference() {
+        final GLSLIdentifier identifier = getMethodIdentifier();
+        if (identifier == null) {
+            return null;
+        }
+        final TextRange range = identifier.getTextRange();
+        return new MethodCallReference(this, range);
+    }
+
+    @Override
+    public boolean isConstantValue() {
+        return getConstantValue() != null;
+    }
+
+    @Override
+    public @Nullable Object getConstantValue() {
+        if (isValidLengthMethod()) {
+            final GLSLExpression target = getLeftHandExpression();
+            if (target == null) {
+                return false;
+            }
+            final GLSLType type = target.getType();
+            if (type instanceof GLSLVectorType) {
+                return ((GLSLVectorType) type).getNumComponents();
+            }
+            if (type instanceof GLSLMatrixType) {
+                return ((GLSLMatrixType) type).getNumColumns();
+            }
+            if (type instanceof GLSLArrayType) {
+                final int[] dims = ((GLSLArrayType) type).getDimensions();
+                if (dims.length > 0 && dims[0] >= 0) {
+                    return dims[0];
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public @NotNull GLSLType getType() {
+        final MethodCallReference ref = getReference();
+        if (ref == null) return GLSLTypes.UNKNOWN_TYPE;
+        final GLSLFunctionDeclaration resolve = ref.resolve();
+        if (resolve == null) return GLSLTypes.UNKNOWN_TYPE;
+        return resolve.getType().getReturnType();
     }
 
     @Override

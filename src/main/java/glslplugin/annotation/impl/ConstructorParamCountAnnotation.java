@@ -22,7 +22,7 @@ package glslplugin.annotation.impl;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
-import glslplugin.lang.elements.expressions.GLSLFunctionCallExpression;
+import glslplugin.lang.elements.expressions.GLSLFunctionOrConstructorCallExpression;
 import glslplugin.lang.elements.types.*;
 import glslplugin.lang.elements.types.constructors.GLSLAggregateParamConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -30,10 +30,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Creates an error annotation if trying to pass invalid amount of arguments to a constructor.
  */
-public class ConstructorParamCountAnnotation extends Annotator<GLSLFunctionCallExpression> {
+public class ConstructorParamCountAnnotation extends Annotator<GLSLFunctionOrConstructorCallExpression> {
 
     @Override
-    public void annotate(GLSLFunctionCallExpression expr, AnnotationHolder holder) {
+    public void annotate(GLSLFunctionOrConstructorCallExpression expr, AnnotationHolder holder) {
         if (!expr.isConstructor()) return;
         final GLSLType constructorType = expr.getType();
 
@@ -100,7 +100,7 @@ public class ConstructorParamCountAnnotation extends Annotator<GLSLFunctionCallE
 
     @NotNull
     @Override
-    public Class<GLSLFunctionCallExpression> getElementType() {
-        return GLSLFunctionCallExpression.class;
+    public Class<GLSLFunctionOrConstructorCallExpression> getElementType() {
+        return GLSLFunctionOrConstructorCallExpression.class;
     }
 }

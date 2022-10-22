@@ -62,7 +62,7 @@ public class GLSLParameterList extends GLSLElementImpl implements Iterable<GLSLE
                 }
             }
         }
-        return result.toArray(new GLSLExpression[0]);
+        return result.toArray(GLSLExpression.EMPTY_ARRAY);
     }
 
     @NotNull

@@ -35,6 +35,9 @@ import org.jetbrains.annotations.Nullable;
  *         Time: 2:30:00 PM
  */
 public abstract class GLSLExpression extends GLSLElementImpl implements GLSLTypedElement {
+
+    public static final GLSLExpression[] EMPTY_ARRAY = new GLSLExpression[0];
+
     public GLSLExpression(@NotNull ASTNode astNode) {
         super(astNode);
     }

@@ -85,7 +85,7 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.CONDITION) return new GLSLCondition(node);
 
         if (type == GLSLElementTypes.FIELD_SELECTION_EXPRESSION) return new GLSLFieldSelectionExpression(node);
-        if (type == GLSLElementTypes.FUNCTION_CALL_EXPRESSION) return new GLSLFunctionCallExpression(node);
+        if (type == GLSLElementTypes.FUNCTION_CALL_EXPRESSION) return new GLSLFunctionOrConstructorCallExpression(node);
         if (type == GLSLElementTypes.METHOD_CALL_EXPRESSION) return new GLSLMethodCallExpression(node);
         if (type == GLSLElementTypes.FUNCTION_NAME) return new GLSLIdentifier(node);
         if (type == GLSLElementTypes.PARAMETER_LIST) return new GLSLParameterList(node);

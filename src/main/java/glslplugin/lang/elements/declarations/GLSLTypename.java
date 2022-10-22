@@ -21,73 +21,130 @@ package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.tree.IElementType;
-import glslplugin.lang.elements.*;
-import glslplugin.lang.elements.reference.GLSLTypeReference;
+import com.intellij.psi.PsiReferenceBase;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
+import glslplugin.lang.elements.GLSLElementImpl;
+import glslplugin.lang.elements.GLSLTypedElement;
+import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
+import glslplugin.lang.elements.types.GLSLMatrixType;
+import glslplugin.lang.elements.types.GLSLOpaqueType;
+import glslplugin.lang.elements.types.GLSLScalarType;
+import glslplugin.lang.elements.types.GLSLStructType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
+import glslplugin.lang.elements.types.GLSLVectorType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.logging.Logger;
+import java.util.ArrayList;
 
 /**
- * GLSLTypeReference represents a type-specifier which specifies a custom type.
+ * GLSLTypeReference represents a type-specifier which specifies a built-in or custom type.
  *
  * @author Yngve Devik Hammersland
  *         Date: Feb 5, 2009
  *         Time: 9:54:19 PM
  */
-public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, GLSLReferenceElement {
+public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement {
 
     public GLSLTypename(@NotNull ASTNode astNode) {
         super(astNode);
     }
 
+    /** If this refers to a struct, return its definition. */
     @Nullable
-    public GLSLStructDefinition getTypeDefinition() {
-        GLSLIdentifier id = findChildByClass(GLSLIdentifier.class);
-        if(id == null)return null;
-        PsiReference ref = id.getReference();
-        if (ref != null) {
-            PsiElement elt = ref.resolve();
-            return (GLSLStructDefinition) elt;
-        } else {
-            // Failed to resolve the type.
-            return null;
+    public GLSLStructDefinition getStructDefinition() {
+        final GLSLType type = getReference().resolveType();
+        if (type instanceof GLSLStructType) {
+            return ((GLSLStructType) type).getDefinition();
         }
+        return null;
     }
 
     @NotNull
     public GLSLType getType() {
-        final ASTNode node = getNode();
-        final IElementType type = node.getElementType();
-
-        if (type == GLSLElementTypes.TYPE_SPECIFIER_STRUCT_REFERENCE) {
-            GLSLStructDefinition def = getTypeDefinition();
-            if (def != null) {
-                return def.getType();
-            } else {
-                // TODO: Check built-in structures
-                return GLSLTypes.getUndefinedType(getText());
-            }
-        }
-
-        if (type == GLSLElementTypes.TYPE_SPECIFIER_PRIMITIVE) {
-            final ASTNode child = node.getFirstChildNode();
-            GLSLType t = GLSLTypes.getTypeFromName(child.getText());
-            if (t != null) return t;
-            return GLSLTypes.UNKNOWN_TYPE;
-        }
-
-        Logger.getLogger("GLSLTypename").warning("Unknown element type: '" + type + "'");
-        return GLSLTypes.UNKNOWN_TYPE;
+        return getReference().resolveType();
     }
 
+    public static final class TypeReference extends PsiReferenceBase<GLSLTypename> implements PsiScopeProcessor {
+
+        public TypeReference(@NotNull GLSLTypename element) {
+            super(element, element.getTextRange(), false);
+        }
+
+        private String onlyNamed = null;
+        private final ArrayList<GLSLStructDefinition> definitions = new ArrayList<>();
+
+        @Override
+        public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
+            if (element instanceof GLSLStructDefinition) {
+                final GLSLStructDefinition def = (GLSLStructDefinition) element;
+                if (onlyNamed == null || onlyNamed.equals(def.getName())) {
+                    definitions.add(def);
+                    return onlyNamed == null;// Done if we found the one named
+                }
+            }
+            return true;// Continue
+        }
+
+        public @NotNull GLSLType resolveType() {
+            final String typeName = getElement().getText();
+
+            GLSLType builtIn = GLSLTypes.getTypeFromName(typeName);
+            if (builtIn != null) {
+                return builtIn;
+            }
+
+            try {
+                onlyNamed = typeName;
+                PsiTreeUtil.treeWalkUp(this, getElement(), null, ResolveState.initial());
+                if (!definitions.isEmpty()) {
+                    return definitions.get(0).getType();
+                }
+            } finally {
+                definitions.clear();
+            }
+
+            // TODO: Check built-in structures
+            return GLSLTypes.getUndefinedType(typeName);
+        }
+
+        @Override
+        public @Nullable GLSLStructDefinition resolve() {
+            final GLSLType type = resolveType();
+            if (type instanceof GLSLStructType) {
+                return ((GLSLStructType) type).getDefinition();
+            }
+
+            final GLSLBuiltInPsiUtilService bipus = getElement().getProject().getService(GLSLBuiltInPsiUtilService.class);
+            if (type instanceof GLSLScalarType) {
+                return bipus.getScalarDefinition((GLSLScalarType) type);
+            }
+            if (type instanceof GLSLVectorType) {
+                return bipus.getVecDefinition((GLSLVectorType) type);
+            }
+            if (type instanceof GLSLMatrixType) {
+                return bipus.getMatrixDefinition((GLSLMatrixType) type);
+            }
+            if (type instanceof GLSLOpaqueType) {
+                return bipus.getOpaqueDefinition((GLSLOpaqueType) type);
+            }
+            return null;
+        }
+    }
+
+    private TypeReference typeReference;
+
     @NotNull
-    public GLSLTypeReference getReferenceProxy() {
-        return new GLSLTypeReference(this);
+    @Override
+    public TypeReference getReference() {
+        final TypeReference ref = typeReference;
+        if (ref == null) {
+            return typeReference = new TypeReference(this);
+        }
+        return ref;
     }
 
     @Override
@@ -97,7 +154,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
 
     @NotNull
     public GLSLDeclaration[] getDeclarations() {
-        final GLSLStructDefinition definition = getTypeDefinition();
+        final GLSLStructDefinition definition = getStructDefinition();
         if (definition != null) {
             return definition.getDeclarations();
         } else {
@@ -107,7 +164,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
 
     @NotNull
     public GLSLDeclarator[] getDeclarators() {
-        final GLSLStructDefinition definition = getTypeDefinition();
+        final GLSLStructDefinition definition = getStructDefinition();
         if (definition != null) {
             return definition.getDeclarators();
         } else {

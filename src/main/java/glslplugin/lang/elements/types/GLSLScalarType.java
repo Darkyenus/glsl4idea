@@ -23,7 +23,6 @@ import glslplugin.lang.elements.types.constructors.GLSLBasicConstructorType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -53,10 +52,10 @@ public class GLSLScalarType extends GLSLType {
         FLOAT.implicitConversions = List.of(DOUBLE);
     }
 
-    private static final GLSLScalarType[] SCALARS = {BOOL, DOUBLE, FLOAT, UINT, INT};
+    public static final GLSLScalarType[] SCALARS = {BOOL, DOUBLE, FLOAT, UINT, INT, UINT64, INT64};
 
     public static boolean isIntegerScalar(GLSLType type){
-        return type == INT || type == UINT;
+        return type == INT || type == UINT || type == INT64 || type == UINT64;
     }
     //endregion
 

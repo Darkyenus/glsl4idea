@@ -59,8 +59,8 @@ public class GLSLVectorType extends GLSLType {
 
     }
 
-    private static final int MIN_VECTOR_DIM = 2, MAX_VECTOR_DIM = 4;
-    private static final Map<GLSLType, GLSLVectorType[]> VECTOR_TYPES = new HashMap<>(BaseType.values().length);
+    public static final int MIN_VECTOR_DIM = 2, MAX_VECTOR_DIM = 4;
+    public static final Map<GLSLType, GLSLVectorType[]> VECTOR_TYPES = new HashMap<>(BaseType.values().length);
 
     static {
         for(BaseType type:BaseType.values()){
@@ -116,7 +116,7 @@ public class GLSLVectorType extends GLSLType {
     }
 
     @SuppressWarnings("SpellCheckingInspection")
-    private static final String[] SWIZZLE_SETS = new String[]{"xyzw","rgba","stpq"};
+    public static final String[] SWIZZLE_SETS = new String[]{"xyzw","rgba","stpq"};
 
     @Override
     public boolean hasMember(String member) {

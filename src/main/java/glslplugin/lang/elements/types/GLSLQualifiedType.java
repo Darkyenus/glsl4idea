@@ -64,4 +64,15 @@ public class GLSLQualifiedType {
         }
         return false;
     }
+
+    /** Return true, if this type could represent an L-value expression. */
+    public boolean isLValue() {
+        if (type.getBaseType() instanceof GLSLOpaqueType) {
+            return false;
+        }
+
+        return !hasQualifier(GLSLQualifier.Qualifier.CONST)
+                && !hasQualifier(GLSLQualifier.Qualifier.IN)
+                && !hasQualifier(GLSLQualifier.Qualifier.READONLY);
+    }
 }

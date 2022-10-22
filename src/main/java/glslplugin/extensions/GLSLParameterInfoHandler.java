@@ -6,16 +6,12 @@ import com.intellij.lang.parameterInfo.ParameterInfoUIContext;
 import com.intellij.lang.parameterInfo.ParameterInfoUtils;
 import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
 import com.intellij.psi.PsiElementResolveResult;
-import glslplugin.lang.elements.GLSLElement;
-import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLParameterDeclaration;
-import glslplugin.lang.elements.expressions.GLSLFunctionCallExpression;
+import glslplugin.lang.elements.expressions.GLSLFunctionOrConstructorCallExpression;
 import glslplugin.lang.elements.expressions.GLSLParameterList;
-import glslplugin.lang.elements.reference.GLSLFunctionReference;
-import glslplugin.lang.elements.reference.GLSLReferenceBase;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,25 +22,23 @@ import java.util.List;
 /**
  * Created by abigail on 08/07/15.
  */
-public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFunctionCallExpression, Object> {
+public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFunctionOrConstructorCallExpression, Object> {
 
     @Nullable
     @Override
-    public GLSLFunctionCallExpression findElementForParameterInfo(@NotNull CreateParameterInfoContext context) {
-        GLSLFunctionCallExpression call =
+    public GLSLFunctionOrConstructorCallExpression findElementForParameterInfo(@NotNull CreateParameterInfoContext context) {
+        GLSLFunctionOrConstructorCallExpression call =
                 ParameterInfoUtils.findParentOfTypeWithStopElements(context.getFile(), context.getOffset(),
-                        GLSLFunctionCallExpression.class, GLSLCompoundStatement.class);
+                        GLSLFunctionOrConstructorCallExpression.class, GLSLCompoundStatement.class);
         if (call == null) return null;
 
-        final GLSLReferenceBase<GLSLIdentifier, ? extends GLSLElement> rawReference = call.getReferenceProxy();
-        if (!(rawReference instanceof GLSLFunctionReference))return null;
+        final GLSLFunctionOrConstructorCallExpression.FunctionCallOrConstructorReference ref = call.getReference();
+        if (ref == null) return null;
 
-       GLSLFunctionReference reference = ((GLSLFunctionReference) rawReference);
-
-        Object[] items = reference.multiResolve(false);
+        Object[] items = ref.multiResolve(false);
         if (items.length == 0) {
             List<GLSLFunctionDeclaration> declarations = new ArrayList<>();
-            for (Object variant : reference.getVariants()) {
+            for (Object variant : ref.getVariants()) {
                 if (!(variant instanceof GLSLDeclarator)) continue;
                 GLSLDeclarator declarator = (GLSLDeclarator) variant;
                 if (declarator.getParentDeclaration() instanceof GLSLFunctionDeclaration) {
@@ -63,22 +57,22 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
     }
 
     @Override
-    public void showParameterInfo(@NotNull GLSLFunctionCallExpression call, @NotNull CreateParameterInfoContext context) {
+    public void showParameterInfo(@NotNull GLSLFunctionOrConstructorCallExpression call, @NotNull CreateParameterInfoContext context) {
         context.showHint(call, call.getTextRange().getStartOffset(), this);
     }
 
     @Nullable
     @Override
-    public GLSLFunctionCallExpression findElementForUpdatingParameterInfo(@NotNull UpdateParameterInfoContext context) {
-        GLSLFunctionCallExpression call =
+    public GLSLFunctionOrConstructorCallExpression findElementForUpdatingParameterInfo(@NotNull UpdateParameterInfoContext context) {
+        GLSLFunctionOrConstructorCallExpression call =
                 ParameterInfoUtils.findParentOfTypeWithStopElements(context.getFile(), context.getOffset(),
-                        GLSLFunctionCallExpression.class, GLSLCompoundStatement.class);
+                        GLSLFunctionOrConstructorCallExpression.class, GLSLCompoundStatement.class);
         context.setParameterOwner(call);
         return call;
     }
 
     @Override
-    public void updateParameterInfo(@NotNull GLSLFunctionCallExpression call, @NotNull UpdateParameterInfoContext context) {
+    public void updateParameterInfo(@NotNull GLSLFunctionOrConstructorCallExpression call, @NotNull UpdateParameterInfoContext context) {
         if (context.getParameterOwner() != call) {
             context.removeHint();
             return;

@@ -20,16 +20,24 @@
 package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReferenceBase;
 import glslplugin.lang.elements.GLSLIdentifier;
-import glslplugin.lang.elements.GLSLReferenceElement;
+import glslplugin.lang.elements.declarations.GLSLDeclaration;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
-import glslplugin.lang.elements.reference.GLSLFieldReference;
+import glslplugin.lang.elements.declarations.GLSLStructDefinition;
+import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
+import glslplugin.lang.elements.types.GLSLScalarType;
+import glslplugin.lang.elements.types.GLSLStructType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import glslplugin.lang.elements.types.GLSLVectorType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * GLSLMemberOperator is ...
@@ -38,7 +46,7 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Jan 28, 2009
  *         Time: 4:40:28 PM
  */
-public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase implements GLSLReferenceElement {
+public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
     public GLSLFieldSelectionExpression(@NotNull ASTNode astNode) {
         super(astNode);
     }
@@ -58,11 +66,12 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
         // A member is L-Value only if its container also is L-Value
         GLSLExpression leftExpression = getLeftHandExpression();
         //noinspection SimplifiableIfStatement
-        if(leftExpression == null)return true; //It might be, but right now it is broken.
-        else {
-            if(isSwizzle()){
-                //It is a swizzle, so it may or may not be a L value
-                //If any of the components are repeated, it is not a L value
+        if(leftExpression == null) {
+            return true; //It might be, but right now it is broken.
+        } else {
+            if (isSwizzle()) {
+                // It is a swizzle, so it may or may not be an L-value
+                // If any of the components are repeated, it is not an L-value
                 GLSLIdentifier memberIdentifier = getMemberIdentifier();
                 if(memberIdentifier == null)return true; //This should not happen
                 String components = memberIdentifier.getName();
@@ -76,7 +85,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
                     }
                 }
                 return true;
-            }else{
+            } else {
                 return leftExpression.isLValue();
             }
         }
@@ -87,43 +96,132 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
      * Returns false if it failed to find out.
      */
     public boolean isSwizzle(){
-        GLSLExpression leftHandExpression = getLeftHandExpression();
-        GLSLIdentifier memberIdentifier = getMemberIdentifier();
-        if(leftHandExpression == null || memberIdentifier == null)return false;
-        GLSLType leftHandType = leftHandExpression.getType();
-        if(!leftHandType.isValidType())return false;
-        if(!(leftHandType instanceof GLSLVectorType))return false;
-        //If it got here, it is picking a component(s) from a vector. But how many?
-        return memberIdentifier.getName().length() > 1;
-        //Because all vector components are marked as only one letter, having more letters means swizzling
+        return getRawReference() instanceof GLSLFieldReference[];
     }
 
-    @NotNull
-    public GLSLFieldReference getReferenceProxy() {
-        return new GLSLFieldReference(this);
+    public static final class GLSLFieldReference extends PsiReferenceBase<GLSLFieldSelectionExpression> {
+
+        public static final GLSLFieldReference[] EMPTY_ARRAY = new GLSLFieldReference[0];
+        private final String fieldName;
+        private final GLSLStructDefinition fieldStruct;
+
+        public GLSLFieldReference(@NotNull GLSLFieldSelectionExpression element, TextRange textRange, @NotNull String fieldName, @NotNull GLSLStructDefinition fieldStruct) {
+            super(element, textRange, false);
+            this.fieldName = fieldName;
+            this.fieldStruct = fieldStruct;
+        }
+
+        @Override
+        public @Nullable GLSLDeclarator resolve() {
+            return fieldStruct.getDeclarator(fieldName);
+        }
+
+        @Override
+        public Object @NotNull [] getVariants() {
+            final ArrayList<GLSLDeclarator> declarators = new ArrayList<>();
+            for (GLSLDeclaration declaration : fieldStruct.getDeclarations()) {
+                Collections.addAll(declarators, declaration.getDeclarators());
+            }
+            return declarators.toArray(GLSLDeclarator.NO_DECLARATORS);
+        }
+    }
+
+    @Override
+    public GLSLFieldReference getReference() {
+        final Object rawReference = getRawReference();
+        if (rawReference == null) {
+            return null;
+        }
+        if (rawReference instanceof GLSLFieldReference) {
+            return (GLSLFieldReference) rawReference;
+        }
+        return ((GLSLFieldReference[]) rawReference)[0];
+    }
+
+    @Override
+    public GLSLFieldReference @NotNull [] getReferences() {
+        final Object rawReference = getRawReference();
+        if (rawReference == null) {
+            return GLSLFieldReference.EMPTY_ARRAY;
+        }
+        if (rawReference instanceof GLSLFieldReference) {
+            return new GLSLFieldReference[] {(GLSLFieldReference) rawReference};
+        }
+        return (GLSLFieldReference[]) rawReference;
+    }
+
+    private Object getRawReference() {
+        GLSLExpression leftHandExpression = getLeftHandExpression();
+        GLSLIdentifier memberIdentifier = getMemberIdentifier();
+        if (leftHandExpression == null || memberIdentifier == null) return null;
+        GLSLType leftHandType = leftHandExpression.getType();
+        if (!leftHandType.isValidType()) return null;
+
+        String fieldName = memberIdentifier.getName();
+        if (fieldName.isEmpty()) {
+            return null;
+        }
+
+        if (leftHandType instanceof GLSLVectorType || leftHandType instanceof GLSLScalarType) {
+            // Resolving swizzling
+            final GLSLBuiltInPsiUtilService bipus = getProject().getService(GLSLBuiltInPsiUtilService.class);
+            final GLSLStructDefinition fieldStruct;
+            if (leftHandType instanceof GLSLVectorType) {
+                fieldStruct = bipus.getVecDefinition((GLSLVectorType) leftHandType);
+            } else {
+                fieldStruct = bipus.getScalarDefinition((GLSLScalarType) leftHandType);
+            }
+
+            if (fieldName.length() == 1) {
+                // No swizzle
+                return new GLSLFieldReference(this, memberIdentifier.getTextRange(), fieldName, fieldStruct);
+            } else {
+                // Swizzle
+                final TextRange range = memberIdentifier.getTextRange();
+                final GLSLFieldReference[] result = new GLSLFieldReference[fieldName.length()];
+                for (int i = 0; i < fieldName.length(); i++) {
+                    final TextRange swizzleRange = new TextRange(range.getStartOffset() + i, range.getStartOffset() + i + 1);
+                    final String swizzleFieldName = Character.toString(fieldName.charAt(i));
+                    result[i] = new GLSLFieldReference(this, swizzleRange, swizzleFieldName, fieldStruct);
+                }
+                return result;
+            }
+        }
+
+        if (leftHandType instanceof GLSLStructType) {
+            return new GLSLFieldReference(this, memberIdentifier.getTextRange(), fieldName, ((GLSLStructType) leftHandType).getDefinition());
+        }
+
+        return null;
     }
 
     @NotNull
     @Override
     public GLSLType getType() {
-        GLSLDeclarator declarator = getReferenceProxy().resolve();
-        if (declarator != null) {
-            return declarator.getType();
-        } else {
-            // No declarator, check for built-in type
-            GLSLExpression left = getLeftHandExpression();
-            if(left == null)return GLSLTypes.UNKNOWN_TYPE;
-            GLSLType type = left.getType();
-            if (type == GLSLTypes.UNKNOWN_TYPE) {
-                return GLSLTypes.UNKNOWN_TYPE;
-            }
-            if (!type.hasMembers()) {
-                return GLSLTypes.UNKNOWN_TYPE;
-            }
-            GLSLIdentifier memberIdentifier = getMemberIdentifier();
-            if(memberIdentifier == null)return GLSLTypes.UNKNOWN_TYPE;
-            else return type.getMemberType(memberIdentifier.getName());
+        final Object rawReference = getRawReference();
+        if (rawReference == null) {
+            return GLSLTypes.UNKNOWN_TYPE;
         }
+        if (rawReference instanceof GLSLFieldReference) {
+            final GLSLDeclarator resolved = ((GLSLFieldReference) rawReference).resolve();
+            if (resolved == null) {
+                return GLSLTypes.UNKNOWN_TYPE;
+            }
+            return resolved.getType();
+        }
+        final GLSLFieldReference[] references = (GLSLFieldReference[]) rawReference;
+        GLSLType baseType = null;
+        for (GLSLFieldReference ref : references) {
+            final GLSLDeclarator resolve = ref.resolve();
+            if (resolve != null) {
+                baseType = resolve.getType();
+                break;
+            }
+        }
+        if (baseType == null) {
+            return GLSLTypes.UNKNOWN_TYPE;
+        }
+        return GLSLVectorType.getType(baseType, Math.min(Math.max(GLSLVectorType.MIN_VECTOR_DIM, references.length), GLSLVectorType.MAX_VECTOR_DIM));
     }
 
     public String toString() {

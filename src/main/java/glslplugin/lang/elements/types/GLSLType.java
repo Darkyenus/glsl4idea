@@ -150,7 +150,7 @@ public abstract class GLSLType {
     //region Struct-like related
 
     /**
-     * Check whether or not this type has given member variable.
+     * Check whether this type has given member variable.
      * Only for those will getMemberType call be meaningful.
      */
     public boolean hasMember(String member){
@@ -158,7 +158,7 @@ public abstract class GLSLType {
     }
 
     /**
-     * Get the type type of given member variable.
+     * Get the type of given member variable.
      *
      * @param member the name of variable to get the type of
      * @return the type if found, {@link GLSLTypes#UNKNOWN_TYPE} otherwise

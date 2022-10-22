@@ -18,7 +18,7 @@ public class VariableTypeHighlightAnnotation extends Annotator<GLSLIdentifierExp
 
     @Override
     public void annotate(GLSLIdentifierExpression expr, AnnotationHolder holder) {
-        final GLSLDeclarator declarator = expr.getReferenceProxy().resolve();
+        final GLSLDeclarator declarator = expr.getReference().resolve();
         if (declarator == null) return;
         final GLSLQualifiedType qualifiedType = declarator.getQualifiedType();
         if (qualifiedType.hasQualifier(GLSLQualifier.Qualifier.UNIFORM)) {

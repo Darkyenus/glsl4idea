@@ -94,10 +94,8 @@ public class GLSLArrayType extends GLSLType {
      * Elements of returned array denote the sizes of type's dimensions.
      * For dimension of yet unknown length, {@link GLSLArrayType#UNDEFINED_SIZE_DIMENSION} is returned.
      * For dimension of length known only at runtime, {@link GLSLArrayType#DYNAMIC_SIZE_DIMENSION} is returned.
-     *
      * For example for "int[3] exampleArray", this will return "new int[]{3}".
      */
-
     public int @NotNull [] getDimensions() {
         return dimensions;
     }

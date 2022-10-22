@@ -22,7 +22,7 @@ package glslplugin.lang.elements;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import glslplugin.lang.parser.GLSLFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,13 +73,6 @@ public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement
 
     @Override
     public final boolean isDescendantOf(PsiElement ancestor) {
-        PsiElement current = this;
-        while (current != null && !(current instanceof GLSLFile)) {
-            if (current == ancestor) {
-                return true;
-            }
-            current = current.getParent();
-        }
-        return false;
+        return PsiTreeUtil.isAncestor(ancestor, this, false);
     }
 }

@@ -3,9 +3,9 @@ plugins {
     // Java support
     id("java")
     // Kotlin support
-    id("org.jetbrains.kotlin.jvm") version "1.6.0"
+    id("org.jetbrains.kotlin.jvm") version "1.7.20"
     // Gradle IntelliJ Plugin
-    id("org.jetbrains.intellij") version "1.5.2"
+    id("org.jetbrains.intellij") version "1.9.0"
 }
 
 val pluginVersion = "1.22-SNAPSHOT"
@@ -25,13 +25,13 @@ intellij {
     //version.set("IC-212.4746.92")
     updateSinceUntilBuild.set(false)
     instrumentCode.set(false)
-    //plugins.add("PsiViewer:203-SNAPSHOT")
+    //plugins.add("PsiViewer:222-SNAPSHOT")
 }
 
 tasks {
     // Set the JVM compatibility versions
     // Java language level used to compile sources and to generate the files for - Java 11 is required since 2020.3
-    val javaVersion = "11"
+    val javaVersion = "17"
     withType<JavaCompile> {
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion

@@ -22,13 +22,10 @@ package glslplugin.lang.elements.declarations;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLIdentifier;
-import glslplugin.lang.elements.GLSLReferenceElement;
 import glslplugin.lang.elements.expressions.GLSLExpression;
-import glslplugin.lang.elements.reference.GLSLVariableReference;
 import glslplugin.lang.elements.types.GLSLArrayType;
 import glslplugin.lang.elements.types.GLSLQualifiedType;
 import glslplugin.lang.elements.types.GLSLType;
@@ -38,13 +35,12 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLDeclarator represents a local or global variable declaration.
- * It may contain one or more declarators.
  *
  * @author Yngve Devik Hammersland
  *         Date: Jan 29, 2009
  *         Time: 7:29:46 PM
  */
-public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifierOwner, GLSLReferenceElement {
+public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifierOwner {
     public static final GLSLDeclarator[] NO_DECLARATORS = new GLSLDeclarator[0];
 
     public GLSLDeclarator(@NotNull ASTNode astNode) {
@@ -199,11 +195,5 @@ public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifier
     @Override
     public String toString() {
         return "Declarator: " + getName() + " : " + getType().getTypename();
-    }
-
-    @NotNull
-    @Override
-    public PsiReference getReferenceProxy() {
-        return new GLSLVariableReference(getNameIdentifier());
     }
 }

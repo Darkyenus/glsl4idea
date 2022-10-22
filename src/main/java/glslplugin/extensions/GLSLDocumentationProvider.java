@@ -24,7 +24,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.declarations.GLSLDeclaration;
@@ -38,7 +37,7 @@ import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
 import glslplugin.lang.elements.declarations.GLSLTypename;
 import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
 import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
-import glslplugin.lang.elements.expressions.GLSLFunctionCallExpression;
+import glslplugin.lang.elements.expressions.GLSLFunctionOrConstructorCallExpression;
 import glslplugin.lang.elements.reference.GLSLReferenceBase;
 import glslplugin.lang.elements.reference.GLSLTypeReference;
 import glslplugin.lang.elements.types.GLSLBasicFunctionType;
@@ -97,15 +96,6 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
         return getFunctionDocumentation(decl.getType(), ContainerUtil.map(decl.getParameters(), GLSLSingleDeclarationImpl::getName));
     }
 
-    private static String getConstructorDocumentation(GLSLFunctionCallExpression ctorCall) {
-        GLSLType type = ctorCall.getType();
-        if (type instanceof GLSLStructType) {
-            GLSLStructType structType = (GLSLStructType) type;
-            return getFunctionDocumentation(structType.getConstructor(), Arrays.asList(structType.getMemberNames()));
-        }
-        return null;
-    }
-
     private static String getNamedTypedElementDocumentation(PsiNamedElement element, String typename) {
         return getElementDocHeader(element) +
                 "<code>" + typename + " <b>" + element.getName() + "</b></code>";
@@ -141,10 +131,7 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
         // For some reason opening documentation on a struct constructor returns GLSLTypeDefinition while we want
         // to consider it a constructor call.
         if (element instanceof GLSLStructDefinition && originalElement != null) {
-            GLSLFunctionCallExpression ctorCall = PsiTreeUtil.getParentOfType(originalElement, GLSLFunctionCallExpression.class);
-            if (ctorCall != null) {
-                return getConstructorDocumentation(ctorCall);
-            }
+            //TODO Check that this case works now
         }
 
         if (element instanceof GLSLIdentifier) {
@@ -182,18 +169,20 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
             if (elementDeclaration instanceof GLSLStructMemberDeclaration) {
                 return getVariableDocumentation(((GLSLDeclarator) element));
             }
-        } else if (element instanceof GLSLFunctionCallExpression) {
-            GLSLFunctionCallExpression functionCallExpression = (GLSLFunctionCallExpression) element;
-            if (functionCallExpression.isConstructor()) {
-                return getConstructorDocumentation(functionCallExpression);
+        } else if (element instanceof GLSLFunctionOrConstructorCallExpression) {
+            GLSLFunctionOrConstructorCallExpression functionCallExpression = (GLSLFunctionOrConstructorCallExpression) element;
+            final GLSLFunctionOrConstructorCallExpression.FunctionCallOrConstructorReference reference = functionCallExpression.getReference();
+            final PsiElement target = reference != null ? reference.resolve() : null;
+            if (target instanceof GLSLFunctionDeclaration) {
+                return getFunctionDocumentation(((GLSLFunctionDeclaration) target).getType(), null);
+            } else if (target instanceof GLSLStructDefinition) {
+                final GLSLStructType structType = ((GLSLStructDefinition) target).getType();
+                return getFunctionDocumentation(structType.getConstructor(), Arrays.asList(structType.getMemberNames()));
             } else {
-                GLSLFunctionType functionType = functionCallExpression.getCalledFunctionType();
-                if (functionType != null) {
-                    return getFunctionDocumentation(functionType, null);
-                }
+                //TODO What is it?
             }
         } else if (element instanceof GLSLTypename) {
-            GLSLStructDefinition typeDefinition = ((GLSLTypename) element).getTypeDefinition();
+            GLSLStructDefinition typeDefinition = ((GLSLTypename) element).getStructDefinition();
             if (typeDefinition != null) {
                 return getStructDocumentation(typeDefinition);
             }

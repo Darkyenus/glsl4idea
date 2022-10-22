@@ -22,15 +22,19 @@ package glslplugin.lang.elements.expressions;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.PsiReferenceBase;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLIdentifier;
-import glslplugin.lang.elements.GLSLReferenceElement;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
-import glslplugin.lang.elements.reference.GLSLVariableReference;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 
 /**
  * GLSLIdentifierExpression is ...
@@ -39,15 +43,19 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Feb 4, 2009
  *         Time: 12:16:41 AM
  */
-public class GLSLIdentifierExpression extends GLSLExpression implements GLSLReferenceElement, PsiNameIdentifierOwner {
+public class GLSLIdentifierExpression extends GLSLExpression implements PsiNameIdentifierOwner {
     public GLSLIdentifierExpression(@NotNull ASTNode astNode) {
         super(astNode);
     }
 
     @Override
     public boolean isLValue() {
-        // TODO: check for read-only-ness in the declaration qualifiers
-        return true;
+        final GLSLDeclarator declarator = getReference().resolve();
+        if (declarator == null) {
+            return true;// Probably
+        }
+
+        return declarator.getQualifiedType().isLValue();
     }
 
     @Override
@@ -81,17 +89,79 @@ public class GLSLIdentifierExpression extends GLSLExpression implements GLSLRefe
     @NotNull
     @Override
     public GLSLType getType() {
-        GLSLVariableReference ref = getReferenceProxy();
-        final GLSLDeclarator declaration = ref.resolve();
-        if (declaration != null) {
-            return declaration.getType();
+        final GLSLDeclarator declarator = getReference().resolve();
+        if (declarator == null) {
+            return GLSLTypes.UNKNOWN_TYPE;
         }
-        return GLSLTypes.UNKNOWN_TYPE;
+        return declarator.getType();
     }
 
-    @Override
+    public static final class GLSLVariableReference
+            extends PsiReferenceBase<GLSLIdentifierExpression>
+            implements PsiScopeProcessor
+    {
+
+        public GLSLVariableReference(@NotNull GLSLIdentifierExpression element) {
+            super(element, element.getTextRange(), false);
+        }
+
+        private final ArrayList<GLSLDeclarator> visitedDeclarations = new ArrayList<>();
+        private String onlyNamed = null;
+
+        // PSI Scope processor
+        @Override
+        public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
+            if (!(element instanceof GLSLDeclarator)) {
+                return true;// Continue
+            }
+            final GLSLDeclarator declarator = (GLSLDeclarator) element;
+
+            final String onlyNamed = this.onlyNamed;
+            if (onlyNamed != null) {
+                if (onlyNamed.equals(declarator.getName())) {
+                    visitedDeclarations.add(declarator);
+                    return false; // We found what we were looking for
+                }
+            } else {
+                visitedDeclarations.add(declarator);
+            }
+            return true;// Continue, keep looking
+        }
+
+        @Override
+        public @Nullable GLSLDeclarator resolve() {
+            onlyNamed = getElement().getName();
+            if (onlyNamed == null || onlyNamed.isEmpty()) {
+                return null;
+            }
+            PsiTreeUtil.treeWalkUp(this, getElement(), null, ResolveState.initial());
+            if (!visitedDeclarations.isEmpty()) {
+                final GLSLDeclarator declaration = visitedDeclarations.get(0);
+                visitedDeclarations.clear();
+                return declaration;
+            }
+            return null;
+        }
+
+        @Override
+        public Object @NotNull [] getVariants() {
+            onlyNamed = null;
+            PsiTreeUtil.treeWalkUp(this, getElement(), null, ResolveState.initial());
+            final PsiElement[] result = visitedDeclarations.toArray(PsiElement.EMPTY_ARRAY);
+            visitedDeclarations.clear();
+            return result;
+        }
+    }
+
+    private GLSLVariableReference referenceCache = null;
+
     @NotNull
-    public GLSLVariableReference getReferenceProxy() {
-        return new GLSLVariableReference(this.getNameIdentifier());
+    @Override
+    public GLSLVariableReference getReference() {
+        GLSLVariableReference reference = referenceCache;
+        if (reference == null) {
+            reference = referenceCache = new GLSLVariableReference(this);
+        }
+        return reference;
     }
 }
