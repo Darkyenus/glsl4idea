@@ -36,7 +36,7 @@
 
     <change-notes><![CDATA[
         <ul>
-            <li></li>
+            <li>Don't associate with .shader files by default to prevent conflicts with Unity</li>
         </ul>
     ]]></change-notes>
 
@@ -57,7 +57,7 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <fileType name="GLSL shader" language="GLSL" extensions="glsl;frag;fsh;vert;vsh;tesc;tese;geom;comp;shader" implementationClass="glslplugin.lang.GLSLFileType" fieldName="INSTANCE" />
+        <fileType name="GLSL shader" language="GLSL" extensions="glsl;frag;fsh;vert;vsh;tesc;tese;geom;comp" implementationClass="glslplugin.lang.GLSLFileType" fieldName="INSTANCE" />
         <colorSettingsPage implementation="glslplugin.GLSLColorAndFontsPage"/>
         <lang.syntaxHighlighterFactory language="GLSL" implementationClass="glslplugin.GLSLHighlighterFactory"/>
         <lang.braceMatcher language="GLSL" implementationClass="glslplugin.GLSLPairedBraceMatcher"/>

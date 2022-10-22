@@ -48,7 +48,6 @@ public class GLSLFileType extends LanguageFileType {
         EXTENSIONS.add("tese");
         EXTENSIONS.add("geom");
         EXTENSIONS.add("comp");
-        EXTENSIONS.add("shader");
     }
 
     private GLSLFileType() {
