@@ -22,6 +22,7 @@ package glslplugin.lang.elements.statements;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
@@ -58,6 +59,7 @@ public class GLSLDeclarationStatement extends GLSLStatement {
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
         GLSLVariableDeclaration declaration = getDeclaration();
         if (declaration == null) return true;
+        if (PsiTreeUtil.isAncestor(lastParent, declaration, false)) return true;
         return declaration.processDeclarations(processor, state, lastParent, place);
     }
 }

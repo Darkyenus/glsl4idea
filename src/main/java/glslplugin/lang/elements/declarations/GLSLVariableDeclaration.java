@@ -19,9 +19,13 @@
 
 package glslplugin.lang.elements.declarations;
 
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * NewVariableDeclaration is ...
@@ -33,6 +37,23 @@ import com.intellij.lang.ASTNode;
 public class GLSLVariableDeclaration extends GLSLDeclarationImpl {
     public GLSLVariableDeclaration(@NotNull ASTNode astNode) {
         super(astNode);
+    }
+
+    @Override
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
+        for (GLSLDeclarator declarator : getDeclarators()) {
+            if (PsiTreeUtil.isAncestor(lastParent, declarator, false))
+                break;// Can't see later-defined stuff
+
+            if (!declarator.processDeclarations(processor, state, null, place))
+                return false;
+        }
+
+        GLSLTypeSpecifier specifier = getTypeSpecifierNode();
+        if (specifier != null && !PsiTreeUtil.isAncestor(lastParent, specifier, false)) {
+            return specifier.processDeclarations(processor, state, null, place);
+        }
+        return true;
     }
 
     @Override

@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,15 +47,18 @@ public class GLSLFunctionDefinitionImpl extends GLSLFunctionDeclarationImpl impl
 
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
-        if (lastParent == null) {
+        if (!super.processDeclarations(processor, state, lastParent, place)) {
+            return false;
+        }
+
+        if (lastParent == null || !PsiTreeUtil.isAncestor(this,place, false)) {
             // Do not show declarations of parameters to outside scopes
             return true;
         }
 
         for (GLSLParameterDeclaration parameter : getParameters()) {
-            if (parameter == lastParent) // TODO(jp): sloppy, parameter is probably not direct child, so this will fail
+            if (PsiTreeUtil.isAncestor(lastParent, parameter, false))
                 continue;
-
             if (!parameter.processDeclarations(processor, state, lastParent, place)) return false;
         }
 

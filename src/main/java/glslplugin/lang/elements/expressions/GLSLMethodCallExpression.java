@@ -21,12 +21,12 @@ package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
+import glslplugin.lang.elements.reference.GLSLReferenceUtil;
 import glslplugin.lang.elements.types.GLSLArrayType;
 import glslplugin.lang.elements.types.GLSLMatrixType;
 import glslplugin.lang.elements.types.GLSLType;
@@ -82,8 +82,8 @@ public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase {
 
     public static final class MethodCallReference extends PsiReferenceBase<GLSLMethodCallExpression> {
 
-        public MethodCallReference(@NotNull GLSLMethodCallExpression element, TextRange range) {
-            super(element, range, true);
+        public MethodCallReference(@NotNull GLSLMethodCallExpression element) {
+            super(element, GLSLReferenceUtil.rangeOfIn(element.getMethodIdentifier(), element), true);
         }
 
         @Override
@@ -119,12 +119,7 @@ public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase {
 
     @Override
     public MethodCallReference getReference() {
-        final GLSLIdentifier identifier = getMethodIdentifier();
-        if (identifier == null) {
-            return null;
-        }
-        final TextRange range = identifier.getTextRange();
-        return new MethodCallReference(this, range);
+        return new MethodCallReference(this);
     }
 
     @Override

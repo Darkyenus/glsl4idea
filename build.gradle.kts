@@ -25,7 +25,8 @@ intellij {
     //version.set("IC-212.4746.92")
     updateSinceUntilBuild.set(false)
     instrumentCode.set(false)
-    //plugins.add("PsiViewer:222-SNAPSHOT")
+
+    plugins.add("PsiViewer:222-SNAPSHOT")
 }
 
 tasks {

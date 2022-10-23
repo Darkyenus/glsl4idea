@@ -23,9 +23,7 @@ import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiReference;
 import com.intellij.util.containers.ContainerUtil;
-import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.declarations.GLSLDeclaration;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
@@ -37,8 +35,6 @@ import glslplugin.lang.elements.declarations.GLSLTypename;
 import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
 import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
 import glslplugin.lang.elements.expressions.GLSLFunctionOrConstructorCallExpression;
-import glslplugin.lang.elements.reference.GLSLReferenceBase;
-import glslplugin.lang.elements.reference.GLSLTypeReference;
 import glslplugin.lang.elements.types.GLSLBasicFunctionType;
 import glslplugin.lang.elements.types.GLSLFunctionType;
 import glslplugin.lang.elements.types.GLSLQualifiedType;
@@ -124,33 +120,15 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
         return getNamedTypedElementDocumentation(variableDeclaration, variableDeclaration.getQualifiedType());
     }
 
-    private static String getDocumentation(PsiElement element, PsiElement originalElement) {
-        PsiElement parent = element.getParent();
-
+    @Override
+    public String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
         // For some reason opening documentation on a struct constructor returns GLSLTypeDefinition while we want
         // to consider it a constructor call.
         if (element instanceof GLSLStructDefinition && originalElement != null) {
             //TODO Check that this case works now
         }
 
-        if (element instanceof GLSLIdentifier) {
-            String parentDoc = getDocumentation(parent, null);
-            if (parentDoc != null)
-                return parentDoc;
-
-            PsiReference reference = element.getReference();
-            if (reference == null && parent instanceof GLSLReferenceBase) reference = ((PsiReference) parent);
-
-            if (reference instanceof GLSLTypeReference) {
-                GLSLStructDefinition typeDef = ((GLSLTypeReference) reference).resolve();
-                if (typeDef == null) return null;
-
-                GLSLStructType type = typeDef.getType();
-                return getNamedTypedElementDocumentation(((GLSLIdentifier) element), type.getTypename());
-            } else {
-                return null;
-            }
-        } else if (element instanceof GLSLStructDefinition) {
+        if (element instanceof GLSLStructDefinition) {
             return getStructDocumentation(((GLSLStructDefinition) element));
         } else if (element instanceof GLSLFunctionDeclaration) {
             return getFunctionDocumentation(((GLSLFunctionDeclaration) element));
@@ -168,8 +146,7 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
             if (elementDeclaration instanceof GLSLStructMemberDeclaration) {
                 return getVariableDocumentation(((GLSLDeclarator) element));
             }
-        } else if (element instanceof GLSLFunctionOrConstructorCallExpression) {
-            GLSLFunctionOrConstructorCallExpression functionCallExpression = (GLSLFunctionOrConstructorCallExpression) element;
+        } else if (element instanceof GLSLFunctionOrConstructorCallExpression functionCallExpression) {
             final GLSLFunctionOrConstructorCallExpression.FunctionCallOrConstructorReference reference = functionCallExpression.getReference();
             final PsiElement target = reference != null ? reference.resolve() : null;
             if (target instanceof GLSLFunctionDeclaration) {
@@ -185,17 +162,11 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
             if (typeDefinition != null) {
                 return getStructDocumentation(typeDefinition);
             }
-        } else if (element instanceof GLSLFieldSelectionExpression) {
-            GLSLFieldSelectionExpression fieldSelectionExpression = (GLSLFieldSelectionExpression) element;
+        } else if (element instanceof GLSLFieldSelectionExpression fieldSelectionExpression) {
             GLSLType type = fieldSelectionExpression.getType();
             return getNamedTypedElementDocumentation(fieldSelectionExpression.getMemberIdentifier(), type.getTypename());
         }
 
         return null;
-    }
-
-    @Override
-    public String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
-        return getDocumentation(element, originalElement);
     }
 }

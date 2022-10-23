@@ -63,13 +63,14 @@ public class GLSLFile extends PsiFileBase {
 
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
-        if (lastParent == null) {
-            return true;
-        }
-        PsiElement child = lastParent.getPrevSibling();
-        while (child != null) {
-            if (!child.processDeclarations(processor, state, lastParent, place)) return false;
-            child = child.getPrevSibling();
+        for (PsiElement child = getFirstChild(); child != null; child = child.getNextSibling()) {
+            if (child == lastParent || PsiTreeUtil.isAncestor(child, place, false)) {
+                // Don't show later declarations
+                break;
+            }
+
+
+            if (!child.processDeclarations(processor, state, null, place)) return false;
         }
         return true;
     }

@@ -23,7 +23,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiCheckedRenameElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

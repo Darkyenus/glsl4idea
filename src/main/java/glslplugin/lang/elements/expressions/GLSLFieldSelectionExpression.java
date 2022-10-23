@@ -28,6 +28,7 @@ import glslplugin.lang.elements.declarations.GLSLDeclaration;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
+import glslplugin.lang.elements.reference.GLSLReferenceUtil;
 import glslplugin.lang.elements.types.GLSLScalarType;
 import glslplugin.lang.elements.types.GLSLStructType;
 import glslplugin.lang.elements.types.GLSLType;
@@ -96,16 +97,16 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
      * Returns false if it failed to find out.
      */
     public boolean isSwizzle(){
-        return getRawReference() instanceof GLSLFieldReference[];
+        return getRawReference() instanceof FieldReference[];
     }
 
-    public static final class GLSLFieldReference extends PsiReferenceBase<GLSLFieldSelectionExpression> {
+    public static final class FieldReference extends PsiReferenceBase<GLSLFieldSelectionExpression> {
 
-        public static final GLSLFieldReference[] EMPTY_ARRAY = new GLSLFieldReference[0];
+        public static final FieldReference[] EMPTY_ARRAY = new FieldReference[0];
         private final String fieldName;
         private final GLSLStructDefinition fieldStruct;
 
-        public GLSLFieldReference(@NotNull GLSLFieldSelectionExpression element, TextRange textRange, @NotNull String fieldName, @NotNull GLSLStructDefinition fieldStruct) {
+        public FieldReference(@NotNull GLSLFieldSelectionExpression element, TextRange textRange, @NotNull String fieldName, @NotNull GLSLStructDefinition fieldStruct) {
             super(element, textRange, false);
             this.fieldName = fieldName;
             this.fieldStruct = fieldStruct;
@@ -124,30 +125,35 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
             }
             return declarators.toArray(GLSLDeclarator.NO_DECLARATORS);
         }
+
+        @Override
+        public String toString() {
+            return GLSLReferenceUtil.toString(this);
+        }
     }
 
     @Override
-    public GLSLFieldReference getReference() {
+    public FieldReference getReference() {
         final Object rawReference = getRawReference();
         if (rawReference == null) {
             return null;
         }
-        if (rawReference instanceof GLSLFieldReference) {
-            return (GLSLFieldReference) rawReference;
+        if (rawReference instanceof FieldReference) {
+            return (FieldReference) rawReference;
         }
-        return ((GLSLFieldReference[]) rawReference)[0];
+        return ((FieldReference[]) rawReference)[0];
     }
 
     @Override
-    public GLSLFieldReference @NotNull [] getReferences() {
+    public FieldReference @NotNull [] getReferences() {
         final Object rawReference = getRawReference();
         if (rawReference == null) {
-            return GLSLFieldReference.EMPTY_ARRAY;
+            return FieldReference.EMPTY_ARRAY;
         }
-        if (rawReference instanceof GLSLFieldReference) {
-            return new GLSLFieldReference[] {(GLSLFieldReference) rawReference};
+        if (rawReference instanceof FieldReference) {
+            return new FieldReference[] {(FieldReference) rawReference};
         }
-        return (GLSLFieldReference[]) rawReference;
+        return (FieldReference[]) rawReference;
     }
 
     private Object getRawReference() {
@@ -161,6 +167,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
         if (fieldName.isEmpty()) {
             return null;
         }
+        final TextRange baseRange = GLSLReferenceUtil.rangeOfIn(memberIdentifier, this);
 
         if (leftHandType instanceof GLSLVectorType || leftHandType instanceof GLSLScalarType) {
             // Resolving swizzling
@@ -174,22 +181,20 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
 
             if (fieldName.length() == 1) {
                 // No swizzle
-                return new GLSLFieldReference(this, memberIdentifier.getTextRange(), fieldName, fieldStruct);
+                return new FieldReference(this, baseRange, fieldName, fieldStruct);
             } else {
                 // Swizzle
-                final TextRange range = memberIdentifier.getTextRange();
-                final GLSLFieldReference[] result = new GLSLFieldReference[fieldName.length()];
+                final FieldReference[] result = new FieldReference[fieldName.length()];
                 for (int i = 0; i < fieldName.length(); i++) {
-                    final TextRange swizzleRange = new TextRange(range.getStartOffset() + i, range.getStartOffset() + i + 1);
                     final String swizzleFieldName = Character.toString(fieldName.charAt(i));
-                    result[i] = new GLSLFieldReference(this, swizzleRange, swizzleFieldName, fieldStruct);
+                    result[i] = new FieldReference(this, new TextRange(baseRange.getStartOffset() + i, baseRange.getStartOffset() + i + 1), swizzleFieldName, fieldStruct);
                 }
                 return result;
             }
         }
 
         if (leftHandType instanceof GLSLStructType) {
-            return new GLSLFieldReference(this, memberIdentifier.getTextRange(), fieldName, ((GLSLStructType) leftHandType).getDefinition());
+            return new FieldReference(this, baseRange, fieldName, ((GLSLStructType) leftHandType).getDefinition());
         }
 
         return null;
@@ -202,16 +207,16 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
         if (rawReference == null) {
             return GLSLTypes.UNKNOWN_TYPE;
         }
-        if (rawReference instanceof GLSLFieldReference) {
-            final GLSLDeclarator resolved = ((GLSLFieldReference) rawReference).resolve();
+        if (rawReference instanceof FieldReference) {
+            final GLSLDeclarator resolved = ((FieldReference) rawReference).resolve();
             if (resolved == null) {
                 return GLSLTypes.UNKNOWN_TYPE;
             }
             return resolved.getType();
         }
-        final GLSLFieldReference[] references = (GLSLFieldReference[]) rawReference;
+        final FieldReference[] references = (FieldReference[]) rawReference;
         GLSLType baseType = null;
-        for (GLSLFieldReference ref : references) {
+        for (FieldReference ref : references) {
             final GLSLDeclarator resolve = ref.resolve();
             if (resolve != null) {
                 baseType = resolve.getType();

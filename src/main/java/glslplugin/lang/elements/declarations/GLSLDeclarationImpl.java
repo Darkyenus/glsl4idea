@@ -20,9 +20,6 @@
 package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.ResolveState;
-import com.intellij.psi.scope.PsiScopeProcessor;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLIdentifier;
 import org.jetbrains.annotations.NotNull;
@@ -109,18 +106,5 @@ public abstract class GLSLDeclarationImpl extends GLSLElementImpl implements GLS
             first = false;
         }
         return b.toString();
-    }
-
-    @Override
-    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
-        for (GLSLDeclarator declarator : getDeclarators()) {
-            if (declarator == lastParent)
-                continue;
-            if (!processor.execute(declarator, state))
-                return false;
-        }
-
-        GLSLTypeSpecifier specifier = getTypeSpecifierNode();
-        return specifier == null || lastParent == specifier || specifier.processDeclarations(processor, state, lastParent, place);
     }
 }

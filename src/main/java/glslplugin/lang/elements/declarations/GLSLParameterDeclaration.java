@@ -20,11 +20,16 @@
 package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
+import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * NewParameterDeclaration is ...
+ * A function parameter declaration.
  *
  * @author Yngve Devik Hammersland
  *         Date: Feb 2, 2009
@@ -85,5 +90,17 @@ public class GLSLParameterDeclaration extends GLSLDeclarationImpl {
     @Override
     public String getDeclarationDescription() {
         return "parameter";
+    }
+
+    @Override
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+        for (GLSLDeclarator declarator : getDeclarators()) {
+            if (PsiTreeUtil.isAncestor(lastParent, declarator, false) || PsiTreeUtil.isAncestor(place, declarator, false)) {
+                continue;
+            }
+            if (!declarator.processDeclarations(processor, state, null, place))
+                return false;
+        }
+        return true;
     }
 }

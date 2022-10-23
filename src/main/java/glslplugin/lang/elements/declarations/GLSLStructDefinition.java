@@ -24,10 +24,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.GLSLTypedElement;
+import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import glslplugin.lang.elements.types.GLSLStructType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +45,7 @@ import java.util.List;
  *         Date: Jan 27, 2009
  *         Time: 10:31:13 AM
  */
-public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedElement, PsiNameIdentifierOwner {
+public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedElement, GLSLReferencableDeclaration, PsiNameIdentifierOwner {
     // Cache this one to enable equals comparison by ==
     //  this is required to be able to compare types of variables of anonymous types.
     // struct {int x;} x, y; <- how to compare types of x and y?
@@ -118,18 +120,23 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
         if (!processor.execute(this, state))
             return false;
 
-        if (lastParent == null) {
+        if (lastParent == null || !PsiTreeUtil.isAncestor(this,place, false)) {
             // Do not show declarations of parameters to outside scopes
             return true;
         }
 
         for (GLSLDeclarator declarator : getDeclarators()) {
-            if (declarator == lastParent)
+            if (PsiTreeUtil.isAncestor(lastParent, declarator, false))
                 continue;
             if (!processor.execute(declarator, state))
                 return false;
         }
         return true;
+    }
+
+    @Override
+    public @NotNull String declaredNoun() {
+        return "struct";
     }
 
     @Nullable

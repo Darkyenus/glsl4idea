@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.tree.TokenSet;
 import glslplugin.lang.elements.GLSLTokenTypes;
+import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import glslplugin.lang.scanner.GLSLFlexAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +18,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class GLSLFindUsagesProvider implements FindUsagesProvider {
 
+    private static final TokenSet identifierTokenSet = TokenSet.orSet(TokenSet.create(GLSLTokenTypes.IDENTIFIER), GLSLTokenTypes.TYPE_SPECIFIER_NONARRAY_TOKENS);
+    private static final TokenSet literalTokenSet = TokenSet.create(GLSLTokenTypes.PREPROCESSOR_STRING);
+
     @Nullable
     @Override
     public WordsScanner getWordsScanner() {
@@ -25,14 +29,14 @@ public class GLSLFindUsagesProvider implements FindUsagesProvider {
         or a new instance. This is required, otherwise errors will happen.
          */
         return new DefaultWordsScanner(new GLSLFlexAdapter(),
-                TokenSet.create(GLSLTokenTypes.IDENTIFIER),
-                TokenSet.create(GLSLTokenTypes.COMMENT_LINE, GLSLTokenTypes.COMMENT_BLOCK),
-                TokenSet.create(GLSLTokenTypes.PREPROCESSOR_STRING));
+                identifierTokenSet,
+                GLSLTokenTypes.COMMENTS,
+                literalTokenSet);
     }
 
     @Override
     public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
-        return psiElement instanceof PsiNamedElement;
+        return psiElement instanceof GLSLReferencableDeclaration;
     }
 
     @Nullable
@@ -44,13 +48,16 @@ public class GLSLFindUsagesProvider implements FindUsagesProvider {
     @NotNull
     @Override
     public String getType(@NotNull PsiElement element) {
+        if (element instanceof GLSLReferencableDeclaration ref) {
+            return ref.declaredNoun();
+        }
         return "GLSL Usage";
     }
 
     @NotNull
     @Override
     public String getDescriptiveName(@NotNull PsiElement element) {
-        return element.toString();
+        return element.toString();//TODO
     }
 
     @NotNull

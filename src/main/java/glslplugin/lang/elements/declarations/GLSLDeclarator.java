@@ -22,10 +22,14 @@ package glslplugin.lang.elements.declarations;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.expressions.GLSLExpression;
+import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import glslplugin.lang.elements.types.GLSLArrayType;
 import glslplugin.lang.elements.types.GLSLQualifiedType;
 import glslplugin.lang.elements.types.GLSLType;
@@ -40,7 +44,7 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Jan 29, 2009
  *         Time: 7:29:46 PM
  */
-public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifierOwner {
+public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableDeclaration, PsiNameIdentifierOwner {
     public static final GLSLDeclarator[] NO_DECLARATORS = new GLSLDeclarator[0];
 
     public GLSLDeclarator(@NotNull ASTNode astNode) {
@@ -190,6 +194,25 @@ public class GLSLDeclarator extends GLSLElementImpl implements PsiNameIdentifier
         final GLSLDeclaration declaration = getParentDeclaration();
         if(declaration == null || declaration.getQualifierList() == null)return new GLSLQualifiedType(type);
         return new GLSLQualifiedType(type, declaration.getQualifierList().getQualifiers());
+    }
+
+    @Override
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+        if (PsiTreeUtil.isAncestor(this,place, false)) {
+            return true;
+        }
+        return processor.execute(this, state);
+    }
+
+    @Override
+    public @NotNull String declaredNoun() {
+        if (findParentByClass(GLSLParameterDeclaration.class) != null) {
+            return "function parameter";
+        }
+        if (findParentByClass(GLSLFunctionDefinition.class) != null) {
+            return "variable";
+        }
+        return "global variable";
     }
 
     @Override

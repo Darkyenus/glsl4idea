@@ -35,8 +35,7 @@ public class GLSLMacroReference extends GLSLReferenceBase<GLSLRedefinedToken, GL
 
     private GLSLDefineDirective resolveDeeperIn(PsiElement current){
         while(current != null){
-            if (current instanceof GLSLDefineDirective) {
-                GLSLDefineDirective directive = (GLSLDefineDirective) current;
+            if (current instanceof GLSLDefineDirective directive) {
                 if (source.getName().equals(directive.getName())) return directive;
             }else{
                 final GLSLDefineDirective deeper = resolveDeeperIn(current.getLastChild());

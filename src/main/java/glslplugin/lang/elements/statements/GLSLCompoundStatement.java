@@ -65,13 +65,16 @@ public class GLSLCompoundStatement extends GLSLStatement {
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state,
                                        @Nullable PsiElement lastParent, @NotNull PsiElement place) {
-        if (lastParent == null) {
+        if (!PsiTreeUtil.isAncestor(this, place, false)) {
             // Do not show declarations of nested variables to outside scopes
             return true;
         }
 
         for (GLSLStatement statement : getStatements()) {
-            if (!statement.processDeclarations(processor, state, lastParent, place)) return false;
+            if (lastParent != null && PsiTreeUtil.isAncestor(statement, lastParent, false)) {
+                break;// Do not show later declarations
+            }
+            if (!statement.processDeclarations(processor, state, null, place)) return false;
         }
 
         return true;

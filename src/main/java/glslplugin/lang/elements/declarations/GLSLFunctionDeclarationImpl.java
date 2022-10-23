@@ -23,8 +23,12 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiCheckedRenameElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import glslplugin.lang.elements.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * GLSLFunctionDeclarationImpl is the psi implementation of a function declaration.
  */
-public class GLSLFunctionDeclarationImpl extends GLSLDeclarationImpl implements GLSLFunctionDeclaration, PsiNameIdentifierOwner, PsiCheckedRenameElement {
+public class GLSLFunctionDeclarationImpl extends GLSLDeclarationImpl implements GLSLFunctionDeclaration, GLSLReferencableDeclaration, PsiNameIdentifierOwner, PsiCheckedRenameElement {
     private GLSLFunctionType typeCache;
     private boolean typeCacheDirty = false;
 
@@ -40,6 +44,20 @@ public class GLSLFunctionDeclarationImpl extends GLSLDeclarationImpl implements 
         super(astNode);
     }
 
+    @Override
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+        if (lastParent != null || !PsiTreeUtil.isAncestor(this, place, false)) {
+            // Can't see the function from inside
+            return true;
+        }
+
+        return processor.execute(this, state);
+    }
+
+    @Override
+    public @NotNull String declaredNoun() {
+        return "function";
+    }
 
     @NotNull
     public String getName() {
@@ -60,20 +78,10 @@ public class GLSLFunctionDeclarationImpl extends GLSLDeclarationImpl implements 
         return findChildrenByClass(GLSLDeclarator.class);
     }
 
-    @Nullable
-    public GLSLDeclarator getDeclarator() {
-        GLSLDeclarator[] declarators = getDeclarators();
-        if(declarators.length == 0){
-            return null;
-        }else{
-            return declarators[0];
-        }
-    }
-
     @NotNull
     public GLSLParameterDeclaration[] getParameters() {
         GLSLDeclarationList parameterList = getParameterList();
-        if(parameterList == null)return GLSLParameterDeclaration.NO_PARAMETER_DECLARATIONS;
+        if(parameterList == null) return GLSLParameterDeclaration.NO_PARAMETER_DECLARATIONS;
         return castToParameters(parameterList.getDeclarations());
     }
 

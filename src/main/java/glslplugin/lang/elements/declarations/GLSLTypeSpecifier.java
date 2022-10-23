@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.types.GLSLArrayType;
@@ -79,7 +80,7 @@ public class GLSLTypeSpecifier extends GLSLElementImpl {
 
     /**
      * If this type specifier defines its own type (possible only with structs), returns its definition.
-     * Otherwise returns null.
+     * Otherwise, returns null.
      */
     @Nullable
     public GLSLStructDefinition getEmbeddedStructDefinition() {
@@ -89,6 +90,8 @@ public class GLSLTypeSpecifier extends GLSLElementImpl {
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
         GLSLStructDefinition typeDefinition = getEmbeddedStructDefinition();
-        return typeDefinition == null || typeDefinition.processDeclarations(processor, state, lastParent, place);
+        if (typeDefinition == null) return true;
+        if (PsiTreeUtil.isAncestor(lastParent, typeDefinition, false)) return true;
+        return typeDefinition.processDeclarations(processor, state, lastParent, place);
     }
 }

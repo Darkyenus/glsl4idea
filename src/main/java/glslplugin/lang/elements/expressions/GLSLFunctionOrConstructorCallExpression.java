@@ -34,6 +34,7 @@ import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.declarations.GLSLTypeSpecifier;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
+import glslplugin.lang.elements.reference.GLSLReferenceUtil;
 import glslplugin.lang.elements.types.GLSLArrayType;
 import glslplugin.lang.elements.types.GLSLFunctionType;
 import glslplugin.lang.elements.types.GLSLMatrixType;
@@ -349,11 +350,11 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression {
         final TextRange range;
         final GLSLTypeSpecifier constructorType = getConstructorTypeSpecifier();
         if (constructorType != null) {
-            range = constructorType.getTextRange();
+            range = GLSLReferenceUtil.rangeOfIn(constructorType, this);
         } else {
             final GLSLIdentifier identifier = getIdentifier();
             if (identifier != null) {
-                range = identifier.getTextRange();
+                range = GLSLReferenceUtil.rangeOfIn(identifier, this);
             } else {
                 return null;
             }

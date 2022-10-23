@@ -28,6 +28,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
+import glslplugin.lang.elements.reference.GLSLReferenceUtil;
 import glslplugin.lang.elements.types.GLSLMatrixType;
 import glslplugin.lang.elements.types.GLSLOpaqueType;
 import glslplugin.lang.elements.types.GLSLScalarType;
@@ -41,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 /**
- * GLSLTypeReference represents a type-specifier which specifies a built-in or custom type.
+ * Represents a type-specifier which specifies a built-in or custom type.
  *
  * @author Yngve Devik Hammersland
  *         Date: Feb 5, 2009
@@ -71,7 +72,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement {
     public static final class TypeReference extends PsiReferenceBase<GLSLTypename> implements PsiScopeProcessor {
 
         public TypeReference(@NotNull GLSLTypename element) {
-            super(element, element.getTextRange(), false);
+            super(element, GLSLReferenceUtil.rangeOfIn(null, element), false);
         }
 
         private String onlyNamed = null;
@@ -79,8 +80,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement {
 
         @Override
         public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
-            if (element instanceof GLSLStructDefinition) {
-                final GLSLStructDefinition def = (GLSLStructDefinition) element;
+            if (element instanceof final GLSLStructDefinition def) {
                 if (onlyNamed == null || onlyNamed.equals(def.getName())) {
                     definitions.add(def);
                     return onlyNamed == null;// Done if we found the one named
@@ -132,6 +132,11 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement {
                 return bipus.getOpaqueDefinition((GLSLOpaqueType) type);
             }
             return null;
+        }
+
+        @Override
+        public String toString() {
+            return GLSLReferenceUtil.toString(this);
         }
     }
 

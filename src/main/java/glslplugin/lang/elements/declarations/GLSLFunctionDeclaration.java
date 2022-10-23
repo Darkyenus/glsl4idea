@@ -33,7 +33,14 @@ import org.jetbrains.annotations.Nullable;
 public interface GLSLFunctionDeclaration extends GLSLDeclaration, PsiNameIdentifierOwner {
 
     @Nullable
-    GLSLDeclarator getDeclarator();
+    default GLSLDeclarator getDeclarator() {
+        GLSLDeclarator[] declarators = getDeclarators();
+        if(declarators.length == 0){
+            return null;
+        }else{
+            return declarators[0];
+        }
+    }
 
     @NotNull
     GLSLParameterDeclaration[] getParameters();
