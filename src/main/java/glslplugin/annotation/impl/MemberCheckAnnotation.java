@@ -22,7 +22,6 @@ package glslplugin.annotation.impl;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.annotation.Annotator;
-import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
 import glslplugin.lang.elements.types.GLSLStructType;
@@ -37,12 +36,10 @@ public class MemberCheckAnnotation extends Annotator<GLSLFieldSelectionExpressio
         GLSLType leftHandType = leftHandExpression.getType();
 
         if (leftHandType instanceof GLSLStructType) {
-            GLSLIdentifier memberIdentifier = expr.getMemberIdentifier();
-            if(memberIdentifier == null)return;
-            if (!leftHandType.hasMember(memberIdentifier.getName())) {
-                holder.newAnnotation(HighlightSeverity.ERROR, "Unknown member for " + leftHandType.getTypename()).range(memberIdentifier).create();
+            final String name = expr.getFieldName();
+            if (name != null && !leftHandType.hasMember(name)) {
+                holder.newAnnotation(HighlightSeverity.ERROR, "Unknown member for " + leftHandType.getTypename()).range(expr.getFieldNameRange()).create();
             }
-
         }
 
     }

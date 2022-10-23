@@ -45,15 +45,13 @@ public class VectorComponentsAnnotation extends Annotator<GLSLFieldSelectionExpr
         if(leftHandExpression == null)return;
         GLSLType leftHandType = leftHandExpression.getType();
 
-        if (leftHandType instanceof GLSLVectorType) {
-            GLSLVectorType type = (GLSLVectorType) leftHandType;
-            GLSLIdentifier memberIdentifier = expr.getMemberIdentifier();
-            if(memberIdentifier == null)return;
-            String member = memberIdentifier.getName();
+        if (leftHandType instanceof GLSLVectorType type) {
+            String member = expr.getFieldName();
+            if(member == null) return;
 
             if (!type.hasMember(member) && member.length() > 0) {
                 //It has no member like that, why?
-                TextRange mitr = memberIdentifier.getTextRange();
+                TextRange mitr = expr.getFieldNameRange();
 
                 char[] basePattern = getPattern(member.charAt(0));
                 int numComponents = type.getNumComponents();

@@ -1306,17 +1306,14 @@ public final class GLSLParsing extends GLSLParsingBase {
         }
     }
 
-    private String parseFieldIdentifier() {
+    private void parseFieldIdentifier() {
         final PsiBuilder.Marker mark = b.mark();
         boolean success = b.getTokenType() == IDENTIFIER;
         if (success) {
-            String name = b.getTokenText();
             b.advanceLexer();
-            mark.done(FIELD_NAME);
-            return name;
+            mark.drop();
         } else {
             mark.error("Expected an identifier.");
-            return null;
         }
     }
 

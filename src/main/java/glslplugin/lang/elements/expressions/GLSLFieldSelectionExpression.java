@@ -23,8 +23,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
-import glslplugin.lang.elements.GLSLIdentifier;
-import glslplugin.lang.elements.declarations.GLSLQualifiedDeclaration;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
@@ -54,13 +53,30 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
     }
 
     @Nullable
-    public GLSLIdentifier getMemberIdentifier() {
-        PsiElement last = getLastChild();
-        if (last instanceof GLSLIdentifier) {
-            return (GLSLIdentifier) last;
-        } else {
-            return null;
+    private PsiElement getFieldIdentifier() {
+        final PsiElement lastChild = getLastChild();
+        if (lastChild.getNode().getElementType() == GLSLTokenTypes.IDENTIFIER) {
+            return lastChild;
         }
+        return null;
+    }
+
+    /** Return the absolute range of the field identifier.
+     * If the identifier does not exist due to an error, returns empty range at the end. */
+    public TextRange getFieldNameRange() {
+        final PsiElement fieldIdentifier = getFieldIdentifier();
+        if (fieldIdentifier != null) {
+            return fieldIdentifier.getTextRange();
+        }
+        final ASTNode node = getNode();
+        final int end = node.getStartOffset() + node.getTextLength();
+        return new TextRange(end, end);
+    }
+
+    @Nullable
+    public String getFieldName() {
+        final PsiElement identifier = getFieldIdentifier();
+        return identifier == null ? null : identifier.getText();
     }
 
     @Override
@@ -74,9 +90,8 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
             if (isSwizzle()) {
                 // It is a swizzle, so it may or may not be an L-value
                 // If any of the components are repeated, it is not an L-value
-                GLSLIdentifier memberIdentifier = getMemberIdentifier();
-                if(memberIdentifier == null)return true; //This should not happen
-                String components = memberIdentifier.getName();
+                String components = getFieldName();
+                if (components == null) return true;
                 for (int i = 0; i < components.length(); i++) {
                     char c = components.charAt(i);
                     for (int j = i+1; j < components.length(); j++) {
@@ -159,12 +174,12 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
 
     private Object getRawReference() {
         GLSLExpression leftHandExpression = getLeftHandExpression();
-        GLSLIdentifier memberIdentifier = getMemberIdentifier();
+        PsiElement memberIdentifier = getFieldIdentifier();
         if (leftHandExpression == null || memberIdentifier == null) return null;
         GLSLType leftHandType = leftHandExpression.getType();
         if (!leftHandType.isValidType()) return null;
 
-        String fieldName = memberIdentifier.getName();
+        String fieldName = memberIdentifier.getText();
         if (fieldName.isEmpty()) {
             return null;
         }
@@ -231,11 +246,11 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
     }
 
     public String toString() {
-        GLSLIdentifier memberIdentifier = getMemberIdentifier();
-        if(memberIdentifier == null){
+        String field = getFieldName();
+        if(field == null){
             return "Field selection: '(unknown)'";
         }else{
-            return "Field selection: '" + memberIdentifier.getName() + "'";
+            return "Field selection: '" + field + "'";
         }
     }
 }

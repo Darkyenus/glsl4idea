@@ -26,7 +26,7 @@ public class GLSLReferenceUtil {
         return new TextRange(offset, offset + length);
     }
 
-    private static void appendElement(StringBuilder sb, PsiElement element) {
+    private static void appendElement(StringBuilder sb, PsiElement element, TextRange rangeInElement) {
         if (element == null) {
             sb.append("null");
             return;
@@ -47,13 +47,18 @@ public class GLSLReferenceUtil {
             child = parent;
             parent = child.getParent();
         }
+
         if (parentText != null) {
+            if (rangeInElement != null) {
+                textRangeInParent = new TextRange(textRangeInParent.getStartOffset() + rangeInElement.getStartOffset(), textRangeInParent.getStartOffset() + rangeInElement.getEndOffset());
+            }
             sb.append(parentText, 0, textRangeInParent.getStartOffset());
             sb.append('|');
             sb.append(parentText, textRangeInParent.getStartOffset(), textRangeInParent.getEndOffset());
             sb.append('|');
             sb.append(parentText, textRangeInParent.getEndOffset(), parentText.length());
         } else {
+            //TODO handle rangeInElement (unlikely to be ever needed)
             sb.append(elementText);
         }
         sb.append("}");
@@ -61,29 +66,31 @@ public class GLSLReferenceUtil {
 
     public static String toString(PsiReference reference) {
         final StringBuilder sb = new StringBuilder();
-        sb.append(reference.getClass()).append(" ");
-        appendElement(sb, reference.getElement());
+        sb.append(reference.getClass().getSimpleName()).append(" ");
+        appendElement(sb, reference.getElement(), reference.getRangeInElement());
 
         final PsiElement resolve = reference.resolve();
         sb.append(" -> ");
-        appendElement(sb, resolve);
+        appendElement(sb, resolve, null);
 
-        sb.append(" [");
-        boolean first = true;
-        for (Object variant : reference.getVariants()) {
-            if (first) {
-                first = false;
-            } else {
-                sb.append(", ");
-            }
+        if (false) {
+            sb.append(" [");
+            boolean first = true;
+            for (Object variant : reference.getVariants()) {
+                if (first) {
+                    first = false;
+                } else {
+                    sb.append(", ");
+                }
 
-            if (variant instanceof PsiElement) {
-                appendElement(sb, (PsiElement) variant);
-            } else {
-                sb.append(variant);
+                if (variant instanceof PsiElement) {
+                    appendElement(sb, (PsiElement) variant, null);
+                } else {
+                    sb.append(variant);
+                }
             }
+            sb.append("]");
         }
-        sb.append("]");
         return sb.toString();
     }
 

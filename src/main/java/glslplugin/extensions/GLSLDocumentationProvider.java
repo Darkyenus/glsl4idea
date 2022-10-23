@@ -163,8 +163,11 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
                 return getStructDocumentation(typeDefinition);
             }
         } else if (element instanceof GLSLFieldSelectionExpression fieldSelectionExpression) {
-            GLSLType type = fieldSelectionExpression.getType();
-            return getNamedTypedElementDocumentation(fieldSelectionExpression.getMemberIdentifier(), type.getTypename());
+            final GLSLFieldSelectionExpression.FieldReference reference = fieldSelectionExpression.getReference();
+            if (reference == null) return null;
+            final GLSLDeclarator resolved = reference.resolve();
+            if (resolved == null) return null;
+            return getNamedTypedElementDocumentation(resolved, resolved.getQualifiedType());
         }
 
         return null;

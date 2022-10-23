@@ -90,7 +90,6 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.FUNCTION_NAME) return new GLSLIdentifier(node);
         if (type == GLSLElementTypes.PARAMETER_LIST) return new GLSLParameterList(node);
         if (type == GLSLElementTypes.METHOD_NAME) return new GLSLIdentifier(node);
-        if (type == GLSLElementTypes.FIELD_NAME) return new GLSLIdentifier(node);
         if (type == GLSLElementTypes.VARIABLE_NAME) return new GLSLIdentifier(node);
 
         if (type == GLSLElementTypes.CONDITIONAL_EXPRESSION) return new GLSLConditionalExpression(node);
