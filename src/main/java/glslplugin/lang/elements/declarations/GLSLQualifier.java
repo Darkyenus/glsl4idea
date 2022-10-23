@@ -43,6 +43,8 @@ import java.util.logging.Logger;
  */
 public class GLSLQualifier extends GLSLElementImpl {
 
+    public static final GLSLQualifier[] NO_QUALIFIERS = new GLSLQualifier[0];
+
     @SuppressWarnings("unused") //It is used, as .values()
     public enum Qualifier {
         // Storage Qualifiers

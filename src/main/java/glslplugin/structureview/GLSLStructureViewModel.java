@@ -26,9 +26,10 @@ import com.intellij.ide.util.treeView.smartTree.Grouper;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import glslplugin.lang.elements.declarations.GLSLDeclarationImpl;
-import glslplugin.lang.elements.declarations.GLSLFunctionDeclarationImpl;
+import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
+import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
+import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
 import org.jetbrains.annotations.NotNull;
 
 class GLSLStructureViewModel extends TextEditorBasedStructureViewModel {
@@ -63,10 +64,15 @@ class GLSLStructureViewModel extends TextEditorBasedStructureViewModel {
         return Filter.EMPTY_ARRAY;
     }
 
-
     @NotNull
     @Override
     protected Class<?> @NotNull [] getSuitableClasses() {
-        return new Class[]{GLSLFunctionDeclarationImpl.class, PsiFile.class, GLSLStructDefinition.class, GLSLDeclarationImpl.class};
+        return new Class[]{
+                PsiFile.class,
+                GLSLFunctionDeclaration.class,
+                GLSLStructDefinition.class,
+                GLSLVariableDeclaration.class,
+                GLSLStructMemberDeclaration.class
+        };
     }
 }

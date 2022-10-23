@@ -24,9 +24,10 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
 import glslplugin.lang.elements.GLSLIdentifier;
-import glslplugin.lang.elements.declarations.GLSLDeclaration;
+import glslplugin.lang.elements.declarations.GLSLQualifiedDeclaration;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
+import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
 import glslplugin.lang.elements.reference.GLSLReferenceUtil;
 import glslplugin.lang.elements.types.GLSLScalarType;
@@ -120,7 +121,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
         @Override
         public Object @NotNull [] getVariants() {
             final ArrayList<GLSLDeclarator> declarators = new ArrayList<>();
-            for (GLSLDeclaration declaration : fieldStruct.getDeclarations()) {
+            for (GLSLStructMemberDeclaration declaration : fieldStruct.getDeclarations()) {
                 Collections.addAll(declarators, declaration.getDeclarators());
             }
             return declarators.toArray(GLSLDeclarator.NO_DECLARATORS);

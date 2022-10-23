@@ -27,6 +27,7 @@ import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import glslplugin.lang.elements.types.*;
@@ -36,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * GLSLFunctionDeclarationImpl is the psi implementation of a function declaration.
  */
-public class GLSLFunctionDeclarationImpl extends GLSLDeclarationImpl implements GLSLFunctionDeclaration, GLSLReferencableDeclaration, PsiNameIdentifierOwner, PsiCheckedRenameElement {
+public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSLQualifiedDeclaration, GLSLFunctionDeclaration, GLSLReferencableDeclaration, PsiNameIdentifierOwner, PsiCheckedRenameElement {
     private GLSLFunctionType typeCache;
     private boolean typeCacheDirty = false;
 
@@ -61,28 +62,20 @@ public class GLSLFunctionDeclarationImpl extends GLSLDeclarationImpl implements 
 
     @NotNull
     public String getName() {
-        final GLSLDeclarator declarator = getDeclarator();
-        if (declarator == null) return "";
-        return declarator.getName();
+        final GLSLIdentifier identifier = getNameIdentifier();
+        if (identifier == null) return "";
+        return identifier.getName();
     }
 
-    /**
-     * Overridden to provide the single GLSLIdentifier.
-     * It is not packaged in DECLARATOR_LIST like the other declarations.
-     *
-     * @return the declarator list.
-     */
-    @Override
-    @NotNull
-    public GLSLDeclarator[] getDeclarators() {
-        return findChildrenByClass(GLSLDeclarator.class);
+    /** @return the element that holds the function name */
+    @Nullable
+    public GLSLIdentifier getNameIdentifier() {
+        return findChildByClass(GLSLIdentifier.class);
     }
 
     @NotNull
     public GLSLParameterDeclaration[] getParameters() {
-        GLSLDeclarationList parameterList = getParameterList();
-        if(parameterList == null) return GLSLParameterDeclaration.NO_PARAMETER_DECLARATIONS;
-        return castToParameters(parameterList.getDeclarations());
+        return findChildrenByClass(GLSLParameterDeclaration.class);
     }
 
     @NotNull
@@ -94,20 +87,6 @@ public class GLSLFunctionDeclarationImpl extends GLSLDeclarationImpl implements 
         }else{
             return typeSpecifier.getType();
         }
-    }
-
-    @Nullable
-    public GLSLDeclarationList getParameterList() {
-        return findChildByClass(GLSLDeclarationList.class);
-    }
-
-    @NotNull
-    private static GLSLParameterDeclaration[] castToParameters(GLSLDeclaration[] declarations) {
-        GLSLParameterDeclaration[] parameters = new GLSLParameterDeclaration[declarations.length];
-        for (int i = 0; i < declarations.length; i++) {
-            parameters[i] = (GLSLParameterDeclaration) declarations[i];
-        }
-        return parameters;
     }
 
     @NotNull
@@ -161,14 +140,6 @@ public class GLSLFunctionDeclarationImpl extends GLSLDeclarationImpl implements 
         return "function";
     }
 
-    @Nullable
-    @Override
-    public GLSLIdentifier getNameIdentifier() {
-        final GLSLDeclarator declarator = getDeclarator();
-        if(declarator == null)return null;
-        return declarator.getNameIdentifier();
-    }
-
     @Override
     public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
         final GLSLIdentifier nameIdentifier = getNameIdentifier();
@@ -187,5 +158,11 @@ public class GLSLFunctionDeclarationImpl extends GLSLDeclarationImpl implements 
     public void subtreeChanged() {
         super.subtreeChanged();
         typeCacheDirty = true;
+    }
+
+
+    @Override
+    public <T> @Nullable T findChildByClass(Class<T> aClass) {
+        return super.findChildByClass(aClass);
     }
 }

@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
+import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.Nullable;
@@ -34,9 +35,15 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Feb 2, 2009
  *         Time: 1:14:40 AM
  */
-public class GLSLVariableDeclaration extends GLSLDeclarationImpl {
+public class GLSLVariableDeclaration extends GLSLElementImpl implements GLSLQualifiedDeclaration {
     public GLSLVariableDeclaration(@NotNull ASTNode astNode) {
         super(astNode);
+    }
+
+    public GLSLDeclarator @NotNull[] getDeclarators() {
+        final GLSLDeclaratorList list = findChildByClass(GLSLDeclaratorList.class);
+        if (list == null) return GLSLDeclarator.NO_DECLARATORS;
+        else return list.getDeclarators();
     }
 
     @Override
@@ -58,7 +65,7 @@ public class GLSLVariableDeclaration extends GLSLDeclarationImpl {
 
     @Override
     public String toString() {
-        return "Variable Declaration: " + getDeclaratorsString();
+        return "Variable Declaration: " + GLSLDeclarator.toString(getDeclarators());
     }
 
     @NotNull
@@ -68,5 +75,11 @@ public class GLSLVariableDeclaration extends GLSLDeclarationImpl {
             return "local variable";
         }
         return "global variable";
+    }
+
+
+    @Override
+    public <T> @Nullable T findChildByClass(Class<T> aClass) {
+        return super.findChildByClass(aClass);
     }
 }

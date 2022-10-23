@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
-import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
+import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Feb 2, 2009
  *         Time: 2:04:56 PM
  */
-public class GLSLParameterDeclaration extends GLSLDeclarationImpl {
+public class GLSLParameterDeclaration extends GLSLElementImpl implements GLSLQualifiedDeclaration {
     public static final GLSLParameterDeclaration[] NO_PARAMETER_DECLARATIONS = new GLSLParameterDeclaration[0];
 
     public GLSLParameterDeclaration(@NotNull ASTNode astNode) {
@@ -54,26 +54,9 @@ public class GLSLParameterDeclaration extends GLSLDeclarationImpl {
         return declarator.getName();
     }
 
-    /**
-     * Overridden to provide the single GLSLIdentifier.
-     * It is not packaged in DECLARATOR_LIST like the other declarations.
-     *
-     * @return the declarator list.
-     */
-    @Override
-    @NotNull
-    public GLSLDeclarator[] getDeclarators() {
-        return findChildrenByClass(GLSLDeclarator.class);
-    }
-
     @Nullable
     public GLSLDeclarator getDeclarator() {
-        GLSLDeclarator[] declarators = getDeclarators();
-        if(declarators.length == 0){
-            return null;
-        }else{
-            return declarators[0];
-        }
+        return findChildByClass(GLSLDeclarator.class);
     }
 
     @Override
@@ -94,13 +77,16 @@ public class GLSLParameterDeclaration extends GLSLDeclarationImpl {
 
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
-        for (GLSLDeclarator declarator : getDeclarators()) {
-            if (PsiTreeUtil.isAncestor(lastParent, declarator, false) || PsiTreeUtil.isAncestor(place, declarator, false)) {
-                continue;
-            }
-            if (!declarator.processDeclarations(processor, state, null, place))
-                return false;
+        final GLSLDeclarator declarator = getDeclarator();
+        if (declarator == null || PsiTreeUtil.isAncestor(lastParent, declarator, false) || PsiTreeUtil.isAncestor(place, declarator, false)) {
+            return true;
         }
-        return true;
+
+        return declarator.processDeclarations(processor, state, null, place);
+    }
+
+    @Override
+    public <T> @Nullable T findChildByClass(Class<T> aClass) {
+        return super.findChildByClass(aClass);
     }
 }

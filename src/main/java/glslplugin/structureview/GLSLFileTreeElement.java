@@ -37,8 +37,7 @@ class GLSLFileTreeElement extends GLSLStructureViewTreeElement<PsiFile> {
     protected void createChildren(@NotNull PsiFile file) {
         PsiElement[] baseNodes = file.getChildren();
         for (PsiElement baseNode : baseNodes) {
-            if (baseNode instanceof GLSLVariableDeclaration) {
-                final GLSLVariableDeclaration declaration = (GLSLVariableDeclaration) baseNode;
+            if (baseNode instanceof final GLSLVariableDeclaration declaration) {
                 final GLSLTypeSpecifier typeSpecifier = declaration.getTypeSpecifierNode();
 
                 if (typeSpecifier != null) {

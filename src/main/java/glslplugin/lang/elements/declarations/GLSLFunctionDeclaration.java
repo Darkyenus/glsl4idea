@@ -23,24 +23,13 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import glslplugin.lang.elements.types.GLSLFunctionType;
 import glslplugin.lang.elements.types.GLSLType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLFunctionDeclaration represents a function declaration.
- * It inherits the name, qualifier and (return) type from {@link glslplugin.lang.elements.declarations.GLSLDeclaration}
+ * It inherits the name, qualifier and (return) type from {@link GLSLQualifiedDeclaration}
  * and adds the parameter list.
  */
-public interface GLSLFunctionDeclaration extends GLSLDeclaration, PsiNameIdentifierOwner {
-
-    @Nullable
-    default GLSLDeclarator getDeclarator() {
-        GLSLDeclarator[] declarators = getDeclarators();
-        if(declarators.length == 0){
-            return null;
-        }else{
-            return declarators[0];
-        }
-    }
+public interface GLSLFunctionDeclaration extends GLSLQualifiedDeclaration, PsiNameIdentifierOwner {
 
     @NotNull
     GLSLParameterDeclaration[] getParameters();

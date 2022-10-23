@@ -24,6 +24,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
 import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
 import glslplugin.lang.elements.reference.GLSLReferenceUtil;

@@ -23,7 +23,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
-import glslplugin.lang.elements.declarations.GLSLDeclaration;
+import glslplugin.lang.elements.declarations.GLSLQualifiedDeclaration;
 import glslplugin.lang.elements.expressions.GLSLCondition;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +56,7 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
         PsiElement current = getFirstChild();
         while (current != null) {
             ASTNode node = current.getNode();
-            if (current instanceof GLSLExpression || current instanceof GLSLDeclaration) {
+            if (current instanceof GLSLExpression || current instanceof GLSLQualifiedDeclaration) {
                 result[numberOfSemicolonsPassed] = (GLSLElement) current;
             } else if (node != null) {
                 if (node.getElementType() == GLSLTokenTypes.SEMICOLON) {

@@ -97,7 +97,6 @@ public class GLSLPsiElementFactory {
 
         if (type == GLSLElementTypes.FUNCTION_DEFINITION) return new GLSLFunctionDefinitionImpl(node);
         if (type == GLSLElementTypes.FUNCTION_DECLARATION) return new GLSLFunctionDeclarationImpl(node);
-        if (type == GLSLElementTypes.PARAMETER_DECLARATION_LIST) return new GLSLDeclarationList(node);
         if (type == GLSLElementTypes.PARAMETER_DECLARATION) return new GLSLParameterDeclaration(node);
         if (type == GLSLElementTypes.PARAMETER_DECLARATOR) return new GLSLDeclarator(node);
 
@@ -136,7 +135,6 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.TYPE_SPECIFIER_STRUCT_REFERENCE) return new GLSLTypename(node);
         if (type == GLSLElementTypes.TYPE_SPECIFIER_STRUCT) return new GLSLStructDefinition(node);
 
-        if (type == GLSLElementTypes.STRUCT_DECLARATION_LIST) return new GLSLDeclarationList(node);
         if (type == GLSLElementTypes.STRUCT_MEMBER_DECLARATION) return new GLSLStructMemberDeclaration(node);
         if (type == GLSLElementTypes.STRUCT_DECLARATOR_LIST) return new GLSLDeclaratorList(node);
         if (type == GLSLElementTypes.STRUCT_DECLARATOR) return new GLSLDeclarator(node);

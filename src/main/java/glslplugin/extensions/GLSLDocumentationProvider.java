@@ -24,7 +24,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.util.containers.ContainerUtil;
-import glslplugin.lang.elements.declarations.GLSLDeclaration;
+import glslplugin.lang.elements.declarations.GLSLQualifiedDeclaration;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLParameterDeclaration;
@@ -133,7 +133,7 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
         } else if (element instanceof GLSLFunctionDeclaration) {
             return getFunctionDocumentation(((GLSLFunctionDeclaration) element));
         } else if (element instanceof GLSLDeclarator) {
-            GLSLDeclaration elementDeclaration = ((GLSLDeclarator) element).getParentDeclaration();
+            GLSLQualifiedDeclaration elementDeclaration = ((GLSLDeclarator) element).getParentDeclaration();
             if (elementDeclaration instanceof GLSLFunctionDeclaration) {
                 return getFunctionDocumentation(((GLSLFunctionDeclaration) elementDeclaration));
             } else if (elementDeclaration instanceof GLSLStructDefinition) {

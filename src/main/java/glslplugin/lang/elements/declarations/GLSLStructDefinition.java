@@ -57,25 +57,15 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
         super(astNode);
     }
 
-    @Nullable
-    public GLSLDeclarationList getDeclarationList() {
-        return findChildByClass(GLSLDeclarationList.class);
-    }
-
     @NotNull
-    public GLSLDeclaration[] getDeclarations() {
-        GLSLDeclarationList declarationList = getDeclarationList();
-        if(declarationList == null){
-            return GLSLDeclaration.NO_DECLARATIONS;
-        }else{
-            return declarationList.getDeclarations();
-        }
+    public GLSLStructMemberDeclaration[] getDeclarations() {
+        return findChildrenByClass(GLSLStructMemberDeclaration.class);
     }
 
     @NotNull
     public GLSLDeclarator[] getDeclarators() {
         List<GLSLDeclarator> declarators = new ArrayList<>();
-        for (GLSLDeclaration declaration : getDeclarations()) {
+        for (GLSLStructMemberDeclaration declaration : getDeclarations()) {
             Collections.addAll(declarators, declaration.getDeclarators());
         }
         return declarators.toArray(GLSLDeclarator.NO_DECLARATORS);

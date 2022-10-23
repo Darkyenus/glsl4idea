@@ -95,8 +95,8 @@ public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableD
     }
 
     @Nullable
-    public GLSLDeclaration getParentDeclaration() {
-        return findParentByClass(GLSLDeclarationImpl.class);
+    public GLSLQualifiedDeclaration getParentDeclaration() {
+        return findParentByClass(GLSLQualifiedDeclaration.class);
     }
 
     /**
@@ -154,7 +154,7 @@ public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableD
 
     @NotNull
     public GLSLType getType() {
-        GLSLDeclaration declaration = getParentDeclaration();
+        GLSLQualifiedDeclaration declaration = getParentDeclaration();
         if(declaration == null)return GLSLTypes.UNKNOWN_TYPE;
         GLSLTypeSpecifier declarationType = declaration.getTypeSpecifierNode();
         if(declarationType == null)return GLSLTypes.UNKNOWN_TYPE;
@@ -191,7 +191,7 @@ public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableD
     @NotNull
     public GLSLQualifiedType getQualifiedType() {
         final GLSLType type = getType();
-        final GLSLDeclaration declaration = getParentDeclaration();
+        final GLSLQualifiedDeclaration declaration = getParentDeclaration();
         if(declaration == null || declaration.getQualifierList() == null)return new GLSLQualifiedType(type);
         return new GLSLQualifiedType(type, declaration.getQualifierList().getQualifiers());
     }
@@ -218,5 +218,23 @@ public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableD
     @Override
     public String toString() {
         return "Declarator: " + getName() + " : " + getType().getTypename();
+    }
+
+    public static @NotNull String toString(GLSLDeclarator[] declarators) {
+        StringBuilder b = new StringBuilder();
+        boolean first = true;
+        for (GLSLDeclarator declarator : declarators) {
+            if (!first) {
+                b.append(", ");
+            }
+            GLSLIdentifier identifier = declarator.getNameIdentifier();
+            if(identifier == null){
+                b.append("(unknown)");
+            } else {
+                b.append(identifier.getName());
+            }
+            first = false;
+        }
+        return b.toString();
     }
 }

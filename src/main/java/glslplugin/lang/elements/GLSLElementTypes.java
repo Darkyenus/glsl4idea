@@ -47,7 +47,6 @@ public class GLSLElementTypes {
 
     public static final IElementType FUNCTION_DECLARATION = new GLSLElementType("FUNCTION_DECLARATION");
 
-    public static final IElementType STRUCT_DECLARATION_LIST = new GLSLElementType("STRUCT_DECLARATION_LIST");
     public static final IElementType STRUCT_MEMBER_DECLARATION = new GLSLElementType("STRUCT_MEMBER_DECLARATION");
     public static final IElementType STRUCT_DECLARATOR = new GLSLElementType("STRUCT_DECLARATOR");
     public static final IElementType STRUCT_DECLARATOR_LIST = new GLSLElementType("STRUCT_DECLARATOR_LIST");
@@ -65,7 +64,6 @@ public class GLSLElementTypes {
     public static final IElementType TYPE_SPECIFIER = new GLSLElementType("TYPE_SPECIFIER");
     public static final IElementType LAYOUT_QUALIFIER_STATEMENT = new GLSLElementType("LAYOUT_QUALIFIER_STATEMENT");
 
-    public static final IElementType PARAMETER_DECLARATION_LIST = new GLSLElementType("PARAMETER_DECLARATION_LIST");
     public static final IElementType PARAMETER_DECLARATION = new GLSLElementType("PARAMETER_DECLARATION");
     public static final IElementType PARAMETER_DECLARATOR = new GLSLElementType("PARAMETER_DECLARATOR");
 

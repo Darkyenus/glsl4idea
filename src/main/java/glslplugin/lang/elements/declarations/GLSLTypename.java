@@ -158,12 +158,12 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement {
     }
 
     @NotNull
-    public GLSLDeclaration[] getDeclarations() {
+    public GLSLQualifiedDeclaration[] getDeclarations() {
         final GLSLStructDefinition definition = getStructDefinition();
         if (definition != null) {
             return definition.getDeclarations();
         } else {
-            return GLSLDeclaration.NO_DECLARATIONS;
+            return GLSLQualifiedDeclaration.NO_DECLARATIONS;
         }
     }
 

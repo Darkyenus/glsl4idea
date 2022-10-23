@@ -61,7 +61,7 @@ abstract class GLSLStructureViewTreeElement<T extends PsiElement> implements Str
         children.clear();
         createChildren(element);
         Collections.sort(children);
-        return children.toArray(new TreeElement[0]);
+        return children.toArray(TreeElement.EMPTY_ARRAY);
     }
 
     public void navigate(boolean requestFocus) {

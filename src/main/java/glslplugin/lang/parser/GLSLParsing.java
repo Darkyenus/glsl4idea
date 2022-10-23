@@ -319,12 +319,23 @@ public final class GLSLParsing extends GLSLParsingBase {
                 // This must be a function declaration or definition, parse the prototype first!
                 postType.rollbackTo();
 
-                PsiBuilder.Marker declarator = b.mark();
                 parseIdentifier();
-                declarator.done(DECLARATOR);
 
                 match(LEFT_PAREN, "Expected '(' after function identifier.");
-                parseParameterDeclarationList();
+                {
+                    // parameter_declaration_list: <nothing>
+                    //                           | VOID
+                    //                           | parameter_declaration (',' parameter_declaration)*
+
+                    //noinspection StatementWithEmptyBody
+                    if (tryMatch(VOID_TYPE)) {
+                        // Do nothing.
+                    } else if (b.getTokenType() != RIGHT_PAREN) {
+                        do {
+                            parseParameterDeclaration();
+                        } while (tryMatch(COMMA));
+                    }
+                }
                 match(RIGHT_PAREN, "Missing ')' after function prototype");
 
                 // Prototype is now done, so look for ';' or '{'
@@ -408,23 +419,6 @@ public final class GLSLParsing extends GLSLParsingBase {
         boolean result = parseTypeSpecifier();
         parseQualifierList(false);
         return result;
-    }
-
-    private void parseParameterDeclarationList() {
-        // parameter_declaration_list: <nothing>
-        //                           | VOID
-        //                           | parameter_declaration (',' parameter_declaration)*
-        final PsiBuilder.Marker mark = b.mark();
-
-        //noinspection StatementWithEmptyBody
-        if (tryMatch(VOID_TYPE)) {
-            // Do nothing.
-        } else if (b.getTokenType() != RIGHT_PAREN) {
-            do {
-                parseParameterDeclaration();
-            } while (tryMatch(COMMA));
-        }
-        mark.done(PARAMETER_DECLARATION_LIST);
     }
 
     private void parseParameterDeclaration() {
@@ -1406,30 +1400,23 @@ public final class GLSLParsing extends GLSLParsingBase {
             return;
         }
 
-        parseStructDeclarationList();
+        {
+            // struct_declaration_list: struct_declaration (',' struct_declaration)*
+            // note: we should initially find ',' for a new declarator or '}' at the end of the struct
+            if (b.getTokenType() == RIGHT_BRACE) {
+                b.error("Empty struct is not allowed.");
+            }
 
-        match(RIGHT_BRACE, "Closing '}' for struct expected.");
-    }
-
-    private void parseStructDeclarationList() {
-        // struct_declaration_list: struct_declaration (',' struct_declaration)*
-        // note: we should initially find ',' for a new declarator or '}' at the end of the struct
-
-        final PsiBuilder.Marker mark = b.mark();
-
-        if (b.getTokenType() == RIGHT_BRACE) {
-            b.error("Empty struct is not allowed.");
-        }
-
-        while (!b.eof() && b.getTokenType() != RIGHT_BRACE) {
-            if(!parseStructDeclaration()) {
-                final PsiBuilder.Marker invalidTokenSkip = b.mark();
-                b.advanceLexer();
-                invalidTokenSkip.error("Expected struct member declaration");
+            while (!b.eof() && b.getTokenType() != RIGHT_BRACE) {
+                if(!parseStructDeclaration()) {
+                    final PsiBuilder.Marker invalidTokenSkip = b.mark();
+                    b.advanceLexer();
+                    invalidTokenSkip.error("Expected struct member declaration");
+                }
             }
         }
 
-        mark.done(STRUCT_DECLARATION_LIST);
+        match(RIGHT_BRACE, "Closing '}' for struct expected.");
     }
 
     private boolean parseStructDeclaration() {

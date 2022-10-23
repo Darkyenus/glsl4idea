@@ -27,6 +27,8 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/** @deprecated The identifier elements should be leaf PsiNamedElements */
+@Deprecated
 public class GLSLIdentifier extends GLSLElementImpl implements PsiCheckedRenameElement, PsiNameIdentifierOwner {
 
     public GLSLIdentifier(@NotNull ASTNode astNode) {

@@ -19,8 +19,10 @@
 
 package glslplugin.lang.elements.declarations;
 
+import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Element for structure members.
@@ -29,19 +31,31 @@ import com.intellij.lang.ASTNode;
  *         Date: Feb 2, 2009
  *         Time: 3:52:15 PM
  */
-public class GLSLStructMemberDeclaration extends GLSLDeclarationImpl {
+public class GLSLStructMemberDeclaration extends GLSLElementImpl implements GLSLQualifiedDeclaration {
     public GLSLStructMemberDeclaration(@NotNull ASTNode astNode) {
         super(astNode);
     }
 
+    public GLSLDeclarator @NotNull[] getDeclarators() {
+        final GLSLDeclaratorList list = findChildByClass(GLSLDeclaratorList.class);
+        if (list == null) return GLSLDeclarator.NO_DECLARATORS;
+        else return list.getDeclarators();
+    }
+
     @Override
     public String toString() {
-        return "Struct Declaration: " + getDeclaratorsString();
+        return "Struct Declaration: " + GLSLDeclarator.toString(getDeclarators());
     }
 
     @NotNull
     @Override
     public String getDeclarationDescription() {
         return "struct member";
+    }
+
+
+    @Override
+    public <T> @Nullable T findChildByClass(Class<T> aClass) {
+        return super.findChildByClass(aClass);
     }
 }

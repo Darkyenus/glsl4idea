@@ -19,9 +19,9 @@
 
 package glslplugin.structureview;
 
-import glslplugin.lang.elements.declarations.GLSLDeclaration;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
+import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
 import org.jetbrains.annotations.NotNull;
 
 public class GLSLStructTreeElement extends GLSLStructureViewTreeElement<GLSLStructDefinition> {
@@ -34,8 +34,7 @@ public class GLSLStructTreeElement extends GLSLStructureViewTreeElement<GLSLStru
     }
 
     protected void createChildren(@NotNull GLSLStructDefinition definition) {
-        GLSLDeclaration[] glslDeclarations = definition.getDeclarations();
-        for (GLSLDeclaration declaration : glslDeclarations) {
+        for (GLSLStructMemberDeclaration declaration : definition.getDeclarations()) {
             for (GLSLDeclarator declarator : declaration.getDeclarators()) {
                 addChild(new GLSLDeclaratorTreeElement(declarator));
             }

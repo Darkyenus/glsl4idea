@@ -19,34 +19,16 @@
 
 package glslplugin.lang.elements.declarations;
 
-import com.intellij.lang.ASTNode;
-import glslplugin.lang.elements.GLSLElementImpl;
-import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.GLSLElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Base for all elements, which declare something named.
- *
- * @author Yngve Devik Hammersland
- *         Date: Feb 2, 2009
- *         Time: 10:33:30 AM
+ * GLSLQualifiedDeclaration is a common interface for all declarations that can have qualifiers;
+ * variable declarations, function declarations/definitions, and struct member declarations.
  */
-public abstract class GLSLDeclarationImpl extends GLSLElementImpl implements GLSLDeclaration {
-    public GLSLDeclarationImpl(@NotNull ASTNode astNode) {
-        super(astNode);
-    }
-
-    private static final GLSLQualifier[] NO_QUALIFIERS = new GLSLQualifier[0];
-    @NotNull
-    public GLSLQualifier[] getQualifiers() {
-        final GLSLQualifierList qualifierList = getQualifierList();
-        if(qualifierList == null){
-            return NO_QUALIFIERS;
-        }else{
-            return qualifierList.getQualifiers();
-        }
-    }
+public interface GLSLQualifiedDeclaration extends GLSLElement {
+    GLSLQualifiedDeclaration[] NO_DECLARATIONS = new GLSLQualifiedDeclaration[0];
 
     /**
      * Returns the type specifier Psi element for this declaration.
@@ -59,7 +41,7 @@ public abstract class GLSLDeclarationImpl extends GLSLElementImpl implements GLS
      * @return the type specifier or null if declaration is malformed
      */
     @Nullable
-    public GLSLTypeSpecifier getTypeSpecifierNode() {
+    default GLSLTypeSpecifier getTypeSpecifierNode() {
         return findChildByClass(GLSLTypeSpecifier.class);
     }
 
@@ -68,43 +50,36 @@ public abstract class GLSLDeclarationImpl extends GLSLElementImpl implements GLS
      * @return result of getTypeSpecifierNode().getTypeName()
      */
     @NotNull
-    public String getTypeSpecifierNodeTypeName(){
+    default String getTypeSpecifierNodeTypeName() {
         GLSLTypeSpecifier specifier = getTypeSpecifierNode();
         if(specifier != null){
             return specifier.getTypeName();
-        }else {
+        } else {
             return "(unknown)";
         }
     }
 
     @Nullable
-    public GLSLQualifierList getQualifierList() {
+    default GLSLQualifierList getQualifierList() {
         return findChildByClass(GLSLQualifierList.class);
     }
 
     @NotNull
-    public GLSLDeclarator[] getDeclarators() {
-        final GLSLDeclaratorList list = findChildByClass(GLSLDeclaratorList.class);
-        if(list == null)return GLSLDeclarator.NO_DECLARATORS;
-        else return list.getDeclarators();
+    default GLSLQualifier[] getQualifiers() {
+        final GLSLQualifierList qualifierList = getQualifierList();
+        if(qualifierList == null){
+            return GLSLQualifier.NO_QUALIFIERS;
+        }else{
+            return qualifierList.getQualifiers();
+        }
     }
 
     @NotNull
-    protected String getDeclaratorsString() {
-        StringBuilder b = new StringBuilder();
-        boolean first = true;
-        for (GLSLDeclarator declarator : getDeclarators()) {
-            if (!first) {
-                b.append(", ");
-            }
-            GLSLIdentifier identifier = declarator.getNameIdentifier();
-            if(identifier == null){
-                b.append("(unknown)");
-            } else {
-                b.append(identifier.getName());
-            }
-            first = false;
-        }
-        return b.toString();
-    }
+    String getDeclarationDescription();//TODO What is it?
+
+
+    /** Just exposes the same method from {@link com.intellij.psi.impl.PsiElementBase}
+     * so that this whole interface can be implemented in the default methods. */
+    @Nullable
+    <T> T findChildByClass(Class<T> aClass);
 }
