@@ -14,6 +14,7 @@ import glslplugin.lang.elements.types.GLSLScalarType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLVectorType;
 import glslplugin.lang.parser.GLSLFile;
+import glslplugin.util.VectorComponents;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public final class GLSLBuiltInPsiUtilService {
             sb.append("struct __").append(type.getTypename()).append("__ {\n");
 
             final String baseTypeName = type.getBaseType().getTypename();
-            for (String swizzleSet : GLSLVectorType.SWIZZLE_SETS) {
+            for (String swizzleSet : VectorComponents.SETS) {
                 sb.append(baseTypeName).append(' ').append(swizzleSet.charAt(0)).append(";\n");
             }
             sb.append("};\n");
@@ -68,7 +69,7 @@ public final class GLSLBuiltInPsiUtilService {
             sb.append("struct __").append(type.getTypename()).append("__ {\n");
 
             final String baseTypeName = type.getBaseType().getTypename();
-            for (String swizzleSet : GLSLVectorType.SWIZZLE_SETS) {
+            for (String swizzleSet : VectorComponents.SETS) {
                 for (int i = 0; i < type.getNumComponents(); i++) {
                     sb.append(baseTypeName).append(' ').append(swizzleSet.charAt(i)).append(";\n");
                 }

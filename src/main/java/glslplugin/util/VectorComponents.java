@@ -6,14 +6,16 @@ public enum VectorComponents {
     RGBA("rgba"),
     STPQ("stpq");
 
+
+    @SuppressWarnings("SpellCheckingInspection")
+    public static final String[] SETS = new String[]{"xyzw","rgba","stpq"};
+
+    public static final String ALL_COMPONENTS = "xyzwrgbastpq";
+
     private final String components;
 
     VectorComponents(String components) {
         this.components = components;
-    }
-
-    public String getComponent(int i) {
-        return String.valueOf(components.charAt(i));
     }
 
     /**

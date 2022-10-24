@@ -34,6 +34,7 @@ import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
 import glslplugin.lang.elements.types.GLSLScalarType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLVectorType;
+import glslplugin.util.VectorComponents;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public class VectorComponentsIntention extends PsiElementBaseIntentionAction {
 
         // Check that all component names are valid, ignoring type width, amount or mixing
         for (int i = 0; i < name.length(); i++) {
-            if (GLSLVectorType.COMBINED_SWIZZLE_SETS.indexOf(name.charAt(i)) == -1) {
+            if (VectorComponents.ALL_COMPONENTS.indexOf(name.charAt(i)) == -1) {
                 return false;// The character itself must be mappable
             }
         }
@@ -91,7 +92,7 @@ public class VectorComponentsIntention extends PsiElementBaseIntentionAction {
         int[] components = new int[name.length()];
         outer: for (int i = 0; i < name.length(); i++) {
             final char c = name.charAt(i);
-            for (String swizzleSet : GLSLVectorType.SWIZZLE_SETS) {
+            for (String swizzleSet : VectorComponents.SETS) {
                 final int component = swizzleSet.indexOf(c);
                 if (component >= 0) {
                     components[i] = component;
@@ -103,7 +104,7 @@ public class VectorComponentsIntention extends PsiElementBaseIntentionAction {
 
         final ArrayList<String> variants = new ArrayList<>();
         final StringBuilder variantBuilder = new StringBuilder();
-        for (String swizzleSet : GLSLVectorType.SWIZZLE_SETS) {
+        for (String swizzleSet : VectorComponents.SETS) {
             for (int component : components) {
                 variantBuilder.append(swizzleSet.charAt(component));
             }

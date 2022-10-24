@@ -21,6 +21,7 @@ package glslplugin.lang.elements.types;
 
 import glslplugin.lang.elements.types.constructors.GLSLAggregateParamConstructor;
 import glslplugin.lang.elements.types.constructors.GLSLScalarParamConstructor;
+import glslplugin.util.VectorComponents;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -110,10 +111,6 @@ public class GLSLVectorType extends GLSLType {
         return true;//Vectors are indexable
     }
 
-    @SuppressWarnings("SpellCheckingInspection")
-    public static final String[] SWIZZLE_SETS = new String[]{"xyzw","rgba","stpq"};
-    public static final String COMBINED_SWIZZLE_SETS = "xyzwrgbastpq";
-
     @Override
     public boolean hasMember(String member) {
         if(member == null || member.isEmpty())return false; //Just in case
@@ -122,7 +119,7 @@ public class GLSLVectorType extends GLSLType {
         // Determine swizzle set
         {
             char first = member.charAt(0);
-            for(String set:SWIZZLE_SETS){
+            for(String set: VectorComponents.SETS){
                 if(set.indexOf(first) != -1){
                     swizzleSet = set;
                     break;
