@@ -19,6 +19,7 @@
 
 package glslplugin.lang.elements.declarations;
 
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
@@ -33,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Feb 2, 2009
  *         Time: 12:33:24 PM
  */
-public interface GLSLFunctionDefinition extends GLSLFunctionDeclaration, GLSLReferencableDeclaration {
+public interface GLSLFunctionDefinition extends GLSLFunctionDeclaration {
 
     /**
      * @return Body of function definition, null only on malformed source
@@ -45,11 +46,6 @@ public interface GLSLFunctionDefinition extends GLSLFunctionDeclaration, GLSLRef
 
     @Override
     default @NotNull String declaredNoun() {
-        return "function definition";
-    }
-
-    @Override
-    default @Nullable PsiElement getNameIdentifier() {
-        return getFunctionNameIdentifier();
+        return "function";
     }
 }

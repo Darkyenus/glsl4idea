@@ -26,8 +26,8 @@ import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.util.CachedValueImpl;
 import glslplugin.lang.elements.GLSLTokenTypes;
+import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import glslplugin.lang.elements.types.GLSLBasicFunctionType;
-import glslplugin.lang.elements.types.GLSLFunctionType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
@@ -39,8 +39,9 @@ import java.util.Objects;
  * GLSLFunctionDeclaration represents a function declaration.
  * It inherits the name, qualifier and (return) type from {@link GLSLQualifiedDeclaration}
  * and adds the parameter list.
+ * It may be implemented by a declaration or a definition (=declaration + definition body)
  */
-public interface GLSLFunctionDeclaration extends GLSLQualifiedDeclaration {
+public interface GLSLFunctionDeclaration extends GLSLQualifiedDeclaration, GLSLReferencableDeclaration {
 
     /** @return the element that holds the function name */
     @Nullable
@@ -86,9 +87,19 @@ public interface GLSLFunctionDeclaration extends GLSLQualifiedDeclaration {
     }
 
     @NotNull
-    GLSLFunctionType getType();
+    GLSLBasicFunctionType getType();
 
-    static CachedValue<@NotNull GLSLFunctionType> newCachedFunctionType(GLSLFunctionDeclaration declaration) {
+    @Override
+    default @NotNull String declaredNoun() {
+        return "function prototype";
+    }
+
+    @Override
+    default @Nullable PsiElement getNameIdentifier() {
+        return getFunctionNameIdentifier();
+    }
+
+    static CachedValue<@NotNull GLSLBasicFunctionType> newCachedFunctionType(GLSLFunctionDeclaration declaration) {
         return new CachedValueImpl<>(() -> {
             final String functionName = declaration.getFunctionName();
             final GLSLParameterDeclaration[] parameterDeclarations = declaration.getParameters();

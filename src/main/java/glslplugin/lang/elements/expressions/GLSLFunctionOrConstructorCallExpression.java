@@ -30,6 +30,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLArraySpecifier;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
+import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.declarations.GLSLTypeSpecifier;
 import glslplugin.lang.elements.reference.GLSLAbstractReference;
@@ -37,7 +38,7 @@ import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
 import glslplugin.lang.elements.reference.GLSLReferenceUtil;
 import glslplugin.lang.elements.reference.GLSLReferencingElement;
 import glslplugin.lang.elements.types.GLSLArrayType;
-import glslplugin.lang.elements.types.GLSLFunctionType;
+import glslplugin.lang.elements.types.GLSLBasicFunctionType;
 import glslplugin.lang.elements.types.GLSLMatrixType;
 import glslplugin.lang.elements.types.GLSLScalarType;
 import glslplugin.lang.elements.types.GLSLStructType;
@@ -50,6 +51,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static com.intellij.util.ArrayUtil.EMPTY_INT_ARRAY;
 
@@ -136,7 +139,7 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
 
         final FunctionCallOrConstructorReference reference = getReference();
         if (reference == null) return false;
-        final FunctionCallOrConstructorReference.GLSLResolveResult[] glslResolveResults = reference.multiResolve(false);
+        final FunctionCallOrConstructorReference.ResolveResult[] glslResolveResults = reference.multiResolve(false);
         if (glslResolveResults.length != 1) return false;
         // Constructor always resolves into a struct, even if it is a dummy struct
         return glslResolveResults[0].getElement() instanceof GLSLStructDefinition;
@@ -147,7 +150,7 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
     public GLSLType getType() {
         final FunctionCallOrConstructorReference reference = getReference();
         if (reference == null) return GLSLTypes.UNKNOWN_TYPE;
-        final FunctionCallOrConstructorReference.GLSLResolveResult[] glslResolveResults = reference.multiResolve(false);
+        final FunctionCallOrConstructorReference.ResolveResult[] glslResolveResults = reference.multiResolve(false);
         if (glslResolveResults.length != 1) return GLSLTypes.UNKNOWN_TYPE;
         return glslResolveResults[0].resultType;
     }
@@ -183,22 +186,24 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
         }
 
         private String onlyNamed = null;
-        private final ArrayList<GLSLFunctionDeclaration> functionDeclarations = new ArrayList<>();
+        private final LinkedHashMap<GLSLBasicFunctionType, GLSLFunctionDeclaration> functionDeclarations = new LinkedHashMap<>();
         private final ArrayList<GLSLStructDefinition> structDefinitions = new ArrayList<>();
 
-        public static class GLSLResolveResult extends PsiElementResolveResult {
+        public static class ResolveResult extends PsiElementResolveResult {
 
-            public static final GLSLResolveResult[] EMPTY_ARRAY = new GLSLResolveResult[0];
+            public static final ResolveResult[] EMPTY_ARRAY = new ResolveResult[0];
             public final GLSLType resultType;
 
-            public GLSLResolveResult(@NotNull PsiElement element, boolean validResult, GLSLType resultType) {
+            public ResolveResult(@NotNull PsiElement element,
+                                 boolean validResult,
+                                 GLSLType resultType) {
                 super(element, validResult);
                 this.resultType = resultType;
             }
         }
 
         @Override
-        public GLSLResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
+        public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
             try {
                 final GLSLFunctionOrConstructorCallExpression element = getElement();
                 final GLSLTypeSpecifier typeSpec = element.getConstructorTypeSpecifier();
@@ -226,7 +231,7 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
                     } else if (baseType instanceof GLSLMatrixType) {
                         builtInType = bipus.getMatrixDefinition((GLSLMatrixType) baseType);
                     } else {
-                        return GLSLResolveResult.EMPTY_ARRAY;
+                        return ResolveResult.EMPTY_ARRAY;
                     }
 
                     if (type instanceof GLSLArrayType arrayType) {
@@ -238,28 +243,29 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
                         type = new GLSLArrayType(type.getBaseType(), newDimensions);
                     }
 
-                    return new GLSLResolveResult[]{
-                            new GLSLResolveResult(builtInType, true, type)
+                    return new ResolveResult[]{
+                            new ResolveResult(builtInType, true, type)
                     };
                 } else if (customTypeOrName != null) {
                     // Lookup the struct or function
                     onlyNamed = customTypeOrName;
                     PsiTreeUtil.treeWalkUp(this, element, null, ResolveState.initial());
 
-                    final ArrayList<GLSLResolveResult> results = new ArrayList<>();
+                    final ArrayList<ResolveResult> results = new ArrayList<>();
 
                     final int @NotNull[] constructorArraySpecifiers = element.getConstructorArrayDimensions();
                     if (!functionDeclarations.isEmpty() && constructorArraySpecifiers.length == 0) {
                         // Try to match function
                         boolean gotDirectlyCompatible = false;
                         final @NotNull GLSLType[] parameterTypes = element.getParameterTypes();
-                        for (GLSLFunctionDeclaration functionDeclaration : functionDeclarations) {
-                            final GLSLFunctionType functionType = functionDeclaration.getType();
+                        for (Map.Entry<GLSLBasicFunctionType, GLSLFunctionDeclaration> entry : functionDeclarations.entrySet()) {
+                            final GLSLBasicFunctionType functionType = entry.getKey();
+                            final GLSLFunctionDeclaration functionDeclaration = entry.getValue();
 
                             final GLSLTypeCompatibilityLevel level = functionType.getParameterCompatibilityLevel(parameterTypes);
                             if (level == GLSLTypeCompatibilityLevel.COMPATIBLE_WITH_IMPLICIT_CONVERSION) {
                                 if (!gotDirectlyCompatible) {
-                                    results.add(new GLSLResolveResult(functionDeclaration, true, functionType.getReturnType()));
+                                    results.add(new ResolveResult(functionDeclaration, true, functionType.getReturnType()));
                                 }
                             } else if (level == GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE) {
                                 if (!gotDirectlyCompatible) {
@@ -267,7 +273,7 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
                                     results.clear();
                                     gotDirectlyCompatible = true;
                                 }
-                                results.add(new GLSLResolveResult(functionDeclaration, true, functionType.getReturnType()));
+                                results.add(new ResolveResult(functionDeclaration, true, functionType.getReturnType()));
                             }
                         }
                     }
@@ -283,13 +289,13 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
                             // This is an array instantiation
                             resultType = new GLSLArrayType(structType, constructorArraySpecifiers);
                         }
-                        results.add(new GLSLResolveResult(definition, true, resultType));
+                        results.add(new ResolveResult(definition, true, resultType));
                     }
 
-                    return results.toArray(GLSLResolveResult.EMPTY_ARRAY);
+                    return results.toArray(ResolveResult.EMPTY_ARRAY);
                 } else {
                     // Broken
-                    return GLSLResolveResult.EMPTY_ARRAY;
+                    return ResolveResult.EMPTY_ARRAY;
                 }
             } finally {
                 functionDeclarations.clear();
@@ -302,7 +308,12 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
             final String onlyNamed = this.onlyNamed;
             if (element instanceof GLSLFunctionDeclaration dec) {
                 if (onlyNamed == null || onlyNamed.equals(dec.getFunctionName())) {
-                    functionDeclarations.add(dec);
+                    final GLSLBasicFunctionType funcType = dec.getType();
+                    final GLSLFunctionDeclaration displaced = functionDeclarations.put(funcType, dec);
+                    if (displaced instanceof GLSLFunctionDefinition && !(dec instanceof GLSLFunctionDefinition)) {
+                        // We have removed definition for just declaration, put it back
+                        functionDeclarations.put(funcType, displaced);
+                    }
                 }
             } else if (element instanceof GLSLStructDefinition def) {
                 if (onlyNamed == null || onlyNamed.equals(def.getStructName())) {
@@ -335,7 +346,7 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
                         }
                     }
                 }
-                variants.addAll(functionDeclarations);
+                variants.addAll(functionDeclarations.values());
                 variants.addAll(structDefinitions);
 
                 return variants.toArray();

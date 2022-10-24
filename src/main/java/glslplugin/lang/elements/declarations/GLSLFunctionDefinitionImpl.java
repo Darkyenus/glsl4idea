@@ -26,6 +26,7 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLElementImpl;
+import glslplugin.lang.elements.types.GLSLBasicFunctionType;
 import glslplugin.lang.elements.types.GLSLFunctionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,14 +43,26 @@ import org.jetbrains.annotations.Nullable;
  */
 public class GLSLFunctionDefinitionImpl extends GLSLElementImpl implements GLSLFunctionDefinition {
 
-    private final CachedValue<GLSLFunctionType> functionTypeCache = GLSLFunctionDeclaration.newCachedFunctionType(this);
+    private final CachedValue<GLSLBasicFunctionType> functionTypeCache = GLSLFunctionDeclaration.newCachedFunctionType(this);
 
     public GLSLFunctionDefinitionImpl(ASTNode node) {
         super(node);
     }
 
+    @Override
+    @Nullable
+    public String getName() {
+        return getFunctionName();
+    }
+
+    @Override
+    public int getTextOffset() {
+        final PsiElement identifier = getNameIdentifier();
+        return identifier != null ? identifier.getTextOffset() : super.getTextOffset();
+    }
+
     @NotNull
-    public GLSLFunctionType getType() {
+    public GLSLBasicFunctionType getType() {
         return functionTypeCache.getValue();
     }
 
@@ -74,6 +87,6 @@ public class GLSLFunctionDefinitionImpl extends GLSLElementImpl implements GLSLF
 
     @Override
     public String toString() {
-        return "Function Definition: " + getSignature();
+        return getSignature() + "{}";
     }
 }

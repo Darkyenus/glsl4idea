@@ -23,6 +23,8 @@ import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+
 /**
  * FunctionType for functions (= not constructors)
  *
@@ -30,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Mar 2, 2009
  *         Time: 12:20:32 PM
  */
-public class GLSLBasicFunctionType extends GLSLFunctionType {
+public final class GLSLBasicFunctionType extends GLSLFunctionType {
 
     private final GLSLType[] parameterTypes;
 
@@ -71,5 +73,21 @@ public class GLSLBasicFunctionType extends GLSLFunctionType {
     @NotNull
     public GLSLType[] getParameterTypes() {
         return parameterTypes;
+    }
+
+    /** @return true if this could be a valid declaration for the other definition (or vice versa) */
+    public boolean definitionsMatch(GLSLBasicFunctionType other) {
+        return this == other || (other.getName().equals(this.getName())
+                && Arrays.equals(parameterTypes, other.parameterTypes));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof GLSLBasicFunctionType other && definitionsMatch(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode() * 31 + Arrays.hashCode(parameterTypes);
     }
 }
