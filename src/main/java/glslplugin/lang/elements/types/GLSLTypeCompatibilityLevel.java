@@ -55,13 +55,8 @@ public enum GLSLTypeCompatibilityLevel {
         for (int i = 0; i < source.length && result != INCOMPATIBLE; i++) {
             GLSLTypeCompatibilityLevel compatibility = getCompatibilityLevel(source[i], target[i]);
             switch (compatibility) {
-                case COMPATIBLE_WITH_IMPLICIT_CONVERSION:
-                    result = COMPATIBLE_WITH_IMPLICIT_CONVERSION;
-                    break;
-
-                case INCOMPATIBLE:
-                    result = INCOMPATIBLE;
-                    break;
+                case COMPATIBLE_WITH_IMPLICIT_CONVERSION -> result = COMPATIBLE_WITH_IMPLICIT_CONVERSION;
+                case INCOMPATIBLE -> result = INCOMPATIBLE;
             }
         }
         return result;

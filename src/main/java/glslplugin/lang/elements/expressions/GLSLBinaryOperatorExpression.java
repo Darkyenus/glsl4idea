@@ -70,8 +70,7 @@ public class GLSLBinaryOperatorExpression extends GLSLOperatorExpression {
         GLSLExpression rightOperand = getRightOperand();
         if (leftOperand == null || rightOperand == null || !leftOperand.isConstantValue() || !rightOperand.isConstantValue()) return null;
         GLSLOperator operator = getOperator();
-        if (!(operator instanceof GLSLOperator.GLSLBinaryOperator)) return null;
-        GLSLOperator.GLSLBinaryOperator binaryOperator = (GLSLOperator.GLSLBinaryOperator) operator;
+        if (!(operator instanceof GLSLOperator.GLSLBinaryOperator binaryOperator)) return null;
         GLSLType leftOperandType = leftOperand.getType();
         GLSLType rightOperandType = rightOperand.getType();
         if (!leftOperandType.isValidType() || !rightOperandType.isValidType()) return null;
@@ -84,8 +83,7 @@ public class GLSLBinaryOperatorExpression extends GLSLOperatorExpression {
     @Override
     public GLSLType getType() {
         GLSLOperator operator = getOperator();
-        if (operator instanceof GLSLOperator.GLSLBinaryOperator) {
-            GLSLOperator.GLSLBinaryOperator binaryOperator = (GLSLOperator.GLSLBinaryOperator) operator;
+        if (operator instanceof GLSLOperator.GLSLBinaryOperator binaryOperator) {
             GLSLExpression leftOperand = getLeftOperand();
             GLSLExpression rightOperand = getRightOperand();
             return binaryOperator.getResultType(leftOperand == null ? GLSLTypes.UNKNOWN_TYPE : leftOperand.getType(),

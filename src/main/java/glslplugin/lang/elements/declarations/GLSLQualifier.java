@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  * GLSLQualifier is all kinds of qualifiers combined into a single class.
  * <p/>
  * The qualifiers are associated with a qualifier type which are ordered by an integer value.
- * Qualifiers needs to appear in increasing order. Some storage qualifiers may be combined,
+ * Qualifiers must appear in increasing order. Some storage qualifiers may be combined,
  * <code>varying centroid</code> in particular.
  *
  * @author Yngve Devik Hammersland

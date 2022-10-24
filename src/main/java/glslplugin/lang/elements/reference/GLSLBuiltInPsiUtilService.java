@@ -7,7 +7,6 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.GLSLFileType;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
-import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.types.GLSLMatrixType;
 import glslplugin.lang.elements.types.GLSLOpaqueType;

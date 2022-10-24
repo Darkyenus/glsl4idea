@@ -152,9 +152,7 @@ public class GLSLOperator {
                 return getResultOfVectorOrMatrixAndScalar(firstInput, (GLSLScalarType) secondInput);
             }
             //Two operands are vectors of same size
-            if(firstInput instanceof GLSLVectorType && secondInput instanceof GLSLVectorType){
-                GLSLVectorType first = (GLSLVectorType) firstInput;
-                GLSLVectorType second = (GLSLVectorType) secondInput;
+            if(firstInput instanceof GLSLVectorType first && secondInput instanceof GLSLVectorType second){
                 if(first.getNumComponents() == second.getNumComponents()){
                     GLSLType unified = unifyTypes(first.getBaseType(), second.getBaseType());
                     if(unified.isValidType()){
@@ -172,8 +170,7 @@ public class GLSLOperator {
             GLSLType unified = unifyTypes(vectorMatrixType.getBaseType(), scalarType);
             if(!unified.isValidType())return UNKNOWN_TYPE;
             else{
-                if(vectorMatrixType instanceof GLSLMatrixType){
-                    GLSLMatrixType matrixType = (GLSLMatrixType) vectorMatrixType;
+                if(vectorMatrixType instanceof GLSLMatrixType matrixType){
                     return GLSLMatrixType.getType(unified, matrixType.getNumColumns(), matrixType.getNumRows());
                 }else{
                     GLSLVectorType vectorType = (GLSLVectorType) vectorMatrixType;
@@ -185,9 +182,7 @@ public class GLSLOperator {
         protected GLSLType getResultTypeOther(GLSLType firstInput, GLSLType secondInput){
             //Only for + - and /
             //Two operands are matrices of exactly same size
-            if(firstInput instanceof GLSLMatrixType && secondInput instanceof GLSLMatrixType){
-                GLSLMatrixType first = (GLSLMatrixType) firstInput;
-                GLSLMatrixType second = (GLSLMatrixType) secondInput;
+            if(firstInput instanceof GLSLMatrixType first && secondInput instanceof GLSLMatrixType second){
                 if(first.getNumColumns() == second.getNumColumns() && first.getNumRows() == second.getNumRows()){
                     GLSLType unified = unifyTypes(first.getBaseType(), second.getBaseType());
                     if(unified.isValidType()){

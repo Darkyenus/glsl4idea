@@ -20,12 +20,11 @@ public class UnaryOperatorTypeAnnotation extends Annotator<GLSLUnaryOperatorExpr
         final GLSLOperator operator = expr.getOperator();
         if(operand == null || operator == null)return;
 
-        if(!(operator instanceof GLSLOperator.GLSLUnaryOperator)){
+        if(!(operator instanceof GLSLOperator.GLSLUnaryOperator unaryOperator)){
             holder.newAnnotation(HighlightSeverity.ERROR, '\''+operator.getTextRepresentation()+"' is not an unary operator").create();
             return;
         }
 
-        GLSLOperator.GLSLUnaryOperator unaryOperator = (GLSLOperator.GLSLUnaryOperator) operator;
         final GLSLType operandType = operand.getType();
         if(operandType.isValidType()){
             if(!unaryOperator.isValidInput(operandType)){

@@ -157,26 +157,6 @@ public abstract class GLSLType {
         return false;
     }
 
-    /**
-     * Get the type of given member variable.
-     *
-     * @param member the name of variable to get the type of
-     * @return the type if found, {@link GLSLTypes#UNKNOWN_TYPE} otherwise
-     */
-    @NotNull
-    public GLSLType getMemberType(String member){
-        return GLSLTypes.UNKNOWN_TYPE;
-    }
-
-    /**
-     * Indicates whether this type has any members.
-     *
-     * @return true for struct, vector and undefined types, false otherwise.
-     */
-    public boolean hasMembers() {
-        return false;
-    }
-
     //endregion
 
     //region Object-like related
@@ -188,7 +168,7 @@ public abstract class GLSLType {
      *
      * As of GLSL version 430, that is only .length() function on arrays, vectors and matrices.
      */
-    @NotNull
+    @NotNull//TODO This is currently unused, but should be used (?)
     public Map<String, GLSLFunctionType> getMemberFunctions(){
         return NO_FUNCTIONS;
     }

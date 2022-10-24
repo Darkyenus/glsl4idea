@@ -39,12 +39,7 @@ public class GLSLGroupedExpression extends GLSLPrimaryExpression {
 
     @Nullable
     public GLSLExpression getExpression() {
-        GLSLExpression expr = findChildByClass(GLSLExpression.class);
-        if (expr != null) {
-            return expr;
-        } else {
-            return null;
-        }
+        return findChildByClass(GLSLExpression.class);
     }
 
     @NotNull

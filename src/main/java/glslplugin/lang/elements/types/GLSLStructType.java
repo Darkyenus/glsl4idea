@@ -123,20 +123,8 @@ public final class GLSLStructType extends GLSLType {
     }
 
     @Override
-    public boolean hasMembers() {
-        return true;
-    }
-
-    @Override
     public boolean hasMember(String member) {
         return members.containsKey(member);
     }
 
-    @NotNull
-    @Override
-    public GLSLType getMemberType(String member) {
-        GLSLType type = members.get(member);
-        if(type == null)return GLSLTypes.UNKNOWN_TYPE;
-        else return type;
-    }
 }

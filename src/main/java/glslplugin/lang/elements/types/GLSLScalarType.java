@@ -82,26 +82,10 @@ public class GLSLScalarType extends GLSLType {
     }
 
     @Override
-    public boolean hasMembers() {
-        //Scalars do have members like vectors, but no .length() and no indexing
-        return true;
-    }
-
-    @Override
     public boolean hasMember(String member) {
         //Only members of scalars are first vector components
         //Scalars are basically one-component-vectors in this regard
         return member.length() == 1 && "xrs".indexOf(member.charAt(0)) != -1;
-    }
-
-    @NotNull
-    @Override
-    public GLSLType getMemberType(String member) {
-        if(hasMember(member)){
-            return this;
-        }else{
-            return GLSLTypes.UNKNOWN_TYPE;
-        }
     }
 
     private GLSLFunctionType[] constructorsCache;

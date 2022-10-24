@@ -23,7 +23,6 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,11 +69,6 @@ public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement
             parent = parent.getParent();
         }
         return null;
-    }
-
-    @Override
-    public final boolean isDescendantOf(PsiElement ancestor) {
-        return PsiTreeUtil.isAncestor(ancestor, this, false);
     }
 
     @Override

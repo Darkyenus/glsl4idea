@@ -110,11 +110,6 @@ public class GLSLVectorType extends GLSLType {
         return true;//Vectors are indexable
     }
 
-    @Override
-    public boolean hasMembers() {
-        return true;
-    }
-
     @SuppressWarnings("SpellCheckingInspection")
     public static final String[] SWIZZLE_SETS = new String[]{"xyzw","rgba","stpq"};
     public static final String COMBINED_SWIZZLE_SETS = "xyzwrgbastpq";
@@ -156,20 +151,6 @@ public class GLSLVectorType extends GLSLType {
 
     @NotNull
     @Override
-    public GLSLType getMemberType(String member) {
-        if(hasMember(member)){
-            if(member.length() == 1){
-                return baseType;
-            }else{
-                return getType(baseType, member.length());
-            }
-        }else{
-            return GLSLTypes.UNKNOWN_TYPE;
-        }
-    }
-
-    @NotNull
-    @Override
     public Map<String, GLSLFunctionType> getMemberFunctions() {
         return GLSLArrayType.ARRAY_LIKE_FUNCTIONS;//Vectors have, like arrays, .length() function
     }
@@ -186,9 +167,8 @@ public class GLSLVectorType extends GLSLType {
 
     @Override
     public boolean isConvertibleTo(GLSLType otherType) {
-        if (!(otherType instanceof GLSLVectorType)) return false;
+        if (!(otherType instanceof GLSLVectorType other)) return false;
 
-        GLSLVectorType other = (GLSLVectorType) otherType;
         return other.numComponents == numComponents
                 && baseType.isConvertibleTo(other.baseType);
     }

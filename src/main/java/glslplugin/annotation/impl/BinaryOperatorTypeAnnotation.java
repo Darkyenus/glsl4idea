@@ -43,11 +43,10 @@ public class BinaryOperatorTypeAnnotation extends Annotator<GLSLBinaryOperatorEx
         final GLSLOperator operator = expr.getOperator();
         if(left == null || right == null || operator == null)return; //There are bigger problems than type compatibility
 
-        if(!(operator instanceof GLSLOperator.GLSLBinaryOperator)) {
+        if(!(operator instanceof GLSLOperator.GLSLBinaryOperator binaryOperator)) {
             holder.newAnnotation(HighlightSeverity.ERROR, "'"+operator.getTextRepresentation()+"' is not a binary operator").create();
             return;
         }
-        GLSLOperator.GLSLBinaryOperator binaryOperator = (GLSLOperator.GLSLBinaryOperator) operator;
 
         final GLSLType rightType = right.getType();
         final GLSLType leftType = left.getType();

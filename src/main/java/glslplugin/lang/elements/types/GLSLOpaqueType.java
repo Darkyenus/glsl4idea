@@ -16,6 +16,7 @@ public class GLSLOpaqueType extends GLSLType {
     public static final GLSLOpaqueType VOID = new GLSLOpaqueType("void");
 
     // atomics
+    @SuppressWarnings("unused")// Used by registering in constructor
     public static final GLSLOpaqueType atomic_uint = new GLSLOpaqueType("atomic_uint");
 
     @SuppressWarnings("unused")

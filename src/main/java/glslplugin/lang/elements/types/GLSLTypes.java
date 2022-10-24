@@ -125,11 +125,6 @@ public class GLSLTypes {
         public boolean isIndexable() {
             return true;
         }
-
-        @Override
-        public boolean hasMembers() {
-            return true;
-        }
     };
 
     private static final Map<String, GLSLType> undefinedTypes = new HashMap<>();
@@ -143,11 +138,6 @@ public class GLSLTypes {
                         @NotNull
                         public String getTypename() {
                             return name;
-                        }
-
-                        @Override
-                        public boolean hasMembers() {
-                            return true;
                         }
                     });
         }

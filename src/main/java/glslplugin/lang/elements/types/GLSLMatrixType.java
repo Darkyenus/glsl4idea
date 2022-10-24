@@ -151,9 +151,8 @@ public class GLSLMatrixType extends GLSLType {
 
     @Override
     public boolean isConvertibleTo(GLSLType otherType) {
-        if (!(otherType instanceof GLSLMatrixType)) return false;
+        if (!(otherType instanceof GLSLMatrixType other)) return false;
 
-        GLSLMatrixType other = (GLSLMatrixType) otherType;
         return rows == other.rows
                 && columns == other.columns
                 && baseType.isConvertibleTo(other.baseType);

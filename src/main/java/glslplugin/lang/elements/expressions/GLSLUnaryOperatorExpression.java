@@ -66,8 +66,7 @@ public class GLSLUnaryOperatorExpression extends GLSLOperatorExpression {
         GLSLExpression operand = getOperand();
         if(operand == null || !operand.isConstantValue())return null;
         GLSLOperator operator = getOperator();
-        if(!(operator instanceof GLSLOperator.GLSLUnaryOperator))return null;
-        GLSLOperator.GLSLUnaryOperator unaryOperator = (GLSLOperator.GLSLUnaryOperator) operator;
+        if(!(operator instanceof GLSLOperator.GLSLUnaryOperator unaryOperator))return null;
         GLSLType operandType = operand.getType();
         if(!operandType.isValidType())return null;
         if(!unaryOperator.isValidInput(operandType))return null;
@@ -80,10 +79,9 @@ public class GLSLUnaryOperatorExpression extends GLSLOperatorExpression {
     public GLSLType getType() {
         GLSLOperator operator = getOperator();
         GLSLExpression operand = getOperand();
-        if(operand == null || !(operator instanceof GLSLOperator.GLSLUnaryOperator)){
+        if(operand == null || !(operator instanceof GLSLOperator.GLSLUnaryOperator unaryOperator)){
             return GLSLTypes.UNKNOWN_TYPE;
         }else{
-            GLSLOperator.GLSLUnaryOperator unaryOperator = (GLSLOperator.GLSLUnaryOperator) operator;
             return unaryOperator.getResultType(operand.getType());
         }
     }

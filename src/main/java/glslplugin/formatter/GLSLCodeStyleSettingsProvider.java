@@ -34,55 +34,56 @@ public class GLSLCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProv
 	@Nullable
 	@Override
 	public String getCodeSample(@NotNull SettingsType settingsType) {
-		return "#version 330 core\n" +
-				"\n" +
-				"// Some definitions\n" +
-				"#if LIGHT_TYPE == 1\n" +
-				"#define LIGHT_STRUCTNAME SpotLight\n" +
-				"#else\n" +
-				"#define LIGHT_STRUCTNAME PointLight\n" +
-				"#endif\n" +
-				"\n" +
-				"// Normal variables\n" +
-				"in vec2 fragTexCoords;\n" +
-				"out vec4 fragColor;\n" +
-				"\n" +
-				"uniform int activeLightCount;\n" +
-				"\n" +
-				"// Interface block\n" +
-				"in VertexData\n" +
-				"{\n" +
-				"    vec3 color;\n" +
-				"    vec2 texCoord;\n" +
-				"} inData[];\n" +
-				"\n" +
-				"layout(row_major) uniform MatrixBlock\n" +
-				"{\n" +
-				"    mat4 projection;\n" +
-				"    layout(column_major) mat4 modelview;\n" +
-				"} matrices[3];\n" +
-				"\n" +
-				"void main() {\n" +
-				"    func();\n" +
-				"}\n" +
-				"\n" +
-				"vec3 addVectors(vec3 a, vec3 b) {\n" +
-				"    return a + b;\n" +
-				"}\n" +
-				"\n" +
-				"void miscFunc(int t) {\n" +
-				"    if (x == y) {\n" +
-				"        int accum = 0;\n" +
-				"        for (int i = 0;i < t; i++) {\n" +
-				"            if (i == 2) {\n" +
-				"                continue;\n" +
-				"            }\n" +
-				"            accum += 0;\n" +
-				"        }\n" +
-				"    } else {\n" +
-				"        discard;\n" +
-				"    }\n" +
-				"}";
+		return """
+				#version 330 core
+
+				// Some definitions
+				#if LIGHT_TYPE == 1
+				#define LIGHT_STRUCTNAME SpotLight
+				#else
+				#define LIGHT_STRUCTNAME PointLight
+				#endif
+
+				// Normal variables
+				in vec2 fragTexCoords;
+				out vec4 fragColor;
+
+				uniform int activeLightCount;
+
+				// Interface block
+				in VertexData
+				{
+				    vec3 color;
+				    vec2 texCoord;
+				} inData[];
+
+				layout(row_major) uniform MatrixBlock
+				{
+				    mat4 projection;
+				    layout(column_major) mat4 modelview;
+				} matrices[3];
+
+				void main() {
+				    func();
+				}
+
+				vec3 addVectors(vec3 a, vec3 b) {
+				    return a + b;
+				}
+
+				void miscFunc(int t) {
+				    if (x == y) {
+				        int accum = 0;
+				        for (int i = 0;i < t; i++) {
+				            if (i == 2) {
+				                continue;
+				            }
+				            accum += 0;
+				        }
+				    } else {
+				        discard;
+				    }
+				}""";
 	}
 
 	@Nullable

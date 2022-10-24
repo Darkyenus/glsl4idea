@@ -57,8 +57,7 @@ public class SwitchAnnotation extends Annotator<GLSLSwitchStatement> {
                     holder.newAnnotation(HighlightSeverity.ERROR, "Multiple default labels are not allowed").range(label).create();
                 }
                 defaultFound = true;
-            } else if (label instanceof GLSLCaseStatement) {//This _should_ be the only possible way
-                final GLSLCaseStatement caseLabel = (GLSLCaseStatement) label;
+            } else if (label instanceof final GLSLCaseStatement caseLabel) {//This _should_ be the only possible way
                 final GLSLExpression caseExpression = caseLabel.getCaseExpression();
                 if (caseExpression != null) {
                     final GLSLType caseExpressionType = caseExpression.getType();

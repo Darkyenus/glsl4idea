@@ -31,8 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ConditionCheckAnnotation extends Annotator<GLSLStatement> {
     public void annotate(GLSLStatement expr, AnnotationHolder holder) {
-        if (expr instanceof ConditionStatement) {
-            ConditionStatement conditionStatement = (ConditionStatement) expr;
+        if (expr instanceof ConditionStatement conditionStatement) {
             GLSLCondition condition = conditionStatement.getCondition();
 
             if (condition != null) {

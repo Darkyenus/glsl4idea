@@ -65,13 +65,4 @@ public interface GLSLElement extends NavigatablePsiElement {
      * so that this whole interface can be implemented in the default methods. */
     <T> T @NotNull [] findChildrenByClass(Class<T> aClass);
 
-    /**
-     * Checks whether this is a descendant of element.
-     * That is; if element is an ancestor of this.
-     * Loops through the parent chains and reports whether or not element is found.
-     *
-     * @param ancestor the proposed ancestor of this.
-     * @return true if ancestor is indeed the ancestor of this, false otherwise.
-     */
-    boolean isDescendantOf(PsiElement ancestor);
 }

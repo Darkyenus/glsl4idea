@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.usageView.UsageViewLongNameLocation;
 import com.intellij.usageView.UsageViewNodeTextLocation;
 import com.intellij.usageView.UsageViewTypeLocation;
-import glslplugin.lang.elements.declarations.GLSLQualifiedDeclaration;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

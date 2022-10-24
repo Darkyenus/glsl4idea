@@ -91,29 +91,30 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
     @NonNls
     @NotNull
     public String getDemoText() {
-        return "#version 120\n" +
-                "precision lowp int;\n" +
-                "uniform vec3 normal; // surface normal\n" +
-                "const vec3 light = vec3(5.0, 0.5, 1.0);\n" +
-                "\n" +
-                "void shade(in vec3 light, in vec3 normal, out vec4 color);\n" +
-                "\n" +
-                "struct PointLight{\n" +
-                "    vec3 position;\n" +
-                "    float intensity;\n" +
-                "};\n" +
-                "\n" +
-                "/* Fragment shader */\n" +
-                "void main() {\n" +
-                "#ifdef TEXTURED\n" +
-                "    vec2 tex = gl_TexCoord[0].xy;\n" +
-                "#endif\n" +
-                "    float diffuse = dot(normal, light);\n" +
-                "    if(diffuse < 0) {\n" +
-                "        diffuse = -diffuse;\n" +
-                "    }\n" +
-                "    gl_FragColor = vec4(diffuse, diffuse, diffuse, 1.0);\n" +
-                "}";
+        return """
+                #version 120
+                precision lowp int;
+                uniform vec3 normal; // surface normal
+                const vec3 light = vec3(5.0, 0.5, 1.0);
+
+                void shade(in vec3 light, in vec3 normal, out vec4 color);
+
+                struct PointLight{
+                    vec3 position;
+                    float intensity;
+                };
+
+                /* Fragment shader */
+                void main() {
+                #ifdef TEXTURED
+                    vec2 tex = gl_TexCoord[0].xy;
+                #endif
+                    float diffuse = dot(normal, light);
+                    if(diffuse < 0) {
+                        diffuse = -diffuse;
+                    }
+                    gl_FragColor = vec4(diffuse, diffuse, diffuse, 1.0);
+                }""";
     }
 
     @Nullable

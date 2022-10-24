@@ -19,10 +19,9 @@
 
 package glslplugin.lang.elements.declarations;
 
+import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
-import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Element for structure members.

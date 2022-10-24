@@ -27,7 +27,7 @@ import glslplugin.lang.elements.expressions.GLSLExpression;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * LValueAnnotation checks for l-values at the left hand side of assignment expressions.
+ * LValueAnnotation checks for l-values on the left hand side of assignment expressions.
  *
  * @author Yngve Devik Hammersland
  *         Date: Jan 30, 2009
