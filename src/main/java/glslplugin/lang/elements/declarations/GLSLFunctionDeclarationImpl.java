@@ -21,9 +21,6 @@ package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.ResolveState;
-import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
@@ -37,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * GLSLFunctionDeclarationImpl is the psi implementation of a function declaration.
  */
-public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSLQualifiedDeclaration, GLSLFunctionDeclaration, GLSLReferencableDeclaration {
+public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSLQualifiedDeclaration, GLSLFunctionDeclaration {
     private GLSLFunctionType typeCache;
     private boolean typeCacheDirty = false;
 
@@ -45,25 +42,9 @@ public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSL
         super(astNode);
     }
 
-    @Override
-    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
-        if (lastParent != null || !PsiTreeUtil.isAncestor(this, place, false)) {
-            // Can't see the function from inside
-            return true;
-        }
-
-        return processor.execute(this, state);
-    }
-
-    @Override
-    public @NotNull String declaredNoun() {
-        return "function";
-    }
-
-
     /** @return the element that holds the function name */
     @Nullable
-    private PsiElement getFunctionNameIdentifier() {
+    protected PsiElement getFunctionNameIdentifier() {
         return findChildByType(GLSLTokenTypes.IDENTIFIER);
     }
 
@@ -150,11 +131,6 @@ public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSL
     public int getTextOffset() {
         final PsiElement identifier = getFunctionNameIdentifier();
         return identifier != null ? identifier.getTextOffset() : super.getTextOffset();
-    }
-
-    @Override
-    public @Nullable PsiElement getNameIdentifier() {
-        return getFunctionNameIdentifier();
     }
 
     @Override

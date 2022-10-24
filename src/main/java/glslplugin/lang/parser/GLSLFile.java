@@ -64,9 +64,11 @@ public class GLSLFile extends PsiFileBase {
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
         for (PsiElement child = getFirstChild(); child != null; child = child.getNextSibling()) {
+
             if (child == lastParent || PsiTreeUtil.isAncestor(child, place, false)) {
-                // Don't show later declarations
-                break;
+                // Intentionally show even later declarations.
+                // Inspection checks that everything is ok.
+                continue;
             }
 
 

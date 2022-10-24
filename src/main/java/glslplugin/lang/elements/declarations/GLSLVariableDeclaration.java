@@ -19,17 +19,19 @@
 
 package glslplugin.lang.elements.declarations;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLElementImpl;
+import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import org.jetbrains.annotations.NotNull;
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * NewVariableDeclaration is ...
+ * A variable declaration statement. The actual declared variables (there may be multiple)
+ * and all related logic is in {@link GLSLDeclarator}s.
  *
  * @author Yngve Devik Hammersland
  *         Date: Feb 2, 2009
@@ -71,7 +73,7 @@ public class GLSLVariableDeclaration extends GLSLElementImpl implements GLSLQual
     @NotNull
     @Override
     public String getDeclarationDescription() {
-        if (PsiTreeUtil.getParentOfType(this, GLSLFunctionDefinition.class) != null) {
+        if (PsiTreeUtil.getParentOfType(this, GLSLCompoundStatement.class) != null) {
             return "local variable";
         }
         return "global variable";

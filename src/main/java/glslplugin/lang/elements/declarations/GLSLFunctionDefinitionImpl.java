@@ -29,7 +29,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * NewFunctionDefinition is ...
+ * A function declaration with a definition.
+ * Opposed to just declaration, this is actually a referencable declaration.
+ * To make this work, file declarations are seen everywhere,
+ * and there is an inspection that checks that the order is correct.
  *
  * @author Yngve Devik Hammersland
  *         Date: Feb 2, 2009
@@ -46,23 +49,32 @@ public class GLSLFunctionDefinitionImpl extends GLSLFunctionDeclarationImpl impl
     }
 
     @Override
+    public @Nullable PsiElement getNameIdentifier() {
+        return getFunctionNameIdentifier();
+    }
+
+    @Override
+    public @NotNull String declaredNoun() {
+        return "function";
+    }
+
+    @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
-        if (!super.processDeclarations(processor, state, lastParent, place)) {
-            return false;
-        }
+        final boolean lookingFromInside = lastParent != null || PsiTreeUtil.isAncestor(this, place, false);
 
-        if (lastParent == null || !PsiTreeUtil.isAncestor(this,place, false)) {
-            // Do not show declarations of parameters to outside scopes
+        // Can't see the function from inside
+        if (lookingFromInside) {
+            // Show parameter declarations
+            for (GLSLParameterDeclaration parameter : getParameters()) {
+                if (PsiTreeUtil.isAncestor(lastParent, parameter, false))
+                    continue;
+                if (!parameter.processDeclarations(processor, state, lastParent, place)) return false;
+            }
             return true;
+        } else {
+            // Show the function declaration
+            return processor.execute(this, state);
         }
-
-        for (GLSLParameterDeclaration parameter : getParameters()) {
-            if (PsiTreeUtil.isAncestor(lastParent, parameter, false))
-                continue;
-            if (!parameter.processDeclarations(processor, state, lastParent, place)) return false;
-        }
-
-        return true;
     }
 
     @Override

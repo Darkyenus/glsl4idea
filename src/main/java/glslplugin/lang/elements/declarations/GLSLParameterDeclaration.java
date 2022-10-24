@@ -36,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
  *         Time: 2:04:56 PM
  */
 public class GLSLParameterDeclaration extends GLSLElementImpl implements GLSLQualifiedDeclaration {
-    public static final GLSLParameterDeclaration[] NO_PARAMETER_DECLARATIONS = new GLSLParameterDeclaration[0];
 
     public GLSLParameterDeclaration(@NotNull ASTNode astNode) {
         super(astNode);
@@ -46,8 +45,7 @@ public class GLSLParameterDeclaration extends GLSLElementImpl implements GLSLQua
         return findChildByClass(GLSLDeclarator.class) != null;
     }
 
-
-    @NotNull
+    @Nullable
     public String getName() {
         final GLSLDeclarator declarator = getDeclarator();
         if (declarator == null) return "";

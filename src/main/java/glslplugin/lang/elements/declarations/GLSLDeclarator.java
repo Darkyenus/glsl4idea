@@ -23,11 +23,14 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.search.LocalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
+import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import glslplugin.lang.elements.types.GLSLArrayType;
 import glslplugin.lang.elements.types.GLSLQualifiedType;
 import glslplugin.lang.elements.types.GLSLType;
@@ -103,15 +106,15 @@ public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableD
      * Does nothing otherwise.
      */
     private GLSLType clarifyArrayType(GLSLType baseType){
-        if(!(baseType instanceof GLSLArrayType))return baseType; //No need to clarify non-array types
-        final GLSLArrayType myArrayType = (GLSLArrayType) baseType;
+        if(!(baseType instanceof final GLSLArrayType myArrayType)) {
+            return baseType; //No need to clarify non-array types
+        }
         final int[] myDimensions = myArrayType.getDimensions();
 
         {   //Try clarifying using initializer list
             GLSLInitializer rawInitializer = getInitializer();
-            if (rawInitializer instanceof GLSLInitializerList) {
+            if (rawInitializer instanceof GLSLInitializerList initializerList) {
                 //Clarify using initializer list
-                GLSLInitializerList initializerList = (GLSLInitializerList) rawInitializer;
                 for (int i = 0; i < myDimensions.length; i++) {
                     GLSLInitializer[] initializers = initializerList.getInitializers();
                     if (myDimensions[i] == GLSLArrayType.UNDEFINED_SIZE_DIMENSION) {
@@ -133,8 +136,7 @@ public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableD
             GLSLExpression rawExpression = getInitializerExpression();
             if(rawExpression != null){
                 GLSLType type = rawExpression.getType();
-                if(type instanceof GLSLArrayType){
-                    GLSLArrayType arrayType = (GLSLArrayType) type;
+                if(type instanceof GLSLArrayType arrayType){
                     //Great, it is being correctly initialized, try to copy as many missing dimensions as we can
                     final int[] dimensions = arrayType.getDimensions();
                     for (int i = 0; i < myDimensions.length && i < dimensions.length; i++) {
@@ -167,9 +169,8 @@ public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableD
         }else{
             //Must _prepend_ some dimensions to the type
             //In: "vec4[2][4] b[3]" b is "vec4[3][2][4]", not "vec4[2][4][3]"
-            if(declaredType instanceof GLSLArrayType){
+            if(declaredType instanceof GLSLArrayType declaredArrayType){
                 //Already an array, must append the dimensions
-                GLSLArrayType declaredArrayType = (GLSLArrayType) declaredType;
                 int[] existingDimensions = declaredArrayType.getDimensions();
                 int[] combinedDimensions = new int[existingDimensions.length + arraySpecifiers.length];
                 System.arraycopy(existingDimensions, 0, combinedDimensions, arraySpecifiers.length, existingDimensions.length);
@@ -212,6 +213,22 @@ public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableD
             return "variable";
         }
         return "global variable";
+    }
+
+    @Override
+    public @NotNull SearchScope getUseScope() {
+        final GLSLCompoundStatement parentCompound = findParentByClass(GLSLCompoundStatement.class);
+        if (parentCompound != null) {
+            // Covers local variables
+            return new LocalSearchScope(parentCompound);
+        }
+        final GLSLFunctionDeclaration functionDeclaration = findParentByClass(GLSLFunctionDeclaration.class);
+        if (functionDeclaration != null) {
+            // Covers function parameters
+            return new LocalSearchScope(functionDeclaration);
+        }
+
+        return super.getUseScope();
     }
 
     @Override

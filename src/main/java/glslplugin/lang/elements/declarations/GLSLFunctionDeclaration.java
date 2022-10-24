@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  * It inherits the name, qualifier and (return) type from {@link GLSLQualifiedDeclaration}
  * and adds the parameter list.
  */
-public interface GLSLFunctionDeclaration extends GLSLQualifiedDeclaration, PsiNameIdentifierOwner {
+public interface GLSLFunctionDeclaration extends GLSLQualifiedDeclaration {
 
     @NotNull
     GLSLParameterDeclaration[] getParameters();
