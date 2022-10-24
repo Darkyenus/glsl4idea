@@ -105,7 +105,7 @@ class GLSLPresentation implements ItemPresentation {
             result += " ";
         }
 
-        result += declarator.getName();
+        result += declarator.getVariableName();
 
         result += " : ";
         result += type.getType().getTypename();

@@ -21,69 +21,21 @@ package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.CachedValue;
 import glslplugin.lang.elements.GLSLElementImpl;
-import glslplugin.lang.elements.GLSLTokenTypes;
-import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
-import glslplugin.lang.elements.types.GLSLBasicFunctionType;
 import glslplugin.lang.elements.types.GLSLFunctionType;
-import glslplugin.lang.elements.types.GLSLType;
-import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLFunctionDeclarationImpl is the psi implementation of a function declaration.
  */
-public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSLQualifiedDeclaration, GLSLFunctionDeclaration {
-    private GLSLFunctionType typeCache;
-    private boolean typeCacheDirty = false;
+public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSLFunctionDeclaration {
+
+    private final CachedValue<GLSLFunctionType> functionTypeCache = GLSLFunctionDeclaration.newCachedFunctionType(this);
 
     public GLSLFunctionDeclarationImpl(@NotNull ASTNode astNode) {
         super(astNode);
-    }
-
-    /** @return the element that holds the function name */
-    @Nullable
-    protected PsiElement getFunctionNameIdentifier() {
-        return findChildByType(GLSLTokenTypes.IDENTIFIER);
-    }
-
-    public @Nullable String getFunctionName() {
-        final PsiElement identifier = getFunctionNameIdentifier();
-        return identifier == null ? null : identifier.getText();
-    }
-
-    @NotNull
-    public GLSLParameterDeclaration[] getParameters() {
-        return findChildrenByClass(GLSLParameterDeclaration.class);
-    }
-
-    @NotNull
-    @Override
-    public GLSLType getReturnType() {
-        GLSLTypeSpecifier typeSpecifier = findChildByClass(GLSLTypeSpecifier.class);
-        if(typeSpecifier == null){
-            return GLSLTypes.UNKNOWN_TYPE;
-        }else{
-            return typeSpecifier.getType();
-        }
-    }
-
-    @NotNull
-    public String getSignature() {
-        StringBuilder b = new StringBuilder();
-        b.append(getName()).append("(");
-        boolean first = true;
-        for (GLSLParameterDeclaration declarator : getParameters()) {
-            if (!first) {
-                b.append(",");
-            }
-            first = false;
-            b.append(declarator.getTypeSpecifierNodeTypeName());
-        }
-        b.append(") : ");
-        b.append(getTypeSpecifierNodeTypeName());
-        return b.toString();
     }
 
     @Override
@@ -93,32 +45,7 @@ public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSL
 
     @NotNull
     public GLSLFunctionType getType() {
-        if (typeCache == null || typeCacheDirty) {
-            typeCache = createType();
-            typeCacheDirty = false;
-        }
-        return typeCache;
-    }
-
-    private GLSLFunctionType createType() {
-        final String functionName = getFunctionName();
-        final GLSLParameterDeclaration[] parameterDeclarations = getParameters();
-        final GLSLType[] parameterTypes = new GLSLType[parameterDeclarations.length];
-        for (int i = 0; i < parameterDeclarations.length; i++) {
-            GLSLDeclarator declarator = parameterDeclarations[i].getDeclarator();
-            if(declarator == null){
-                parameterTypes[i] = GLSLTypes.UNKNOWN_TYPE;
-            }else{
-                parameterTypes[i] = declarator.getType();
-            }
-        }
-        return new GLSLBasicFunctionType(this, functionName == null ? "<no name>" : functionName, getReturnType(), parameterTypes);
-    }
-
-    @NotNull
-    @Override
-    public String getDeclarationDescription() {
-        return "function";
+        return functionTypeCache.getValue();
     }
 
     @Nullable
@@ -131,17 +58,5 @@ public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSL
     public int getTextOffset() {
         final PsiElement identifier = getFunctionNameIdentifier();
         return identifier != null ? identifier.getTextOffset() : super.getTextOffset();
-    }
-
-    @Override
-    public void subtreeChanged() {
-        super.subtreeChanged();
-        typeCacheDirty = true;
-    }
-
-
-    @Override
-    public <T> @Nullable T findChildByClass(Class<T> aClass) {
-        return super.findChildByClass(aClass);
     }
 }

@@ -74,12 +74,4 @@ public interface GLSLQualifiedDeclaration extends GLSLElement {
         }
     }
 
-    @NotNull
-    String getDeclarationDescription();//TODO What is it?
-
-
-    /** Just exposes the same method from {@link com.intellij.psi.impl.PsiElementBase}
-     * so that this whole interface can be implemented in the default methods. */
-    @Nullable
-    <T> T findChildByClass(Class<T> aClass);
 }

@@ -82,7 +82,7 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
 
     @Override
     public String toString() {
-        final String name = getName();
+        final String name = getStructName();
         if (name == null || name.isEmpty()) return "Anonymous struct";
         return "Struct Type: '" + name + "'";
     }
@@ -107,7 +107,7 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
     @Nullable
     public GLSLDeclarator getDeclarator(@NotNull String name) {
         for (GLSLDeclarator declarator : getDeclarators()) {
-            if (name.equals(declarator.getName())) {
+            if (name.equals(declarator.getVariableName())) {
                 return declarator;
             }
         }

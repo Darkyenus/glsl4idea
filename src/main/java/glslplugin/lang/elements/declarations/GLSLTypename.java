@@ -93,7 +93,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
         @Override
         public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
             if (element instanceof final GLSLStructDefinition def) {
-                if (onlyNamed == null || onlyNamed.equals(def.getName())) {
+                if (onlyNamed == null || onlyNamed.equals(def.getStructName())) {
                     definitions.add(def);
                     return onlyNamed == null;// Done if we found the one named
                 }

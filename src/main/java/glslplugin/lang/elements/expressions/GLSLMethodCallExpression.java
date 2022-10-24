@@ -68,12 +68,7 @@ public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase implem
 
     @Nullable
     public GLSLParameterList getParameterList() {
-        final PsiElement last = getLastChild();
-        if(last instanceof GLSLParameterList){
-            return (GLSLParameterList) last;
-        }else{
-            return null;
-        }
+        return findChildByClass(GLSLParameterList.class);
     }
 
     public static final class MethodCallReference extends GLSLAbstractReference<GLSLMethodCallExpression> {

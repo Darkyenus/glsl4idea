@@ -69,19 +69,4 @@ public class GLSLVariableDeclaration extends GLSLElementImpl implements GLSLQual
     public String toString() {
         return "Variable Declaration: " + GLSLDeclarator.toString(getDeclarators());
     }
-
-    @NotNull
-    @Override
-    public String getDeclarationDescription() {
-        if (PsiTreeUtil.getParentOfType(this, GLSLCompoundStatement.class) != null) {
-            return "local variable";
-        }
-        return "global variable";
-    }
-
-
-    @Override
-    public <T> @Nullable T findChildByClass(Class<T> aClass) {
-        return super.findChildByClass(aClass);
-    }
 }

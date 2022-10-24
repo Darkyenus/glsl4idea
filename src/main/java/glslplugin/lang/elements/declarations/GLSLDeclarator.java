@@ -212,7 +212,29 @@ public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableD
         if (findParentByClass(GLSLFunctionDefinition.class) != null) {
             return "variable";
         }
+        if (findParentByClass(GLSLStructDefinition.class) != null) {
+            return "struct field";
+        }
         return "global variable";
+    }
+
+
+
+    public @NotNull String getHierarchicalVariableName() {
+        String variableName = getVariableName();
+        if (variableName == null) {
+            variableName = "<?>";
+        }
+
+        final GLSLStructDefinition struct = findParentByClass(GLSLStructDefinition.class);
+        if (struct != null) {
+            String structName = struct.getStructName();
+            if (structName == null) structName = "<anonymous>";
+            return structName + "." + variableName;
+        }
+
+        return variableName;
+
     }
 
     @Override
@@ -233,7 +255,7 @@ public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableD
 
     @Override
     public String toString() {
-        return "Declarator: " + getName() + " : " + getType().getTypename();
+        return "Declarator: " + getVariableName() + " : " + getType().getTypename();
     }
 
     public static @NotNull String toString(GLSLDeclarator[] declarators) {

@@ -19,9 +19,11 @@
 
 package glslplugin.lang.elements.declarations;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -31,11 +33,23 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Feb 2, 2009
  *         Time: 12:33:24 PM
  */
-public interface GLSLFunctionDefinition extends GLSLFunctionDeclaration, GLSLReferencableDeclaration, PsiNameIdentifierOwner {
+public interface GLSLFunctionDefinition extends GLSLFunctionDeclaration, GLSLReferencableDeclaration {
 
     /**
      * @return Body of function definition, null only on malformed source
      */
     @Nullable
-    GLSLCompoundStatement getBody();
+    default GLSLCompoundStatement getBody() {
+        return findChildByClass(GLSLCompoundStatement.class);
+    }
+
+    @Override
+    default @NotNull String declaredNoun() {
+        return "function definition";
+    }
+
+    @Override
+    default @Nullable PsiElement getNameIdentifier() {
+        return getFunctionNameIdentifier();
+    }
 }

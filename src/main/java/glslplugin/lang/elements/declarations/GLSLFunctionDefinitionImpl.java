@@ -23,8 +23,10 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.PsiTreeUtil;
-import glslplugin.lang.elements.statements.GLSLCompoundStatement;
+import glslplugin.lang.elements.GLSLElementImpl;
+import glslplugin.lang.elements.types.GLSLFunctionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,24 +40,17 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Feb 2, 2009
  *         Time: 12:32:21 PM
  */
-public class GLSLFunctionDefinitionImpl extends GLSLFunctionDeclarationImpl implements GLSLFunctionDefinition {
+public class GLSLFunctionDefinitionImpl extends GLSLElementImpl implements GLSLFunctionDefinition {
+
+    private final CachedValue<GLSLFunctionType> functionTypeCache = GLSLFunctionDeclaration.newCachedFunctionType(this);
+
     public GLSLFunctionDefinitionImpl(ASTNode node) {
         super(node);
     }
 
-    @Nullable
-    public GLSLCompoundStatement getBody() {
-        return findChildByClass(GLSLCompoundStatement.class);
-    }
-
-    @Override
-    public @Nullable PsiElement getNameIdentifier() {
-        return getFunctionNameIdentifier();
-    }
-
-    @Override
-    public @NotNull String declaredNoun() {
-        return "function";
+    @NotNull
+    public GLSLFunctionType getType() {
+        return functionTypeCache.getValue();
     }
 
     @Override

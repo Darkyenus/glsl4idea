@@ -117,7 +117,6 @@ public abstract class GLSLAbstractReference<T extends GLSLReferencingElement> im
     /** Variant of {@link PsiPolyVariantReferenceBase} */
     public static abstract class Poly<T extends GLSLReferencingElement> extends GLSLAbstractReference<T> implements PsiPolyVariantReference {
 
-
         public Poly(@NotNull T element) {
             super(element);
         }

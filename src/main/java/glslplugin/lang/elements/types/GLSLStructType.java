@@ -54,7 +54,7 @@ public final class GLSLStructType extends GLSLType {
      * Updates internal members containers from the struct type definition.
      */
     public void updateNameAndMembers() {
-        final String definitionName = definition.getName();
+        final String definitionName = definition.getStructName();
         typename = !Strings.isNullOrEmpty(definitionName) ? definitionName  : "(anonymous " + System.identityHashCode(this) + ")";
 
         final GLSLDeclarator[] declarators = definition.getDeclarators();
@@ -65,9 +65,11 @@ public final class GLSLStructType extends GLSLType {
         members.clear();
         for (int i = 0; i < declarators.length; i++) {
             final GLSLDeclarator declarator = declarators[i];
-            members.put(declarator.getName(), declarator.getType());
-            memberNames[i] = declarator.getName();
-            memberTypes[i] = declarator.getType();
+            final String memberName = declarator.getVariableName();
+            final GLSLType memberType = declarator.getType();
+            members.put(memberName, memberType);
+            memberNames[i] = memberName;
+            memberTypes[i] = memberType;
         }
 
         constructors[0] = new GLSLBasicConstructorType(this.definition, this, memberTypes);

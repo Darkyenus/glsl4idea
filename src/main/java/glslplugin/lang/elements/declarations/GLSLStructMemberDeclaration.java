@@ -47,15 +47,4 @@ public class GLSLStructMemberDeclaration extends GLSLElementImpl implements GLSL
         return "Struct Declaration: " + GLSLDeclarator.toString(getDeclarators());
     }
 
-    @NotNull
-    @Override
-    public String getDeclarationDescription() {
-        return "struct member";
-    }
-
-
-    @Override
-    public <T> @Nullable T findChildByClass(Class<T> aClass) {
-        return super.findChildByClass(aClass);
-    }
 }

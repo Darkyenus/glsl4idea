@@ -19,21 +19,18 @@ public class GLSLDescriptionProvider implements ElementDescriptionProvider {
     @Override
     @Nullable
     public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
-        if (!(element instanceof GLSLDeclarator)) return null;
-        GLSLDeclarator declarator = (GLSLDeclarator) element;
-        GLSLQualifiedDeclaration declaration = declarator.getParentDeclaration();
-        if (declaration == null) return null;
+        if (!(element instanceof GLSLDeclarator declarator)) return null;
 
         if (location instanceof UsageViewTypeLocation) {
-            return declaration.getDeclarationDescription();
+            return declarator.declaredNoun();
         }
 
         if (location instanceof UsageViewLongNameLocation) {
-            return declaration.getDeclarationDescription() + " '" + declarator.getName() + "'";
+            return declarator.getHierarchicalVariableName();
         }
 
         if (location instanceof UsageViewNodeTextLocation) {
-            return declarator.getName();
+            return declarator.getVariableName();
         }
         return null;
 //        return location.toString();

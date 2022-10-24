@@ -39,11 +39,10 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
         if (items.length == 0) {
             List<GLSLFunctionDeclaration> declarations = new ArrayList<>();
             for (Object variant : ref.getVariants()) {
-                if (!(variant instanceof GLSLDeclarator)) continue;
-                GLSLDeclarator declarator = (GLSLDeclarator) variant;
+                if (!(variant instanceof GLSLDeclarator declarator)) continue;
                 if (declarator.getParentDeclaration() instanceof GLSLFunctionDeclaration) {
-                    String name = declarator.getName();
-                    if (name.equals(call.getFunctionOrConstructedTypeName())) {
+                    String name = declarator.getVariableName();
+                    if (name != null && name.equals(call.getFunctionOrConstructedTypeName())) {
                         declarations.add((GLSLFunctionDeclaration) declarator.getParentDeclaration());
                     }
 
@@ -89,13 +88,12 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
     @Override
     public void updateUI(Object p, @NotNull ParameterInfoUIContext context) {
         if (p instanceof PsiElementResolveResult) p = ((PsiElementResolveResult) p).getElement();
-        if (!(p instanceof GLSLFunctionDeclaration)) return;
-        GLSLFunctionDeclaration declaration = (GLSLFunctionDeclaration) p;
+        if (!(p instanceof GLSLFunctionDeclaration declaration)) return;
         GLSLParameterDeclaration[] parameters = declaration.getParameters();
 
         StringBuilder buffer = new StringBuilder();
         buffer.append(declaration.getType().getReturnType().getTypename())
-                .append(' ').append(declaration.getName()).append('(');
+                .append(' ').append(declaration.getFunctionName()).append('(');
 
         final int currentParameter = context.getCurrentParameterIndex();
         int highlightStartOffset = -1, highlightEndOffset = -1;

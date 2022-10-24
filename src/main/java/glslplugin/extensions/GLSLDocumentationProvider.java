@@ -88,7 +88,7 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
                 "<code>" + type.getReturnType().getTypename() + " <b>" + type.getName() + "</b>(" + paramsString + ")</code>";
     }
     private static String getFunctionDocumentation(@NotNull GLSLFunctionDeclaration decl) {
-        return getFunctionDocumentation(decl.getType(), ContainerUtil.map(decl.getParameters(), GLSLParameterDeclaration::getName));
+        return getFunctionDocumentation(decl.getType(), ContainerUtil.mapNotNull(decl.getParameters(), GLSLParameterDeclaration::getParameterName));
     }
 
     private static String getNamedTypedElementDocumentation(PsiNamedElement element, String typename) {

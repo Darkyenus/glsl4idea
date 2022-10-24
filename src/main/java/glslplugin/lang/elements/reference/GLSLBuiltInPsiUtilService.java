@@ -2,6 +2,7 @@ package glslplugin.lang.elements.reference;
 
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.GLSLFileType;
@@ -113,8 +114,12 @@ public final class GLSLBuiltInPsiUtilService {
         GLSLFunctionDeclaration lengthMethod = this.lengthMethod;
         if (lengthMethod == null) {
             final GLSLFile file = createImmutableDummyFile("int length();");
-            this.lengthMethod = lengthMethod = PsiTreeUtil.findChildOfType(file, GLSLFunctionDefinition.class);
-            assert lengthMethod != null;
+            final PsiElement functionDefinition = file.getFirstChild();
+            if (functionDefinition instanceof GLSLFunctionDeclaration decl) {
+                this.lengthMethod = lengthMethod = decl;
+            } else {
+                throw new AssertionError("length() dummy did not parse");
+            }
         }
         return lengthMethod;
     }

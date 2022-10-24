@@ -202,7 +202,7 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
             try {
                 final GLSLFunctionOrConstructorCallExpression element = getElement();
                 final GLSLTypeSpecifier typeSpec = element.getConstructorTypeSpecifier();
-                final String customType = element.getFunctionOrConstructedTypeName();
+                final String customTypeOrName = element.getFunctionOrConstructedTypeName();
 
                 if (typeSpec != null) {
                     // Built-in type constructor, it does not matter what the array specifiers are
@@ -241,9 +241,9 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
                     return new GLSLResolveResult[]{
                             new GLSLResolveResult(builtInType, true, type)
                     };
-                } else if (customType != null) {
+                } else if (customTypeOrName != null) {
                     // Lookup the struct or function
-                    onlyNamed = customType;
+                    onlyNamed = customTypeOrName;
                     PsiTreeUtil.treeWalkUp(this, element, null, ResolveState.initial());
 
                     final ArrayList<GLSLResolveResult> results = new ArrayList<>();
@@ -301,11 +301,11 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
         public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
             final String onlyNamed = this.onlyNamed;
             if (element instanceof GLSLFunctionDeclaration dec) {
-                if (onlyNamed == null || onlyNamed.equals(dec.getName())) {
+                if (onlyNamed == null || onlyNamed.equals(dec.getFunctionName())) {
                     functionDeclarations.add(dec);
                 }
             } else if (element instanceof GLSLStructDefinition def) {
-                if (onlyNamed == null || onlyNamed.equals(def.getName())) {
+                if (onlyNamed == null || onlyNamed.equals(def.getStructName())) {
                     structDefinitions.add(def);
                 }
             }

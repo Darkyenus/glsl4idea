@@ -22,6 +22,7 @@ package glslplugin.lang.elements;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,5 +75,20 @@ public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement
     @Override
     public final boolean isDescendantOf(PsiElement ancestor) {
         return PsiTreeUtil.isAncestor(ancestor, this, false);
+    }
+
+    @Override
+    public <T> @Nullable T findChildByClass(Class<T> aClass) {
+        return super.findChildByClass(aClass);
+    }
+
+    @Override
+    public <T extends PsiElement> @Nullable T findChildByType(IElementType type) {
+        return super.findChildByType(type);
+    }
+
+    @Override
+    public <T> T @NotNull [] findChildrenByClass(Class<T> aClass) {
+        return super.findChildrenByClass(aClass);
     }
 }

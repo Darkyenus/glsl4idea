@@ -46,9 +46,9 @@ public class GLSLParameterDeclaration extends GLSLElementImpl implements GLSLQua
     }
 
     @Nullable
-    public String getName() {
+    public String getParameterName() {
         final GLSLDeclarator declarator = getDeclarator();
-        if (declarator == null) return "";
+        if (declarator == null) return null;
         return declarator.getName();
     }
 
@@ -62,15 +62,9 @@ public class GLSLParameterDeclaration extends GLSLElementImpl implements GLSLQua
         StringBuilder b = new StringBuilder("Parameter Declaration: ");
         b.append(getTypeSpecifierNodeTypeName());
         if (hasDeclarator()) {
-            b.append(getName());
+            b.append(getParameterName());
         }
         return b.toString();
-    }
-
-    @NotNull
-    @Override
-    public String getDeclarationDescription() {
-        return "parameter";
     }
 
     @Override
@@ -81,10 +75,5 @@ public class GLSLParameterDeclaration extends GLSLElementImpl implements GLSLQua
         }
 
         return declarator.processDeclarations(processor, state, null, place);
-    }
-
-    @Override
-    public <T> @Nullable T findChildByClass(Class<T> aClass) {
-        return super.findChildByClass(aClass);
     }
 }

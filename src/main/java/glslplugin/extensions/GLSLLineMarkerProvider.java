@@ -73,7 +73,7 @@ public class GLSLLineMarkerProvider implements LineMarkerProvider {
 
         final PsiElement parent = expr.getParent();
 
-        if (!(parent instanceof GLSLFunctionDeclaration functionDeclaration) || !leaf.getText().equals(functionDeclaration.getName())) {
+        if (!(parent instanceof GLSLFunctionDeclaration functionDeclaration) || !leaf.getText().equals(functionDeclaration.getFunctionName())) {
             return null;
         }
 

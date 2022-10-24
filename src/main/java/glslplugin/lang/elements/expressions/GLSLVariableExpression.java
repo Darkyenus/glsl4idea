@@ -75,7 +75,7 @@ public class GLSLVariableExpression extends GLSLExpression implements GLSLRefere
 
     @Override
     public String toString() {
-        return "Identifier Expression: " + getName();
+        return "Identifier Expression: " + getVariableName();
     }
 
     @NotNull
@@ -109,7 +109,7 @@ public class GLSLVariableExpression extends GLSLExpression implements GLSLRefere
 
             final String onlyNamed = this.onlyNamed;
             if (onlyNamed != null) {
-                if (onlyNamed.equals(declarator.getName())) {
+                if (onlyNamed.equals(declarator.getVariableName())) {
                     visitedDeclarations.add(declarator);
                     return false; // We found what we were looking for
                 }
@@ -121,7 +121,7 @@ public class GLSLVariableExpression extends GLSLExpression implements GLSLRefere
 
         @Override
         public synchronized @Nullable GLSLDeclarator resolve() {
-            String onlyNamed = this.onlyNamed = getElement().getName();
+            String onlyNamed = this.onlyNamed = getElement().getVariableName();
             if (onlyNamed == null || onlyNamed.isEmpty()) {
                 return null;
             }

@@ -21,6 +21,8 @@ package glslplugin.lang.elements;
 
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -48,6 +50,20 @@ public interface GLSLElement extends NavigatablePsiElement {
     PsiElement findParentByClasses(Class<? extends PsiElement>... clazzes);
     @Nullable
     PsiElement findParentByClasses(Collection<Class<? extends PsiElement>> clazzes);
+
+
+    /** Just exposes the same method from {@link com.intellij.psi.impl.PsiElementBase}
+     * so that this whole interface can be implemented in the default methods. */
+    @Nullable
+    <T> T findChildByClass(Class<T> aClass);
+
+    /** Just exposes the same method from {@link com.intellij.psi.impl.PsiElementBase}
+     * so that this whole interface can be implemented in the default methods. */
+    <T extends PsiElement> @Nullable T findChildByType(IElementType type);
+
+    /** Just exposes the same method from {@link com.intellij.psi.impl.PsiElementBase}
+     * so that this whole interface can be implemented in the default methods. */
+    <T> T @NotNull [] findChildrenByClass(Class<T> aClass);
 
     /**
      * Checks whether this is a descendant of element.
