@@ -223,6 +223,7 @@ public class GLSLTokenTypes {
     public static final IElementType PREPROCESSOR_LINE = new GLSLElementType("PREPROCESSOR_LINE");
     public static final IElementType PREPROCESSOR_DEFINED = new GLSLElementType("PREPROCESSOR_DEFINED");
     public static final IElementType PREPROCESSOR_CONCAT = new GLSLElementType("PREPROCESSOR_CONCAT");
+    public static final IElementType PREPROCESSOR_INCLUDE = new GLSLElementType("PREPROCESSOR_INCLUDE");
     public static final IElementType PREPROCESSOR_STRING = new GLSLElementType("PREPROCESSOR_STRING");
     public static final IElementType PREPROCESSOR_RAW = new GLSLElementType("PREPROCESSOR_RAW");
 
@@ -249,6 +250,7 @@ public class GLSLTokenTypes {
             PREPROCESSOR_LINE,
             PREPROCESSOR_DEFINED,
             PREPROCESSOR_CONCAT,
+            PREPROCESSOR_INCLUDE,
             PREPROCESSOR_OTHER);
 
     // Type specifiers

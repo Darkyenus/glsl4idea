@@ -55,6 +55,7 @@ public class GLSLPsiElementFactory {
         if (type instanceof GLSLElementTypes.RedefinedTokenElementType /*== GLSLElementTypes.REDEFINED_TOKEN*/) return new GLSLRedefinedToken(node);
         if (type == GLSLTokenTypes.PREPROCESSOR_DEFINE) return new GLSLDefineDirective(node);
         if (type == GLSLTokenTypes.PREPROCESSOR_VERSION) return new GLSLVersionDirective(node);
+        if (type == GLSLTokenTypes.PREPROCESSOR_INCLUDE) return new GLSLPreprocessorInclude(node);
         if (GLSLTokenTypes.PREPROCESSOR_DIRECTIVES.contains(type)) return new GLSLPreprocessorDirective(node);
 
         // primary expressions
@@ -154,5 +155,14 @@ public class GLSLPsiElementFactory {
             return node;
         }
         throw new IncorrectOperationException("'"+name+"' is not a valid identifier");
+    }
+
+    public static ASTNode createPreprocessorString(Project project, String name) throws IncorrectOperationException {
+        PsiElement element = PsiFileFactory.getInstance(project).createFileFromText("dummy.glsl", GLSLFileType.INSTANCE, "# "+name);
+        final ASTNode node = element.getNode().getLastChildNode();
+        if (node != null && node.getElementType() == GLSLTokenTypes.PREPROCESSOR_STRING) {
+            return node;
+        }
+        throw new IncorrectOperationException("'"+name+"' is not a valid preprocessor string");
     }
 }

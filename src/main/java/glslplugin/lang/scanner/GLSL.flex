@@ -98,6 +98,7 @@ BLOCK_COMMENT       = "/*"([^"*"]|("*"+[^"*""/"]))*("*"+"/")?
   line                  { return PREPROCESSOR_LINE; }
   defined               { return PREPROCESSOR_DEFINED; }
   ##                    { return PREPROCESSOR_CONCAT; }
+  include               { return PREPROCESSOR_INCLUDE; }
 }
 
 <PREPROCESSOR_RAW_MODE> {

@@ -84,7 +84,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
         IElementType directiveType = b.getTokenType();
 
-        if(directiveType == PREPROCESSOR_DEFINE){
+        if (directiveType == PREPROCESSOR_DEFINE) {
             //Parse define
             b.advanceLexer(false, false);//Get past DEFINE
 
@@ -119,7 +119,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                     b.advanceLexer();
                 }
             }
-        }else if(directiveType == PREPROCESSOR_UNDEF){
+        } else if (directiveType == PREPROCESSOR_UNDEF) {
             //Parse undefine
             b.advanceLexer(false, false);//Get past UNDEF
 
@@ -143,7 +143,15 @@ public final class GLSLParsing extends GLSLParsingBase {
                 }
                 b.advanceLexer();
             }
-        }else{
+        } else if (directiveType == PREPROCESSOR_INCLUDE) {
+            // Since there is no standard, just eat whatever and hope that there is a string with path somewhere in there
+            while (!b.eof()) {
+                if (b.getTokenType() == PREPROCESSOR_END) {
+                    break;
+                }
+                b.advanceLexer();
+            }
+        } else {
             //Some other directive, no work here
             while (!b.eof()) {
                 if (b.getTokenType() == PREPROCESSOR_END) {
