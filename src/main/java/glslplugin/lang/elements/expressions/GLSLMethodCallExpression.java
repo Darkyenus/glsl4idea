@@ -20,10 +20,8 @@
 package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
-import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
@@ -46,29 +44,19 @@ import org.jetbrains.annotations.Nullable;
  */
 public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase {
 
-    private static final Logger LOG = Logger.getInstance(GLSLMethodCallExpression.class);
     public GLSLMethodCallExpression(@NotNull ASTNode astNode) {
         super(astNode);
     }
 
     @Nullable
-    public GLSLIdentifier getMethodIdentifier() {
-        GLSLIdentifier id = findChildByClass(GLSLIdentifier.class);
-        if (id != null) {
-            return id;
-        } else {
-            LOG.warn("Method call expression with no method identifier: "+this);
-            return null;
-        }
+    public PsiElement getMethodIdentifier() {
+        return findChildByType(GLSLTokenTypes.IDENTIFIER);
     }
 
-    @NotNull
+    @Nullable
     public String getMethodName() {
-        GLSLIdentifier methodIdentifier = getMethodIdentifier();
-        if(methodIdentifier != null){
-            return methodIdentifier.getName();
-        }
-        return "(unknown)";
+        PsiElement identifier = getMethodIdentifier();
+        return identifier == null ? null : identifier.getText();
     }
 
     @Nullable

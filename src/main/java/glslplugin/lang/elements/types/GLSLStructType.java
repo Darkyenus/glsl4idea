@@ -19,6 +19,7 @@
 
 package glslplugin.lang.elements.types;
 
+import com.google.common.base.Strings;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.types.constructors.GLSLBasicConstructorType;
@@ -54,7 +55,7 @@ public final class GLSLStructType extends GLSLType {
      */
     public void updateNameAndMembers() {
         final String definitionName = definition.getName();
-        typename = !definitionName.isEmpty() ? definitionName  : "(anonymous " + System.identityHashCode(this) + ")";
+        typename = !Strings.isNullOrEmpty(definitionName) ? definitionName  : "(anonymous " + System.identityHashCode(this) + ")";
 
         final GLSLDeclarator[] declarators = definition.getDeclarators();
 
@@ -88,8 +89,7 @@ public final class GLSLStructType extends GLSLType {
 
     @Override
     public boolean typeEquals(GLSLType otherType) {
-        if (otherType instanceof GLSLStructType) {
-            GLSLStructType other = (GLSLStructType) otherType;
+        if (otherType instanceof GLSLStructType other) {
 
             // typename should be enough as only a single struct can have any given name
             // TODO: Check definition reference instead? NOTE: It may be null

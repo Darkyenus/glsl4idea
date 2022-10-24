@@ -21,13 +21,11 @@ package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElementImpl;
-import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import glslplugin.lang.elements.types.GLSLArrayType;
@@ -44,11 +42,40 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Jan 29, 2009
  *         Time: 7:29:46 PM
  */
-public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableDeclaration, PsiNameIdentifierOwner {
+public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableDeclaration {
     public static final GLSLDeclarator[] NO_DECLARATORS = new GLSLDeclarator[0];
 
     public GLSLDeclarator(@NotNull ASTNode astNode) {
         super(astNode);
+    }
+
+
+    /** @return the element that holds the function name */
+    @Nullable
+    private PsiElement getVariableNameIdentifier() {
+        return findChildByType(GLSLTokenTypes.IDENTIFIER);
+    }
+
+    public @Nullable String getVariableName() {
+        final PsiElement identifier = getVariableNameIdentifier();
+        return identifier == null ? null : identifier.getText();
+    }
+
+    @Nullable
+    @Override
+    public String getName() {
+        return getVariableName();
+    }
+
+    @Override
+    public @Nullable PsiElement getNameIdentifier() {
+        return getVariableNameIdentifier();
+    }
+
+    @Override
+    public int getTextOffset() {
+        final PsiElement identifier = getVariableNameIdentifier();
+        return identifier != null ? identifier.getTextOffset() : super.getTextOffset();
     }
 
     @Nullable
@@ -64,34 +91,6 @@ public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableD
     @Nullable
     public GLSLInitializer getInitializer(){
         return findChildByClass(GLSLInitializer.class);
-    }
-
-    @Override
-    @Nullable
-    public GLSLIdentifier getNameIdentifier() {
-        PsiElement idElement = getFirstChild();
-        if (idElement instanceof GLSLIdentifier) {
-            return (GLSLIdentifier) idElement;
-        } else {
-            return null; //May trigger on malformed code
-        }
-    }
-
-    @NotNull
-    public String getName() {
-        GLSLIdentifier identifier = getNameIdentifier();
-        if (identifier == null) return "";
-        return identifier.getName();
-    }
-
-    @Override
-    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
-        GLSLIdentifier identifier = getNameIdentifier();
-        if (identifier != null) {
-            return identifier.setName(name);
-        } else {
-            throw new IncorrectOperationException("Declarator with no name!");
-        }
     }
 
     @Nullable
@@ -227,11 +226,11 @@ public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableD
             if (!first) {
                 b.append(", ");
             }
-            GLSLIdentifier identifier = declarator.getNameIdentifier();
-            if(identifier == null){
+            String identifier = declarator.getVariableName();
+            if (identifier == null){
                 b.append("(unknown)");
             } else {
-                b.append(identifier.getName());
+                b.append(identifier);
             }
             first = false;
         }

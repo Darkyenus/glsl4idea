@@ -117,6 +117,7 @@ public class GLSLVectorType extends GLSLType {
 
     @SuppressWarnings("SpellCheckingInspection")
     public static final String[] SWIZZLE_SETS = new String[]{"xyzw","rgba","stpq"};
+    public static final String COMBINED_SWIZZLE_SETS = "xyzwrgbastpq";
 
     @Override
     public boolean hasMember(String member) {

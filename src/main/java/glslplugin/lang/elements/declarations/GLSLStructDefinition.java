@@ -21,13 +21,11 @@ package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElementImpl;
-import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import glslplugin.lang.elements.types.GLSLStructType;
@@ -45,7 +43,7 @@ import java.util.List;
  *         Date: Jan 27, 2009
  *         Time: 10:31:13 AM
  */
-public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedElement, GLSLReferencableDeclaration, PsiNameIdentifierOwner {
+public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedElement, GLSLReferencableDeclaration {
     // Cache this one to enable equals comparison by ==
     //  this is required to be able to compare types of variables of anonymous types.
     // struct {int x;} x, y; <- how to compare types of x and y?
@@ -55,6 +53,17 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
 
     public GLSLStructDefinition(@NotNull ASTNode astNode) {
         super(astNode);
+    }
+
+    /** @return the element that holds the struct name */
+    @Nullable
+    private PsiElement getStructNameIdentifier() {
+        return findChildByType(GLSLTokenTypes.IDENTIFIER);
+    }
+
+    public @Nullable String getStructName() {
+        final PsiElement identifier = getStructNameIdentifier();
+        return identifier == null ? null : identifier.getText();
     }
 
     @NotNull
@@ -74,7 +83,7 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
     @Override
     public String toString() {
         final String name = getName();
-        if (name.isEmpty()) return "Anonymous struct";
+        if (name == null || name.isEmpty()) return "Anonymous struct";
         return "Struct Type: '" + name + "'";
     }
 
@@ -131,23 +140,19 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
 
     @Nullable
     @Override
-    public GLSLIdentifier getNameIdentifier() {
-        return findChildByClass(GLSLIdentifier.class);
-    }
-
-    @NotNull
-    @Override
     public String getName() {
-        GLSLIdentifier identifier = getNameIdentifier();
-        if (identifier == null) return "";
-        return identifier.getName();
+        return getStructName();
     }
 
     @Override
-    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
-        GLSLIdentifier identifier = getNameIdentifier();
-        if (identifier == null) return null;
-        return identifier.setName(name);
+    public int getTextOffset() {
+        final PsiElement identifier = getStructNameIdentifier();
+        return identifier != null ? identifier.getTextOffset() : super.getTextOffset();
+    }
+
+    @Override
+    public @Nullable PsiElement getNameIdentifier() {
+        return getStructNameIdentifier();
     }
 
     @Override

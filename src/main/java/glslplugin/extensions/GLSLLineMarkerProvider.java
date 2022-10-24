@@ -25,8 +25,9 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
 import org.jetbrains.annotations.NotNull;
@@ -66,12 +67,13 @@ public class GLSLLineMarkerProvider implements LineMarkerProvider {
     private static final Supplier<String> implementingAccessibilityName = () -> "implementing";
 
     public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement expr) {
-        if (!(expr instanceof GLSLIdentifier)) {
+        if (!(expr instanceof LeafPsiElement leaf) || leaf.getElementType() != GLSLTokenTypes.IDENTIFIER) {
             return null;
         }
 
-        final GLSLFunctionDeclaration functionDeclaration = ((GLSLIdentifier) expr).findParentByClass(GLSLFunctionDeclaration.class);
-        if (functionDeclaration == null || functionDeclaration.getNameIdentifier() != expr) {
+        final PsiElement parent = expr.getParent();
+
+        if (!(parent instanceof GLSLFunctionDeclaration functionDeclaration) || !leaf.getText().equals(functionDeclaration.getName())) {
             return null;
         }
 
@@ -81,15 +83,9 @@ public class GLSLLineMarkerProvider implements LineMarkerProvider {
             return null;
         }
 
-        // GLSLIdentifier wraps PsiElement(IDENTIFIER), which is what we should pass in
-        PsiElement targetElement = ((GLSLIdentifier) expr).getNameIdentifier();
-        if (targetElement == null) {
-            targetElement = expr;
-        }
-
         final String signature = functionDeclaration.getSignature();
-        return new LineMarkerInfo<>(targetElement,
-                targetElement.getTextRange(),
+        return new LineMarkerInfo<>(expr,
+                expr.getTextRange(),
                 isDefinition ? implementing : implemented,
                 (element) -> signature + (isDefinition ? " has forward declaration" : " has definition"),
                 new DefaultGutterIconNavigationHandler<>(navigationTargets, (isDefinition ? "Declarations of " : "Definitions of ") + signature),

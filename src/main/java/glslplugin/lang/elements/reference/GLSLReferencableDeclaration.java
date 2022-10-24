@@ -1,10 +1,15 @@
 package glslplugin.lang.elements.reference;
 
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiCheckedRenameElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElement;
+import glslplugin.lang.elements.GLSLPsiElementFactory;
 import glslplugin.lang.elements.declarations.GLSLQualifiedDeclaration;
+import glslplugin.lang.parser.GLSLFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,21 +18,24 @@ import org.jetbrains.annotations.Nullable;
  * This differs from {@link GLSLQualifiedDeclaration},
  * which is a declaration from a language perspective, but not from PSI perspective.
  */
-public interface GLSLReferencableDeclaration extends GLSLElement, PsiNameIdentifierOwner {
+public interface GLSLReferencableDeclaration extends GLSLElement, PsiNameIdentifierOwner, PsiCheckedRenameElement {
 
     @Nullable
     String getName();
 
-    PsiElement setName(@NotNull String name) throws IncorrectOperationException;
+    @Override
+    default PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+        replaceIdentifier(getNameIdentifier(), name);
+        return this;
+    }
 
     @Override
-    default int getTextOffset() {
-        final PsiElement identifier = getNameIdentifier();
-        if (identifier == null) {
-
-        }
-        return 0;//TODO
+    default void checkSetName(String name) throws IncorrectOperationException {
+        GLSLPsiElementFactory.createIdentifier(getProject(), name);
     }
+
+    @Override
+    int getTextOffset();
 
     /**
      * @see com.intellij.lang.findUsages.FindUsagesProvider#getType(PsiElement)
@@ -35,4 +43,16 @@ public interface GLSLReferencableDeclaration extends GLSLElement, PsiNameIdentif
     @NotNull
     String declaredNoun();
 
+    static void replaceIdentifier(PsiElement oldIdentifier, @NotNull String name) throws IncorrectOperationException {
+        if (oldIdentifier == null) throw new IncorrectOperationException("No name to rename");
+        ASTNode newNameNode = GLSLPsiElementFactory.createIdentifier(oldIdentifier.getProject(), name);
+        final ASTNode oldIdentifierNode = oldIdentifier.getNode();
+        oldIdentifierNode.getTreeParent().replaceChild(oldIdentifierNode, newNameNode);
+    }
+
+    static void reformat(PsiElement statement) {
+        if (statement.getContainingFile() instanceof GLSLFile) {
+            CodeStyleManager.getInstance(statement.getManager()).reformat(statement);
+        }
+    }
 }

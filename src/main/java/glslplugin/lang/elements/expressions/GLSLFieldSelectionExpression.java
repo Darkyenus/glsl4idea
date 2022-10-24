@@ -23,11 +23,13 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
+import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
+import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import glslplugin.lang.elements.reference.GLSLReferenceUtil;
 import glslplugin.lang.elements.types.GLSLScalarType;
 import glslplugin.lang.elements.types.GLSLStructType;
@@ -54,11 +56,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
 
     @Nullable
     private PsiElement getFieldIdentifier() {
-        final PsiElement lastChild = getLastChild();
-        if (lastChild.getNode().getElementType() == GLSLTokenTypes.IDENTIFIER) {
-            return lastChild;
-        }
-        return null;
+        return findChildByType(GLSLTokenTypes.IDENTIFIER);
     }
 
     /** Return the absolute range of the field identifier.
@@ -77,6 +75,10 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
     public String getFieldName() {
         final PsiElement identifier = getFieldIdentifier();
         return identifier == null ? null : identifier.getText();
+    }
+
+    public void setFieldName(@NotNull String newName) throws IncorrectOperationException {
+        GLSLReferencableDeclaration.replaceIdentifier(getFieldIdentifier(), newName);
     }
 
     @Override

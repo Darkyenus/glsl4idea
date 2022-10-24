@@ -70,7 +70,7 @@
         <codeInsight.parameterInfo language="GLSL" implementationClass="glslplugin.extensions.GLSLParameterInfoHandler" />
 
         <intentionAction>
-            <className>glslplugin.intentions.vectorcomponents.VectorComponentsIntention</className>
+            <className>glslplugin.intentions.VectorComponentsIntention</className>
             <category>GLSL</category>
         </intentionAction>
         <codeInsight.lineMarkerProvider language="GLSL"

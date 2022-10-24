@@ -43,7 +43,7 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
                 GLSLDeclarator declarator = (GLSLDeclarator) variant;
                 if (declarator.getParentDeclaration() instanceof GLSLFunctionDeclaration) {
                     String name = declarator.getName();
-                    if (name.equals(call.getFunctionName())) {
+                    if (name.equals(call.getFunctionOrConstructedTypeName())) {
                         declarations.add((GLSLFunctionDeclaration) declarator.getParentDeclaration());
                     }
 

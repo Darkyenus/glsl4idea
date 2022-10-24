@@ -28,7 +28,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
-import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLArraySpecifier;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
@@ -55,14 +55,14 @@ import static com.intellij.util.ArrayUtil.EMPTY_INT_ARRAY;
 /**
  * GLSLFunctionOrConstructorCallExpression is a function call expression or a constructor expression.
  * What it really is determines what methods (of this class) are sensible to call.
- *
+ * <p>
  * There are three possible valid children states:
  *  TYPE_SPECIFIER                      = Constructor mode of built-in types or their arrays
  *  FUNCTION_NAME ARRAY_DECLARATOR*     = Constructor mode of struct arrays
  *  FUNCTION_NAME                       = Constructor mode of structs or an actual function call, determined by references in scope
  * All modes always followed by LEFT_PAREN parameter list RIGHT_PAREN.
  * (That is, if the tree is syntactically valid.)
- *
+ * <p>
  * Examples:
  * int A = int(4);
  * int[] B = int[3](1,2,3);
@@ -104,8 +104,8 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression {
 
     //Shared
     @Nullable
-    public GLSLIdentifier getIdentifier() {
-        return findChildByClass(GLSLIdentifier.class);
+    public PsiElement getFunctionOrConstructedTypeNameIdentifier() {
+        return findChildByType(GLSLTokenTypes.IDENTIFIER);
     }
 
     @Nullable
@@ -160,13 +160,10 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression {
         }
     }
 
-    @NotNull
-    public String getFunctionName() {
-        GLSLIdentifier identifier = getIdentifier();
-        if(identifier != null){
-            return identifier.getName();
-        }
-        return "(unknown)";
+    @Nullable
+    public String getFunctionOrConstructedTypeName() {
+        PsiElement identifier = getFunctionOrConstructedTypeNameIdentifier();
+        return identifier == null ? null : identifier.getText();
     }
     //endregion
 
@@ -198,7 +195,7 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression {
             try {
                 final GLSLFunctionOrConstructorCallExpression element = getElement();
                 final GLSLTypeSpecifier typeSpec = element.getConstructorTypeSpecifier();
-                final GLSLIdentifier customType = element.getIdentifier();
+                final String customType = element.getFunctionOrConstructedTypeName();
 
                 if (typeSpec != null) {
                     // Built-in type constructor, it does not matter what the array specifiers are
@@ -225,9 +222,8 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression {
                         return GLSLResolveResult.EMPTY_ARRAY;
                     }
 
-                    if (type instanceof GLSLArrayType) {
+                    if (type instanceof GLSLArrayType arrayType) {
                         // Array may be implicitly sized: if so, clarify it using parameter list
-                        GLSLArrayType arrayType = (GLSLArrayType) type;
                         final int[] dimensions = arrayType.getDimensions();
                         final int[] newDimensions = Arrays.copyOf(dimensions, dimensions.length);
                         final GLSLParameterList parameterList = element.getParameterList();
@@ -240,7 +236,7 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression {
                     };
                 } else if (customType != null) {
                     // Lookup the struct or function
-                    onlyNamed = customType.getName();
+                    onlyNamed = customType;
                     PsiTreeUtil.treeWalkUp(this, element, null, ResolveState.initial());
 
                     final ArrayList<GLSLResolveResult> results = new ArrayList<>();
@@ -297,13 +293,11 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression {
         @Override
         public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
             final String onlyNamed = this.onlyNamed;
-            if (element instanceof GLSLFunctionDeclaration) {
-                GLSLFunctionDeclaration dec = (GLSLFunctionDeclaration) element;
+            if (element instanceof GLSLFunctionDeclaration dec) {
                 if (onlyNamed == null || onlyNamed.equals(dec.getName())) {
                     functionDeclarations.add(dec);
                 }
-            } else if (element instanceof GLSLStructDefinition) {
-                GLSLStructDefinition def = (GLSLStructDefinition) element;
+            } else if (element instanceof GLSLStructDefinition def) {
                 if (onlyNamed == null || onlyNamed.equals(def.getName())) {
                     structDefinitions.add(def);
                 }
@@ -352,7 +346,7 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression {
         if (constructorType != null) {
             range = GLSLReferenceUtil.rangeOfIn(constructorType, this);
         } else {
-            final GLSLIdentifier identifier = getIdentifier();
+            final PsiElement identifier = getFunctionOrConstructedTypeNameIdentifier();
             if (identifier != null) {
                 range = GLSLReferenceUtil.rangeOfIn(identifier, this);
             } else {
@@ -372,7 +366,7 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression {
         if (isConstructor()) {
             return "Constructor call: "+getType().getTypename();
         }else{
-            return "Function call: " + getFunctionName();
+            return "Function call: " + getFunctionOrConstructedTypeName();
         }
     }
 
@@ -381,7 +375,7 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression {
         if (isConstructor()) {
             return getType().getTypename();
         } else {
-            return getFunctionName();
+            return getFunctionOrConstructedTypeName();
         }
     }
 }

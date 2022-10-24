@@ -4,11 +4,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
 import glslplugin.GLSLHighlighter;
 import glslplugin.annotation.Annotator;
-import glslplugin.lang.elements.declarations.GLSLDeclarator;
-import glslplugin.lang.elements.declarations.GLSLQualifier;
-import glslplugin.lang.elements.expressions.GLSLIdentifierExpression;
 import glslplugin.lang.elements.preprocessor.GLSLFlowAttribute;
-import glslplugin.lang.elements.types.GLSLQualifiedType;
 import org.jetbrains.annotations.NotNull;
 
 /**

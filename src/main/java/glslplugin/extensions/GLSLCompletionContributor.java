@@ -19,7 +19,11 @@
 
 package glslplugin.extensions;
 
-import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionProvider;
+import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.completion.DefaultCompletionContributor;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.fileTypes.LanguageFileType;
@@ -28,7 +32,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import glslplugin.lang.GLSLFileType;
-import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.expressions.GLSLAssignmentExpression;
 import glslplugin.lang.elements.expressions.GLSLExpression;
@@ -52,7 +56,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  */
 public class GLSLCompletionContributor extends DefaultCompletionContributor {
     private static final ElementPattern<PsiElement> FIELD_SELECTION =
-            psiElement().withParent(psiElement(GLSLIdentifier.class).withParent(GLSLFieldSelectionExpression.class));
+            psiElement().withParent(psiElement(GLSLTokenTypes.IDENTIFIER).withParent(GLSLFieldSelectionExpression.class));
 
     public GLSLCompletionContributor() {
         // Add field selection completion

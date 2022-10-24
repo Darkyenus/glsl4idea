@@ -20,15 +20,12 @@
 package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.reference.GLSLReferenceUtil;
 import glslplugin.lang.elements.types.GLSLType;
@@ -39,15 +36,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 /**
- * GLSLIdentifierExpression is ...
- *
- * @author Yngve Devik Hammersland
- *         Date: Feb 4, 2009
- *         Time: 12:16:41 AM
+ * Expression that consists just of a variable reference.
  */
-public class GLSLIdentifierExpression extends GLSLExpression implements PsiNameIdentifierOwner {
-    public GLSLIdentifierExpression(@NotNull ASTNode astNode) {
+public class GLSLVariableExpression extends GLSLExpression {
+    public GLSLVariableExpression(@NotNull ASTNode astNode) {
         super(astNode);
+    }
+
+    private @Nullable PsiElement getVariableNameIdentifier() {
+        return findChildByType(GLSLTokenTypes.IDENTIFIER);
+    }
+
+    public @Nullable String getVariableName() {
+        final PsiElement identifier = getVariableNameIdentifier();
+        return identifier == null ? null : identifier.getText();
     }
 
     @Override
@@ -60,27 +62,10 @@ public class GLSLIdentifierExpression extends GLSLExpression implements PsiNameI
         return declarator.getQualifiedType().isLValue();
     }
 
-    @Override
-    @Nullable
-    public GLSLIdentifier getNameIdentifier() {
-        return findChildByClass(GLSLIdentifier.class);
-    }
-
+    //TODO Is this necessary?
     @Override
     public String getName() {
-        GLSLIdentifier identifier = getNameIdentifier();
-        if (identifier == null) return null;
-        return identifier.getName();
-    }
-
-    @Override
-    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
-        GLSLIdentifier identifier = getNameIdentifier();
-        if (identifier != null) {
-            return identifier.setName(name);
-        } else {
-            throw new IncorrectOperationException("Declarator with no name!");
-        }
+        return getVariableName();
     }
 
     @Override
@@ -99,12 +84,12 @@ public class GLSLIdentifierExpression extends GLSLExpression implements PsiNameI
     }
 
     public static final class VariableReference
-            extends PsiReferenceBase<GLSLIdentifierExpression>
+            extends PsiReferenceBase<GLSLVariableExpression>
             implements PsiScopeProcessor
     {
 
-        public VariableReference(@NotNull GLSLIdentifierExpression element) {
-            super(element, GLSLReferenceUtil.rangeOfIn(element.getNameIdentifier(), element), false);
+        public VariableReference(@NotNull GLSLVariableExpression element) {
+            super(element, GLSLReferenceUtil.rangeOfIn(element.getVariableNameIdentifier(), element), false);
         }
 
         private final ArrayList<GLSLDeclarator> visitedDeclarations = new ArrayList<>();
@@ -163,7 +148,7 @@ public class GLSLIdentifierExpression extends GLSLExpression implements PsiNameI
 
     @NotNull
     @Override
-    public GLSLIdentifierExpression.VariableReference getReference() {
+    public GLSLVariableExpression.VariableReference getReference() {
         VariableReference reference = referenceCache;
         if (reference == null) {
             reference = referenceCache = new VariableReference(this);

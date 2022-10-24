@@ -40,9 +40,6 @@ public class GLSLElementTypes {
     public static final IElementType POSTFIX_OPERATOR_EXPRESSION = new GLSLElementType("POSTFIX_OPERATOR_EXPRESSION");
     public static final IElementType PREFIX_OPERATOR_EXPRESSION = new GLSLElementType("PREFIX_OPERATOR_EXPRESSION");
 
-    public static final IElementType VARIABLE_NAME = new GLSLElementType("VARIABLE_NAME");
-    public static final IElementType METHOD_NAME = new GLSLElementType("METHOD_NAME");
-    public static final IElementType FUNCTION_NAME = new GLSLElementType("FUNCTION_NAME");
 
     public static final IElementType FUNCTION_DECLARATION = new GLSLElementType("FUNCTION_DECLARATION");
 

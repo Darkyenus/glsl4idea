@@ -26,6 +26,7 @@ import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLElementImpl;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
 import glslplugin.lang.elements.reference.GLSLReferenceUtil;
@@ -52,6 +53,12 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement {
 
     public GLSLTypename(@NotNull ASTNode astNode) {
         super(astNode);
+    }
+
+    @Nullable
+    public String getReferencedTypeName() {
+        final PsiElement identifier = findChildByType(GLSLTokenTypes.IDENTIFIER);
+        return identifier == null ? null : identifier.getText();
     }
 
     /** If this refers to a struct, return its definition. */
@@ -154,7 +161,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement {
 
     @Override
     public String toString() {
-        return "Struct Reference: '" + getTypename() + "'";
+        return "Struct Reference: '" + getReferencedTypeName() + "'";
     }
 
     @NotNull
@@ -175,10 +182,5 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement {
         } else {
             return GLSLDeclarator.NO_DECLARATORS;
         }
-    }
-
-    @NotNull
-    public String getTypename() {
-        return getText();
     }
 }

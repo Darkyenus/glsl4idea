@@ -1130,7 +1130,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                     parseFunctionCallImpl(true);
                     mark.done(METHOD_CALL_EXPRESSION);
                 } else {
-                    parseFieldIdentifier();
+                    parseIdentifier();
                     mark.done(FIELD_SELECTION_EXPRESSION);
                 }
             } else if (tryMatch(INC_OP) || tryMatch(DEC_OP)) {
@@ -1196,13 +1196,13 @@ public final class GLSLParsing extends GLSLParsingBase {
      * Additionally, in function/constructor mode, one or more ARRAY_DECLARATOR's may be emitted.
      * That is because it might be a struct array constructor.
      *
-     * @param markAsMethodIdentifier true -> method mode | false -> function/constructor mode
+     * @param method true -> method mode | false -> function/constructor mode
      */
-    private boolean parseFunctionIdentifier(boolean markAsMethodIdentifier) {
+    private boolean parseFunctionIdentifier(boolean method) {
         // function_identifier: IDENTIFIER                          //function/method call
         //                    | type_name [ array_declarator ]      //constructor
 
-        if(!markAsMethodIdentifier){
+        if(!method){
             //Methods can't be constructors
             PsiBuilder.Marker constructorMark = b.mark();
             if(parseTypeSpecifier(true)){//true -> only built-in type specifiers
@@ -1214,20 +1214,17 @@ public final class GLSLParsing extends GLSLParsingBase {
             }
         }
 
-        PsiBuilder.Marker mark = b.mark();
         if(tryMatch(IDENTIFIER)){
             //Function/method call
-            mark.done(markAsMethodIdentifier ? METHOD_NAME : FUNCTION_NAME);
 
             //Search for "[x]" AFTER marking the IDENTIFIER, because it is not part of the identifier
-            if(!markAsMethodIdentifier && b.getTokenType() == LEFT_BRACKET){
+            if(!method && b.getTokenType() == LEFT_BRACKET){
                 //If it is a constructor, it may be an array constructor.
                 parseArrayDeclarator();
             }
             return true;
         }else{
-            if(markAsMethodIdentifier) mark.error("Expected method identifier.");
-            else mark.error("Expected function identifier.");
+            b.mark().error(method ? "Expected method identifier." : "Expected function identifier.");
             return false;
         }
     }
@@ -1265,9 +1262,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
         final IElementType type = b.getTokenType();
         if (type == IDENTIFIER) {
-            final PsiBuilder.Marker mark2 = b.mark();
             b.advanceLexer();
-            mark2.done(VARIABLE_NAME);
             mark.done(VARIABLE_NAME_EXPRESSION);
             return true;
         } else if (tryMatch(CONSTANT_TOKENS)) {
@@ -1292,28 +1287,11 @@ public final class GLSLParsing extends GLSLParsingBase {
         }
     }
 
-    private String parseIdentifier() {
-        final PsiBuilder.Marker mark = b.mark();
-        boolean success = b.getTokenType() == IDENTIFIER;
-        if (success) {
-            String name = b.getTokenText();
+    private void parseIdentifier() {
+        if (b.getTokenType() == IDENTIFIER) {
             b.advanceLexer();
-            mark.done(VARIABLE_NAME);
-            return name;
         } else {
-            mark.error("Expected an identifier.");
-            return null;
-        }
-    }
-
-    private void parseFieldIdentifier() {
-        final PsiBuilder.Marker mark = b.mark();
-        boolean success = b.getTokenType() == IDENTIFIER;
-        if (success) {
-            b.advanceLexer();
-            mark.drop();
-        } else {
-            mark.error("Expected an identifier.");
+            b.mark().error("Expected an identifier.");
         }
     }
 
@@ -1382,7 +1360,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private void parseStructSpecifier() {
         // struct_specifier: STRUCT IDENTIFIER LEFT_BRACE struct_declaration_list RIGHT_BRACE
-        //                 | STRUCT            LEFT_BRACE struct_delcaration_list RIGHT_BRACE
+        //                 | STRUCT            LEFT_BRACE struct_declaration_list RIGHT_BRACE
         // note: these are the same except the first is named
 
         match(STRUCT, "Expected 'struct'.");

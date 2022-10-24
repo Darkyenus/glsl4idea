@@ -6,7 +6,7 @@ import glslplugin.GLSLHighlighter;
 import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLQualifier;
-import glslplugin.lang.elements.expressions.GLSLIdentifierExpression;
+import glslplugin.lang.elements.expressions.GLSLVariableExpression;
 import glslplugin.lang.elements.types.GLSLQualifiedType;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,10 +14,10 @@ import org.jetbrains.annotations.NotNull;
  * Highlight-only annotation for variable references which are uniforms or varyings.
  * Highlighting style is the same as normal variables by default, so for this to be visible, new style must be selected manually.
  */
-public class VariableTypeHighlightAnnotation extends Annotator<GLSLIdentifierExpression> {
+public class VariableTypeHighlightAnnotation extends Annotator<GLSLVariableExpression> {
 
     @Override
-    public void annotate(GLSLIdentifierExpression expr, AnnotationHolder holder) {
+    public void annotate(GLSLVariableExpression expr, AnnotationHolder holder) {
         final GLSLDeclarator declarator = expr.getReference().resolve();
         if (declarator == null) return;
         final GLSLQualifiedType qualifiedType = declarator.getQualifiedType();
@@ -32,7 +32,7 @@ public class VariableTypeHighlightAnnotation extends Annotator<GLSLIdentifierExp
 
     @NotNull
     @Override
-    public Class<GLSLIdentifierExpression> getElementType() {
-        return GLSLIdentifierExpression.class;
+    public Class<GLSLVariableExpression> getElementType() {
+        return GLSLVariableExpression.class;
     }
 }

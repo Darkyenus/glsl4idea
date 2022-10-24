@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.GLSLFileType;
 import glslplugin.lang.elements.declarations.*;
 import glslplugin.lang.elements.expressions.*;
@@ -57,7 +58,7 @@ public class GLSLPsiElementFactory {
         if (GLSLTokenTypes.PREPROCESSOR_DIRECTIVES.contains(type)) return new GLSLPreprocessorDirective(node);
 
         // primary expressions
-        if (type == GLSLElementTypes.VARIABLE_NAME_EXPRESSION) return new GLSLIdentifierExpression(node);
+        if (type == GLSLElementTypes.VARIABLE_NAME_EXPRESSION) return new GLSLVariableExpression(node);
         if (type == GLSLElementTypes.CONSTANT_EXPRESSION) return new GLSLLiteral(node);
         if (type == GLSLElementTypes.GROUPED_EXPRESSION) return new GLSLGroupedExpression(node);
 
@@ -87,10 +88,7 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.FIELD_SELECTION_EXPRESSION) return new GLSLFieldSelectionExpression(node);
         if (type == GLSLElementTypes.FUNCTION_CALL_EXPRESSION) return new GLSLFunctionOrConstructorCallExpression(node);
         if (type == GLSLElementTypes.METHOD_CALL_EXPRESSION) return new GLSLMethodCallExpression(node);
-        if (type == GLSLElementTypes.FUNCTION_NAME) return new GLSLIdentifier(node);
         if (type == GLSLElementTypes.PARAMETER_LIST) return new GLSLParameterList(node);
-        if (type == GLSLElementTypes.METHOD_NAME) return new GLSLIdentifier(node);
-        if (type == GLSLElementTypes.VARIABLE_NAME) return new GLSLIdentifier(node);
 
         if (type == GLSLElementTypes.CONDITIONAL_EXPRESSION) return new GLSLConditionalExpression(node);
 
@@ -147,5 +145,14 @@ public class GLSLPsiElementFactory {
                 createFileFromText("dummy.glsl", GLSLFileType.INSTANCE, name);
         while (element.getFirstChild() != null) element = element.getFirstChild();
         return element;
+    }
+
+    public static ASTNode createIdentifier(Project project, String name) throws IncorrectOperationException {
+        PsiElement element = PsiFileFactory.getInstance(project).createFileFromText("dummy.glsl", GLSLFileType.INSTANCE, name);
+        final ASTNode node = element.getNode();//TODO Check if this works
+        if (node != null && node.getElementType() == GLSLTokenTypes.IDENTIFIER) {
+            return node;
+        }
+        throw new IncorrectOperationException("'"+name+"' is not a valid identifier");
     }
 }

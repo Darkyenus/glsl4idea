@@ -20,24 +20,24 @@
 package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiCheckedRenameElement;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElementImpl;
-import glslplugin.lang.elements.GLSLIdentifier;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
-import glslplugin.lang.elements.types.*;
+import glslplugin.lang.elements.types.GLSLBasicFunctionType;
+import glslplugin.lang.elements.types.GLSLFunctionType;
+import glslplugin.lang.elements.types.GLSLType;
+import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * GLSLFunctionDeclarationImpl is the psi implementation of a function declaration.
  */
-public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSLQualifiedDeclaration, GLSLFunctionDeclaration, GLSLReferencableDeclaration, PsiNameIdentifierOwner, PsiCheckedRenameElement {
+public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSLQualifiedDeclaration, GLSLFunctionDeclaration, GLSLReferencableDeclaration {
     private GLSLFunctionType typeCache;
     private boolean typeCacheDirty = false;
 
@@ -60,17 +60,16 @@ public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSL
         return "function";
     }
 
-    @NotNull
-    public String getName() {
-        final GLSLIdentifier identifier = getNameIdentifier();
-        if (identifier == null) return "";
-        return identifier.getName();
-    }
 
     /** @return the element that holds the function name */
     @Nullable
-    public GLSLIdentifier getNameIdentifier() {
-        return findChildByClass(GLSLIdentifier.class);
+    private PsiElement getFunctionNameIdentifier() {
+        return findChildByType(GLSLTokenTypes.IDENTIFIER);
+    }
+
+    public @Nullable String getFunctionName() {
+        final PsiElement identifier = getFunctionNameIdentifier();
+        return identifier == null ? null : identifier.getText();
     }
 
     @NotNull
@@ -121,6 +120,7 @@ public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSL
     }
 
     private GLSLFunctionType createType() {
+        final String functionName = getFunctionName();
         final GLSLParameterDeclaration[] parameterDeclarations = getParameters();
         final GLSLType[] parameterTypes = new GLSLType[parameterDeclarations.length];
         for (int i = 0; i < parameterDeclarations.length; i++) {
@@ -131,7 +131,7 @@ public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSL
                 parameterTypes[i] = declarator.getType();
             }
         }
-        return new GLSLBasicFunctionType(this, getName(), getReturnType(), parameterTypes);
+        return new GLSLBasicFunctionType(this, functionName == null ? "<no name>" : functionName, getReturnType(), parameterTypes);
     }
 
     @NotNull
@@ -140,18 +140,21 @@ public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSL
         return "function";
     }
 
+    @Nullable
     @Override
-    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
-        final GLSLIdentifier nameIdentifier = getNameIdentifier();
-        if(nameIdentifier == null)throw new IncorrectOperationException("GLSLDeclarator is null");
-        return nameIdentifier.setName(name);
+    public String getName() {
+        return getFunctionName();
     }
 
     @Override
-    public void checkSetName(String name) throws IncorrectOperationException {
-        final GLSLIdentifier nameIdentifier = getNameIdentifier();
-        if(nameIdentifier == null)throw new IncorrectOperationException("GLSLDeclarator is null");
-        nameIdentifier.checkSetName(name);
+    public int getTextOffset() {
+        final PsiElement identifier = getFunctionNameIdentifier();
+        return identifier != null ? identifier.getTextOffset() : super.getTextOffset();
+    }
+
+    @Override
+    public @Nullable PsiElement getNameIdentifier() {
+        return getFunctionNameIdentifier();
     }
 
     @Override
