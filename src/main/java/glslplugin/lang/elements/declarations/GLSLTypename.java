@@ -21,15 +21,15 @@ package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.GLSLTypedElement;
+import glslplugin.lang.elements.reference.GLSLAbstractReference;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
-import glslplugin.lang.elements.reference.GLSLReferenceUtil;
+import glslplugin.lang.elements.reference.GLSLReferencingElement;
 import glslplugin.lang.elements.types.GLSLMatrixType;
 import glslplugin.lang.elements.types.GLSLOpaqueType;
 import glslplugin.lang.elements.types.GLSLScalarType;
@@ -49,15 +49,20 @@ import java.util.ArrayList;
  *         Date: Feb 5, 2009
  *         Time: 9:54:19 PM
  */
-public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement {
+public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, GLSLReferencingElement {
 
     public GLSLTypename(@NotNull ASTNode astNode) {
         super(astNode);
     }
 
+    @Override
+    public @Nullable PsiElement getReferencingIdentifierForRenaming() {
+        return findChildByType(GLSLTokenTypes.IDENTIFIER);
+    }
+
     @Nullable
     public String getReferencedTypeName() {
-        final PsiElement identifier = findChildByType(GLSLTokenTypes.IDENTIFIER);
+        final PsiElement identifier = getReferencingIdentifierForRenaming();
         return identifier == null ? null : identifier.getText();
     }
 
@@ -76,10 +81,10 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement {
         return getReference().resolveType();
     }
 
-    public static final class TypeReference extends PsiReferenceBase<GLSLTypename> implements PsiScopeProcessor {
+    public static final class TypeReference extends GLSLAbstractReference<GLSLTypename> implements PsiScopeProcessor {
 
         public TypeReference(@NotNull GLSLTypename element) {
-            super(element, GLSLReferenceUtil.rangeOfIn(null, element), false);
+            super(element);
         }
 
         private String onlyNamed = null;
@@ -139,11 +144,6 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement {
                 return bipus.getOpaqueDefinition((GLSLOpaqueType) type);
             }
             return null;
-        }
-
-        @Override
-        public String toString() {
-            return GLSLReferenceUtil.toString(this);
         }
     }
 

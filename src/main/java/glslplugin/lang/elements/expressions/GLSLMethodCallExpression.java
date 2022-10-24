@@ -21,11 +21,11 @@ package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReferenceBase;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
+import glslplugin.lang.elements.reference.GLSLAbstractReference;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
-import glslplugin.lang.elements.reference.GLSLReferenceUtil;
+import glslplugin.lang.elements.reference.GLSLReferencingElement;
 import glslplugin.lang.elements.types.GLSLArrayType;
 import glslplugin.lang.elements.types.GLSLMatrixType;
 import glslplugin.lang.elements.types.GLSLType;
@@ -42,15 +42,22 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Feb 3, 2009
  *         Time: 12:41:53 PM
  */
-public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase {
+public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase implements GLSLReferencingElement {
 
     public GLSLMethodCallExpression(@NotNull ASTNode astNode) {
         super(astNode);
     }
 
     @Nullable
-    public PsiElement getMethodIdentifier() {
+    private PsiElement getMethodIdentifier() {
         return findChildByType(GLSLTokenTypes.IDENTIFIER);
+    }
+
+    @Override
+    public @Nullable PsiElement getReferencingIdentifierForRenaming() {
+        // length() can't be renamed, but the renaming will be stopped because it is in a read-only file.
+        // This is here for any possible future extensions of user-defined methods.
+        return getMethodIdentifier();
     }
 
     @Nullable
@@ -69,10 +76,15 @@ public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase {
         }
     }
 
-    public static final class MethodCallReference extends PsiReferenceBase<GLSLMethodCallExpression> {
+    public static final class MethodCallReference extends GLSLAbstractReference<GLSLMethodCallExpression> {
 
         public MethodCallReference(@NotNull GLSLMethodCallExpression element) {
-            super(element, GLSLReferenceUtil.rangeOfIn(element.getMethodIdentifier(), element), true);
+            super(element);
+        }
+
+        @Override
+        public boolean isSoft() {
+            return true;
         }
 
         @Override

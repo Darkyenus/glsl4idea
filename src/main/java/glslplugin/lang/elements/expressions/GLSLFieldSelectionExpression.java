@@ -22,15 +22,16 @@ package glslplugin.lang.elements.expressions;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReferenceBase;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
+import glslplugin.lang.elements.reference.GLSLAbstractReference;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import glslplugin.lang.elements.reference.GLSLReferenceUtil;
+import glslplugin.lang.elements.reference.GLSLReferencingElement;
 import glslplugin.lang.elements.types.GLSLScalarType;
 import glslplugin.lang.elements.types.GLSLStructType;
 import glslplugin.lang.elements.types.GLSLType;
@@ -49,7 +50,7 @@ import java.util.Collections;
  *         Date: Jan 28, 2009
  *         Time: 4:40:28 PM
  */
-public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
+public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase implements GLSLReferencingElement {
     public GLSLFieldSelectionExpression(@NotNull ASTNode astNode) {
         super(astNode);
     }
@@ -57,6 +58,11 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
     @Nullable
     private PsiElement getFieldIdentifier() {
         return findChildByType(GLSLTokenTypes.IDENTIFIER);
+    }
+
+    @Override
+    public @Nullable PsiElement getReferencingIdentifierForRenaming() {
+        return getFieldIdentifier();
     }
 
     /** Return the absolute range of the field identifier.
@@ -118,14 +124,14 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
         return getRawReference() instanceof FieldReference[];
     }
 
-    public static final class FieldReference extends PsiReferenceBase<GLSLFieldSelectionExpression> {
+    public static final class FieldReference extends GLSLAbstractReference<GLSLFieldSelectionExpression> {
 
         public static final FieldReference[] EMPTY_ARRAY = new FieldReference[0];
         private final String fieldName;
         private final GLSLStructDefinition fieldStruct;
 
         public FieldReference(@NotNull GLSLFieldSelectionExpression element, TextRange textRange, @NotNull String fieldName, @NotNull GLSLStructDefinition fieldStruct) {
-            super(element, textRange, false);
+            super(element, textRange);
             this.fieldName = fieldName;
             this.fieldStruct = fieldStruct;
         }
@@ -142,11 +148,6 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase {
                 Collections.addAll(declarators, declaration.getDeclarators());
             }
             return declarators.toArray(GLSLDeclarator.NO_DECLARATORS);
-        }
-
-        @Override
-        public String toString() {
-            return GLSLReferenceUtil.toString(this);
         }
     }
 

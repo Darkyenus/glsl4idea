@@ -9,7 +9,7 @@ import glslplugin.lang.elements.preprocessor.GLSLRedefinedToken;
  *
  * Created by abigail on 08/07/15.
  */
-public class GLSLMacroReference extends GLSLReferenceBase<GLSLRedefinedToken, GLSLDefineDirective> {
+public class GLSLMacroReference extends GLSLReferenceBaseOLD<GLSLRedefinedToken, GLSLDefineDirective> {
     public GLSLMacroReference(GLSLRedefinedToken source) {
         super(source);
     }

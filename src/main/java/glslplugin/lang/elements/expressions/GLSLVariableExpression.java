@@ -21,13 +21,13 @@ package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
-import glslplugin.lang.elements.reference.GLSLReferenceUtil;
+import glslplugin.lang.elements.reference.GLSLAbstractReference;
+import glslplugin.lang.elements.reference.GLSLReferencingElement;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
@@ -38,13 +38,18 @@ import java.util.ArrayList;
 /**
  * Expression that consists just of a variable reference.
  */
-public class GLSLVariableExpression extends GLSLExpression {
+public class GLSLVariableExpression extends GLSLExpression implements GLSLReferencingElement {
     public GLSLVariableExpression(@NotNull ASTNode astNode) {
         super(astNode);
     }
 
     private @Nullable PsiElement getVariableNameIdentifier() {
         return findChildByType(GLSLTokenTypes.IDENTIFIER);
+    }
+
+    @Override
+    public @Nullable PsiElement getReferencingIdentifierForRenaming() {
+        return getVariableNameIdentifier();
     }
 
     public @Nullable String getVariableName() {
@@ -84,12 +89,12 @@ public class GLSLVariableExpression extends GLSLExpression {
     }
 
     public static final class VariableReference
-            extends PsiReferenceBase<GLSLVariableExpression>
+            extends GLSLAbstractReference<GLSLVariableExpression>
             implements PsiScopeProcessor
     {
 
         public VariableReference(@NotNull GLSLVariableExpression element) {
-            super(element, GLSLReferenceUtil.rangeOfIn(element.getVariableNameIdentifier(), element), false);
+            super(element);
         }
 
         private final ArrayList<GLSLDeclarator> visitedDeclarations = new ArrayList<>();
@@ -136,11 +141,6 @@ public class GLSLVariableExpression extends GLSLExpression {
             final PsiElement[] result = visitedDeclarations.toArray(PsiElement.EMPTY_ARRAY);
             visitedDeclarations.clear();
             return result;
-        }
-
-        @Override
-        public String toString() {
-            return GLSLReferenceUtil.toString(this);
         }
     }
 

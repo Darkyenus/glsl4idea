@@ -23,7 +23,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
-import com.intellij.psi.PsiPolyVariantReferenceBase;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
@@ -33,8 +32,10 @@ import glslplugin.lang.elements.declarations.GLSLArraySpecifier;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.declarations.GLSLTypeSpecifier;
+import glslplugin.lang.elements.reference.GLSLAbstractReference;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
 import glslplugin.lang.elements.reference.GLSLReferenceUtil;
+import glslplugin.lang.elements.reference.GLSLReferencingElement;
 import glslplugin.lang.elements.types.GLSLArrayType;
 import glslplugin.lang.elements.types.GLSLFunctionType;
 import glslplugin.lang.elements.types.GLSLMatrixType;
@@ -74,7 +75,7 @@ import static com.intellij.util.ArrayUtil.EMPTY_INT_ARRAY;
  *         Date: Jan 29, 2009
  *         Time: 10:34:04 AM
  */
-public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression {
+public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression implements GLSLReferencingElement {
     public GLSLFunctionOrConstructorCallExpression(@NotNull ASTNode astNode) {
         super(astNode);
     }
@@ -106,6 +107,12 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression {
     @Nullable
     public PsiElement getFunctionOrConstructedTypeNameIdentifier() {
         return findChildByType(GLSLTokenTypes.IDENTIFIER);
+    }
+
+    @Override
+    public @Nullable PsiElement getReferencingIdentifierForRenaming() {
+        // Could also be something from getConstructorTypeSpecifier, but that would be built-in and would not be able to be renamed
+        return getFunctionOrConstructedTypeNameIdentifier();
     }
 
     @Nullable
@@ -168,11 +175,11 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression {
     //endregion
 
     public static class FunctionCallOrConstructorReference
-            extends PsiPolyVariantReferenceBase<GLSLFunctionOrConstructorCallExpression>
+            extends GLSLAbstractReference.Poly<GLSLFunctionOrConstructorCallExpression>
             implements PsiScopeProcessor {
 
         public FunctionCallOrConstructorReference(@NotNull GLSLFunctionOrConstructorCallExpression source, TextRange range) {
-            super(source, range,false);
+            super(source, range);
         }
 
         private String onlyNamed = null;

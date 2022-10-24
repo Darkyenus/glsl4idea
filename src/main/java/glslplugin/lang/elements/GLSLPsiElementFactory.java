@@ -149,7 +149,7 @@ public class GLSLPsiElementFactory {
 
     public static ASTNode createIdentifier(Project project, String name) throws IncorrectOperationException {
         PsiElement element = PsiFileFactory.getInstance(project).createFileFromText("dummy.glsl", GLSLFileType.INSTANCE, name);
-        final ASTNode node = element.getNode();//TODO Check if this works
+        final ASTNode node = element.getNode().getFirstChildNode();
         if (node != null && node.getElementType() == GLSLTokenTypes.IDENTIFIER) {
             return node;
         }

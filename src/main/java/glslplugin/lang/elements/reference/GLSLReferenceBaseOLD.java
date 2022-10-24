@@ -40,10 +40,10 @@ import java.util.List;
  *         Date: Feb 4, 2009
  *         Time: 1:29:50 AM
  */
-public abstract class GLSLReferenceBase<SOURCE_TYPE extends GLSLElement, TARGET_TYPE extends GLSLElement> implements PsiReference {
+public abstract class GLSLReferenceBaseOLD<SOURCE_TYPE extends GLSLElement, TARGET_TYPE extends GLSLElement> implements PsiReference {
     protected SOURCE_TYPE source;
 
-    public GLSLReferenceBase(SOURCE_TYPE source) {
+    public GLSLReferenceBaseOLD(SOURCE_TYPE source) {
         this.source = source;
     }
 

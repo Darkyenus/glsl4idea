@@ -1,5 +1,6 @@
 package glslplugin.util;
 
+//TODO Combine with whatever is defined in GLSLVectorType
 public enum VectorComponents {
     XYZW("xyzw"),
     RGBA("rgba"),
