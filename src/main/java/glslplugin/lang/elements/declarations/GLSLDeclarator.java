@@ -218,8 +218,6 @@ public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableD
         return "global variable";
     }
 
-
-
     public @NotNull String getHierarchicalVariableName() {
         String variableName = getVariableName();
         if (variableName == null) {

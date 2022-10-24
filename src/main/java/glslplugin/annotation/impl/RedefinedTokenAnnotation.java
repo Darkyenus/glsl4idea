@@ -8,7 +8,6 @@ import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.preprocessor.GLSLDefineDirective;
 import glslplugin.lang.elements.preprocessor.GLSLRedefinedToken;
-import glslplugin.lang.elements.reference.GLSLMacroReference;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,7 +23,7 @@ public class RedefinedTokenAnnotation extends Annotator<GLSLRedefinedToken> {
         if(identifierType instanceof GLSLElementTypes.RedefinedTokenElementType){
             definition = ((GLSLElementTypes.RedefinedTokenElementType) identifierType).text;
         }else{
-            GLSLMacroReference reference = identifier.getReference();
+            final GLSLRedefinedToken.RedefinedTokenReference reference = identifier.getReference();
             GLSLDefineDirective referent = (reference != null) ? reference.resolve() : null;
             definition = (referent != null) ? referent.getBoundText() : null;
         }

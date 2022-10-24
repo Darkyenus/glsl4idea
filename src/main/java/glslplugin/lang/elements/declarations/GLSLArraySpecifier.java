@@ -51,10 +51,10 @@ public class GLSLArraySpecifier extends GLSLElementImpl {
         GLSLExpression sizeExpression = getSizeExpression();
         if(sizeExpression != null){
             //Check if it is a constant value
-            if(sizeExpression.isConstantValue()){
+            if (sizeExpression.isConstantValue()) {
                 Object constantValue = sizeExpression.getConstantValue();
-                if(constantValue instanceof Long){
-                    return ((Long)constantValue).intValue();
+                if(constantValue instanceof Number){
+                    return ((Number) constantValue).intValue();
                 }
             }
             //It is not a constant value, assume it is dynamic

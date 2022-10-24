@@ -149,6 +149,15 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
             }
             return declarators.toArray(GLSLDeclarator.NO_DECLARATORS);
         }
+
+        @Override
+        public @NotNull String getCanonicalText() {
+            final GLSLDeclarator resolve = resolve();
+            if (resolve != null) {
+                return resolve.getHierarchicalVariableName();
+            }
+            return super.getCanonicalText();
+        }
     }
 
     @Override
