@@ -92,7 +92,7 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
         GLSLParameterDeclaration[] parameters = declaration.getParameters();
 
         StringBuilder buffer = new StringBuilder();
-        buffer.append(declaration.getType().getReturnType().getTypename())
+        buffer.append(declaration.getFunctionType().getReturnType().getTypename())
                 .append(' ').append(declaration.getFunctionName()).append('(');
 
         final int currentParameter = context.getCurrentParameterIndex();

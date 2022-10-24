@@ -144,15 +144,9 @@ public class GLSLVariableExpression extends GLSLExpression implements GLSLRefere
         }
     }
 
-    private VariableReference referenceCache = null;
-
     @NotNull
     @Override
     public GLSLVariableExpression.VariableReference getReference() {
-        VariableReference reference = referenceCache;
-        if (reference == null) {
-            reference = referenceCache = new VariableReference(this);
-        }
-        return reference;
+        return new VariableReference(this);
     }
 }

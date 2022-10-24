@@ -25,7 +25,6 @@ import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.reference.GLSLAbstractReference;
@@ -41,15 +40,8 @@ import java.util.ArrayList;
  */
 public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSLFunctionDeclaration, GLSLReferencingElement {
 
-    private final CachedValue<GLSLBasicFunctionType> functionTypeCache = GLSLFunctionDeclaration.newCachedFunctionType(this);
-
     public GLSLFunctionDeclarationImpl(@NotNull ASTNode astNode) {
         super(astNode);
-    }
-
-    @NotNull
-    public GLSLBasicFunctionType getType() {
-        return functionTypeCache.getValue();
     }
 
     @Nullable
@@ -113,11 +105,11 @@ public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSL
                     return ResolveResult.EMPTY_ARRAY;
                 }
 
-                final GLSLBasicFunctionType funcType = element.getType();
+                final GLSLBasicFunctionType funcType = element.getFunctionType();
                 final ResolveResult[] results = new ResolveResult[functionDefinitions.size()];
                 for (int i = 0; i < results.length; i++) {
                     final GLSLFunctionDefinition def = functionDefinitions.get(i);
-                    final GLSLBasicFunctionType defType = def.getType();
+                    final GLSLBasicFunctionType defType = def.getFunctionType();
                     results[i] = new PsiElementResolveResult(def, funcType.definitionsMatch(defType));
                 }
                 return results;

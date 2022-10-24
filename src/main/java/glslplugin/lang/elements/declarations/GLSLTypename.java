@@ -147,16 +147,10 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
         }
     }
 
-    private TypeReference typeReference;
-
     @NotNull
     @Override
     public TypeReference getReference() {
-        final TypeReference ref = typeReference;
-        if (ref == null) {
-            return typeReference = new TypeReference(this);
-        }
-        return ref;
+        return new TypeReference(this);
     }
 
     @Override

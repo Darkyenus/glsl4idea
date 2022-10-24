@@ -42,8 +42,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class GLSLFunctionDefinitionImpl extends GLSLElementImpl implements GLSLFunctionDefinition {
 
-    private final CachedValue<GLSLBasicFunctionType> functionTypeCache = GLSLFunctionDeclaration.newCachedFunctionType(this);
-
     public GLSLFunctionDefinitionImpl(ASTNode node) {
         super(node);
     }
@@ -58,11 +56,6 @@ public class GLSLFunctionDefinitionImpl extends GLSLElementImpl implements GLSLF
     public int getTextOffset() {
         final PsiElement identifier = getNameIdentifier();
         return identifier != null ? identifier.getTextOffset() : super.getTextOffset();
-    }
-
-    @NotNull
-    public GLSLBasicFunctionType getType() {
-        return functionTypeCache.getValue();
     }
 
     @Override

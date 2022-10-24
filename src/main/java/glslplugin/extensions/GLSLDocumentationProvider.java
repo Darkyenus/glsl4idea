@@ -88,7 +88,7 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
                 "<code>" + type.getReturnType().getTypename() + " <b>" + type.getName() + "</b>(" + paramsString + ")</code>";
     }
     private static String getFunctionDocumentation(@NotNull GLSLFunctionDeclaration decl) {
-        return getFunctionDocumentation(decl.getType(), ContainerUtil.mapNotNull(decl.getParameters(), GLSLParameterDeclaration::getParameterName));
+        return getFunctionDocumentation(decl.getFunctionType(), ContainerUtil.mapNotNull(decl.getParameters(), GLSLParameterDeclaration::getParameterName));
     }
 
     private static String getNamedTypedElementDocumentation(PsiNamedElement element, String typename) {
@@ -150,7 +150,7 @@ public class GLSLDocumentationProvider extends AbstractDocumentationProvider {
             final GLSLFunctionOrConstructorCallExpression.FunctionCallOrConstructorReference reference = functionCallExpression.getReference();
             final PsiElement target = reference != null ? reference.resolve() : null;
             if (target instanceof GLSLFunctionDeclaration) {
-                return getFunctionDocumentation(((GLSLFunctionDeclaration) target).getType(), null);
+                return getFunctionDocumentation(((GLSLFunctionDeclaration) target).getFunctionType(), null);
             } else if (target instanceof GLSLStructDefinition) {
                 final GLSLStructType structType = ((GLSLStructDefinition) target).getType();
                 return getFunctionDocumentation(structType.getConstructor(), Arrays.asList(structType.getMemberNames()));

@@ -308,7 +308,7 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
             final String onlyNamed = this.onlyNamed;
             if (element instanceof GLSLFunctionDeclaration dec) {
                 if (onlyNamed == null || onlyNamed.equals(dec.getFunctionName())) {
-                    final GLSLBasicFunctionType funcType = dec.getType();
+                    final GLSLBasicFunctionType funcType = dec.getFunctionType();
                     final GLSLFunctionDeclaration displaced = functionDeclarations.put(funcType, dec);
                     if (displaced instanceof GLSLFunctionDefinition && !(dec instanceof GLSLFunctionDefinition)) {
                         // We have removed definition for just declaration, put it back

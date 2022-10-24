@@ -153,7 +153,7 @@ public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase implem
         if (ref == null) return GLSLTypes.UNKNOWN_TYPE;
         final GLSLFunctionDeclaration resolve = ref.resolve();
         if (resolve == null) return GLSLTypes.UNKNOWN_TYPE;
-        return resolve.getType().getReturnType();
+        return resolve.getFunctionType().getReturnType();
     }
 
     @Override
