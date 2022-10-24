@@ -20,6 +20,10 @@
 package glslplugin.lang.elements.statements;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.expressions.GLSLCondition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +53,18 @@ public class GLSLWhileStatement extends GLSLStatement implements ConditionStatem
     @Override
     public String toString() {
         return "While Loop";
+    }
+
+    @Override
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+        boolean fromInside = PsiTreeUtil.isAncestor(this, place, false);
+        if (!fromInside) return true;
+        // Variable declarations are only visible from inside
+
+        final GLSLCondition condition = getCondition();
+        if (condition == null || PsiTreeUtil.isAncestor(lastParent, condition, false)) return true;
+
+        return condition.processDeclarations(processor, state, null, place);
     }
 
     // TODO some while statements can be terminating if their condition can be constant-analyzed as true

@@ -59,4 +59,6 @@ public class GLSLDoStatement extends GLSLStatement implements ConditionStatement
         if (scope == TerminatorScope.LOOP || scope == TerminatorScope.LOOP_OR_SWITCH) scope = TerminatorScope.NONE;
         return scope;
     }
+
+    // do-while cannot have variables in condition
 }

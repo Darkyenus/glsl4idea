@@ -20,6 +20,10 @@
 package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTypedElement;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
@@ -82,5 +86,12 @@ public class GLSLCondition extends GLSLElementImpl implements GLSLTypedElement {
         }else{
             return conditionExpression.getType();
         }
+    }
+
+    @Override
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+        final GLSLVariableDeclaration dec = getVariableDeclaration();
+        if (dec == null || PsiTreeUtil.isAncestor(lastParent, dec, false)) return true;
+        return dec.processDeclarations(processor, state, null, place);
     }
 }

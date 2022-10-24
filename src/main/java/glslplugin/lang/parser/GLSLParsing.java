@@ -689,7 +689,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         //       to declare a single variable.
 
         PsiBuilder.Marker conditionMark = b.mark();
-        if(lookaheadConditionDeclaration()){
+        if (lookaheadConditionDeclaration()) {
             PsiBuilder.Marker mark = b.mark();
 
             parseQualifiedTypeSpecifier();
@@ -895,23 +895,19 @@ public final class GLSLParsing extends GLSLParsingBase {
         PsiBuilder.Marker mark = b.mark();
         if (b.getTokenType() == IDENTIFIER) {
             do {
-                parseDeclarator();
+                // declarator: IDENTIFIER [ '[' [ constant_expression ] ']' ] [ '=' initializer ]
+                final PsiBuilder.Marker mark1 = b.mark();
+                parseIdentifier();
+                if (b.getTokenType() == LEFT_BRACKET) {
+                    parseArrayDeclarator();
+                }
+                if (tryMatch(EQUAL)) {
+                    parseInitializer();
+                }
+                mark1.done(DECLARATOR);
             } while (tryMatch(COMMA));
         }
         mark.done(DECLARATOR_LIST);
-    }
-
-    private void parseDeclarator() {
-        // declarator: IDENTIFIER [ '[' [ constant_expression ] ']' ] [ '=' initializer ]
-        final PsiBuilder.Marker mark = b.mark();
-        parseIdentifier();
-        if (b.getTokenType() == LEFT_BRACKET) {
-            parseArrayDeclarator();
-        }
-        if (tryMatch(EQUAL)) {
-            parseInitializer();
-        }
-        mark.done(DECLARATOR);
     }
 
     private void parseArrayDeclarator() {

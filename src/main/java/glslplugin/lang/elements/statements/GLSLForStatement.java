@@ -21,9 +21,12 @@ package glslplugin.lang.elements.statements;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
-import glslplugin.lang.elements.declarations.GLSLQualifiedDeclaration;
 import glslplugin.lang.elements.expressions.GLSLCondition;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +45,9 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
         super(astNode);
     }
 
+
+    private @Nullable GLSLElement @Nullable[] parts;
+
     /**
      * Fetches the initialization, the condition and the counter elements and places them in an array.
      * The array will always have length 3 and the elements are always placed in their respective places.
@@ -50,25 +56,80 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
      * @return an array containing the loop elements.
      */
     @NotNull
-    private GLSLElement[] getForElements() {
-        GLSLElement[] result = new GLSLElement[3];
-        int numberOfSemicolonsPassed = 0;
-        PsiElement current = getFirstChild();
-        while (current != null) {
-            ASTNode node = current.getNode();
-            if (current instanceof GLSLExpression || current instanceof GLSLQualifiedDeclaration) {
-                result[numberOfSemicolonsPassed] = (GLSLElement) current;
-            } else if (node != null) {
-                if (node.getElementType() == GLSLTokenTypes.SEMICOLON) {
-                    numberOfSemicolonsPassed++;
-                }
-                if (node.getElementType() == GLSLTokenTypes.RIGHT_PAREN) {
+    private @Nullable GLSLElement @NotNull[] getForElements() {
+        final GLSLElement[] currentParts = this.parts;
+        if (currentParts != null) {
+            return currentParts;
+        }
+
+        GLSLElement[] result = this.parts = new GLSLElement[4];
+
+        // Get to the opening brace
+        PsiElement current = findChildByType(GLSLTokenTypes.LEFT_PAREN);
+
+        lookingForRightParen: do {
+            // Skip it and any whitespace and comments
+            while (current != null) {
+                current = current.getNextSibling();
+
+                if (current instanceof GLSLExpressionStatement || current instanceof GLSLDeclarationStatement) {
+                    result[0] = (GLSLElement) current;
                     break;
+                } else if (current instanceof LeafPsiElement leaf) {
+                    if (leaf.getElementType() == GLSLTokenTypes.SEMICOLON) {
+                        // No initializer
+                        break;
+                    } else if (leaf.getElementType() == GLSLTokenTypes.RIGHT_PAREN) {
+                        // End of for header
+                        break lookingForRightParen;
+                    }
                 }
             }
 
+            // current is null or initializer
+            // find condition
+            while (current != null) {
+                current = current.getNextSibling();
+
+                if (result[1] == null && current instanceof GLSLCondition cond) {
+                    result[1] = cond;
+                    //break; no break, there must be a semicolon after the condition
+                } else if (current instanceof LeafPsiElement leaf) {
+                    if (leaf.getElementType() == GLSLTokenTypes.SEMICOLON) {
+                        // After condition
+                        break;
+                    } else if (leaf.getElementType() == GLSLTokenTypes.RIGHT_PAREN) {
+                        // End of for header
+                        break lookingForRightParen;
+                    }
+                }
+            }
+
+            // current is null or condition semicolon
+            while (current != null) {
+                current = current.getNextSibling();
+
+                if (current instanceof GLSLExpression expr) {
+                    result[2] = expr;
+                    //break; no break, there must be a right paren after the counter
+                } else if (current instanceof LeafPsiElement leaf && leaf.getElementType() == GLSLTokenTypes.RIGHT_PAREN) {
+                    // End of for header
+                    break lookingForRightParen;
+                }
+            }
+
+        } while(true);
+
+        // current is null or right paren
+        while (current != null) {
             current = current.getNextSibling();
+
+            if (current instanceof GLSLStatement stat) {
+                result[3] = stat;
+                break;
+            }
         }
+
         return result;
     }
 
@@ -80,10 +141,7 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
      */
     @Nullable
     public GLSLElement getInitializerElement() {
-        GLSLElement[] forElements = getForElements();
-        if(forElements.length > 0){
-            return forElements[0];
-        }else return null;
+        return getForElements()[0];
     }
 
     /**
@@ -94,10 +152,7 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
      */
     @Nullable
     public GLSLCondition getCondition() {
-        GLSLElement[] forElements = getForElements();
-        if(forElements.length > 1 && forElements[1] instanceof GLSLCondition){
-            return (GLSLCondition) forElements[1];
-        }else return null;
+        return (GLSLCondition) getForElements()[1];
     }
 
     /**
@@ -108,21 +163,32 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
      */
     @Nullable
     public GLSLExpression getCountExpression() {
-        GLSLElement[] forElements = getForElements();
-        if(forElements.length > 2 && forElements[2] instanceof GLSLExpression){
-            return (GLSLExpression) forElements[2];
-        }else return null;
+        return (GLSLExpression) getForElements()[2];
     }
 
     @Nullable
-    public GLSLStatement getLoopStatement() {
-        return findChildByClass(GLSLStatement.class);
+    public GLSLStatement getBodyStatement() {
+        return (GLSLStatement) getForElements()[3];
     }
-
 
     @Override
     public String toString() {
         return "For Loop";
+    }
+
+    @Override
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+        boolean fromInside = PsiTreeUtil.isAncestor(this, place, false);
+        if (!fromInside) return true;
+        // Variable declarations are only visible from inside
+
+        final GLSLElement initializer = getInitializerElement();
+        if (initializer != null && !PsiTreeUtil.isAncestor(lastParent, initializer, false) && !initializer.processDeclarations(processor, state, null, place)) return false;
+
+        final GLSLCondition condition = getCondition();
+        if (condition != null && !PsiTreeUtil.isAncestor(lastParent, condition, false) && !condition.processDeclarations(processor, state, null, place)) return false;
+
+        return true;
     }
 
     // TODO some for statements can be terminating if their condition can be constant-analyzed as true
