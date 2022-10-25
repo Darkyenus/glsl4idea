@@ -1,4 +1,4 @@
-package glslplugin;
+package glslplugin.util;
 
 /**
  * Various utility functions.

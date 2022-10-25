@@ -25,12 +25,17 @@ import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.GLSLTokenTypes;
+import glslplugin.util.ASTTreeIterator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
+
+import static java.util.Collections.emptySet;
 
 public class GLSLFoldingBuilder implements FoldingBuilder {
 
@@ -38,7 +43,45 @@ public class GLSLFoldingBuilder implements FoldingBuilder {
     public FoldingDescriptor @NotNull [] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
         List<FoldingDescriptor> descriptors = new ArrayList<>();
         appendDescriptors(node, descriptors);
-        return descriptors.toArray(new FoldingDescriptor[0]);
+        appendPreprocessorFolding(node, descriptors);
+        return descriptors.toArray(FoldingDescriptor.EMPTY);
+    }
+
+    private void appendPreprocessorFolding(final ASTNode node, final List<FoldingDescriptor> descriptors) {
+        Stack<ASTNode> nestingStack = new Stack<>();
+        ASTNode n = node;
+        while (n != null) {
+            final IElementType elementType = n.getElementType();
+            if (PREPROCESSOR_IF_END.contains(elementType) && !nestingStack.isEmpty()) {
+                final ASTNode owner = nestingStack.pop();
+                ASTNode preprocessorEnd = owner;
+                do {
+                    preprocessorEnd = preprocessorEnd.getTreeNext();
+                } while (preprocessorEnd != null && preprocessorEnd.getElementType() != GLSLTokenTypes.PREPROCESSOR_END);
+
+                ASTNode preprocessorBegin = n;
+                do {
+                    preprocessorBegin = preprocessorBegin.getTreePrev();
+                } while (preprocessorBegin != null && preprocessorBegin.getElementType() != GLSLTokenTypes.PREPROCESSOR_BEGIN);
+
+                if (preprocessorEnd != null && preprocessorBegin != null) {
+                    final int startOffset = preprocessorEnd.getStartOffset();
+                    final int endOffset = preprocessorBegin.getStartOffset();
+
+                    // Empty folding regions are pointless and trigger assert
+                    if (endOffset - startOffset > 0) {
+                        descriptors.add(new FoldingDescriptor(owner, new TextRange(startOffset, endOffset), null, "...", false, emptySet()));
+                    }
+                }
+            }
+
+            if (PREPROCESSOR_IF_BEGIN.contains(elementType)) {
+                nestingStack.push(n);
+            }
+
+            // Walk only leafs, no composite nodes
+            n = ASTTreeIterator.nextLeaf(n);
+        }
     }
 
     private void appendDescriptors(final ASTNode node, final List<FoldingDescriptor> descriptors) {
@@ -72,4 +115,21 @@ public class GLSLFoldingBuilder implements FoldingBuilder {
     public boolean isCollapsedByDefault(@NotNull ASTNode astNode) {
         return false;
     }
+
+    /** Starts preprocessor IF block */
+    public static final TokenSet PREPROCESSOR_IF_BEGIN = TokenSet.create(
+            GLSLTokenTypes.PREPROCESSOR_IF,
+            GLSLTokenTypes.PREPROCESSOR_IFDEF,
+            GLSLTokenTypes.PREPROCESSOR_IFNDEF,
+            GLSLTokenTypes.PREPROCESSOR_ELIF,
+            GLSLTokenTypes.PREPROCESSOR_ELSE
+    );
+
+    /** Ends preprocessor IF block */
+    public static final TokenSet PREPROCESSOR_IF_END = TokenSet.create(
+            GLSLTokenTypes.PREPROCESSOR_ELSE,
+            GLSLTokenTypes.PREPROCESSOR_ELIF,
+            GLSLTokenTypes.PREPROCESSOR_ENDIF
+    );
+
 }

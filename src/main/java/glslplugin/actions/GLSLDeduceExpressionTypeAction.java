@@ -38,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-import static glslplugin.Utils.escapeHtml;
+import static glslplugin.util.Utils.escapeHtml;
 
 /**
  * GLSLDeduceExpressionTypeAction is ...
