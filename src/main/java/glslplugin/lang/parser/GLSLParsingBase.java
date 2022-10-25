@@ -97,14 +97,17 @@ abstract class GLSLParsingBase {
             try {
                 parsingPreprocessor = true;
                 while (getTokenType() == PREPROCESSOR_BEGIN) {
-                    parsePreprocessor();
+                    if (parsePreprocessor()) {
+                        //Remap explicitly after advancing without remapping, makes mess otherwise
+                        b.advanceLexer_remapTokens();
+                    }
                 }
             } finally {
                 parsingPreprocessor = false;
             }
         }
 
-        public void advanceLexer(boolean remapTokens){
+        public void advanceLexer(boolean remapTokens) {
             super.advanceLexer();
 
             if (remapTokens) {
@@ -148,6 +151,13 @@ abstract class GLSLParsingBase {
     //Utility code
 
     /**
+     * @return whether lexer is at the end of the file.
+     */
+    protected final boolean eof() {
+        return b.eof();
+    }
+
+    /**
      * Checks whether lexer is at the end of the file,
      * complains about it if it is
      * and closes all marks supplied (if eof).
@@ -167,6 +177,43 @@ abstract class GLSLParsingBase {
         } else {
             return false;
         }
+    }
+
+    protected final void error(@NotNull final String messageText) {
+        b.error(messageText);
+    }
+
+    protected final @Nullable IElementType getTokenType() {
+        return b.getTokenType();
+    }
+
+    protected final @Nullable IElementType lookAhead(int steps) {
+        if (steps <= 0) return b.getTokenType();
+        final PsiBuilder.Marker mark = b.mark();
+        try {
+            for (int step = 0; step < steps; step++) {
+                b.advanceLexer(true);
+            }
+            return b.getTokenType();
+        } finally {
+            mark.rollbackTo();
+        }
+    }
+
+    protected final @Nullable String getTokenText() {
+        return b.getTokenText();
+    }
+
+    protected final @NotNull PsiBuilder.Marker mark() {
+        return b.mark();
+    }
+
+    protected final void advanceLexer() {
+        b.advanceLexer(true);
+    }
+
+    protected final void advanceLexer(boolean remapTokens) {
+        b.advanceLexer(remapTokens);
     }
 
     /**
@@ -222,5 +269,5 @@ abstract class GLSLParsingBase {
 
     // Interface to implementation
 
-    protected abstract void parsePreprocessor();
+    protected abstract boolean parsePreprocessor();
 }

@@ -66,101 +66,103 @@ public final class GLSLParsing extends GLSLParsingBase {
     //Parsing code
 
     /**
-     * Parses preprocessor, assuming that the b.getTokenType() is at PREPROCESSOR_BEGIN.
+     * Parses preprocessor, assuming that the getTokenType() is at PREPROCESSOR_BEGIN.
      *
-     * Called automatically on b.advanceLexer(), which means that elements may contain
+     * Called automatically by {@link GLSLParsingBase}, which means that elements may contain
      * some tokens, that are part of preprocessor, not that element.
      * This may cause trouble during working with the PSI tree, so be careful.
+     *
+     * @return true to explicitly remap next token
      */
     @Override
-    protected void parsePreprocessor() {
+    protected boolean parsePreprocessor() {
         // We can't use tryMatch etc. in here because we'll end up
         // potentially parsing a preprocessor directive inside this one.
-        PsiBuilder.Marker preprocessor = b.mark();
-        b.advanceLexer(false); //Get past the PREPROCESSOR_BEGIN ("#")
+        PsiBuilder.Marker preprocessor = mark();
+        advanceLexer(false); //Get past the PREPROCESSOR_BEGIN ("#")
         //advanceLexer(false,false) explanation:
         //false -> this is not a valid place for more preprocessor directives
         //false -> don't substitute here (makes re"define"ing and "undef"ing impossible)
 
-        IElementType directiveType = b.getTokenType();
+        IElementType directiveType = getTokenType();
 
         if (directiveType == PREPROCESSOR_DEFINE) {
             //Parse define
-            b.advanceLexer(false);//Get past DEFINE
+            advanceLexer(false);//Get past DEFINE
 
-            if(isValidDefineIdentifier(b.getTokenText())){
+            if (isValidDefineIdentifier(getTokenText())) {
                 //Valid
-                final String defineIdentifier = b.getTokenText();
-                //Can use non-b b.advanceLexer here, to allow "nested" defines
-                b.advanceLexer();//Get past identifier
+                final String defineIdentifier = getTokenText();
+                //Can use non-b advanceLexer here, to allow "nested" defines
+                advanceLexer();//Get past identifier
 
                 List<ForeignLeafType> definition = new ArrayList<>();
                 StringBuilder definitionText = new StringBuilder();
 
-                while (b.getTokenType() != PREPROCESSOR_END && !b.eof()) {
+                while (getTokenType() != PREPROCESSOR_END && !eof()) {
                     //Suppressed warning that getTokenType/Text may be null, because it won't be (.eof() is checked).
-                    definition.add(new RedefinedTokenType(b.getTokenType(), b.getTokenText(), b.getNamesThroughWhichThisTokenWasRedefined()));
-                    definitionText.append(b.getTokenText()).append(' ');
-                    b.advanceLexer();
+                    definition.add(new RedefinedTokenType(getTokenType(), getTokenText(), b.getNamesThroughWhichThisTokenWasRedefined()));
+                    definitionText.append(getTokenText()).append(' ');
+                    advanceLexer();
                 }
                 definitions.put(defineIdentifier, definition);
                 if(definitionText.length() >= 1){
                     definitionText.setLength(definitionText.length()-1);
                 }
                 definitionTexts.put(defineIdentifier, definitionText.toString());
-            }else{
+            } else {
                 //Invalid
-                b.error("Identifier expected.");
+                error("Identifier expected.");
                 //Eat rest
-                while (!b.eof()) {
-                    if (b.getTokenType() == PREPROCESSOR_END) {
+                while (!eof()) {
+                    if (getTokenType() == PREPROCESSOR_END) {
                         break;
                     }
-                    b.advanceLexer();
+                    advanceLexer();
                 }
             }
         } else if (directiveType == PREPROCESSOR_UNDEF) {
             //Parse undefine
-            b.advanceLexer(false);//Get past UNDEF
+            advanceLexer(false);//Get past UNDEF
 
-            if(isValidDefineIdentifier(b.getTokenText())){
+            if(isValidDefineIdentifier(getTokenText())){
                 //Valid
-                final String defineIdentifier = b.getTokenText();
+                final String defineIdentifier = getTokenText();
                 definitions.remove(defineIdentifier);
                 definitionTexts.remove(defineIdentifier);
 
-                b.advanceLexer();//Get past IDENTIFIER
+                advanceLexer();//Get past IDENTIFIER
             }else{
                 //Invalid
-                b.error("Identifier expected.");
+                error("Identifier expected.");
             }
             //Eat rest
-            while (!b.eof()) {
-                if (b.getTokenType() == PREPROCESSOR_END) {
+            while (!eof()) {
+                if (getTokenType() == PREPROCESSOR_END) {
                     break;
                 }else{
-                    b.error("Unexpected token.");
+                    error("Unexpected token.");
                 }
-                b.advanceLexer();
+                advanceLexer();
             }
         } else if (directiveType == PREPROCESSOR_INCLUDE) {
             // Since there is no standard, just eat whatever and hope that there is a string with path somewhere in there
-            while (!b.eof()) {
-                if (b.getTokenType() == PREPROCESSOR_END) {
+            while (!eof()) {
+                if (getTokenType() == PREPROCESSOR_END) {
                     break;
                 }
-                b.advanceLexer();
+                advanceLexer();
             }
         } else {
             //Some other directive, no work here
-            while (!b.eof()) {
-                if (b.getTokenType() == PREPROCESSOR_END) {
+            while (!eof()) {
+                if (getTokenType() == PREPROCESSOR_END) {
                     break;
                 }
-                b.advanceLexer();
+                advanceLexer();
             }
         }
-        b.advanceLexer(false);//Get past PREPROCESSOR_END
+        advanceLexer(false);//Get past PREPROCESSOR_END
         //false -> don't check for PREPROCESSOR_BEGIN, we will handle that ourselves
         if(!PREPROCESSOR_DIRECTIVES.contains(directiveType)){
             //Happens when typing new directive at the end of the file
@@ -169,7 +171,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         }else{
             preprocessor.done(directiveType);
         }
-        b.advanceLexer_remapTokens(); //Remap explicitly after advancing without remapping, makes mess otherwise
+        return true;
     }
 
     private static final Pattern IDENTIFIER_REGEX = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
@@ -184,10 +186,10 @@ public final class GLSLParsing extends GLSLParsingBase {
     public void parseTranslationUnit() {
         // translation_unit: external_declaration*
 
-        while (!b.eof()) {
+        while (!eof()) {
             if (!parseExternalDeclaration()) {
-                b.advanceLexer();
-                b.error("Unable to parse external declaration.");
+                advanceLexer();
+                error("Unable to parse external declaration.");
             }
         }
     }
@@ -211,25 +213,25 @@ public final class GLSLParsing extends GLSLParsingBase {
         // Note: after type-specifier, we only need to look up IDENTIfIER '(' to determine
         //       whether or not it is a prototype or a declarator-list.
 
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
 
         // This bunch of conditionals are responsible to handle really invalid input.
-        // Specifically, when b.getTokenType() is not in the first set of external-declaration
+        // Specifically, when getTokenType() is not in the first set of external-declaration
         // Please add more if found lacking.
         // TODO: Add something similar to parseStatement
-        if (b.getTokenType() == LEFT_PAREN ||
-                CONSTANT_TOKENS.contains(b.getTokenType()) ||
-                UNARY_OPERATORS.contains(b.getTokenType())) {
+        if (getTokenType() == LEFT_PAREN ||
+                CONSTANT_TOKENS.contains(getTokenType()) ||
+                UNARY_OPERATORS.contains(getTokenType())) {
             parseExpression();
             tryMatch(SEMICOLON);
             mark.error("Expression not allowed here.");
             return true;
         }
-        String text = b.getTokenText();
-        if (b.getTokenType() == IF_KEYWORD ||
-                b.getTokenType() == FOR_KEYWORD ||
-                b.getTokenType() == WHILE_KEYWORD ||
-                b.getTokenType() == DO_KEYWORD) {
+        String text = getTokenText();
+        if (getTokenType() == IF_KEYWORD ||
+                getTokenType() == FOR_KEYWORD ||
+                getTokenType() == WHILE_KEYWORD ||
+                getTokenType() == DO_KEYWORD) {
             parseSimpleStatement();
             mark.error("'" + text + "' statement not allowed here.");
             return true;
@@ -240,7 +242,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         }
         while (tryMatch(OPERATORS)) {
             mark.error("Unexpected token '" + text + "'.");
-            mark = b.mark();
+            mark = mark();
         }
 
         if (parsePrecisionStatement()) {
@@ -255,27 +257,27 @@ public final class GLSLParsing extends GLSLParsingBase {
 
         parseQualifierList(true);
 
-        if (b.getTokenType() == IDENTIFIER && b.lookAhead(1) == LEFT_BRACE) { // interface block
+        if (getTokenType() == IDENTIFIER && lookAhead(1) == LEFT_BRACE) { // interface block
             //TODO Make sure that this is preceded by storage_qualifier
             parseIdentifier();
             match(LEFT_BRACE, "Expected '{'");
 
-            if (b.getTokenType() == RIGHT_BRACE) {
-                b.error("Empty interface block is not allowed.");
+            if (getTokenType() == RIGHT_BRACE) {
+                error("Empty interface block is not allowed.");
             }
 
             while (!tryMatch(RIGHT_BRACE) && !eof()) {
-                final PsiBuilder.Marker member = b.mark();
+                final PsiBuilder.Marker member = mark();
                 parseQualifierList(true);
-                if (!parseTypeSpecifier()) b.advanceLexer();
+                if (!parseTypeSpecifier()) advanceLexer();
                 parseDeclaratorList();
                 match(SEMICOLON, "Expected ';'");
                 member.done(STRUCT_MEMBER_DECLARATION);//TODO Should we call interface block members struct members?
             }
 
-            if (b.getTokenType() == IDENTIFIER) {
+            if (getTokenType() == IDENTIFIER) {
                 parseIdentifier();
-                if (b.getTokenType() == LEFT_BRACKET) {
+                if (getTokenType() == LEFT_BRACKET) {
                     parseArrayDeclarator();
                 }
             }
@@ -285,9 +287,9 @@ public final class GLSLParsing extends GLSLParsingBase {
         }
 
         parseTypeSpecifier();
-        PsiBuilder.Marker postType = b.mark();
+        PsiBuilder.Marker postType = mark();
 
-        if (b.getTokenType() == SEMICOLON) {
+        if (getTokenType() == SEMICOLON) {
             // Declaration with no declarators.
             // (struct definitions will look like this)
             postType.drop();
@@ -296,14 +298,14 @@ public final class GLSLParsing extends GLSLParsingBase {
             mark.done(VARIABLE_DECLARATION);
             return true;
 
-        } else if (b.getTokenType() == IDENTIFIER || b.getTokenType() == LEFT_PAREN) {
+        } else if (getTokenType() == IDENTIFIER || getTokenType() == LEFT_PAREN) {
             // Identifier means either declarators, or function declaration/definition
             match(IDENTIFIER, "Missing function name");
 
-            if (b.getTokenType() == SEMICOLON ||
-                    b.getTokenType() == COMMA ||
-                    b.getTokenType() == LEFT_BRACKET ||
-                    b.getTokenType() == EQUAL) {
+            if (getTokenType() == SEMICOLON ||
+                    getTokenType() == COMMA ||
+                    getTokenType() == LEFT_BRACKET ||
+                    getTokenType() == EQUAL) {
                 // These are valid operatorTokens after an identifier in a declarator.
                 // ... try to parse declarator-list!
                 postType.rollbackTo();
@@ -328,7 +330,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                     //noinspection StatementWithEmptyBody
                     if (tryMatch(VOID_TYPE)) {
                         // Do nothing.
-                    } else if (b.getTokenType() != RIGHT_PAREN) {
+                    } else if (getTokenType() != RIGHT_PAREN) {
                         do {
                             parseParameterDeclaration();
                         } while (tryMatch(COMMA));
@@ -340,16 +342,16 @@ public final class GLSLParsing extends GLSLParsingBase {
 
                 if (tryMatch(SEMICOLON)) {
                     mark.done(FUNCTION_DECLARATION);
-                } else if (b.getTokenType() == LEFT_BRACE) {
+                } else if (getTokenType() == LEFT_BRACE) {
                     parseCompoundStatement();
                     mark.done(FUNCTION_DEFINITION);
                 } else {
                     // Neither ';' nor '{' found, mark as a prototype with missing ';'
                     mark.done(FUNCTION_DECLARATION);
-                    b.error("Missing ';' after function declaration.");
+                    error("Missing ';' after function declaration.");
                 }
                 return true;
-            } else if (TYPE_SPECIFIER_NONARRAY_TOKENS.contains(b.getTokenType())) {
+            } else if (TYPE_SPECIFIER_NONARRAY_TOKENS.contains(getTokenType())) {
                 // simulate declarators, and return success to make parsing continue.
                 postType.done(IDENTIFIER);
                 postType = postType.precede();
@@ -357,35 +359,35 @@ public final class GLSLParsing extends GLSLParsingBase {
                 postType = postType.precede();
                 postType.done(DECLARATOR_LIST);
                 mark.done(VARIABLE_DECLARATION);
-                b.error("Missing ';' after variable declaration.");
+                error("Missing ';' after variable declaration.");
                 return true;
             }
-        } else if (GLSLTokenTypes.OPERATORS.contains(b.getTokenType()) ||
-                b.getTokenType() == DOT ||
-                b.getTokenType() == LEFT_BRACKET) {
+        } else if (GLSLTokenTypes.OPERATORS.contains(getTokenType()) ||
+                getTokenType() == DOT ||
+                getTokenType() == LEFT_BRACKET) {
             // this will handle most expressions
             postType.drop();
             mark.rollbackTo();
-            mark = b.mark();
+            mark = mark();
             if (!parseExpression()) {
                 //There is no expression! Consume what triggered me. (Would lead to infinite loop otherwise)
-                b.advanceLexer();
+                advanceLexer();
             }
             tryMatch(SEMICOLON);
             mark.error("Expression not allowed here.");
             return true;
-        } else if (GLSLTokenTypes.FLOW_KEYWORDS.contains(b.getTokenType()) ||
-                GLSLTokenTypes.CONSTANT_TOKENS.contains(b.getTokenType())) {
+        } else if (GLSLTokenTypes.FLOW_KEYWORDS.contains(getTokenType()) ||
+                GLSLTokenTypes.CONSTANT_TOKENS.contains(getTokenType())) {
             postType.drop();
-            text = b.getTokenText();
-            b.advanceLexer();
+            text = getTokenText();
+            advanceLexer();
             mark.error("Unexpected '" + text + "'");
             return true;
-        } else if (TYPE_SPECIFIER_NONARRAY_TOKENS.contains(b.getTokenType())) {
+        } else if (TYPE_SPECIFIER_NONARRAY_TOKENS.contains(getTokenType())) {
             // simulate declarators, and return success to make parsing continue.
             postType.done(DECLARATOR_LIST);
             mark.done(VARIABLE_DECLARATION);
-            b.error("Missing ';' after declaration.");
+            error("Missing ';' after declaration.");
             return true;
         }
 
@@ -395,16 +397,16 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parsePrecisionStatement() {
         // precision_statement: PRECISION precision_qualifier type_specifier_no_precision ;
-        if (b.getTokenType() == PRECISION_KEYWORD) {
-            final PsiBuilder.Marker mark = b.mark();
-            b.advanceLexer();
+        if (getTokenType() == PRECISION_KEYWORD) {
+            final PsiBuilder.Marker mark = mark();
+            advanceLexer();
 
             if (!tryMatch(PRECISION_QUALIFIER_TOKENS)) {
-                b.error("Expected precision qualifier.");
+                error("Expected precision qualifier.");
             }
 
             if (!parseTypeSpecifier()) {
-                b.error("Expected type specifier.");
+                error("Expected type specifier.");
             }
             match(SEMICOLON, "Expected ';'");
             mark.done(PRECISION_STATEMENT);
@@ -421,15 +423,15 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private void parseParameterDeclaration() {
         // parameter_declaration: [parameter_qualifier] [type_qualifier] IDENTIFIER [array_declarator]
-        final PsiBuilder.Marker mark = b.mark();
+        final PsiBuilder.Marker mark = mark();
 
         parseQualifiedTypeSpecifier();
 
-        if (b.getTokenType() == IDENTIFIER) {
+        if (getTokenType() == IDENTIFIER) {
             parseStructOrParameterDeclarator(PARAMETER_DECLARATOR);
         } else {
             // Fake a declarator.
-            PsiBuilder.Marker mark2 = b.mark();
+            PsiBuilder.Marker mark2 = mark();
             mark2.done(PARAMETER_DECLARATOR);
         }
 
@@ -439,10 +441,10 @@ public final class GLSLParsing extends GLSLParsingBase {
     private void parseCompoundStatement() {
         // compound_statement: '{' '}'
         //                   | '{' statement_list '}'
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
         match(LEFT_BRACE, "'{' expected.");
         if (eof(mark)) return;
-        if (b.getTokenType() != RIGHT_BRACE) {
+        if (getTokenType() != RIGHT_BRACE) {
             parseStatementList();
         }
         if (eof()) {
@@ -458,7 +460,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         // NOTE: terminates with '}', but we check for FirstSet(statement)
         //       instead for increased robustness
 
-        while ((STATEMENT_FIRST_SET.contains(b.getTokenType()) || OPERATORS.contains(b.getTokenType()) || b.getTokenType() == PRECISION_KEYWORD) && !eof()) {
+        while ((STATEMENT_FIRST_SET.contains(getTokenType()) || OPERATORS.contains(getTokenType()) || getTokenType() == PRECISION_KEYWORD) && !eof()) {
             if (!parseStatement()) {
                 return;
             }
@@ -468,14 +470,14 @@ public final class GLSLParsing extends GLSLParsingBase {
     private boolean parseStatement() {
         // statement: simple_statement | compound_statement
 
-        if (b.getTokenType() == LEFT_BRACE) {
+        if (getTokenType() == LEFT_BRACE) {
             parseCompoundStatement();
             return true;
         }
         if (parseSimpleStatement()) {
             return true;
         } else {
-            b.error("Expected a statement.");
+            error("Expected a statement.");
             return false;
         }
     }
@@ -483,12 +485,12 @@ public final class GLSLParsing extends GLSLParsingBase {
     private static final TokenSet VALID_FIRST_OPERATORS = TokenSet.create(INC_OP, DEC_OP, PLUS, DASH);
 
     private void eatInvalidOperators() {
-        PsiBuilder.Marker mark = b.mark();
-        while (OPERATORS.contains(b.getTokenType()) && !VALID_FIRST_OPERATORS.contains(b.getTokenType())) {
-            String operator = b.getTokenText();
-            b.advanceLexer();
+        PsiBuilder.Marker mark = mark();
+        while (OPERATORS.contains(getTokenType()) && !VALID_FIRST_OPERATORS.contains(getTokenType())) {
+            String operator = getTokenText();
+            advanceLexer();
             mark.error("Unexpected operator '" + operator + "'.");
-            mark = b.mark();
+            mark = mark();
         }
         mark.drop();
     }
@@ -496,29 +498,29 @@ public final class GLSLParsing extends GLSLParsingBase {
     // https://github.com/KhronosGroup/GLSL/blob/master/extensions/ext/GL_EXT_control_flow_attributes.txt
     private void tryParseFlowAttributes() {
         // These are currently not semantically processed at all
-        final IElementType type = b.getTokenType();
+        final IElementType type = getTokenType();
         if (type != LEFT_BRACKET) {
             return;
         }
-        final PsiBuilder.Marker mark = b.mark();
-        b.advanceLexer();
-        if (b.getTokenType() != LEFT_BRACKET) {
+        final PsiBuilder.Marker mark = mark();
+        advanceLexer();
+        if (getTokenType() != LEFT_BRACKET) {
             mark.rollbackTo();
             return;
         }
-        b.advanceLexer();
+        advanceLexer();
 
         // We are not very particular about this, just consume tokens until we get to ]]
         //TODO: More precise parsing
-        while (b.getTokenType() != RIGHT_BRACKET && !b.eof()) {
-            b.advanceLexer();
+        while (getTokenType() != RIGHT_BRACKET && !eof()) {
+            advanceLexer();
         }
-        b.advanceLexer();
-        if (b.getTokenType() != RIGHT_BRACKET) {
+        advanceLexer();
+        if (getTokenType() != RIGHT_BRACKET) {
             mark.rollbackTo();
             return;
         }
-        b.advanceLexer();
+        advanceLexer();
         mark.done(FLOW_ATTRIBUTE);
     }
 
@@ -532,7 +534,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         tryParseFlowAttributes();
         eatInvalidOperators();
 
-        final IElementType type = b.getTokenType();
+        final IElementType type = getTokenType();
         boolean result;
 
         if (EXPRESSION_FIRST_SET.contains(type) || QUALIFIER_TOKENS.contains(type) || type == PRECISION_KEYWORD) {
@@ -572,9 +574,9 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseReturnStatement() {
         // return_statement: 'return' [expression] ';'
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
         match(RETURN_JUMP_STATEMENT, "Missing 'return'.");
-        if (b.getTokenType() != SEMICOLON) {
+        if (getTokenType() != SEMICOLON) {
             parseExpression();
             match(SEMICOLON, "Missing ';' after expression.");
         } else {
@@ -586,7 +588,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseContinueStatement() {
         // discard_statement: 'continue' ';'
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
         match(CONTINUE_JUMP_STATEMENT, "Missing 'continue'.");
         match(SEMICOLON, "Missing ';' after 'continue'.");
         mark.done(CONTINUE_STATEMENT);
@@ -595,7 +597,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseDiscardStatement() {
         // discard_statement: 'discard' ';'
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
         match(DISCARD_JUMP_STATEMENT, "Missing 'discard'.");
         match(SEMICOLON, "Missing ';' after 'discard'.");
         mark.done(DISCARD_STATEMENT);
@@ -604,7 +606,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseBreakStatement() {
         // break_statement: 'break' ';'
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
         match(BREAK_JUMP_STATEMENT, "Missing 'break'.");
         match(SEMICOLON, "Missing ';' after 'break'.");
         mark.done(BREAK_STATEMENT);
@@ -613,7 +615,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseCaseStatement() {
         // case_statement: 'case' constant_expression ':'
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
         match(CASE_KEYWORD, "Expected 'case'");
         parseConstantExpression();
         match(COLON, "Expected ':'");
@@ -623,7 +625,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseDefaultStatement() {
         // default_statement: 'default' ':'
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
         match(DEFAULT_KEYWORD, "Expected 'case'");
         match(COLON, "Expected ':'");
         mark.done(DEFAULT_STATEMENT);
@@ -637,19 +639,19 @@ public final class GLSLParsing extends GLSLParsingBase {
         // condition:
         //              expression
         //              fully_specified_type IDENTIFIER '=' initializer
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
 
         match(FOR_KEYWORD, "Missing 'for'.");
         match(LEFT_PAREN, "Missing '(' after 'for'.");
 
         parseForInitStatement();
 
-        if (b.getTokenType() != SEMICOLON) {
+        if (getTokenType() != SEMICOLON) {
             parseCondition();
         }
         match(SEMICOLON, "Missing ';' after condition statement.");
 
-        if (b.getTokenType() != RIGHT_PAREN) {
+        if (getTokenType() != RIGHT_PAREN) {
             // Only parse the expression if it is present.
             parseExpression();
         }
@@ -662,7 +664,7 @@ public final class GLSLParsing extends GLSLParsingBase {
     }
 
     private boolean lookaheadConditionDeclaration(){
-        final PsiBuilder.Marker rollback = b.mark();
+        final PsiBuilder.Marker rollback = mark();
         try {
             if(!parseQualifiedTypeSpecifier()){
                 return false;
@@ -686,14 +688,14 @@ public final class GLSLParsing extends GLSLParsingBase {
         // NOTE: The spec, allows the condition expression in 'for' and 'while' loops
         //       to declare a single variable.
 
-        PsiBuilder.Marker conditionMark = b.mark();
+        PsiBuilder.Marker conditionMark = mark();
         if (lookaheadConditionDeclaration()) {
-            PsiBuilder.Marker mark = b.mark();
+            PsiBuilder.Marker mark = mark();
 
             parseQualifiedTypeSpecifier();
 
-            PsiBuilder.Marker list = b.mark();
-            PsiBuilder.Marker declarator = b.mark();
+            PsiBuilder.Marker list = mark();
+            PsiBuilder.Marker declarator = mark();
 
             parseIdentifier();
             match(EQUAL, "Missing '=' in condition initializer.");
@@ -720,13 +722,13 @@ public final class GLSLParsing extends GLSLParsingBase {
             return;
         }
 
-        PsiBuilder.Marker rollback = b.mark();
+        PsiBuilder.Marker rollback = mark();
         if(lookaheadDeclarationStatement() && parseDeclarationStatement()){
             rollback.drop();
             return;
         }else{
             rollback.rollbackTo();
-            rollback = b.mark();
+            rollback = mark();
         }
 
         if(parseExpressionStatement()){
@@ -734,7 +736,7 @@ public final class GLSLParsing extends GLSLParsingBase {
             return;
         }else{
             rollback.rollbackTo();
-            rollback = b.mark();
+            rollback = mark();
         }
 
         rollback.error("Failed to parse for-init statement.");
@@ -742,7 +744,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseDoIterationStatement() {
         // do_iteration_statement: 'do' statement 'while' '(' expression ')' ';'
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
 
         match(DO_KEYWORD, "Missing 'do'.");
         parseStatement();
@@ -758,7 +760,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseWhileIterationStatement() {
         // while_iteration_statement: 'while' '(' expression ')' statement
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
 
         match(WHILE_KEYWORD, "Missing 'while'.");
         match(LEFT_PAREN, "Missing '(' after 'while'.");
@@ -772,7 +774,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseSelectionStatement() {
         // selection_statement: 'if' '(' expression ')' statement [ 'else' statement ]
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
 
         match(IF_KEYWORD, "Missing 'if'.");
         match(LEFT_PAREN, "Missing '(' after 'if'.");
@@ -794,7 +796,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseSwitchStatement() {
         // switch_statement: 'switch' '(' expression ')' '{' statement_list? '}'
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
         match(SWITCH_KEYWORD, "Expected 'switch'");
         match(LEFT_PAREN, "Expected '('");
         parseExpression();
@@ -806,7 +808,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseExpressionStatement() {
         // expression_statement: [expression] ';'
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
 
         //noinspection StatementWithEmptyBody
         if (tryMatch(SEMICOLON)) {
@@ -825,11 +827,11 @@ public final class GLSLParsing extends GLSLParsingBase {
     private boolean parseDeclarationStatement() {
         // declaration_statement: declaration
         //                        precision_statement
-        if(b.getTokenType() == PRECISION_KEYWORD){
+        if(getTokenType() == PRECISION_KEYWORD){
             return parsePrecisionStatement();
         }
 
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
 
         if (!parseDeclaration()) {
             mark.error("Expected declaration.");
@@ -849,10 +851,10 @@ public final class GLSLParsing extends GLSLParsingBase {
      */
     private boolean lookaheadDeclarationStatement() {
         //Precision statement is a type of declaration statement (GLSL 4.30)
-        if(b.getTokenType() == PRECISION_KEYWORD)return true;
+        if(getTokenType() == PRECISION_KEYWORD)return true;
 
         // they share type_specifier. So if found; look for the following identifier.
-        PsiBuilder.Marker rollback = b.mark();
+        PsiBuilder.Marker rollback = mark();
         try {
             if (tryMatch(QUALIFIER_TOKENS)) {
                 return true;
@@ -875,7 +877,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         // declaration: function_prototype SEMICOLON
         //            | init_declarator_list SEMICOLON
 
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
 
         if (parseQualifiedTypeSpecifier()) {
             parseDeclaratorList();
@@ -890,13 +892,13 @@ public final class GLSLParsing extends GLSLParsingBase {
     private void parseDeclaratorList() {
         // init_declarator_list: fully_specified_type
         //                     | fully_specified_type declarator ( ',' declarator )*
-        PsiBuilder.Marker mark = b.mark();
-        if (b.getTokenType() == IDENTIFIER) {
+        PsiBuilder.Marker mark = mark();
+        if (getTokenType() == IDENTIFIER) {
             do {
                 // declarator: IDENTIFIER [ '[' [ constant_expression ] ']' ] [ '=' initializer ]
-                final PsiBuilder.Marker mark1 = b.mark();
+                final PsiBuilder.Marker mark1 = mark();
                 parseIdentifier();
-                if (b.getTokenType() == LEFT_BRACKET) {
+                if (getTokenType() == LEFT_BRACKET) {
                     parseArrayDeclarator();
                 }
                 if (tryMatch(EQUAL)) {
@@ -910,24 +912,24 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private void parseArrayDeclarator() {
         do{
-            final PsiBuilder.Marker mark = b.mark();
+            final PsiBuilder.Marker mark = mark();
 
             match(LEFT_BRACKET, "Expected '['.");
-            if (b.getTokenType() != RIGHT_BRACKET) {
+            if (getTokenType() != RIGHT_BRACKET) {
                 parseConstantExpression();
             }
             match(RIGHT_BRACKET, "Missing closing ']' after array declarator.");
 
             mark.done(ARRAY_DECLARATOR);
-        }while(b.getTokenType() == LEFT_BRACKET); //Parse all ARRAY_DECLARATOR's if multidimensional array
+        }while(getTokenType() == LEFT_BRACKET); //Parse all ARRAY_DECLARATOR's if multidimensional array
     }
 
     private boolean parseInitializer() {
         // initializer: assignment_expression
-        if (b.getTokenType() == LEFT_BRACE) {
+        if (getTokenType() == LEFT_BRACE) {
             parseInitializerList();
         } else {
-            PsiBuilder.Marker mark = b.mark();
+            PsiBuilder.Marker mark = mark();
             if (!parseAssignmentExpression()) {
                 mark.error("Expected initializer");
                 return false;
@@ -939,16 +941,16 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private void parseInitializerList() {
         // initializer_list: '{' initializer (',' initializer)* ','? '}'
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
 
         match(LEFT_BRACE, "Expected '{'");
 
-        if (b.getTokenType() != RIGHT_BRACE) parseInitializer();
+        if (getTokenType() != RIGHT_BRACE) parseInitializer();
 
-        while (b.getTokenType() != RIGHT_BRACE && !eof()) {
+        while (getTokenType() != RIGHT_BRACE && !eof()) {
             match(COMMA, "Expected '}' or ','");
-            if (b.getTokenType() == RIGHT_BRACE) break;
-            if (!parseInitializer()) { b.advanceLexer(); }
+            if (getTokenType() == RIGHT_BRACE) break;
+            if (!parseInitializer()) { advanceLexer(); }
         }
 
         match(RIGHT_BRACE, "Expected '}'");
@@ -962,7 +964,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         // NOTE: both conditional_expression and assignment_expression starts with unary_expression
         // CHANGED TO: (to reduce the need for lookahead. use the annotation pass to verify l-values)
         // assignment_expression: conditional_expression (assignment_operator conditional_expression)*
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
 
         if (!parseConditionalExpression()) {
             mark.drop();
@@ -982,7 +984,7 @@ public final class GLSLParsing extends GLSLParsingBase {
     private boolean parseConditionalExpression() {
         // conditional_expression: logical_or_expression
         //                       | logical_or_expression QUESTION expression COLON assignment_expression
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
 
         if (!parseOperatorExpression()) {
             mark.drop();
@@ -1006,7 +1008,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         // transformed to:
         // expression: assignment_expression (',' assignment_expression)*
 
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
 
         if (!parseAssignmentExpression()) {
             mark.error("Expected an expression.");
@@ -1030,7 +1032,7 @@ public final class GLSLParsing extends GLSLParsingBase {
     }
 
     private boolean parseOperatorExpression(int level) {
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
         if (!parseOperatorExpressionLevel(level + 1)) {
             mark.drop();
             return false;
@@ -1042,7 +1044,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                 mark.done(operatorLevel.getElementType());
                 mark = mark.precede();
             } else {
-                PsiBuilder.Marker operatorMark = b.mark();
+                PsiBuilder.Marker operatorMark = mark();
                 outOfPlace:
                 if (tryMatch(OPERATORS)) {
                     do {
@@ -1052,7 +1054,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                             mark = mark.precede();
                             break outOfPlace;
                         } else {
-                            operatorMark = b.mark();
+                            operatorMark = mark();
                         }
                     } while (tryMatch(OPERATORS));
                     operatorMark.drop();
@@ -1079,7 +1081,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         // unary_expression: postfix_expression
         //                 | unary_operator unary_expression
         // note: moved INC_OP and DEC_OP to unary_operator
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
 
         if (tryMatch(UNARY_OPERATORS)) {
             parseUnaryExpression();
@@ -1103,7 +1105,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         //                   | postfix_expression DEC_OP
         // (moved from function_or_method_call:)
         //                   | postfix_expression '.' function_call
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
         boolean result;
         if (lookAheadFunctionCall(true)) {
             result = parseFunctionCall();
@@ -1145,13 +1147,13 @@ public final class GLSLParsing extends GLSLParsingBase {
      * @return true if the immediately approaching tokens contain a function call, false otherwise
      */
     private boolean lookAheadFunctionCall(boolean allowConstructors) {
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
         boolean result = false;
 
         if (tryMatch(TYPE_SPECIFIER_NONARRAY_TOKENS)) {
             result = true;
         } else if (tryMatch(IDENTIFIER)) {
-            if(allowConstructors && b.getTokenType() == LEFT_BRACKET){
+            if(allowConstructors && getTokenType() == LEFT_BRACKET){
                 parseArrayDeclarator();
             }
             if (tryMatch(LEFT_PAREN)) {
@@ -1164,7 +1166,7 @@ public final class GLSLParsing extends GLSLParsingBase {
     }
 
     private boolean parseFunctionCall() {
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
         parseFunctionCallImpl(false);
         mark.done(FUNCTION_CALL_EXPRESSION);
         return true;
@@ -1198,7 +1200,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
         if(!method){
             //Methods can't be constructors
-            PsiBuilder.Marker constructorMark = b.mark();
+            PsiBuilder.Marker constructorMark = mark();
             if(parseTypeSpecifier(true)){//true -> only built-in type specifiers
                 //Success, it is definitely a constructor
                 constructorMark.drop();// (parseTypeSpecifier has added a type specifier element)
@@ -1212,13 +1214,13 @@ public final class GLSLParsing extends GLSLParsingBase {
             //Function/method call
 
             //Search for "[x]" AFTER marking the IDENTIFIER, because it is not part of the identifier
-            if(!method && b.getTokenType() == LEFT_BRACKET){
+            if(!method && getTokenType() == LEFT_BRACKET){
                 //If it is a constructor, it may be an array constructor.
                 parseArrayDeclarator();
             }
             return true;
         }else{
-            b.mark().error(method ? "Expected method identifier." : "Expected function identifier.");
+            mark().error(method ? "Expected method identifier." : "Expected function identifier.");
             return false;
         }
     }
@@ -1226,17 +1228,17 @@ public final class GLSLParsing extends GLSLParsingBase {
     private void parseParameterList() {
         // parameter_list: VOID | (nothing)
         //               | assignment_expression (',' assignment_expression)
-        PsiBuilder.Marker mark = b.mark();
+        PsiBuilder.Marker mark = mark();
 
-        if (b.getTokenType() == VOID_TYPE) {
-            b.advanceLexer();
+        if (getTokenType() == VOID_TYPE) {
+            advanceLexer();
         } else //noinspection StatementWithEmptyBody
-            if (b.getTokenType() == RIGHT_PAREN) {
+            if (getTokenType() == RIGHT_PAREN) {
                 // do nothing
             } else if (parseAssignmentExpression()) {
                 while (tryMatch(COMMA)) {
                     if (!parseAssignmentExpression()) {
-                        b.error("Assignment expression expected.");
+                        error("Assignment expression expected.");
                         break;
                     }
                 }
@@ -1252,21 +1254,21 @@ public final class GLSLParsing extends GLSLParsingBase {
         // primary_expression: variable_identifier
         //                   | CONSTANT
         //                   | '(' expression ')'
-        final PsiBuilder.Marker mark = b.mark();
+        final PsiBuilder.Marker mark = mark();
 
-        final IElementType type = b.getTokenType();
+        final IElementType type = getTokenType();
         if (type == IDENTIFIER) {
-            b.advanceLexer();
+            advanceLexer();
             mark.done(VARIABLE_NAME_EXPRESSION);
             return true;
         } else if (tryMatch(CONSTANT_TOKENS)) {
             mark.done(CONSTANT_EXPRESSION);
             return true;
         } else if (type == LEFT_PAREN) {
-            b.advanceLexer();
+            advanceLexer();
             if (!parseExpression()) {
-                if (b.getTokenType() == RIGHT_PAREN) {
-                    b.error("Expected expression after '('");
+                if (getTokenType() == RIGHT_PAREN) {
+                    error("Expected expression after '('");
                 } else {
                     mark.error("Expected expression after '('");
                     return false;
@@ -1282,10 +1284,10 @@ public final class GLSLParsing extends GLSLParsingBase {
     }
 
     private void parseIdentifier() {
-        if (b.getTokenType() == IDENTIFIER) {
-            b.advanceLexer();
+        if (getTokenType() == IDENTIFIER) {
+            advanceLexer();
         } else {
-            b.mark().error("Expected an identifier.");
+            mark().error("Expected an identifier.");
         }
     }
 
@@ -1307,14 +1309,14 @@ public final class GLSLParsing extends GLSLParsingBase {
         // type_specifier_noarray
         // type_specifier_noarray "[" const_expr "]"
 
-        final PsiBuilder.Marker mark = b.mark();
+        final PsiBuilder.Marker mark = mark();
 
         if (!parseTypeSpecifierNoArray(onlyBuiltIn)) {
             mark.drop();
             return false;
         }
 
-        if (b.getTokenType() == LEFT_BRACKET) {
+        if (getTokenType() == LEFT_BRACKET) {
             parseArrayDeclarator();
         }
         mark.done(TYPE_SPECIFIER);
@@ -1333,15 +1335,15 @@ public final class GLSLParsing extends GLSLParsingBase {
         // todo: implement       | INVARIANT IDENTIFIER  (vertex only)
         // note: This also accepts IDENTIFIERS
 
-        final PsiBuilder.Marker mark = b.mark();
+        final PsiBuilder.Marker mark = mark();
 
-        if (!onlyBuiltIn && b.getTokenType() == STRUCT) {
+        if (!onlyBuiltIn && getTokenType() == STRUCT) {
             parseStructSpecifier();
             mark.done(TYPE_SPECIFIER_STRUCT);
-        } else if (TYPE_SPECIFIER_NONARRAY_TOKENS.contains(b.getTokenType())) {
-            b.advanceLexer();
+        } else if (TYPE_SPECIFIER_NONARRAY_TOKENS.contains(getTokenType())) {
+            advanceLexer();
             mark.done(TYPE_SPECIFIER_PRIMITIVE);
-        } else if (!onlyBuiltIn && b.getTokenType() == IDENTIFIER) {
+        } else if (!onlyBuiltIn && getTokenType() == IDENTIFIER) {
             parseIdentifier();
             mark.done(TYPE_SPECIFIER_STRUCT_REFERENCE);
         } else {
@@ -1359,7 +1361,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
         match(STRUCT, "Expected 'struct'.");
 
-        if (b.getTokenType() == IDENTIFIER) {
+        if (getTokenType() == IDENTIFIER) {
             parseIdentifier();
         }
 
@@ -1372,14 +1374,14 @@ public final class GLSLParsing extends GLSLParsingBase {
         {
             // struct_declaration_list: struct_declaration (',' struct_declaration)*
             // note: we should initially find ',' for a new declarator or '}' at the end of the struct
-            if (b.getTokenType() == RIGHT_BRACE) {
-                b.error("Empty struct is not allowed.");
+            if (getTokenType() == RIGHT_BRACE) {
+                error("Empty struct is not allowed.");
             }
 
-            while (!b.eof() && b.getTokenType() != RIGHT_BRACE) {
+            while (!eof() && getTokenType() != RIGHT_BRACE) {
                 if(!parseStructDeclaration()) {
-                    final PsiBuilder.Marker invalidTokenSkip = b.mark();
-                    b.advanceLexer();
+                    final PsiBuilder.Marker invalidTokenSkip = mark();
+                    advanceLexer();
                     invalidTokenSkip.error("Expected struct member declaration");
                 }
             }
@@ -1391,7 +1393,7 @@ public final class GLSLParsing extends GLSLParsingBase {
     private boolean parseStructDeclaration() {
         // type_specifier struct_declarator_list ';'
 
-        final PsiBuilder.Marker mark = b.mark();
+        final PsiBuilder.Marker mark = mark();
 
         if (!parseQualifiedTypeSpecifier()) {
             mark.rollbackTo();
@@ -1407,7 +1409,7 @@ public final class GLSLParsing extends GLSLParsingBase {
     private void parseStructDeclaratorList() {
         // struct_declarator_list: struct_declarator (',' struct_declarator)*
 
-        final PsiBuilder.Marker mark = b.mark();
+        final PsiBuilder.Marker mark = mark();
         do {
             if (eof(mark)) return;
             parseStructOrParameterDeclarator(STRUCT_DECLARATOR);
@@ -1428,15 +1430,15 @@ public final class GLSLParsing extends GLSLParsingBase {
 
         assert type == STRUCT_DECLARATOR || type == PARAMETER_DECLARATOR;
 
-        final PsiBuilder.Marker mark = b.mark();
+        final PsiBuilder.Marker mark = mark();
 
         parseIdentifier();
 
-        if (b.getTokenType() == LEFT_BRACKET) {
+        if (getTokenType() == LEFT_BRACKET) {
             parseArrayDeclarator();
         }
 
-        PsiBuilder.Marker declaratorEnd = b.mark();
+        PsiBuilder.Marker declaratorEnd = mark();
         if (tryMatch(EQUAL)) {
             parseInitializer();
             declaratorEnd.error("Initializer not allowed here.");
@@ -1448,7 +1450,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private void parseQualifierList(boolean validPlacement) {
 
-        final PsiBuilder.Marker mark = b.mark();
+        final PsiBuilder.Marker mark = mark();
 
         if (!validPlacement && !parseQualifier()) {
             mark.drop();
@@ -1474,9 +1476,9 @@ public final class GLSLParsing extends GLSLParsingBase {
         if(parseLayoutQualifier())return true;
         if(parseSubroutineQualifier())return true;
 
-        if (QUALIFIER_TOKENS.contains(b.getTokenType())) {
-            final PsiBuilder.Marker mark = b.mark();
-            b.advanceLexer();
+        if (QUALIFIER_TOKENS.contains(getTokenType())) {
+            final PsiBuilder.Marker mark = mark();
+            advanceLexer();
             mark.done(QUALIFIER);
             return true;
         }
@@ -1490,7 +1492,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         // if the semicolon is present.
         // NOTE: interface_qualifier is in, out or uniform
 
-        final PsiBuilder.Marker mark = b.mark();
+        final PsiBuilder.Marker mark = mark();
 
         if(!parseLayoutQualifier()){
             mark.rollbackTo();
@@ -1514,9 +1516,9 @@ public final class GLSLParsing extends GLSLParsingBase {
     private boolean parseLayoutQualifier(){
         // layout_qualifier: LAYOUT '(' layout_qualifier_id_list ')'
 
-        if(b.getTokenType() == LAYOUT_KEYWORD){
-            final PsiBuilder.Marker mark = b.mark();
-            b.advanceLexer();
+        if(getTokenType() == LAYOUT_KEYWORD){
+            final PsiBuilder.Marker mark = mark();
+            advanceLexer();
             match(LEFT_PAREN, "Expected '('");
             parseLayoutQualifierList();
             match(RIGHT_PAREN, "Expected ')'");
@@ -1526,9 +1528,9 @@ public final class GLSLParsing extends GLSLParsingBase {
     }
 
     private void parseSubroutineTypeName(){
-        final PsiBuilder.Marker typeNameMark = b.mark();
-        if(b.getTokenType() == IDENTIFIER){
-            b.advanceLexer();
+        final PsiBuilder.Marker typeNameMark = mark();
+        if(getTokenType() == IDENTIFIER){
+            advanceLexer();
             typeNameMark.done(TYPE_SPECIFIER);
         }else{
             typeNameMark.error("Subroutine type name expected");
@@ -1538,13 +1540,13 @@ public final class GLSLParsing extends GLSLParsingBase {
 
     private boolean parseSubroutineQualifier(){
         // subroutine_qualifier: SUBROUTINE ['(' TYPE_NAME [',' TYPE_NAME]* ')']?
-        if(b.getTokenType() == SUBROUTINE_KEYWORD){
-            final PsiBuilder.Marker mark = b.mark();
-            b.advanceLexer();
+        if(getTokenType() == SUBROUTINE_KEYWORD){
+            final PsiBuilder.Marker mark = mark();
+            advanceLexer();
             if(tryMatch(LEFT_PAREN)){
                 parseSubroutineTypeName();
-                while(b.getTokenType() == COMMA){
-                    b.advanceLexer();
+                while(getTokenType() == COMMA){
+                    advanceLexer();
                     parseSubroutineTypeName();
                 }
 
@@ -1566,11 +1568,11 @@ public final class GLSLParsing extends GLSLParsingBase {
     private void parseLayoutQualifierElement() {
         // layout_qualifier_id: IDENTIFIER [ EQUAL constant_expression ]
         //                    | SHARED
-        final PsiBuilder.Marker mark = b.mark();
+        final PsiBuilder.Marker mark = mark();
 
         if (tryMatch(IDENTIFIER)) {
             if (tryMatch(EQUAL)) {
-                if (!parseConstantExpression()) b.error("Expected constant expression");
+                if (!parseConstantExpression()) error("Expected constant expression");
             }
         } else if (!tryMatch(SHARED_KEYWORD)) {
             mark.error("Expected 'shared' or an identifier");
