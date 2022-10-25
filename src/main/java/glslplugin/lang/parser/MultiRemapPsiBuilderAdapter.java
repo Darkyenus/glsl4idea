@@ -15,7 +15,7 @@ import java.util.List;
  * A PsiBuilderAdapter in which each token can be remapped to an arbitrary number of tokens.
  *
  * In order to preserve the functionality of getTokenText(), it is necessary to remap tokens
- * to an instance of {#link com.intellij.lang.TokenWrapper}.
+ * to an instance of {@link com.intellij.lang.TokenWrapper}.
  * Created by abigail on 30/06/15.
  */
 public class MultiRemapPsiBuilderAdapter extends PsiBuilderAdapter {

@@ -23,6 +23,8 @@ import com.intellij.lang.ForeignLeafType;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -55,23 +57,55 @@ abstract class GLSLParsingBase {
 
     protected final class GLSLPsiBuilderAdapter extends MultiRemapPsiBuilderAdapter {
 
+        private boolean parsingPreprocessor = false;
+
         public GLSLPsiBuilderAdapter(PsiBuilder delegate) {
             super(delegate);
         }
 
         @Override
-        public void advanceLexer() {
-            advanceLexer(true, true);
+        public @NotNull Marker mark() {
+            flushPreprocessor();
+            return super.mark();
         }
 
-        public void advanceLexer(boolean checkForPreprocessor, boolean remapTokens){
-            super.advanceLexer();
+        @Override
+        public boolean eof() {
+            flushPreprocessor();
+            return super.eof();
+        }
 
-            if(checkForPreprocessor) {
+        @Override
+        public @Nullable IElementType getTokenType() {
+            // Just in case
+            flushPreprocessor();
+            return super.getTokenType();
+        }
+
+        @Override
+        public void advanceLexer() {
+            advanceLexer(true);
+        }
+
+        /**
+         * Called before marking or querying tokens.
+         * This makes sure that the preprocessor AST is as isolated in the PSI (as close to root) as possible.
+         * The only disadvantage to this is that it does not automatically handle preprocessor at the end of the file, which we handle explicitly.
+         */
+        private void flushPreprocessor() {
+            if (parsingPreprocessor) return;
+            try {
+                parsingPreprocessor = true;
                 while (getTokenType() == PREPROCESSOR_BEGIN) {
                     parsePreprocessor();
                 }
+            } finally {
+                parsingPreprocessor = false;
             }
+        }
+
+        public void advanceLexer(boolean remapTokens){
+            super.advanceLexer();
 
             if (remapTokens) {
                 advanceLexer_remapTokens();
@@ -107,7 +141,7 @@ abstract class GLSLParsingBase {
 
         @Override
         protected void remapCurrentTokenAdvanceLexer() {
-            advanceLexer(false, remapCurrentTokenAdvanceLexer_remapTokens);
+            advanceLexer(remapCurrentTokenAdvanceLexer_remapTokens);
         }
     }
 

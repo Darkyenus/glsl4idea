@@ -77,7 +77,7 @@ public final class GLSLParsing extends GLSLParsingBase {
         // We can't use tryMatch etc. in here because we'll end up
         // potentially parsing a preprocessor directive inside this one.
         PsiBuilder.Marker preprocessor = b.mark();
-        b.advanceLexer(false, false); //Get past the PREPROCESSOR_BEGIN ("#")
+        b.advanceLexer(false); //Get past the PREPROCESSOR_BEGIN ("#")
         //advanceLexer(false,false) explanation:
         //false -> this is not a valid place for more preprocessor directives
         //false -> don't substitute here (makes re"define"ing and "undef"ing impossible)
@@ -86,7 +86,7 @@ public final class GLSLParsing extends GLSLParsingBase {
 
         if (directiveType == PREPROCESSOR_DEFINE) {
             //Parse define
-            b.advanceLexer(false, false);//Get past DEFINE
+            b.advanceLexer(false);//Get past DEFINE
 
             if(isValidDefineIdentifier(b.getTokenText())){
                 //Valid
@@ -121,7 +121,7 @@ public final class GLSLParsing extends GLSLParsingBase {
             }
         } else if (directiveType == PREPROCESSOR_UNDEF) {
             //Parse undefine
-            b.advanceLexer(false, false);//Get past UNDEF
+            b.advanceLexer(false);//Get past UNDEF
 
             if(isValidDefineIdentifier(b.getTokenText())){
                 //Valid
@@ -160,7 +160,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                 b.advanceLexer();
             }
         }
-        b.advanceLexer(false, false);//Get past PREPROCESSOR_END
+        b.advanceLexer(false);//Get past PREPROCESSOR_END
         //false -> don't check for PREPROCESSOR_BEGIN, we will handle that ourselves
         if(!PREPROCESSOR_DIRECTIVES.contains(directiveType)){
             //Happens when typing new directive at the end of the file
@@ -170,10 +170,6 @@ public final class GLSLParsing extends GLSLParsingBase {
             preprocessor.done(directiveType);
         }
         b.advanceLexer_remapTokens(); //Remap explicitly after advancing without remapping, makes mess otherwise
-
-        if (b.getTokenType() == PREPROCESSOR_BEGIN) {
-            parsePreprocessor();
-        }
     }
 
     private static final Pattern IDENTIFIER_REGEX = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
@@ -187,12 +183,6 @@ public final class GLSLParsing extends GLSLParsingBase {
      */
     public void parseTranslationUnit() {
         // translation_unit: external_declaration*
-
-        // We normally parse preprocessor directives whenever we advance the lexer - which means that if the first
-        // token is a preprocessor directive we won't catch it, so we just parse them all at the beginning here.
-        while (b.getTokenType() == PREPROCESSOR_BEGIN) {
-            parsePreprocessor();
-        }
 
         while (!b.eof()) {
             if (!parseExternalDeclaration()) {
