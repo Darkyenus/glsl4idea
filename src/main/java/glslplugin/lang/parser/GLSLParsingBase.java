@@ -97,10 +97,7 @@ abstract class GLSLParsingBase {
             try {
                 parsingPreprocessor = true;
                 while (getTokenType() == PREPROCESSOR_BEGIN) {
-                    if (parsePreprocessor()) {
-                        //Remap explicitly after advancing without remapping, makes mess otherwise
-                        b.advanceLexer_remapTokens();
-                    }
+                    parsePreprocessor();
                 }
             } finally {
                 parsingPreprocessor = false;
@@ -188,6 +185,7 @@ abstract class GLSLParsingBase {
     }
 
     protected final @Nullable IElementType lookAhead(int steps) {
+        b.lookAhead(steps);
         if (steps <= 0) return b.getTokenType();
         final PsiBuilder.Marker mark = b.mark();
         try {
@@ -269,5 +267,5 @@ abstract class GLSLParsingBase {
 
     // Interface to implementation
 
-    protected abstract boolean parsePreprocessor();
+    protected abstract void parsePreprocessor();
 }

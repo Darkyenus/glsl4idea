@@ -71,11 +71,9 @@ public final class GLSLParsing extends GLSLParsingBase {
      * Called automatically by {@link GLSLParsingBase}, which means that elements may contain
      * some tokens, that are part of preprocessor, not that element.
      * This may cause trouble during working with the PSI tree, so be careful.
-     *
-     * @return true to explicitly remap next token
      */
     @Override
-    protected boolean parsePreprocessor() {
+    protected void parsePreprocessor() {
         // We can't use tryMatch etc. in here because we'll end up
         // potentially parsing a preprocessor directive inside this one.
         PsiBuilder.Marker preprocessor = mark();
@@ -162,16 +160,14 @@ public final class GLSLParsing extends GLSLParsingBase {
                 advanceLexer();
             }
         }
-        advanceLexer(false);//Get past PREPROCESSOR_END
-        //false -> don't check for PREPROCESSOR_BEGIN, we will handle that ourselves
-        if(!PREPROCESSOR_DIRECTIVES.contains(directiveType)){
-            //Happens when typing new directive at the end of the file
-            //or when malformed directive is created (eg #foo)
-            preprocessor.done(PREPROCESSOR_OTHER);
-        }else{
+        advanceLexer(true);// Get past PREPROCESSOR_END
+        if (PREPROCESSOR_DIRECTIVES.contains(directiveType)) {
             preprocessor.done(directiveType);
+        } else {
+            // Happens when typing new directive at the end of the file (incomplete code)
+            // or when malformed/custom directive is created (eg #foo)
+            preprocessor.done(PREPROCESSOR_OTHER);
         }
-        return true;
     }
 
     private static final Pattern IDENTIFIER_REGEX = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");

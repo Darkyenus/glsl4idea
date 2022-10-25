@@ -229,6 +229,8 @@ public class GLSLTokenTypes {
 
     /** Not returned by lexer but used instead of PREPROCESSOR_[something] when the kind of directive is unknown */
     public static final IElementType PREPROCESSOR_OTHER = new GLSLElementType("PREPROCESSOR_OTHER");
+    /** Synthetically created for preprocessor-redefined tokens */
+    public static final IElementType PREPROCESSOR_REDEFINED = new GLSLElementType("PREPROCESSOR_REDEFINED");
 
     public static final IElementType RESERVED_KEYWORD = new GLSLElementType("RESERVED_KEYWORD");
 

@@ -112,6 +112,7 @@ public class GLSLElementTypes {
     public static final IElementType FLOW_ATTRIBUTE = new GLSLElementType("FLOW_ATTRIBUTE");
 
     //Preprocessor dropins
+    @Deprecated// Is this still useful?
     public static final class RedefinedTokenElementType extends GLSLElementType {
 
         public final String text;
