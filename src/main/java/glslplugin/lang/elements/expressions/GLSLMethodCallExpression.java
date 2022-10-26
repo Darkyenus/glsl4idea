@@ -21,6 +21,7 @@ package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.reference.GLSLAbstractReference;
@@ -62,8 +63,7 @@ public class GLSLMethodCallExpression extends GLSLSelectionExpressionBase implem
 
     @Nullable
     public String getMethodName() {
-        PsiElement identifier = getMethodIdentifier();
-        return identifier == null ? null : identifier.getText();
+        return GLSLElement.text(getMethodIdentifier());
     }
 
     @Nullable

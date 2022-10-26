@@ -248,6 +248,7 @@ public class PreprocessorPsiBuilderAdapter {
                 }
             }
 
+            currentToken = marker.tokenPosition;
             pendingMarkers.removeIf(removeFutureMarkers);
         }
 
@@ -313,7 +314,7 @@ public class PreprocessorPsiBuilderAdapter {
 
         public void rollbackTo() {
             ensureAlive();
-            parent.rollbackTo();//TODO
+            parent.rollbackTo();
             removeMarker(this, true);
         }
 

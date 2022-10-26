@@ -21,12 +21,14 @@ package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -109,9 +111,7 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
 
     @NotNull
     public String getLiteralValue(){
-        final ASTNode node = valueNode();
-        if (node == null) return "";
-        return node.getText();
+        return Objects.requireNonNullElse(GLSLElement.nodeText(valueNode()), "");
     }
 
     @Override

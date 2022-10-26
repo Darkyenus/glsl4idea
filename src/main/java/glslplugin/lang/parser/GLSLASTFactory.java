@@ -1,8 +1,8 @@
 package glslplugin.lang.parser;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.DefaultASTFactoryImpl;
 import com.intellij.lang.ForeignLeafType;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.tree.IElementType;
@@ -32,60 +32,19 @@ public class GLSLASTFactory extends DefaultASTFactoryImpl {
         return result;
     }
 
+    /**
+     * Stand in for preprocessor redefined tokens.
+     * Since {@link #getText()} and related text methods must match the file reality, they are not overridden.
+     * Use {@link glslplugin.lang.elements.GLSLElement#nodeText(ASTNode)} instead for compatbilitiy.
+     * But this subclass at least provides correct {@link IElementType}.
+     */
     public static final class LeafPsiCompositeElement extends CompositeElement {
 
-        private final String text;
+        public final String actualText;
 
         public LeafPsiCompositeElement(@NotNull ForeignLeafType type) {
             super(type.getDelegate());
-            text = type.getValue();
-        }
-
-        @Override
-        public @NotNull String getText() {
-            return text;
-        }
-
-        @Override
-        public @NotNull CharSequence getChars() {
-            return text;
-        }
-
-        @Override
-        public char @NotNull [] textToCharArray() {
-            return text.toCharArray();
-        }
-
-        @Override
-        public boolean textContains(char c) {
-            return text.indexOf(c) != -1;
-        }
-
-        @Override
-        protected int textMatches(@NotNull CharSequence buffer, int start) {
-            assert start >= 0 : start;
-            final int length = text.length();
-            if(buffer.length() - start < length) {
-                return start == 0 ? Integer.MIN_VALUE : -start;
-            }
-            for(int i = 0; i < length; i++){
-                int k = i + start;
-                if(text.charAt(i) != buffer.charAt(k)) {
-                    return k == 0 ? Integer.MIN_VALUE : -k;
-                }
-            }
-            return start + length;
-        }
-
-        @Override
-        public int getTextLength() {
-            return 0;// Otherwise it breaks some assumptions.
-        }
-
-        @Override
-        public TextRange getTextRange() {
-            final int startOffset = getStartOffset();
-            return new TextRange(startOffset, startOffset);
+            actualText = type.getValue();
         }
     }
 }

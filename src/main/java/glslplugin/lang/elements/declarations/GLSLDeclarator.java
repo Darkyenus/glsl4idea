@@ -26,6 +26,7 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.expressions.GLSLExpression;
@@ -60,8 +61,7 @@ public class GLSLDeclarator extends GLSLElementImpl implements GLSLReferencableD
     }
 
     public @Nullable String getVariableName() {
-        final PsiElement identifier = getVariableNameIdentifier();
-        return identifier == null ? null : identifier.getText();
+        return GLSLElement.text(getVariableNameIdentifier());
     }
 
     @Nullable

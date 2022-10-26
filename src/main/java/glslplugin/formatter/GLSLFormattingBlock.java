@@ -24,6 +24,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
@@ -93,7 +94,7 @@ public class GLSLFormattingBlock extends AbstractBlock {
     }
 
     private boolean canBeCorrectBlock(ASTNode child) {
-        return child.getText().trim().length() > 0;
+        return GLSLElement.nodeText(child).trim().length() > 0;
     }
 
     @Override

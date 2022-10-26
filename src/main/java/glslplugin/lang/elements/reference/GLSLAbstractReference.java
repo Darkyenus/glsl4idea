@@ -11,6 +11,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.intellij.util.IncorrectOperationException;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.preprocessor.GLSLRedefinedToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,7 +57,7 @@ public abstract class GLSLAbstractReference<T extends GLSLReferencingElement> im
 
     @Override
     public @NotNull String getCanonicalText() {
-        String text = element.getText();
+        String text = GLSLElement.text(element);
         final TextRange range = rangeInElement;
         try {
             return range.substring(text);
@@ -80,9 +81,9 @@ public abstract class GLSLAbstractReference<T extends GLSLReferencingElement> im
         if (identifierRange.equals(renameRange)) {
             newCombinedName = newElementName;
         } else if (!identifierRange.contains(renameRange)) {
-            throw new IncorrectOperationException("Can't rename, rename range "+rangeInElement+" exceeds the identifier range "+identifierRange+" in '"+element.getText()+"' ");
+            throw new IncorrectOperationException("Can't rename, rename range "+rangeInElement+" exceeds the identifier range "+identifierRange+" in '"+GLSLElement.text(element)+"' ");
         } else {
-            final String oldName = identifier.getText();
+            final String oldName = GLSLElement.text(identifier);
             final String keptPrefix = oldName.substring(0, renameRange.getStartOffset() - identifierRange.getStartOffset());
             final String keptSuffix = oldName.substring(renameRange.getEndOffset() - identifierRange.getStartOffset());
             newCombinedName = keptPrefix + newElementName + keptSuffix;

@@ -2,6 +2,7 @@ package glslplugin.lang.elements.preprocessor;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,10 +27,10 @@ public class GLSLVersionDirective extends GLSLPreprocessorDirective {
      * @return the version literal as number or -1 if not found
      */
     public int getVersionLiteralNumber() {
-        PsiElement versionLiteral = getVersionLiteral();
+        String versionLiteral = GLSLElement.text(getVersionLiteral());
         if (versionLiteral == null) return -1;
 
-        return Integer.parseInt(versionLiteral.getText());
+        return Integer.parseInt(versionLiteral);
     }
 
     @Override

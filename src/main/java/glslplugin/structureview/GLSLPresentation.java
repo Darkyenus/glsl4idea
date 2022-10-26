@@ -23,6 +23,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.util.PlatformIcons;
 import glslplugin.lang.GLSLFileType;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLQualifier;
 import glslplugin.lang.elements.types.GLSLQualifiedType;
@@ -101,7 +102,7 @@ class GLSLPresentation implements ItemPresentation {
         GLSLQualifier[] qualifiers = type.getQualifiers();
 
         if (qualifiers.length > 0) {
-            result += prettyPrint(stringify(qualifiers, glslQualifier -> glslQualifier == null ? "null" : glslQualifier.getText()));
+            result += prettyPrint(stringify(qualifiers, glslQualifier -> glslQualifier == null ? "null" : GLSLElement.text(glslQualifier)));
             result += " ";
         }
 

@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
@@ -79,8 +80,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
 
     @Nullable
     public String getFieldName() {
-        final PsiElement identifier = getFieldIdentifier();
-        return identifier == null ? null : identifier.getText();
+        return GLSLElement.text(getFieldIdentifier());
     }
 
     public void setFieldName(@NotNull String newName) throws IncorrectOperationException {
@@ -191,7 +191,7 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
         GLSLType leftHandType = leftHandExpression.getType();
         if (!leftHandType.isValidType()) return null;
 
-        String fieldName = memberIdentifier.getText();
+        String fieldName = GLSLElement.text(memberIdentifier);
         if (fieldName.isEmpty()) {
             return null;
         }

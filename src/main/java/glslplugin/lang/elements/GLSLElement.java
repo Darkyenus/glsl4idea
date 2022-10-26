@@ -19,9 +19,12 @@
 
 package glslplugin.lang.elements;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import glslplugin.lang.parser.GLSLASTFactory;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,4 +68,22 @@ public interface GLSLElement extends NavigatablePsiElement {
      * so that this whole interface can be implemented in the default methods. */
     <T> T @NotNull [] findChildrenByClass(Class<T> aClass);
 
+    /**
+     * Retrieve text of the leaf element. Supports redefined tokens.
+     */
+    @Contract("null->null;!null->!null")
+    static @Nullable String text(@Nullable PsiElement element) {
+        if (element == null) return null;
+        return nodeText(element.getNode());
+    }
+
+    /**
+     * Retrieve text of the leaf element. Supports redefined tokens.
+     */
+    @Contract("null->null;!null->!null")
+    static @Nullable String nodeText(@Nullable ASTNode node) {
+        if (node == null) return null;
+        if (node instanceof GLSLASTFactory.LeafPsiCompositeElement leaf) return leaf.actualText;
+        return node.getText();
+    }
 }

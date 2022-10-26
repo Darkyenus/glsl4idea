@@ -2,10 +2,13 @@ package glslplugin.lang.elements.preprocessor;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  *
@@ -25,9 +28,7 @@ public class GLSLDefineDirective extends GLSLPreprocessorDirective implements GL
     @NotNull
     @Override
     public String getName() {
-        PsiElement nameIdentifier = getNameIdentifier();
-        if (nameIdentifier == null) return "";
-        return nameIdentifier.getText();
+        return Objects.requireNonNullElse(GLSLElement.text(getNameIdentifier()), "");
     }
 
     @Override
@@ -56,7 +57,7 @@ public class GLSLDefineDirective extends GLSLPreprocessorDirective implements GL
 
         int startOffset = first.getStartOffset();
         int endOffset = last.getStartOffset() + last.getTextLength();
-        final String text = getContainingFile().getText();
+        final String text = GLSLElement.text(getContainingFile());
         if (startOffset < 0) startOffset = 0;
         if (endOffset > text.length()) endOffset = text.length();
         if (startOffset >= endOffset) return "";

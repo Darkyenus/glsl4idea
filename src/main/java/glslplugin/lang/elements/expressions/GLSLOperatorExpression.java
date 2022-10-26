@@ -21,6 +21,7 @@ package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.expressions.operator.GLSLOperator;
 import glslplugin.lang.elements.expressions.operator.GLSLOperators;
@@ -100,7 +101,7 @@ public abstract class GLSLOperatorExpression extends GLSLExpression {
 
         if (type == GLSLTokenTypes.DOT) return GLSLOperators.MEMBER;
 
-        Logger.getLogger("Unsupported Operator: '" + getText() + "'");
+        Logger.getLogger("Unsupported Operator: '" + GLSLElement.text(this) + "'");
         return null;
     }
 }

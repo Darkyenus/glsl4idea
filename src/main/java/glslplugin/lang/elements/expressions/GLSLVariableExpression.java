@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.reference.GLSLAbstractReference;
@@ -53,8 +54,7 @@ public class GLSLVariableExpression extends GLSLExpression implements GLSLRefere
     }
 
     public @Nullable String getVariableName() {
-        final PsiElement identifier = getVariableNameIdentifier();
-        return identifier == null ? null : identifier.getText();
+        return GLSLElement.text(getVariableNameIdentifier());
     }
 
     @Override

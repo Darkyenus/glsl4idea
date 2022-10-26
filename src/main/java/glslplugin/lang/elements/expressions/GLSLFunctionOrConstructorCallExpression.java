@@ -27,6 +27,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLArraySpecifier;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
@@ -172,8 +173,7 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
 
     @Nullable
     public String getFunctionOrConstructedTypeName() {
-        PsiElement identifier = getFunctionOrConstructedTypeNameIdentifier();
-        return identifier == null ? null : identifier.getText();
+        return GLSLElement.text(getFunctionOrConstructedTypeNameIdentifier());
     }
     //endregion
 

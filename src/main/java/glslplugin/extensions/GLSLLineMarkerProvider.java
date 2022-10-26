@@ -27,6 +27,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
@@ -73,7 +74,7 @@ public class GLSLLineMarkerProvider implements LineMarkerProvider {
 
         final PsiElement parent = expr.getParent();
 
-        if (!(parent instanceof GLSLFunctionDeclaration functionDeclaration) || !leaf.getText().equals(functionDeclaration.getFunctionName())) {
+        if (!(parent instanceof GLSLFunctionDeclaration functionDeclaration) || !GLSLElement.text(leaf).equals(functionDeclaration.getFunctionName())) {
             return null;
         }
 

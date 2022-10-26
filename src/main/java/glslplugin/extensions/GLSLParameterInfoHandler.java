@@ -6,6 +6,7 @@ import com.intellij.lang.parameterInfo.ParameterInfoUIContext;
 import com.intellij.lang.parameterInfo.ParameterInfoUtils;
 import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
 import com.intellij.psi.PsiElementResolveResult;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
@@ -100,7 +101,7 @@ public class GLSLParameterInfoHandler implements ParameterInfoHandler<GLSLFuncti
 
         for (int i = 0; i < parameters.length; i++) {
             if (i == currentParameter) highlightStartOffset = buffer.length();
-            buffer.append(parameters[i].getText());
+            buffer.append(GLSLElement.text(parameters[i]));
             if (i == currentParameter) highlightEndOffset = buffer.length();
             if (i < parameters.length - 1) buffer.append(", ");
         }

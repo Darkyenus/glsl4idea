@@ -20,6 +20,7 @@
 package glslplugin.lang.elements.declarations;
 
 import com.intellij.psi.PsiElement;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import glslplugin.lang.elements.types.GLSLBasicFunctionType;
@@ -43,8 +44,7 @@ public interface GLSLFunctionDeclaration extends GLSLQualifiedDeclaration, GLSLR
     }
 
     default @Nullable String getFunctionName() {
-        final PsiElement identifier = getFunctionNameIdentifier();
-        return identifier == null ? null : identifier.getText();
+        return GLSLElement.text(getFunctionNameIdentifier());
     }
 
     @NotNull

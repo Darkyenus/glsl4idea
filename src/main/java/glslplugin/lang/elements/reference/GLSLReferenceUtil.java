@@ -3,6 +3,7 @@ package glslplugin.lang.elements.reference;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import glslplugin.lang.elements.GLSLElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,14 +34,14 @@ public class GLSLReferenceUtil {
         }
 
         sb.append(element.getClass().getSimpleName()).append("{");
-        final String elementText = element.getText();
+        final String elementText = GLSLElement.text(element);
 
         PsiElement child = element;
         PsiElement parent = child.getParent();
         String parentText = null;
         TextRange textRangeInParent = null;
         while (parent != null) {
-            parentText = parent.getText();
+            parentText = GLSLElement.text(parent);
             textRangeInParent = child.getTextRangeInParent();
             if (!parentText.equals(elementText))
                 break;

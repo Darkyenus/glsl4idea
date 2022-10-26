@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.GLSLTypedElement;
@@ -62,8 +63,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
 
     @Nullable
     public String getReferencedTypeName() {
-        final PsiElement identifier = getReferencingIdentifierForRenaming();
-        return identifier == null ? null : identifier.getText();
+        return GLSLElement.text(getReferencingIdentifierForRenaming());
     }
 
     /** If this refers to a struct, return its definition. */
@@ -102,7 +102,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
         }
 
         public @NotNull GLSLType resolveType() {
-            final String typeName = getElement().getText();
+            final String typeName = GLSLElement.text(getElement());
 
             GLSLType builtIn = GLSLTypes.getTypeFromName(typeName);
             if (builtIn != null) {

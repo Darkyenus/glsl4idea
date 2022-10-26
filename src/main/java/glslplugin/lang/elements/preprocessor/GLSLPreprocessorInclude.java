@@ -10,6 +10,7 @@ import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.IncorrectOperationException;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
 import glslplugin.lang.elements.reference.GLSLReferenceUtil;
@@ -30,8 +31,7 @@ public class GLSLPreprocessorInclude extends GLSLPreprocessorDirective {
     }
 
     public @Nullable GLSLFile includedFile() {
-        final PsiElement stringElement = findChildByType(GLSLTokenTypes.PREPROCESSOR_STRING);
-        final String pathStringRaw = stringElement == null ? null : stringElement.getText();
+        final String pathStringRaw = GLSLElement.text(this.<PsiElement>findChildByType(GLSLTokenTypes.PREPROCESSOR_STRING));
         final String pathString = pathStringRaw == null
                 || !pathStringRaw.startsWith("\"")
                 || !pathStringRaw.endsWith("\"")

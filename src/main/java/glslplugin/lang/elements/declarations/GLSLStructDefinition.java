@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.GLSLTypedElement;
@@ -62,8 +63,7 @@ public class GLSLStructDefinition extends GLSLElementImpl implements GLSLTypedEl
     }
 
     public @Nullable String getStructName() {
-        final PsiElement identifier = getStructNameIdentifier();
-        return identifier == null ? null : identifier.getText();
+        return GLSLElement.text(getStructNameIdentifier());
     }
 
     @NotNull

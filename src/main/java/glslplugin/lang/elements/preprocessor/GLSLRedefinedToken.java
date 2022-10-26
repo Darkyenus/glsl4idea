@@ -3,6 +3,7 @@ package glslplugin.lang.elements.preprocessor;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.reference.GLSLAbstractReference;
 import glslplugin.lang.elements.reference.GLSLReferencingElement;
@@ -29,8 +30,7 @@ public class GLSLRedefinedToken extends LeafPsiElement implements GLSLReferencin
 
     @Nullable
     public String getRedefinedTokenName() {
-        final PsiElement identifier = getReferencingIdentifierForRenaming();
-        return identifier == null ? null : identifier.getText();
+        return GLSLElement.text(getReferencingIdentifierForRenaming());
     }
 
     @NotNull
@@ -38,7 +38,7 @@ public class GLSLRedefinedToken extends LeafPsiElement implements GLSLReferencin
         final StringBuilder sb = new StringBuilder();
         ASTNode node = TreeIterator.nextLeaf(getNode());
         while (node instanceof GLSLASTFactory.LeafPsiCompositeElement) {
-            sb.append(node.getText());
+            sb.append(GLSLElement.nodeText(node));
             sb.append(' ');
             node = TreeIterator.nextLeaf(node);
         }

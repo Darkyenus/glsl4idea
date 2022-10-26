@@ -32,6 +32,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.awt.RelativePoint;
 import glslplugin.lang.GLSLLanguage;
+import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.types.GLSLType;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +68,7 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
         GLSLExpression expr = (GLSLExpression) element;
 
         if (expr != null) {
-            expressionText = expr.getText();
+            expressionText = GLSLElement.text(expr);
             GLSLType type = expr.getType();
             typename = type.getTypename();
 
@@ -79,8 +80,8 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
             }
         }
 
-        if(expressionText == null && element != null){
-            expressionText = element.getText();
+        if(expressionText == null || expressionText.isEmpty()){
+            expressionText = GLSLElement.text(element);
         }
 
         showBalloon(e, createHtml(expressionText, typename, value));
