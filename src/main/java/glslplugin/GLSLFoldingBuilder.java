@@ -28,7 +28,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.GLSLTokenTypes;
-import glslplugin.util.ASTTreeIterator;
+import glslplugin.util.TreeIterator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -80,7 +80,7 @@ public class GLSLFoldingBuilder implements FoldingBuilder {
             }
 
             // Walk only leafs, no composite nodes
-            n = ASTTreeIterator.nextLeaf(n);
+            n = TreeIterator.nextLeaf(n);
         }
     }
 

@@ -53,12 +53,13 @@ public class GLSLParser implements PsiParser, LightPsiParser {
 
     @Override
     public void parseLight(IElementType root, PsiBuilder builder) {
-        if (crashing) {
-            builder.setDebugMode(true);
-        }
+
         final PsiBuilder.Marker rootMarker = builder.mark();
         if (!builder.eof()) { //Empty file is not an error
             final GLSLParsing theRealParser = new GLSLParsing(builder);
+            if (crashing) {
+                theRealParser.b.setDebugMode(true);
+            }
 
             theRealParser.parseTranslationUnit();
             while (!builder.eof()) // exhaust the file if unable to parse everything

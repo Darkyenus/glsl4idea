@@ -34,11 +34,13 @@ public class PreprocessorPsiBuilderAdapter {
     private int currentToken = 0;
     /** Holds peeked tokens, redefined tokens and markers */
     private final ArrayDeque<@Nullable ForeignLeafType> tokens = new ArrayDeque<>();
-    private final TreeSet<Marker> pendingMarkers = new TreeSet<>();
+    private final TreeSet<PMark> pendingMarkers = new TreeSet<>();
 
     private final HashMap<String, Redefinition> redefinitions = new HashMap<>();
 
     private boolean debugMode = false;
+
+    public boolean allowRedefinitions = true;
 
     public PreprocessorPsiBuilderAdapter(@NotNull PsiBuilder parent) {
         this.parent = parent;
@@ -50,7 +52,7 @@ public class PreprocessorPsiBuilderAdapter {
 
     public @NotNull ASTNode getTreeBuilt() {
         if (debugMode) {
-            for (Marker marker : pendingMarkers) {
+            for (PMark marker : pendingMarkers) {
                 LOG.error("Incomplete marker: "+marker.alive);
             }
         }
@@ -72,8 +74,8 @@ public class PreprocessorPsiBuilderAdapter {
         while (true) {
             // We must put something in
             final String text = parent.getTokenText();
-            final Redefinition redefinition = redefinitions.get(text);
-            if (redefinition != null) {
+            final Redefinition redefinition = allowRedefinitions ? redefinitions.get(text) : null;
+            if (redefinition != null && redefinition.redefinedTo != null) {
                 // The next token is redefined, skip it (mark as redefined) and insert tokens for redefinitions
                 parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_REDEFINED);
                 parent.advanceLexer();
@@ -140,7 +142,7 @@ public class PreprocessorPsiBuilderAdapter {
         return parent.getCurrentOffset();
     }
 
-    public @NotNull Marker mark() {
+    public @NotNull PreprocessorPsiBuilderAdapter.PMark mark() {
         return addMarker(parent.mark(), currentToken, null);
     }
 
@@ -155,7 +157,7 @@ public class PreprocessorPsiBuilderAdapter {
         return tokenIndex >= tokens.size() && parent.eof();
     }
 
-    public void define(@NotNull String definitionName, @Nullable List<@NotNull String> arguments, List<ForeignLeafType> redefinedTo) {
+    public void define(@NotNull String definitionName, @Nullable List<@NotNull String> arguments, @Nullable List<@NotNull ForeignLeafType> redefinedTo) {
         final Redefinition redefinition = new Redefinition(definitionName, arguments, redefinedTo, currentToken);
         Redefinition chain = this.redefinitions.get(definitionName);
         if (chain == null || chain.fromTokenPosition < currentToken) {
@@ -180,11 +182,11 @@ public class PreprocessorPsiBuilderAdapter {
     private static final class Redefinition {
         public final @NotNull String name;
         private final @Nullable List<@NotNull String> arguments;
-        public final List<ForeignLeafType> redefinedTo;
+        public final @Nullable List<@NotNull ForeignLeafType> redefinedTo;
         public final int fromTokenPosition;
         public @Nullable Redefinition previous;
 
-        private Redefinition(@NotNull String name, @Nullable List<@NotNull String> arguments, List<ForeignLeafType> redefinedTo, int fromTokenPosition) {
+        private Redefinition(@NotNull String name, @Nullable List<@NotNull String> arguments, @Nullable List<@NotNull ForeignLeafType> redefinedTo, int fromTokenPosition) {
             this.name = name;
             this.arguments = arguments;
             this.redefinedTo = redefinedTo;
@@ -197,18 +199,18 @@ public class PreprocessorPsiBuilderAdapter {
         debugMode = dbgMode;
     }
 
-    private Marker addMarker(PsiBuilder.Marker parent, int tokenPosition, Marker precede) {
-        final Marker marker = new Marker(parent, tokenPosition);
+    private PMark addMarker(PsiBuilder.Marker parent, int tokenPosition, final PMark precede) {
+        final PMark marker = new PMark(parent, tokenPosition);
         if (precede != null) {
-            marker.next = precede;
-            marker.previous = precede.previous;
-            precede.previous = marker;
-            if (marker.previous != null) {
-                assert marker.previous.next == precede;
-                marker.previous.next = marker;
+            final PMark previous = precede.previous;
+            if (previous != null) {
+                previous.next = marker;
             }
+            marker.previous = previous;
+            marker.next = precede;
+            precede.previous = marker;
         } else {
-            final Marker before = pendingMarkers.floor(marker);
+            final PMark before = pendingMarkers.floor(marker);
             if (before != null && before.tokenPosition == tokenPosition) {
                 // This marker is really after it!
                 assert before.next == null;
@@ -221,10 +223,10 @@ public class PreprocessorPsiBuilderAdapter {
         return marker;
     }
 
-    private void removeMarker(Marker marker, boolean rollback) {
+    private void removeMarker(PMark marker, boolean rollback) {
         pendingMarkers.remove(marker);
-        final Marker previous = marker.previous;
-        Marker next = marker.next;
+        final PMark previous = marker.previous;
+        PMark next = marker.next;
         // The previous/next must always be correct before interacting with the tree
         if (previous != null) {
             previous.next = next;
@@ -236,10 +238,14 @@ public class PreprocessorPsiBuilderAdapter {
             while (next != null) {
                 pendingMarkers.remove(next);
                 next = next.next;
-                previous.next = next;
+                if (previous != null) {
+                    previous.next = next;
+                }
                 if (next != null) {
                     next.previous = previous;
-                } else break;
+                } else {
+                    break;
+                }
             }
 
             pendingMarkers.removeIf(removeFutureMarkers);
@@ -257,11 +263,11 @@ public class PreprocessorPsiBuilderAdapter {
         }
     }
 
-    private final Predicate<Marker> removeFutureMarkers = m -> {
+    private final Predicate<PMark> removeFutureMarkers = m -> {
         if (m.tokenPosition > currentToken) {
             m.alive = false;
-            final Marker previous = m.previous;
-            Marker next = m.next;
+            final PMark previous = m.previous;
+            PMark next = m.next;
             // The previous/next must always be correct when interacting with the tree
             if (previous != null) {
                 previous.next = next;
@@ -275,7 +281,7 @@ public class PreprocessorPsiBuilderAdapter {
         } else return false;
     };
 
-    public final class Marker implements Comparable<Marker> {
+    public final class PMark implements Marker, Comparable<PMark> {
 
         /** Contains this if alive, null if not alive, Throwable with stack trace if alive and created when debug mode was active. */
         private Object alive = null;
@@ -283,18 +289,18 @@ public class PreprocessorPsiBuilderAdapter {
         private final int tokenPosition;
 
         /** All tokens on the same token position form a linked list. */
-        private Marker previous = null, next = null;
+        private PMark previous = null, next = null;
 
-        private Marker(PsiBuilder.Marker parent, int tokenPosition) {
+        private PMark(PsiBuilder.Marker parent, int tokenPosition) {
             this.parent = parent;
             this.tokenPosition = tokenPosition;
         }
 
         private void ensureAlive() {
-            if (alive == null) throw new IllegalStateException("Marker is used up");
+            if (alive == null) throw new IllegalStateException("PMark is used up");
         }
 
-        public Marker precede() {
+        public PMark precede() {
             ensureAlive();
             return addMarker(parent.precede(), tokenPosition, this);
         }
@@ -324,21 +330,21 @@ public class PreprocessorPsiBuilderAdapter {
         }
 
         @Override
-        public int compareTo(@NotNull PreprocessorPsiBuilderAdapter.Marker o) {
+        public int compareTo(@NotNull PreprocessorPsiBuilderAdapter.PMark o) {
             final int compare = Integer.compare(this.tokenPosition, o.tokenPosition);
             if (compare != 0) return compare;
             if (this == o) return 0;
             // These have the same position in token stream, we must distinguish them by the linked list
 
             // -1 is this object less than = is this object somewhere in o[.previous]+?
-            Marker previous = o.previous;
+            PMark previous = o.previous;
             while (previous != null) {
                 if (previous == this) return -1;
                 previous = previous.previous;
             }
 
             // +1 is this object greater than = is this object somewhere in o[.next]+?
-            Marker next = o.next;
+            PMark next = o.next;
             while (next != null) {
                 if (next == this) return 1;
                 next = next.next;

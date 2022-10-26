@@ -26,11 +26,55 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.GLSLFileType;
-import glslplugin.lang.elements.declarations.*;
-import glslplugin.lang.elements.expressions.*;
-import glslplugin.lang.elements.preprocessor.*;
-import glslplugin.lang.elements.statements.*;
-import org.jetbrains.annotations.NotNull;
+import glslplugin.lang.elements.declarations.GLSLArraySpecifier;
+import glslplugin.lang.elements.declarations.GLSLDeclarator;
+import glslplugin.lang.elements.declarations.GLSLDeclaratorList;
+import glslplugin.lang.elements.declarations.GLSLFunctionDeclarationImpl;
+import glslplugin.lang.elements.declarations.GLSLFunctionDefinitionImpl;
+import glslplugin.lang.elements.declarations.GLSLInitializerExpression;
+import glslplugin.lang.elements.declarations.GLSLInitializerList;
+import glslplugin.lang.elements.declarations.GLSLParameterDeclaration;
+import glslplugin.lang.elements.declarations.GLSLQualifier;
+import glslplugin.lang.elements.declarations.GLSLQualifierList;
+import glslplugin.lang.elements.declarations.GLSLStructDefinition;
+import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
+import glslplugin.lang.elements.declarations.GLSLTypeSpecifier;
+import glslplugin.lang.elements.declarations.GLSLTypename;
+import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
+import glslplugin.lang.elements.expressions.GLSLAssignmentExpression;
+import glslplugin.lang.elements.expressions.GLSLBinaryOperatorExpression;
+import glslplugin.lang.elements.expressions.GLSLCondition;
+import glslplugin.lang.elements.expressions.GLSLConditionalExpression;
+import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
+import glslplugin.lang.elements.expressions.GLSLFunctionOrConstructorCallExpression;
+import glslplugin.lang.elements.expressions.GLSLGroupedExpression;
+import glslplugin.lang.elements.expressions.GLSLLiteral;
+import glslplugin.lang.elements.expressions.GLSLMethodCallExpression;
+import glslplugin.lang.elements.expressions.GLSLParameterList;
+import glslplugin.lang.elements.expressions.GLSLSubscriptExpression;
+import glslplugin.lang.elements.expressions.GLSLUnaryOperatorExpression;
+import glslplugin.lang.elements.expressions.GLSLVariableExpression;
+import glslplugin.lang.elements.preprocessor.GLSLDefineDirective;
+import glslplugin.lang.elements.preprocessor.GLSLFlowAttribute;
+import glslplugin.lang.elements.preprocessor.GLSLPreprocessorDirective;
+import glslplugin.lang.elements.preprocessor.GLSLPreprocessorInclude;
+import glslplugin.lang.elements.preprocessor.GLSLRedefinedToken;
+import glslplugin.lang.elements.preprocessor.GLSLVersionDirective;
+import glslplugin.lang.elements.statements.GLSLBreakStatement;
+import glslplugin.lang.elements.statements.GLSLCaseStatement;
+import glslplugin.lang.elements.statements.GLSLCompoundStatement;
+import glslplugin.lang.elements.statements.GLSLContinueStatement;
+import glslplugin.lang.elements.statements.GLSLDeclarationStatement;
+import glslplugin.lang.elements.statements.GLSLDefaultStatement;
+import glslplugin.lang.elements.statements.GLSLDiscardStatement;
+import glslplugin.lang.elements.statements.GLSLDoStatement;
+import glslplugin.lang.elements.statements.GLSLExpressionStatement;
+import glslplugin.lang.elements.statements.GLSLForStatement;
+import glslplugin.lang.elements.statements.GLSLIfStatement;
+import glslplugin.lang.elements.statements.GLSLPrecisionStatement;
+import glslplugin.lang.elements.statements.GLSLReturnStatement;
+import glslplugin.lang.elements.statements.GLSLSwitchStatement;
+import glslplugin.lang.elements.statements.GLSLWhileStatement;
 
 /**
  * GLSLPsiElementFactory defines the interface for the GLSLElement factory.
@@ -52,7 +96,6 @@ public class GLSLPsiElementFactory {
         }
         IElementType type = node.getElementType();
 
-        if (type instanceof GLSLElementTypes.RedefinedTokenElementType /*== GLSLElementTypes.REDEFINED_TOKEN*/) return new GLSLRedefinedToken(node);
         if (type == GLSLTokenTypes.PREPROCESSOR_DEFINE) return new GLSLDefineDirective(node);
         if (type == GLSLTokenTypes.PREPROCESSOR_VERSION) return new GLSLVersionDirective(node);
         if (type == GLSLTokenTypes.PREPROCESSOR_INCLUDE) return new GLSLPreprocessorInclude(node);
@@ -138,14 +181,6 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.STRUCT_DECLARATOR) return new GLSLDeclarator(node);
 
         return null;
-    }
-
-    @NotNull
-    public static PsiElement createLeafElement(Project project, String name) {
-        PsiElement element = PsiFileFactory.getInstance(project).
-                createFileFromText("dummy.glsl", GLSLFileType.INSTANCE, name);
-        while (element.getFirstChild() != null) element = element.getFirstChild();
-        return element;
     }
 
     public static ASTNode createIdentifier(Project project, String name) throws IncorrectOperationException {

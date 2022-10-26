@@ -58,6 +58,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="GLSL shader" language="GLSL" extensions="glsl;frag;fsh;vert;vsh;tesc;tese;geom;comp" implementationClass="glslplugin.lang.GLSLFileType" fieldName="INSTANCE" />
+        <lang.ast.factory language="GLSL" implementationClass="glslplugin.lang.parser.GLSLASTFactory"/>
         <colorSettingsPage implementation="glslplugin.GLSLColorAndFontsPage"/>
         <lang.syntaxHighlighterFactory language="GLSL" implementationClass="glslplugin.GLSLHighlighterFactory"/>
         <lang.braceMatcher language="GLSL" implementationClass="glslplugin.GLSLPairedBraceMatcher"/>

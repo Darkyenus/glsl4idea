@@ -27,9 +27,6 @@ import glslplugin.lang.GLSLLanguage;
 public class GLSLElementTypes {
     public static final IFileElementType FILE = new IFileElementType(Language.findInstance(GLSLLanguage.class));
 
-    //Workaround before proper text redefinition of remapped tokens is implemented, see RedefinedTokenElementType below
-    //public static final IElementType REDEFINED_TOKEN = new GLSLElementType("REDEFINED_TOKEN");
-
     public static final IElementType VARIABLE_NAME_EXPRESSION = new GLSLElementType("VARIABLE_NAME_EXPRESSION");
     public static final IElementType EXPRESSION = new GLSLElementType("EXPRESSION");
     public static final IElementType CONSTANT_EXPRESSION = new GLSLElementType("CONSTANT_EXPRESSION");
@@ -110,16 +107,4 @@ public class GLSLElementTypes {
 
     // https://github.com/KhronosGroup/GLSL/blob/master/extensions/ext/GL_EXT_control_flow_attributes.txt
     public static final IElementType FLOW_ATTRIBUTE = new GLSLElementType("FLOW_ATTRIBUTE");
-
-    //Preprocessor dropins
-    @Deprecated// Is this still useful?
-    public static final class RedefinedTokenElementType extends GLSLElementType {
-
-        public final String text;
-
-        public RedefinedTokenElementType(String text) {
-            super("REDEFINED_TOKEN", false);
-            this.text = text;
-        }
-    }
 }

@@ -42,13 +42,26 @@ public class GLSLDefineDirective extends GLSLPreprocessorDirective implements GL
     @NotNull
     public String getBoundText(){
         final PsiElement name = getNameIdentifier();
-        if(name == null)return "";
+        if (name == null) return "";
+        final ASTNode first = name.getNode().getTreeNext();
+        if (first == null || first.getElementType() == GLSLTokenTypes.PREPROCESSOR_END) return "";
+        ASTNode last = first;
+        while (true) {
+            final ASTNode next = last.getTreeNext();
+            if (next == null || next.getElementType() == GLSLTokenTypes.PREPROCESSOR_END) {
+                break;
+            }
+            last = next;
+        }
 
-        int textStart = name.getTextOffset() + name.getTextLength();
-        int textEnd = getTextOffset() + getTextLength();
+        int startOffset = first.getStartOffset();
+        int endOffset = last.getStartOffset() + last.getTextLength();
         final String text = getContainingFile().getText();
-        if(textStart >= textEnd || textStart < 0 || textEnd > text.length()) return "";
-        return text.substring(textStart, textEnd).trim();
+        if (startOffset < 0) startOffset = 0;
+        if (endOffset > text.length()) endOffset = text.length();
+        if (startOffset >= endOffset) return "";
+
+        return text.substring(startOffset, endOffset).trim();
     }
 
     @Override

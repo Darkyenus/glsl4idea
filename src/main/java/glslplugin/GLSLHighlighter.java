@@ -28,7 +28,6 @@ import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.scanner.GLSLFlexAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import static glslplugin.lang.elements.GLSLElementTypes.RedefinedTokenElementType;
 import static glslplugin.lang.elements.GLSLTokenTypes.*;
 
 public class GLSLHighlighter extends SyntaxHighlighterBase {
@@ -107,7 +106,7 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
         if (type == PREPROCESSOR_STRING) return GLSL_STRING;
         if (type == UNKNOWN) return GLSL_UNKNOWN;
         if (type == RESERVED_KEYWORD) return GLSL_FLOW_KEYWORDS;
-        if (type instanceof RedefinedTokenElementType /*== REDEFINED_TOKEN*/) return GLSL_REDEFINED_TOKEN;
+        if (type == PREPROCESSOR_REDEFINED) return GLSL_REDEFINED_TOKEN;
         if (OPERATORS.contains(type)) return GLSL_OPERATOR;
         return GLSL_TEXT;
     }

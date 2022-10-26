@@ -1,6 +1,7 @@
 package glslplugin.lang.elements.reference;
 
 import com.intellij.diagnostic.PluginException;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -10,6 +11,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.intellij.util.IncorrectOperationException;
+import glslplugin.lang.elements.preprocessor.GLSLRedefinedToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,9 +89,18 @@ public abstract class GLSLAbstractReference<T extends GLSLReferencingElement> im
         }
         final TextRange newRange = new TextRange(renameRange.getStartOffset(), renameRange.getStartOffset() + newCombinedName.length());
 
-        GLSLReferencableDeclaration.replaceIdentifier(identifier, newCombinedName);
-        rangeInElement = newRange;
-        return element;
+        if (identifier instanceof GLSLRedefinedToken) {
+            // Special case for GLSLRedefinedToken
+            assert identifier == element;
+            final GLSLRedefinedToken token = new GLSLRedefinedToken(newCombinedName);
+            final ASTNode identifierNode = identifier.getNode();
+            identifierNode.getTreeParent().replaceChild(identifierNode, token);
+            return token;
+        } else {
+            GLSLReferencableDeclaration.replaceIdentifier(identifier, newCombinedName);
+            rangeInElement = newRange;
+            return element;
+        }
     }
 
     @Override

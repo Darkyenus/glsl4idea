@@ -65,9 +65,16 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
         super(astNode);
     }
 
+    private @Nullable ASTNode valueNode() {
+        return getNode().getFirstChildNode();
+    }
+
     @Nullable
     public Type getLiteralType() {
-        IElementType type = getNode().getFirstChildNode().getElementType();
+        final ASTNode node = valueNode();
+        if (node == null) return null;
+
+        IElementType type = node.getElementType();
 
         Type result = getLiteralType(type);
         if(result != null) return result;
@@ -102,7 +109,9 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
 
     @NotNull
     public String getLiteralValue(){
-        return getText();
+        final ASTNode node = valueNode();
+        if (node == null) return "";
+        return node.getText();
     }
 
     @Override
@@ -114,7 +123,7 @@ public class GLSLLiteral extends GLSLPrimaryExpression {
     @Override
     public Object getConstantValue() {
         final Type literalType = getLiteralType();
-        final String text = getText();
+        final String text = getLiteralValue();
         if(literalType == null)return null;
         switch (literalType){
             case BOOL:

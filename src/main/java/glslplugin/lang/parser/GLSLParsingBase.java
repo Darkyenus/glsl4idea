@@ -19,19 +19,13 @@
 
 package glslplugin.lang.parser;
 
-import com.intellij.lang.ForeignLeafType;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static glslplugin.lang.elements.GLSLElementTypes.*;
-import static glslplugin.lang.elements.GLSLTokenTypes.*;
+import static glslplugin.lang.elements.GLSLTokenTypes.PREPROCESSOR_BEGIN;
 
 /**
  * Base of GLSLParsing to clearly divide helper and parsing methods.
@@ -46,102 +40,33 @@ abstract class GLSLParsingBase {
      * Do not use directly, use specialized proxy functions below, which can handle preprocessor
      * directives and macro replacements.
      */
-    protected final GLSLPsiBuilderAdapter b;
-
-    protected Map<String, List<ForeignLeafType>> definitions = new HashMap<>();
-    protected Map<String, String> definitionTexts = new HashMap<>();
+    final PreprocessorPsiBuilderAdapter b;
 
     GLSLParsingBase(PsiBuilder builder) {
-        b = new GLSLPsiBuilderAdapter(builder);
+        b = new PreprocessorPsiBuilderAdapter(builder);
     }
 
-    protected final class GLSLPsiBuilderAdapter extends MultiRemapPsiBuilderAdapter {
+    private boolean parsingPreprocessor = false;
 
-        private boolean parsingPreprocessor = false;
-
-        public GLSLPsiBuilderAdapter(PsiBuilder delegate) {
-            super(delegate);
-        }
-
-        @Override
-        public @NotNull Marker mark() {
-            flushPreprocessor();
-            return super.mark();
-        }
-
-        @Override
-        public boolean eof() {
-            flushPreprocessor();
-            return super.eof();
-        }
-
-        @Override
-        public @Nullable IElementType getTokenType() {
-            // Just in case
-            flushPreprocessor();
-            return super.getTokenType();
-        }
-
-        @Override
-        public void advanceLexer() {
-            advanceLexer(true);
-        }
-
-        /**
-         * Called before marking or querying tokens.
-         * This makes sure that the preprocessor AST is as isolated in the PSI (as close to root) as possible.
-         * The only disadvantage to this is that it does not automatically handle preprocessor at the end of the file, which we handle explicitly.
-         */
-        private void flushPreprocessor() {
-            if (parsingPreprocessor) return;
-            try {
-                parsingPreprocessor = true;
-                while (getTokenType() == PREPROCESSOR_BEGIN) {
+    /**
+     * Called before marking or querying tokens.
+     * This makes sure that the preprocessor AST is as isolated in the PSI (as close to root) as possible.
+     * The only disadvantage to this is that it does not automatically handle preprocessor at the end of the file, which we handle explicitly.
+     */
+    private void flushPreprocessor() {
+        if (parsingPreprocessor) return;
+        try {
+            parsingPreprocessor = true;
+            while (getTokenType() == PREPROCESSOR_BEGIN) {
+                try {
+                    b.allowRedefinitions = false;
                     parsePreprocessor();
-                }
-            } finally {
-                parsingPreprocessor = false;
-            }
-        }
-
-        public void advanceLexer(boolean remapTokens) {
-            super.advanceLexer();
-
-            if (remapTokens) {
-                advanceLexer_remapTokens();
-            }
-        }
-
-        public void advanceLexer_remapTokens(){
-            final String tokenText = getTokenText();
-            final String[] namesThroughWhichThisTokenWasRedefined = getNamesThroughWhichThisTokenWasRedefined();
-            for (String name : namesThroughWhichThisTokenWasRedefined) {
-                if (name != null && name.equals(tokenText)) {
-                    // Happens for #define name .*name.*
-                    // We must not replace it with itself, as it would lead to much tears (and probably is't up to spec anyway)
-                    return;
+                } finally {
+                    b.allowRedefinitions = true;
                 }
             }
-            final List<ForeignLeafType> definition = definitions.get(tokenText);
-            if (definition != null) {
-                Marker macro = mark();
-                remapCurrentTokenAdvanceLexer_remapTokens = false;
-                remapCurrentToken(definition, tokenText); //This will advance the lexer which will eat the (real or substituted) token and replace it with redefinition
-                remapCurrentTokenAdvanceLexer_remapTokens = true;
-                macro.done(new RedefinedTokenElementType(definitionTexts.get(tokenText)));
-                advanceLexer_remapTokens();
-            }
-        }
-
-        //Behold, the longest boolean on this hemisphere
-        //Used in advanceLexer_remapTokens to not remap immediately after advancing in remapCurrentToken
-        //That prevents two redefined tokens merging together (second becomes child of first)
-        //I know that it sounds complicated, but you will have to trust me.
-        private boolean remapCurrentTokenAdvanceLexer_remapTokens = true;
-
-        @Override
-        protected void remapCurrentTokenAdvanceLexer() {
-            advanceLexer(remapCurrentTokenAdvanceLexer_remapTokens);
+        } finally {
+            parsingPreprocessor = false;
         }
     }
 
@@ -151,6 +76,7 @@ abstract class GLSLParsingBase {
      * @return whether lexer is at the end of the file.
      */
     protected final boolean eof() {
+        flushPreprocessor();
         return b.eof();
     }
 
@@ -161,14 +87,14 @@ abstract class GLSLParsingBase {
      *
      * @return b.eof()
      */
-    protected final boolean eof(PsiBuilder.Marker... marksToClose) {
-        if (b.eof()) {
+    protected final boolean eof(Marker... marksToClose) {
+        if (eof()) {
             if (marksToClose.length > 0) {
-                for (PsiBuilder.Marker mark : marksToClose) {
+                for (Marker mark : marksToClose) {
                     mark.error("Premature end of file.");
                 }
             } else {
-                b.error("Premature end of file.");
+                error("Premature end of file.");
             }
             return true;
         } else {
@@ -181,37 +107,35 @@ abstract class GLSLParsingBase {
     }
 
     protected final @Nullable IElementType getTokenType() {
+        flushPreprocessor();
         return b.getTokenType();
     }
 
     protected final @Nullable IElementType lookAhead(int steps) {
-        b.lookAhead(steps);
-        if (steps <= 0) return b.getTokenType();
-        final PsiBuilder.Marker mark = b.mark();
+        if (steps <= 0) return getTokenType();
+        final Marker mark = mark();
         try {
             for (int step = 0; step < steps; step++) {
-                b.advanceLexer(true);
+                advanceLexer();
             }
-            return b.getTokenType();
+            return getTokenType();
         } finally {
             mark.rollbackTo();
         }
     }
 
     protected final @Nullable String getTokenText() {
+        flushPreprocessor();
         return b.getTokenText();
     }
 
-    protected final @NotNull PsiBuilder.Marker mark() {
+    protected final @NotNull Marker mark() {
+        flushPreprocessor();
         return b.mark();
     }
 
     protected final void advanceLexer() {
-        b.advanceLexer(true);
-    }
-
-    protected final void advanceLexer(boolean remapTokens) {
-        b.advanceLexer(remapTokens);
+        b.advanceLexer();
     }
 
     /**
@@ -222,11 +146,11 @@ abstract class GLSLParsingBase {
      * @return indicates whether the match was successful or not.
      */
     protected final boolean match(IElementType type, String error) {
-        final boolean matched = !b.eof() && b.getTokenType() == type;
+        final boolean matched = !eof() && getTokenType() == type;
         if (matched) {
-            b.advanceLexer();
+            advanceLexer();
         } else {
-            b.error(error);
+            error(error);
         }
         return matched;
     }
@@ -238,15 +162,15 @@ abstract class GLSLParsingBase {
      * @return indicates whether the match was successful or not.
      */
     protected final boolean tryMatch(IElementType... types) {
-        if (b.eof()) {
+        if (eof()) {
             return false;
         }
         boolean match = false;
         for (IElementType type : types) {
-            match |= b.getTokenType() == type;
+            match |= getTokenType() == type;
         }
         if (match) {
-            b.advanceLexer();
+            advanceLexer();
         }
         return match;
     }
@@ -258,9 +182,9 @@ abstract class GLSLParsingBase {
      * @return indicates whether the match was successful or not.
      */
     protected final boolean tryMatch(TokenSet types) {
-        boolean match = types.contains(b.getTokenType());
+        boolean match = types.contains(getTokenType());
         if (match) {
-            b.advanceLexer();
+            advanceLexer();
         }
         return match;
     }

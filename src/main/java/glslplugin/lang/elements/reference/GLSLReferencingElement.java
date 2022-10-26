@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * An element which references something.
  */
-public interface GLSLReferencingElement extends GLSLElement {
+public interface GLSLReferencingElement extends PsiElement {
 
     /** The identifier which actually creates the reference. Used only for automatic renaming. */
     @Nullable
