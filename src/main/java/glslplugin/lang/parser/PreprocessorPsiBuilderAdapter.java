@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 
@@ -26,7 +27,7 @@ public class PreprocessorPsiBuilderAdapter {
 
     private static final Logger LOG = Logger.getInstance(PreprocessorPsiBuilderAdapter.class);
 
-    private final @NotNull PsiBuilder parent;
+    final @NotNull PsiBuilder parent;
 
     /** To help with memory consumption, all tokens that will definitely not be needed are dropped from tokens.
      * The amount of dropped tokens is recorded here to aid with proper indexing, because all position numbers are indexed from the start. */
@@ -89,6 +90,7 @@ public class PreprocessorPsiBuilderAdapter {
                         break;
                     } else {
                         final PsiBuilder.Marker mark = parent.mark();
+                        parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_MACRO_ARGUMENT);
                         parent.advanceLexer();
 
                         final var actualArguments = new ArrayList<ForeignLeafType[]>();
@@ -100,7 +102,7 @@ public class PreprocessorPsiBuilderAdapter {
                                 parent.error("Unexpected end of the file, expected function macro arguments");
                                 return;
                             }
-                            
+
                             parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_MACRO_ARGUMENT);
                             if (parenNesting == 0 && (type == GLSLTokenTypes.COMMA || type == GLSLTokenTypes.RIGHT_PAREN)) {
                                 actualArguments.add(actualArgument.toArray(EMPTY_FOREIGN_LEAF_TYPE_ARRAY));
@@ -219,20 +221,25 @@ public class PreprocessorPsiBuilderAdapter {
         if (chain == null || chain.fromTokenPosition < currentToken) {
             redefinition.previous = chain;
             redefinitions.put(definitionName, redefinition);
-            return;
-        } else if (chain.fromTokenPosition > currentToken) {
-            while (true) {
-                if (chain.previous == null || chain.previous.fromTokenPosition < currentToken) {
-                    redefinition.previous = chain.previous;
-                    chain.previous = redefinition;
-                    return;
-                }
+        } else if (chain.fromTokenPosition == currentToken) {
+            // Redefine
+            LOG.warn("Redefining " + chain + " -> " + redefinition);
+            redefinition.previous = chain.previous;
+            this.redefinitions.put(definitionName, redefinition);
+        } else while (true) {
+            if (chain.previous == null || chain.previous.fromTokenPosition < currentToken) {
+                redefinition.previous = chain.previous;
+                chain.previous = redefinition;
+                break;
+            } else if (chain.previous.fromTokenPosition == currentToken) {
+                LOG.warn("Redefining " + chain.previous + " -> " + redefinition);
+                redefinition.previous = chain.previous.previous;
+                chain.previous = redefinition;
+                break;
+            } else {
                 chain = chain.previous;
             }
         }
-
-        LOG.error("Can't create two redefinitions at the same token position");
-        assert false;
     }
 
     private static final class Redefinition {
@@ -247,6 +254,37 @@ public class PreprocessorPsiBuilderAdapter {
             this.arguments = arguments;
             this.redefinedTo = redefinedTo;
             this.fromTokenPosition = fromTokenPosition;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Redefinition that = (Redefinition) o;
+
+            if (fromTokenPosition != that.fromTokenPosition) return false;
+            if (!name.equals(that.name)) return false;
+            if (!Objects.equals(arguments, that.arguments)) return false;
+            return Objects.equals(redefinedTo, that.redefinedTo);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = name.hashCode();
+            result = 31 * result + (arguments != null ? arguments.hashCode() : 0);
+            result = 31 * result + (redefinedTo != null ? redefinedTo.hashCode() : 0);
+            result = 31 * result + fromTokenPosition;
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "Redefinition{" +
+                    "name='" + name + '\'' +
+                    ", arguments=" + arguments +
+                    ", redefinedTo=" + redefinedTo +
+                    '}';
         }
     }
 

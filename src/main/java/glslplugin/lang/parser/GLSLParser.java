@@ -46,8 +46,6 @@ public class GLSLParser implements PsiParser, LightPsiParser {
         }
 
         try {
-
-
             final GLSLParsing parser = new GLSLParsing(builder);
             if (crashing) {
                 parser.b.setDebugMode(true);

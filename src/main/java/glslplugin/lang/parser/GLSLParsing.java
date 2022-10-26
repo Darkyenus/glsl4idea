@@ -212,11 +212,61 @@ public final class GLSLParsing extends GLSLParsingBase {
             final String defineIdentifier = getTokenText();
             if (isValidDefineIdentifier(defineIdentifier)) {
                 //Valid
-                //Can use non-b advanceLexer here, to allow "nested" defines
+
+                // Check that the '(' is immediately after identifier, otherwise it is not a function macro.
+                // We must check through raw lookup because normal lookup skips whitespace and comments.
+                // It should be safe to skip directly to parent, because redefinitions are not allowed.
+                final IElementType afterIdentifier = b.parent.rawLookup(1);
+
                 advanceLexer();//Get past identifier
+
+                List<String> arguments = null;
+                if (afterIdentifier == LEFT_PAREN) {
+                    // Function macro!
+                    advanceLexer();
+
+                    arguments = new ArrayList<>();
+                    parseArguments: while (true) {
+                        final IElementType type = getTokenType();
+                        if (type == PREPROCESSOR_END) {
+                            error("Expected argument or )");
+                            break;
+                        }
+                        if (type == RIGHT_PAREN) {
+                            advanceLexer();
+                            break;
+                        }
+                        if (type == COMMA) {
+                            error("Expected argument");
+                            advanceLexer();
+                            continue;
+                        }
+
+                        arguments.add(getTokenText());
+                        advanceLexer();
+
+                        while (true) {
+                            final IElementType commaType = getTokenType();
+                            if (commaType == PREPROCESSOR_END) {
+                                error("Expected , or )");
+                                break parseArguments;
+                            } else if (commaType == RIGHT_PAREN) {
+                                advanceLexer();
+                                break parseArguments;
+                            } else if (commaType == COMMA) {
+                                advanceLexer();
+                                continue parseArguments;
+                            } else {
+                                error("Expected , or )");
+                                advanceLexer();
+                            }
+                        }
+                    }
+                }
 
                 List<ForeignLeafType> definition = new ArrayList<>();
 
+                // to allow "nested" defines
                 b.allowRedefinitions = true;
                 try {
                     while (getTokenType() != PREPROCESSOR_END && !eof()) {
@@ -226,7 +276,7 @@ public final class GLSLParsing extends GLSLParsingBase {
                 } finally {
                     b.allowRedefinitions = false;
                 }
-                b.define(defineIdentifier, null, definition);
+                b.define(defineIdentifier, arguments, definition);
             } else {
                 //Invalid
                 error("Identifier expected.");

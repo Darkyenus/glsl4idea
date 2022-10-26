@@ -36,7 +36,17 @@ public class GLSLRedefinedToken extends LeafPsiElement implements GLSLReferencin
     @NotNull
     public String redefinedTo() {
         final StringBuilder sb = new StringBuilder();
-        ASTNode node = TreeIterator.nextLeaf(getNode());
+
+        ASTNode node;
+        {
+            PsiElement next = getNextSibling();
+            if (next instanceof GLSLPreprocessorFunctionMacroArguments) {
+                final PsiElement afterNext = next.getNextSibling();
+                node = afterNext == null ? null : TreeIterator.nextLeaf(afterNext.getNode());
+            } else {
+                node = TreeIterator.nextLeaf(getNode());
+            }
+        }
         while (node instanceof GLSLASTFactory.LeafPsiCompositeElement leaf) {
             sb.append(leaf.actualText);
             sb.append(' ');
