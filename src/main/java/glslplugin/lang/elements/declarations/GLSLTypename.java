@@ -56,6 +56,10 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
         super(astNode);
     }
 
+    /**
+     * May be null when referencing built-in type.
+     * @return element which names the type and can be renamed
+     */
     @Override
     public @Nullable PsiElement getReferencingIdentifierForRenaming() {
         return findChildByType(GLSLTokenTypes.IDENTIFIER);
@@ -63,7 +67,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
 
     @Nullable
     public String getReferencedTypeName() {
-        return GLSLElement.text(getReferencingIdentifierForRenaming());
+        return GLSLElement.text(this);
     }
 
     /** If this refers to a struct, return its definition. */
@@ -155,7 +159,7 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
 
     @Override
     public String toString() {
-        return "Struct Reference: '" + getReferencedTypeName() + "'";
+        return "Type Reference: '" + getReferencedTypeName() + "'";
     }
 
     @NotNull

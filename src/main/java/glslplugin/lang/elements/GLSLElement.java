@@ -22,6 +22,7 @@ package glslplugin.lang.elements;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.parser.GLSLASTFactory;
 import org.jetbrains.annotations.Contract;
@@ -83,7 +84,20 @@ public interface GLSLElement extends NavigatablePsiElement {
     @Contract("null->null;!null->!null")
     static @Nullable String nodeText(@Nullable ASTNode node) {
         if (node == null) return null;
-        if (node instanceof GLSLASTFactory.LeafPsiCompositeElement leaf) return leaf.actualText;
-        return node.getText();
+        while (true) {
+            if (node instanceof GLSLASTFactory.LeafPsiCompositeElement leaf) return leaf.actualText;
+            if (node instanceof CompositeElement) {
+                final ASTNode child = node.getFirstChildNode();
+                if (child.getTreeNext() == null) {
+                    // Single node tree, try again with that
+                    node = child;
+                    continue;
+                }
+                // Note: We should probably implement the whole CompositeElement.getText() traversal here,
+                // but it is probably not something that will ever be used.
+                return node.getText();
+            }
+            return node.getText();
+        }
     }
 }

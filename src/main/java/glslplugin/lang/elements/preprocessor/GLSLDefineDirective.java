@@ -57,7 +57,7 @@ public class GLSLDefineDirective extends GLSLPreprocessorDirective implements GL
 
         int startOffset = first.getStartOffset();
         int endOffset = last.getStartOffset() + last.getTextLength();
-        final String text = GLSLElement.text(getContainingFile());
+        final String text = getContainingFile().getText();
         if (startOffset < 0) startOffset = 0;
         if (endOffset > text.length()) endOffset = text.length();
         if (startOffset >= endOffset) return "";
