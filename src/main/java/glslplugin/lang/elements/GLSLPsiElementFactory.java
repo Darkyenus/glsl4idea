@@ -57,8 +57,8 @@ import glslplugin.lang.elements.expressions.GLSLVariableExpression;
 import glslplugin.lang.elements.preprocessor.GLSLDefineDirective;
 import glslplugin.lang.elements.preprocessor.GLSLFlowAttribute;
 import glslplugin.lang.elements.preprocessor.GLSLPreprocessorDirective;
+import glslplugin.lang.elements.preprocessor.GLSLPreprocessorFunctionMacroArguments;
 import glslplugin.lang.elements.preprocessor.GLSLPreprocessorInclude;
-import glslplugin.lang.elements.preprocessor.GLSLRedefinedToken;
 import glslplugin.lang.elements.preprocessor.GLSLVersionDirective;
 import glslplugin.lang.elements.statements.GLSLBreakStatement;
 import glslplugin.lang.elements.statements.GLSLCaseStatement;
@@ -167,6 +167,8 @@ public class GLSLPsiElementFactory {
 
         if (type == GLSLElementTypes.PRECISION_STATEMENT) return new GLSLPrecisionStatement(node);
         if (type == GLSLElementTypes.FLOW_ATTRIBUTE) return new GLSLFlowAttribute(node);
+
+        if (type == GLSLElementTypes.PREPROCESSOR_FUNCTION_MACRO_ARGUMENTS) return new GLSLPreprocessorFunctionMacroArguments(node);
 
         // types and structs
         if (type == GLSLElementTypes.QUALIFIER) return new GLSLQualifier(node);

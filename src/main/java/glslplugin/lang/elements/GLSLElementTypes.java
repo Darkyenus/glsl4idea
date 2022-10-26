@@ -107,4 +107,6 @@ public class GLSLElementTypes {
 
     // https://github.com/KhronosGroup/GLSL/blob/master/extensions/ext/GL_EXT_control_flow_attributes.txt
     public static final IElementType FLOW_ATTRIBUTE = new GLSLElementType("FLOW_ATTRIBUTE");
+
+    public static final IElementType PREPROCESSOR_FUNCTION_MACRO_ARGUMENTS = new GLSLElementType("PREPROCESSOR_FUNCTION_MACRO_ARGUMENTS");
 }

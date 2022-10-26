@@ -107,6 +107,7 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
         if (type == UNKNOWN) return GLSL_UNKNOWN;
         if (type == RESERVED_KEYWORD) return GLSL_FLOW_KEYWORDS;
         if (type == PREPROCESSOR_REDEFINED) return GLSL_REDEFINED_TOKEN;
+        if (type == PREPROCESSOR_MACRO_ARGUMENT) return GLSL_REDEFINED_TOKEN;
         if (OPERATORS.contains(type)) return GLSL_OPERATOR;
         return GLSL_TEXT;
     }

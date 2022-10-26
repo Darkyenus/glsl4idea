@@ -231,6 +231,7 @@ public class GLSLTokenTypes {
     public static final IElementType PREPROCESSOR_OTHER = new GLSLElementType("PREPROCESSOR_OTHER");
     /** Synthetically created for preprocessor-redefined tokens */
     public static final IElementType PREPROCESSOR_REDEFINED = new GLSLElementType("PREPROCESSOR_REDEFINED");
+    public static final IElementType PREPROCESSOR_MACRO_ARGUMENT = new GLSLElementType("PREPROCESSOR_MACRO_ARGUMENT");
 
     public static final IElementType RESERVED_KEYWORD = new GLSLElementType("RESERVED_KEYWORD");
 

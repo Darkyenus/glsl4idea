@@ -4,14 +4,16 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.ForeignLeafType;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
+import glslplugin.lang.elements.GLSLElementTypes;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import kotlin.collections.ArrayDeque;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
@@ -46,10 +48,6 @@ public class PreprocessorPsiBuilderAdapter {
         this.parent = parent;
     }
 
-    public Project getProject() {
-        return parent.getProject();
-    }
-
     public @NotNull ASTNode getTreeBuilt() {
         if (debugMode) {
             for (PMark marker : pendingMarkers) {
@@ -59,9 +57,7 @@ public class PreprocessorPsiBuilderAdapter {
         return parent.getTreeBuilt();
     }
 
-    public @NotNull CharSequence getOriginalText() {
-        return parent.getOriginalText();
-    }
+    private static final ForeignLeafType[] EMPTY_FOREIGN_LEAF_TYPE_ARRAY = new ForeignLeafType[0];
 
     private void fillBufferIfEmpty() {
         final int tokenIndex = currentToken - droppedTokens;
@@ -79,11 +75,76 @@ public class PreprocessorPsiBuilderAdapter {
                 // The next token is redefined, skip it (mark as redefined) and insert tokens for redefinitions
                 parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_REDEFINED);
                 parent.advanceLexer();
-                //TODO Add this to tokens?
 
-                if (!redefinition.redefinedTo.isEmpty()) {
-                    tokens.addAll(redefinition.redefinedTo);
-                    break;
+                final List<@NotNull String> arguments = redefinition.arguments;
+                if (arguments == null) {
+                    if (!redefinition.redefinedTo.isEmpty()) {
+                        tokens.addAll(redefinition.redefinedTo);
+                        break;
+                    } // else continue
+                } else {
+                    // This is a function macro
+                    if (parent.getTokenType() != GLSLTokenTypes.LEFT_PAREN) {
+                        parent.error("Expected macro parameters");
+                        break;
+                    } else {
+                        final PsiBuilder.Marker mark = parent.mark();
+                        parent.advanceLexer();
+
+                        final var actualArguments = new ArrayList<ForeignLeafType[]>();
+                        final var actualArgument = new ArrayList<ForeignLeafType>();
+                        int parenNesting = 0;
+                        while (true) {
+                            final IElementType type = parent.getTokenType();
+                            if (type == null) {
+                                parent.error("Unexpected end of the file, expected function macro arguments");
+                                return;
+                            }
+                            
+                            parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_MACRO_ARGUMENT);
+                            if (parenNesting == 0 && (type == GLSLTokenTypes.COMMA || type == GLSLTokenTypes.RIGHT_PAREN)) {
+                                actualArguments.add(actualArgument.toArray(EMPTY_FOREIGN_LEAF_TYPE_ARRAY));
+                                actualArgument.clear();
+                                parent.advanceLexer();
+                                if (type == GLSLTokenTypes.RIGHT_PAREN) {
+                                    break;
+                                }
+                            } else {
+                                final String tokenText = parent.getTokenText();
+                                parent.advanceLexer();
+
+                                actualArgument.add(new ForeignLeafType(type, tokenText == null ? "" : tokenText));
+                                if (type == GLSLTokenTypes.LEFT_PAREN) {
+                                    parenNesting++;
+                                } else if (type == GLSLTokenTypes.RIGHT_PAREN) {
+                                    parenNesting--;
+                                }
+                            }
+                        }
+
+                        mark.done(GLSLElementTypes.PREPROCESSOR_FUNCTION_MACRO_ARGUMENTS);
+
+                        if (actualArguments.size() != arguments.size()) {
+                            mark.precede().error("Expected "+arguments.size()+" arguments, but found "+actualArguments.size()+".");
+                        }
+
+                        final int tokensSizeBefore = tokens.size();
+                        for (ForeignLeafType type : redefinition.redefinedTo) {
+                            final int argumentIndex = arguments.indexOf(type.getValue());
+                            if (argumentIndex >= 0) {
+                                // Insert argument
+                                Collections.addAll(tokens, actualArguments.get(argumentIndex));
+                            } else {
+                                // Insert the token literally
+                                tokens.add(type);
+                            }
+                        }
+
+                        final int tokensAdded = tokens.size() - tokensSizeBefore;
+                        if (tokensAdded > 0) {
+                            break;
+                        }
+                    }
                 }
                 // Continue, check next token
             } else {
@@ -135,11 +196,6 @@ public class PreprocessorPsiBuilderAdapter {
         } else {
             return type.getValue();
         }
-    }
-
-    //TODO Delete if unused
-    public int getCurrentOffset() {
-        return parent.getCurrentOffset();
     }
 
     public @NotNull PreprocessorPsiBuilderAdapter.PMark mark() {

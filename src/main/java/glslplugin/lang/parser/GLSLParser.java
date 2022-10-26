@@ -38,9 +38,24 @@ public class GLSLParser implements PsiParser, LightPsiParser {
     @Override
     @NotNull
     public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {
-        try {
-            parseLight(root, builder);
+        // Intentionally not using parser.mark(), because it would prevent memory saving optimizations in parser
+        final PsiBuilder.Marker rootMarker = builder.mark();
+        if (builder.eof()) {
+            rootMarker.done(root);
             return builder.getTreeBuilt();
+        }
+
+        try {
+
+
+            final GLSLParsing parser = new GLSLParsing(builder);
+            if (crashing) {
+                parser.b.setDebugMode(true);
+            }
+            parser.parseTranslationUnit();
+
+            rootMarker.done(root);
+            return parser.b.getTreeBuilt();
         } catch (ProcessCanceledException | BlockSupport.ReparsedSuccessfullyException expected) {
             // Not a problem
             throw expected;
@@ -53,18 +68,17 @@ public class GLSLParser implements PsiParser, LightPsiParser {
 
     @Override
     public void parseLight(IElementType root, PsiBuilder builder) {
-
         final PsiBuilder.Marker rootMarker = builder.mark();
-        if (!builder.eof()) { //Empty file is not an error
-            final GLSLParsing theRealParser = new GLSLParsing(builder);
-            if (crashing) {
-                theRealParser.b.setDebugMode(true);
-            }
-
-            theRealParser.parseTranslationUnit();
-            while (!builder.eof()) // exhaust the file if unable to parse everything
-                builder.advanceLexer();
+        if (builder.eof()) {
+            rootMarker.done(root);
+            return;
         }
+
+        final GLSLParsing parser = new GLSLParsing(builder);
+        if (crashing) {
+            parser.b.setDebugMode(true);
+        }
+        parser.parseTranslationUnit();
 
         rootMarker.done(root);
     }
