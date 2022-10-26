@@ -38,10 +38,4 @@ public class GLSLDiscardStatement extends GLSLStatement {
     public String toString() {
         return "Discard Statement";
     }
-
-    @NotNull
-    @Override
-    public TerminatorScope getTerminatorScope() {
-        return TerminatorScope.SHADER;
-    }
 }

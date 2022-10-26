@@ -82,6 +82,11 @@ public class GLSLElementImpl extends ASTWrapperPsiElement implements GLSLElement
     }
 
     @Override
+    public <T extends PsiElement> @Nullable T findLastChildByType(IElementType type) {
+        return super.findLastChildByType(type);
+    }
+
+    @Override
     public <T> T @NotNull [] findChildrenByClass(Class<T> aClass) {
         return super.findChildrenByClass(aClass);
     }

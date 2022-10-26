@@ -38,10 +38,4 @@ public class GLSLBreakStatement extends GLSLStatement {
     public String toString() {
         return "Break Statement";
     }
-
-    @NotNull
-    @Override
-    public TerminatorScope getTerminatorScope() {
-        return TerminatorScope.LOOP_OR_SWITCH;
-    }
 }

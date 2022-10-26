@@ -380,9 +380,9 @@ public class GLSLOperator {
             if(this == PLUS){
                 return input;
             }else if(this == MINUS){
-                if(input instanceof Double){
+                if (input instanceof Double) {
                     return -((Double)input);
-                }else if(input instanceof Long){
+                } else if(input instanceof Long) {
                     return -((Long)input);
                 }
             } else {
@@ -436,6 +436,17 @@ public class GLSLOperator {
         @Nullable
         @Override
         public Object getResultValue(Object firstInput, Object secondInput) {
+            if (firstInput instanceof Number n1 && secondInput instanceof Number n2) {
+                if (this == GLSLOperators.GREATER) {
+                    return n1.doubleValue() > n2.doubleValue();
+                } else if (this == GLSLOperators.LESSER) {
+                    return n1.doubleValue() < n2.doubleValue();
+                } else if (this == GLSLOperators.GREATER_EQUAL) {
+                    return n1.doubleValue() >= n2.doubleValue();
+                } else if (this == GLSLOperators.LESSER_EQUAL) {
+                    return n1.doubleValue() <= n2.doubleValue();
+                }
+            }
             return null;
         }
     }
@@ -463,6 +474,13 @@ public class GLSLOperator {
         @Nullable
         @Override
         public Object getResultValue(Object firstInput, Object secondInput) {
+            if (firstInput instanceof Number n1 && secondInput instanceof Number n2) {
+                if (this == GLSLOperators.EQUAL) {
+                    return n1.equals(n2);
+                } else if (this == GLSLOperators.NOT_EQUAL) {
+                    return !n1.equals(n2);
+                }
+            }
             return null;
         }
     }
@@ -494,6 +512,15 @@ public class GLSLOperator {
         @Nullable
         @Override
         public Object getResultValue(Object firstInput, Object secondInput) {
+            if (firstInput instanceof Boolean b1 && secondInput instanceof Boolean b2) {
+                if (this == GLSLOperators.LOGIC_AND) {
+                    return b1 && b2;
+                } else if (this == GLSLOperators.LOGIC_OR) {
+                    return b1 || b2;
+                } else if (this == GLSLOperators.LOGIC_XOR) {
+                    return b1 != b2;
+                }
+            }
             return null;
         }
     }
@@ -524,8 +551,8 @@ public class GLSLOperator {
         @Override
         public Object getResultValue(Object input, boolean prefix) {
             if (this == LOGIC_NEGATION) {
-                if (input instanceof Boolean) {
-                    return !((Boolean) input);
+                if (input instanceof Boolean b) {
+                    return !b;
                 }
             }
             return null;

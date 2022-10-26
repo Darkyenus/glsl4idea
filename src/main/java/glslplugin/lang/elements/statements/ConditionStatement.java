@@ -20,7 +20,8 @@
 package glslplugin.lang.elements.statements;
 
 import glslplugin.lang.elements.expressions.GLSLCondition;
+import org.jetbrains.annotations.Nullable;
 
 public interface ConditionStatement {
-    GLSLCondition getCondition();
+    @Nullable GLSLCondition getCondition();
 }

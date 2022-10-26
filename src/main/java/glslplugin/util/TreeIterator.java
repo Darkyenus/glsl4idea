@@ -2,6 +2,7 @@ package glslplugin.util;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -96,6 +97,17 @@ public class TreeIterator {
         PsiElement p = previous(origin);
         while (p != null && !type.isInstance(p)) {
             p = previous(p);
+        }
+        return (T) p;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> @Nullable T next(@NotNull PsiElement origin, @NotNull Class<T> type, @NotNull PsiElement scope) {
+        PsiElement p = next(origin);
+        if (p == null || !PsiTreeUtil.isAncestor(scope, p,false)) return null;
+        while (!type.isInstance(p)) {
+            p = next(p);
+            if (p == null || !PsiTreeUtil.isAncestor(scope, p,false)) return null;
         }
         return (T) p;
     }

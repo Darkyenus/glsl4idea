@@ -38,10 +38,4 @@ public class GLSLContinueStatement extends GLSLStatement {
     public String toString() {
         return "Continue Statement";
     }
-
-    @NotNull
-    @Override
-    public TerminatorScope getTerminatorScope() {
-        return TerminatorScope.LOOP;
-    }
 }

@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Jan 28, 2009
  *         Time: 6:13:58 PM
  */
-public class GLSLWhileStatement extends GLSLStatement implements ConditionStatement {
+public class GLSLWhileStatement extends GLSLStatement implements LoopStatement {
     public GLSLWhileStatement(@NotNull ASTNode astNode) {
         super(astNode);
     }
@@ -45,8 +45,9 @@ public class GLSLWhileStatement extends GLSLStatement implements ConditionStatem
         return findChildByClass(GLSLCondition.class);
     }
 
+    @Override
     @Nullable
-    public GLSLStatement getLoopStatement() {
+    public GLSLStatement getBody() {
         return findChildByClass(GLSLStatement.class);
     }
 

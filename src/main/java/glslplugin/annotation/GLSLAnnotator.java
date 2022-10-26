@@ -54,10 +54,9 @@ public class GLSLAnnotator implements com.intellij.lang.annotation.Annotator {
         add(new BinaryOperatorTypeAnnotation());
         add(new VectorComponentsAnnotation());
         add(new MemberCheckAnnotation());
-        add(new UnreachableAnnotation());
+        add(new ReachabilityAnnotation());
         add(new CheckReturnTypeAnnotation());
         add(new ConditionCheckAnnotation());
-        add(new MissingReturnAnnotation());
         add(new DeclarationAssignmentTypeAnnotation());
         add(new FlowAttributeHighlightAnnotation());
         add(new ReservedKeywordAnnotation());

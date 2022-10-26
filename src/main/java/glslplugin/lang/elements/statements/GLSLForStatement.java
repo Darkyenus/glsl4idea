@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Jan 28, 2009
  *         Time: 6:13:58 PM
  */
-public class GLSLForStatement extends GLSLStatement implements ConditionStatement {
+public class GLSLForStatement extends GLSLStatement implements LoopStatement {
 
     public GLSLForStatement(@NotNull ASTNode astNode) {
         super(astNode);
@@ -166,8 +166,9 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
         return (GLSLExpression) getForElements()[2];
     }
 
+    @Override
     @Nullable
-    public GLSLStatement getBodyStatement() {
+    public GLSLStatement getBody() {
         return (GLSLStatement) getForElements()[3];
     }
 

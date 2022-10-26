@@ -50,18 +50,6 @@ public class GLSLCompoundStatement extends GLSLStatement {
         return "Compound Statement (" + getStatements().length + " statements)";
     }
 
-    @NotNull
-    @Override
-    public TerminatorScope getTerminatorScope() {
-        // The terminator scope of a compound statement is scope of the first terminating statement inside it.
-
-        for (GLSLStatement statement : getStatements()) {
-            TerminatorScope childScope = statement.getTerminatorScope();
-            if (childScope != TerminatorScope.NONE) return childScope;
-        }
-        return TerminatorScope.NONE;
-    }
-
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state,
                                        @Nullable PsiElement lastParent, @NotNull PsiElement place) {
