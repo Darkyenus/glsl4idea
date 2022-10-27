@@ -183,7 +183,7 @@ public class PreprocessorPsiBuilderAdapter {
 
                     for (ForeignLeafType type : redefinition.redefinedTo) {
                         final int argumentIndex = arguments.indexOf(type.getValue());
-                        if (argumentIndex >= 0) {
+                        if (argumentIndex >= 0 && argumentIndex < actualArguments.size()) {
                             // Insert argument
                             Collections.addAll(result, actualArguments.get(argumentIndex));
                         } else {
