@@ -70,7 +70,6 @@ public class GLSLQualifiedType {
         }
 
         return !hasQualifier(GLSLQualifier.Qualifier.CONST)
-                && !hasQualifier(GLSLQualifier.Qualifier.IN)
                 && !hasQualifier(GLSLQualifier.Qualifier.READONLY);
     }
 }

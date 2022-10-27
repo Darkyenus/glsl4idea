@@ -30,7 +30,8 @@ public class SubscriptBoundAnnotation extends Annotator<GLSLSubscriptExpression>
         if (expression.getType() instanceof GLSLArrayType) {
             dimension = ((GLSLArrayType) expression.getType()).getDimensions()[0];
 
-            if (!subscript.isConstantValue()) {
+            // Disabled, because constant value detection is not perfect yet
+            if (!subscript.isConstantValue() && false) {
                 if (dimension == GLSLArrayType.UNDEFINED_SIZE_DIMENSION) {
                     holder.newAnnotation(HighlightSeverity.ERROR, "Unsized arrays may only be indexed with constant expressions").create();
                     return;

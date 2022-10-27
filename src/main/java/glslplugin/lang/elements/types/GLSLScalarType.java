@@ -22,6 +22,7 @@ package glslplugin.lang.elements.types;
 import glslplugin.lang.elements.types.constructors.GLSLBasicConstructorType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -92,18 +93,33 @@ public class GLSLScalarType extends GLSLType {
 
     /**
      * Each scalar type is explicitly convertible to any other scalar type.
+     * Scalar constructors with non-scalar parameters can be used to take the first element from a non-scalar.
+     * For example, the constructor float(vec3) will select the first component of the vec3 parameter.
      * See 5.4.1 of GLSL Spec. 4.50
      */
     @NotNull
     @Override
     public GLSLFunctionType[] getConstructors() {
-        if(constructorsCache == null){
-            final GLSLFunctionType[] constructorsCache = this.constructorsCache = new GLSLFunctionType[SCALARS.length];
-            for (int i = 0; i < SCALARS.length; i++) {
-                constructorsCache[i] = new GLSLBasicConstructorType(null, this, SCALARS[i]);
+        if (constructorsCache != null) {
+            return constructorsCache;
+        }
+        final ArrayList<GLSLFunctionType> constructors = new ArrayList<>();
+        for (GLSLScalarType scalar : SCALARS) {
+            constructors.add(new GLSLBasicConstructorType(null, this, scalar));
+        }
+        for (GLSLVectorType[] vectors : GLSLVectorType.VECTOR_TYPES.values()) {
+            for (GLSLVectorType vector : vectors) {
+                constructors.add(new GLSLBasicConstructorType(null, this, vector));
             }
         }
-        return constructorsCache;
+        for (GLSLMatrixType[][] matrices : GLSLMatrixType.MATRIX_TYPES.values()) {
+            for (GLSLMatrixType[] matricesRow : matrices) {
+                for (GLSLMatrixType matrix : matricesRow) {
+                    constructors.add(new GLSLBasicConstructorType(null, this, matrix));
+                }
+            }
+        }
+        return constructorsCache = constructors.toArray(GLSLFunctionType.EMPTY_ARRAY);
     }
 
     @Override

@@ -25,8 +25,6 @@ import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.logging.Logger;
-
 /**
  * Expression of selecting an element from (probably) an array.
  * For example: "example_array[3]".
@@ -49,7 +47,6 @@ public class GLSLSubscriptExpression extends GLSLOperatorExpression {
         if (operands.length == 2) {
             return operands[0];
         } else {
-            Logger.getLogger("GLSLSubscriptExpression").warning("Binary operator with " + operands.length + " operand(s).");
             return null;
         }
     }
@@ -60,7 +57,6 @@ public class GLSLSubscriptExpression extends GLSLOperatorExpression {
         if (operands.length == 2) {
             return operands[1];
         } else {
-            Logger.getLogger("GLSLSubscriptExpression").warning("Binary operator with " + operands.length + " operand(s).");
             return null;
         }
     }
