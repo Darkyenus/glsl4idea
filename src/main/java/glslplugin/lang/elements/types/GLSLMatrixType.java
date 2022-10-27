@@ -84,7 +84,7 @@ public class GLSLMatrixType extends GLSLType {
         this.baseType = baseType.type;
         this.columns = columns;
         this.rows = rows;
-        this.typename = baseType.name + (columns == rows ? columns : columns + "x" + rows);
+        this.typename = baseType.name + columns + "x" + rows;// The other name is registered additionally
         this.constructors = new GLSLFunctionType[]{
                 new GLSLScalarParamConstructor(this),
                 new GLSLAggregateParamConstructor(this, false, columns * rows),

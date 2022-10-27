@@ -22,6 +22,7 @@ public class ParameterQualifierAnnotation extends Annotator<GLSLParameterDeclara
                     || qualifierType == GLSLTypeQualifier.PRECISION_QUALIFIER
                     || qualifierType == GLSLTypeQualifier.MEMORY_QUALIFIER
                     || q == GLSLQualifier.Qualifier.CONST
+                    || q == GLSLQualifier.Qualifier.PRECISE
                     || q == GLSLQualifier.Qualifier.IN
                     || q == GLSLQualifier.Qualifier.OUT
                     || q == GLSLQualifier.Qualifier.INOUT) continue;

@@ -139,7 +139,7 @@ public class GLSLOperator {
         @NotNull
         @Override
         public GLSLType getResultType(GLSLType firstInput, GLSLType secondInput) {
-            if(!firstInput.isValidType() || !secondInput.isValidType())return UNKNOWN_TYPE;
+            if(!firstInput.isValidType() || !secondInput.isValidType()) return UNKNOWN_TYPE;
             //Both types are scalars
             if(firstInput instanceof GLSLScalarType && secondInput instanceof GLSLScalarType){
                 return unifyTypes(firstInput, secondInput);

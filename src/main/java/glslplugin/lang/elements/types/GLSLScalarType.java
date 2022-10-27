@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -61,7 +62,7 @@ public class GLSLScalarType extends GLSLType {
     //endregion
 
     private final String typename;
-    private List<GLSLType> implicitConversions;
+    private List<GLSLType> implicitConversions = Collections.emptyList();
 
     private GLSLScalarType(String typename, Class<?> javaType) {
         super(javaType);

@@ -163,7 +163,7 @@ import static glslplugin.lang.elements.GLSLTokenTypes.XOR_OP;
  *         Date: Jan 19, 2009
  *         Time: 3:16:56 PM
  */
-public final class GLSLParsing extends GLSLParsingBase {
+public class GLSLParsing extends GLSLParsingBase {
     // The general approach for error return and flagging is that an error should only be returned when not flagged.
     // So, if an error is encountered; EITHER flag it in the editor OR propagate it down the call stack.
 
