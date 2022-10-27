@@ -40,11 +40,6 @@ public class GLSLParser implements PsiParser, LightPsiParser {
     public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {
         // Intentionally not using parser.mark(), because it would prevent memory saving optimizations in parser
         final PsiBuilder.Marker rootMarker = builder.mark();
-        if (builder.eof()) {
-            rootMarker.done(root);
-            return builder.getTreeBuilt();
-        }
-
         try {
             final GLSLParsing parser = new GLSLParsing(builder);
             if (crashing) {
@@ -67,17 +62,11 @@ public class GLSLParser implements PsiParser, LightPsiParser {
     @Override
     public void parseLight(IElementType root, PsiBuilder builder) {
         final PsiBuilder.Marker rootMarker = builder.mark();
-        if (builder.eof()) {
-            rootMarker.done(root);
-            return;
-        }
-
         final GLSLParsing parser = new GLSLParsing(builder);
         if (crashing) {
             parser.b.setDebugMode(true);
         }
         parser.parseTranslationUnit();
-
         rootMarker.done(root);
     }
 }

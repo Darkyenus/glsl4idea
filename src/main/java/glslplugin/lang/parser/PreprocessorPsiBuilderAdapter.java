@@ -29,24 +29,61 @@ public class PreprocessorPsiBuilderAdapter {
 
     final @NotNull PsiBuilder parent;
 
+    private static long position(int parent, int replacement) {
+        return (((long)parent) << 32) | (((long) replacement) & 0xFFFF_FFFFL);
+    }
+    private static int parentPosition(long position) {
+        return (int) (position >>> 32);
+    }
+    private static int replacementPosition(long position) {
+        return (int) position;
+    }
+
     /** To help with memory consumption, all tokens that will definitely not be needed are dropped from tokens.
      * The amount of dropped tokens is recorded here to aid with proper indexing, because all position numbers are indexed from the start. */
     private int droppedTokens = 0;
     /** The current token, in absolute position, is recorded here.
-     * {@link #advanceLexer()} moves it forward, marker rollbacks move it backward. */
-    private int currentToken = 0;
-    /** Holds peeked tokens, redefined tokens and markers */
-    private final ArrayDeque<@Nullable ForeignLeafType> tokens = new ArrayDeque<>();
+     * {@link #advanceLexer()} moves it forward, marker rollbacks move it backward.
+     * The position is combination of position in parent and position in token replacements. */
+    private long currentPosition = position(0, 0);
+
+    /** At parent position holds the replacement tokens. */
+    private final ArrayDeque<@Nullable Replacements> tokenReplacements = new ArrayDeque<>();
     private final TreeSet<PMark> pendingMarkers = new TreeSet<>();
 
     private final HashMap<String, Redefinition> redefinitions = new HashMap<>();
 
     private boolean debugMode = false;
 
-    public boolean allowRedefinitions = true;
+    private boolean allowRedefinitions = true;
+
+    private static final class Replacements extends ArrayList<@NotNull ForeignLeafType> {
+        public final PsiBuilder.Marker marker;
+
+        private Replacements(PsiBuilder.Marker marker) {
+            this.marker = marker;
+        }
+    }
 
     public PreprocessorPsiBuilderAdapter(@NotNull PsiBuilder parent) {
         this.parent = parent;
+    }
+
+    public void setAllowRedefinitions(boolean allowRedefinitions) {
+        if (this.allowRedefinitions == allowRedefinitions) return;
+        this.allowRedefinitions = allowRedefinitions;
+
+        int currentParent = parentPosition(currentPosition);
+        assert replacementPosition(currentPosition) == 0 : "Can't change allowRedefinitions, already in redefinition";
+
+        final int tokenIndex = currentParent - droppedTokens;
+        if (tokenIndex >= tokenReplacements.getSize()) return; // EOF
+        assert tokenIndex + 1 == tokenReplacements.getSize();
+
+        final Replacements replacement = tokenReplacements.removeLast();
+        if (replacement != null) {
+            replacement.marker.rollbackTo();
+        }
     }
 
     public @NotNull ASTNode getTreeBuilt() {
@@ -55,153 +92,195 @@ public class PreprocessorPsiBuilderAdapter {
                 LOG.error("Incomplete marker: "+marker.alive);
             }
         }
+        for (Replacements tokenReplacement : tokenReplacements) {
+            if (tokenReplacement != null) {
+                tokenReplacement.marker.drop();
+            }
+        }
+        tokenReplacements.clear();
+
         return parent.getTreeBuilt();
     }
 
     private static final ForeignLeafType[] EMPTY_FOREIGN_LEAF_TYPE_ARRAY = new ForeignLeafType[0];
 
     private void fillBufferIfEmpty() {
-        final int tokenIndex = currentToken - droppedTokens;
-        if (tokenIndex < tokens.size() || parent.eof()) {
-            // Not empty or eof
+        final int currentParent = parentPosition(currentPosition);
+        final int currentReplaced = replacementPosition(currentPosition);
+
+        final int tokenIndex = currentParent - droppedTokens;
+        if (tokenIndex < tokenReplacements.size()) {
+            var replacement = tokenReplacements.get(tokenIndex);
+            if (replacement == null || currentReplaced < replacement.size()) {
+                // Not empty
+                return;
+            }
+        }
+        if (parent.eof()) {
+            // Nothing else to do
             return;
         }
-        assert tokenIndex == tokens.size();
+        assert tokenIndex == tokenReplacements.size();
 
-        while (true) {
-            // We must put something in
-            final String text = parent.getTokenText();
-            final Redefinition redefinition = allowRedefinitions ? redefinitions.get(text) : null;
-            if (redefinition != null && redefinition.redefinedTo != null) {
-                // The next token is redefined, skip it (mark as redefined) and insert tokens for redefinitions
-                parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_REDEFINED);
-                parent.advanceLexer();
+        // We must put something in
+        final String text = parent.getTokenText();
+        final Redefinition redefinition = allowRedefinitions ? redefinitions.get(text) : null;
+        final @Nullable Replacements result;
+        if (redefinition != null && redefinition.redefinedTo != null) {
+            // The next token is redefined, skip it (mark as redefined) and insert tokens for redefinitions
+            result = new Replacements(parent.mark());
+            parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_REDEFINED);
+            parent.advanceLexer();
 
-                final List<@NotNull String> arguments = redefinition.arguments;
-                if (arguments == null) {
-                    if (!redefinition.redefinedTo.isEmpty()) {
-                        tokens.addAll(redefinition.redefinedTo);
-                        break;
-                    } // else continue
+            final List<@NotNull String> arguments = redefinition.arguments;
+            if (arguments == null) {
+                result.addAll(redefinition.redefinedTo);
+            } else {
+                // This is a function macro
+                if (parent.getTokenType() != GLSLTokenTypes.LEFT_PAREN) {
+                    parent.error("Expected macro parameters");
                 } else {
-                    // This is a function macro
-                    if (parent.getTokenType() != GLSLTokenTypes.LEFT_PAREN) {
-                        parent.error("Expected macro parameters");
-                        break;
-                    } else {
-                        final PsiBuilder.Marker mark = parent.mark();
+                    final PsiBuilder.Marker mark = parent.mark();
+                    parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_MACRO_ARGUMENT);
+                    parent.advanceLexer();
+
+                    final var actualArguments = new ArrayList<ForeignLeafType[]>();
+                    final var actualArgument = new ArrayList<ForeignLeafType>();
+                    int parenNesting = 0;
+                    while (true) {
+                        final IElementType type = parent.getTokenType();
+                        if (type == null) {
+                            parent.error("Unexpected end of the file, expected function macro arguments");
+                            return;
+                        }
+
                         parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_MACRO_ARGUMENT);
-                        parent.advanceLexer();
-
-                        final var actualArguments = new ArrayList<ForeignLeafType[]>();
-                        final var actualArgument = new ArrayList<ForeignLeafType>();
-                        int parenNesting = 0;
-                        while (true) {
-                            final IElementType type = parent.getTokenType();
-                            if (type == null) {
-                                parent.error("Unexpected end of the file, expected function macro arguments");
-                                return;
+                        if (parenNesting == 0 && (type == GLSLTokenTypes.COMMA || type == GLSLTokenTypes.RIGHT_PAREN)) {
+                            actualArguments.add(actualArgument.toArray(EMPTY_FOREIGN_LEAF_TYPE_ARRAY));
+                            actualArgument.clear();
+                            parent.advanceLexer();
+                            if (type == GLSLTokenTypes.RIGHT_PAREN) {
+                                break;
                             }
+                        } else {
+                            final String tokenText = parent.getTokenText();
+                            parent.advanceLexer();
 
-                            parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_MACRO_ARGUMENT);
-                            if (parenNesting == 0 && (type == GLSLTokenTypes.COMMA || type == GLSLTokenTypes.RIGHT_PAREN)) {
-                                actualArguments.add(actualArgument.toArray(EMPTY_FOREIGN_LEAF_TYPE_ARRAY));
-                                actualArgument.clear();
-                                parent.advanceLexer();
-                                if (type == GLSLTokenTypes.RIGHT_PAREN) {
-                                    break;
-                                }
-                            } else {
-                                final String tokenText = parent.getTokenText();
-                                parent.advanceLexer();
-
-                                actualArgument.add(new ForeignLeafType(type, tokenText == null ? "" : tokenText));
-                                if (type == GLSLTokenTypes.LEFT_PAREN) {
-                                    parenNesting++;
-                                } else if (type == GLSLTokenTypes.RIGHT_PAREN) {
-                                    parenNesting--;
-                                }
+                            actualArgument.add(new ForeignLeafType(type, tokenText == null ? "" : tokenText));
+                            if (type == GLSLTokenTypes.LEFT_PAREN) {
+                                parenNesting++;
+                            } else if (type == GLSLTokenTypes.RIGHT_PAREN) {
+                                parenNesting--;
                             }
                         }
+                    }
 
-                        mark.done(GLSLElementTypes.PREPROCESSOR_FUNCTION_MACRO_ARGUMENTS);
+                    mark.done(GLSLElementTypes.PREPROCESSOR_FUNCTION_MACRO_ARGUMENTS);
 
-                        if (actualArguments.size() != arguments.size()) {
-                            mark.precede().error("Expected "+arguments.size()+" arguments, but found "+actualArguments.size()+".");
-                        }
+                    if (actualArguments.size() != arguments.size()) {
+                        mark.precede().error("Expected "+arguments.size()+" arguments, but found "+actualArguments.size()+".");
+                    }
 
-                        final int tokensSizeBefore = tokens.size();
-                        for (ForeignLeafType type : redefinition.redefinedTo) {
-                            final int argumentIndex = arguments.indexOf(type.getValue());
-                            if (argumentIndex >= 0) {
-                                // Insert argument
-                                Collections.addAll(tokens, actualArguments.get(argumentIndex));
-                            } else {
-                                // Insert the token literally
-                                tokens.add(type);
-                            }
-                        }
-
-                        final int tokensAdded = tokens.size() - tokensSizeBefore;
-                        if (tokensAdded > 0) {
-                            break;
+                    for (ForeignLeafType type : redefinition.redefinedTo) {
+                        final int argumentIndex = arguments.indexOf(type.getValue());
+                        if (argumentIndex >= 0) {
+                            // Insert argument
+                            Collections.addAll(result, actualArguments.get(argumentIndex));
+                        } else {
+                            // Insert the token literally
+                            result.add(type);
                         }
                     }
                 }
-                // Continue, check next token
-            } else {
-                tokens.add(null);// = check parent
-                break;
             }
+        } else {
+            result = null;// = check parent
         }
+        tokenReplacements.add(result);
     }
 
     public void advanceLexer() {
         fillBufferIfEmpty();
-        if (eof()) {
-            return;
-        }
-        final int tokenIndex = currentToken - droppedTokens;
-        final ForeignLeafType type = tokens.get(tokenIndex);
-        if (type == null) {
-            parent.advanceLexer();
-        } else {
-            parent.mark().done(type);
-        }
-        currentToken++;
+        int currentParent = parentPosition(currentPosition);
+        int currentReplaced = replacementPosition(currentPosition);
 
+        final int tokenIndex = currentParent - droppedTokens;
+        if (tokenIndex >= tokenReplacements.getSize()) return; // EOF
+        final List<@NotNull ForeignLeafType> replacement = tokenReplacements.get(tokenIndex);
+        if (replacement == null) {
+            parent.advanceLexer();
+            currentParent++;
+            currentReplaced = 0;
+            //TODO Verify that the next token is not empty
+        } else if (currentReplaced >= replacement.size()) {
+            return; //EOF
+        } else {
+            parent.mark().done(replacement.get(currentReplaced));
+            currentReplaced++;
+            if (currentReplaced < replacement.size()) {
+                // Done, ok
+                currentPosition = position(currentParent, currentReplaced);
+                return;
+            } else {
+                currentParent++;
+                currentReplaced = 0;
+            }
+        }
+
+        // Verify that the position we have landed on is valid
+        // Note: It may appear that this setting would be needed for the very first token as well, but
+        // since it is impossible for any definitions to exist at that point, this is moot.
+        while (true) {
+            currentPosition = position(currentParent, currentReplaced);
+            fillBufferIfEmpty();
+            final int newTokenIndex = currentParent - droppedTokens;
+            if (newTokenIndex >= tokenReplacements.getSize()) {
+                return; // EOF
+            }
+            final List<@NotNull ForeignLeafType> newReplacement = tokenReplacements.get(newTokenIndex);
+            if (newReplacement == null || newReplacement.size() > 0) {
+                // Valid, ok
+                return;
+            }
+            // Replaced into nothing, keep looking
+            currentParent++;
+        }
     }
 
     public @Nullable IElementType getTokenType() {
         fillBufferIfEmpty();
-        if (eof()) {
+        int currentParent = parentPosition(currentPosition);
+        final int tokenIndex = currentParent - droppedTokens;
+        // advanceLexer makes sure that we are never in an empty replacement or at the end of it
+        if (tokenIndex >= tokenReplacements.size()) {
             return null;
         }
-        final int tokenIndex = currentToken - droppedTokens;
-        final ForeignLeafType type = tokens.get(tokenIndex);
-        if (type == null) {
-            return parent.getTokenType();
-        } else {
-            return type.getDelegate();
+        final List<@NotNull ForeignLeafType> replacements = tokenReplacements.get(tokenIndex);
+        if (replacements == null) {
+            final IElementType tokenType = parent.getTokenType();
+            assert tokenType != GLSLTokenTypes.PREPROCESSOR_REDEFINED;
+            return tokenType;
         }
+        return replacements.get(replacementPosition(currentPosition)).getDelegate();
     }
 
     public @NonNls @Nullable String getTokenText() {
         fillBufferIfEmpty();
-        if (eof()) {
+        int currentParent = parentPosition(currentPosition);
+        final int tokenIndex = currentParent - droppedTokens;
+        // advanceLexer makes sure that we are never in an empty replacement or at the end of it
+        if (tokenIndex >= tokenReplacements.size()) {
             return null;
         }
-        final int tokenIndex = currentToken - droppedTokens;
-        final ForeignLeafType type = tokens.get(tokenIndex);
-        if (type == null) {
+        final List<@NotNull ForeignLeafType> replacements = tokenReplacements.get(tokenIndex);
+        if (replacements == null) {
             return parent.getTokenText();
-        } else {
-            return type.getValue();
         }
+        return replacements.get(replacementPosition(currentPosition)).getValue();
     }
 
     public @NotNull PreprocessorPsiBuilderAdapter.PMark mark() {
-        return addMarker(parent.mark(), currentToken, null);
+        return addMarker(parent.mark(), currentPosition, null);
     }
 
     public void error(@NotNull String messageText) {
@@ -211,27 +290,34 @@ public class PreprocessorPsiBuilderAdapter {
 
     public boolean eof() {
         fillBufferIfEmpty();
-        final int tokenIndex = currentToken - droppedTokens;
-        return tokenIndex >= tokens.size() && parent.eof();
+
+        int currentParent = parentPosition(currentPosition);
+        final int tokenIndex = currentParent - droppedTokens;
+        // advanceLexer makes sure that we are never in an empty replacement or at the end of it
+        final boolean eof = tokenIndex >= tokenReplacements.size();
+        if (eof) {
+            return true;
+        }
+        return false;
     }
 
     public void define(@NotNull String definitionName, @Nullable List<@NotNull String> arguments, @Nullable List<@NotNull ForeignLeafType> redefinedTo) {
-        final Redefinition redefinition = new Redefinition(definitionName, arguments, redefinedTo, currentToken);
+        final Redefinition redefinition = new Redefinition(definitionName, arguments, redefinedTo, currentPosition);
         Redefinition chain = this.redefinitions.get(definitionName);
-        if (chain == null || chain.fromTokenPosition < currentToken) {
+        if (chain == null || chain.fromPosition < currentPosition) {
             redefinition.previous = chain;
             redefinitions.put(definitionName, redefinition);
-        } else if (chain.fromTokenPosition == currentToken) {
+        } else if (chain.fromPosition == currentPosition) {
             // Redefine
             LOG.warn("Redefining " + chain + " -> " + redefinition);
             redefinition.previous = chain.previous;
             this.redefinitions.put(definitionName, redefinition);
         } else while (true) {
-            if (chain.previous == null || chain.previous.fromTokenPosition < currentToken) {
+            if (chain.previous == null || chain.previous.fromPosition < currentPosition) {
                 redefinition.previous = chain.previous;
                 chain.previous = redefinition;
                 break;
-            } else if (chain.previous.fromTokenPosition == currentToken) {
+            } else if (chain.previous.fromPosition == currentPosition) {
                 LOG.warn("Redefining " + chain.previous + " -> " + redefinition);
                 redefinition.previous = chain.previous.previous;
                 chain.previous = redefinition;
@@ -246,14 +332,14 @@ public class PreprocessorPsiBuilderAdapter {
         public final @NotNull String name;
         private final @Nullable List<@NotNull String> arguments;
         public final @Nullable List<@NotNull ForeignLeafType> redefinedTo;
-        public final int fromTokenPosition;
+        public final long fromPosition;
         public @Nullable Redefinition previous;
 
-        private Redefinition(@NotNull String name, @Nullable List<@NotNull String> arguments, @Nullable List<@NotNull ForeignLeafType> redefinedTo, int fromTokenPosition) {
+        private Redefinition(@NotNull String name, @Nullable List<@NotNull String> arguments, @Nullable List<@NotNull ForeignLeafType> redefinedTo, long fromPosition) {
             this.name = name;
             this.arguments = arguments;
             this.redefinedTo = redefinedTo;
-            this.fromTokenPosition = fromTokenPosition;
+            this.fromPosition = fromPosition;
         }
 
         @Override
@@ -263,7 +349,7 @@ public class PreprocessorPsiBuilderAdapter {
 
             Redefinition that = (Redefinition) o;
 
-            if (fromTokenPosition != that.fromTokenPosition) return false;
+            if (fromPosition != that.fromPosition) return false;
             if (!name.equals(that.name)) return false;
             if (!Objects.equals(arguments, that.arguments)) return false;
             return Objects.equals(redefinedTo, that.redefinedTo);
@@ -274,7 +360,7 @@ public class PreprocessorPsiBuilderAdapter {
             int result = name.hashCode();
             result = 31 * result + (arguments != null ? arguments.hashCode() : 0);
             result = 31 * result + (redefinedTo != null ? redefinedTo.hashCode() : 0);
-            result = 31 * result + fromTokenPosition;
+            result = 31 * result + Long.hashCode(fromPosition);
             return result;
         }
 
@@ -293,7 +379,7 @@ public class PreprocessorPsiBuilderAdapter {
         debugMode = dbgMode;
     }
 
-    private PMark addMarker(PsiBuilder.Marker parent, int tokenPosition, final PMark precede) {
+    private PMark addMarker(PsiBuilder.Marker parent, long tokenPosition, final PMark precede) {
         final PMark marker = new PMark(parent, tokenPosition);
         if (precede != null) {
             final PMark previous = precede.previous;
@@ -342,24 +428,36 @@ public class PreprocessorPsiBuilderAdapter {
                 }
             }
 
-            currentToken = marker.tokenPosition;
+            currentPosition = marker.tokenPosition;
             pendingMarkers.removeIf(removeFutureMarkers);
+
+            // Drop extra tokens so that they may get re-processed later,
+            // trying to reuse them is tricky. But don't drop already reprocessed.
+            final int targetTokenCount = parentPosition(currentPosition) - droppedTokens + 1;
+            while (tokenReplacements.size() > targetTokenCount) {
+                // Don't drop them, already dropped by rollback
+                tokenReplacements.removeLast();
+            }
         }
 
         // Maybe we can trim the token buffer now?
         if (!pendingMarkers.isEmpty()) {
-            int firstRequiredTokenPosition = pendingMarkers.first().tokenPosition;
-            assert firstRequiredTokenPosition <= currentToken;
+            long firstRequiredPosition = pendingMarkers.first().tokenPosition;
+            assert firstRequiredPosition <= currentPosition;
+            int firstRequiredParentToken = parentPosition(firstRequiredPosition);
 
-            while (!tokens.isEmpty() && droppedTokens < firstRequiredTokenPosition) {
-                tokens.removeFirst();
+            while (!tokenReplacements.isEmpty() && droppedTokens < firstRequiredParentToken) {
+                final Replacements removed = tokenReplacements.removeFirst();
+                if (removed != null) {
+                    removed.marker.drop();
+                }
                 droppedTokens++;
             }
         }
     }
 
     private final Predicate<PMark> removeFutureMarkers = m -> {
-        if (m.tokenPosition > currentToken) {
+        if (m.tokenPosition > currentPosition) {
             m.alive = false;
             final PMark previous = m.previous;
             PMark next = m.next;
@@ -381,12 +479,12 @@ public class PreprocessorPsiBuilderAdapter {
         /** Contains this if alive, null if not alive, Throwable with stack trace if alive and created when debug mode was active. */
         private Object alive = null;
         private final PsiBuilder.Marker parent;
-        private final int tokenPosition;
+        private final long tokenPosition;
 
         /** All tokens on the same token position form a linked list. */
         private PMark previous = null, next = null;
 
-        private PMark(PsiBuilder.Marker parent, int tokenPosition) {
+        private PMark(PsiBuilder.Marker parent, long tokenPosition) {
             this.parent = parent;
             this.tokenPosition = tokenPosition;
         }
@@ -426,7 +524,7 @@ public class PreprocessorPsiBuilderAdapter {
 
         @Override
         public int compareTo(@NotNull PreprocessorPsiBuilderAdapter.PMark o) {
-            final int compare = Integer.compare(this.tokenPosition, o.tokenPosition);
+            final int compare = Long.compareUnsigned(this.tokenPosition, o.tokenPosition);
             if (compare != 0) return compare;
             if (this == o) return 0;
             // These have the same position in token stream, we must distinguish them by the linked list

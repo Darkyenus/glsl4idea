@@ -267,14 +267,14 @@ public class GLSLParsing extends GLSLParsingBase {
                 List<ForeignLeafType> definition = new ArrayList<>();
 
                 // to allow "nested" defines
-                b.allowRedefinitions = true;
+                b.setAllowRedefinitions(true);
                 try {
                     while (getTokenType() != PREPROCESSOR_END && !eof()) {
                         definition.add(new ForeignLeafType(getTokenType(), getTokenText()));
                         advanceLexer();
                     }
                 } finally {
-                    b.allowRedefinitions = false;
+                    b.setAllowRedefinitions(false);
                 }
                 b.define(defineIdentifier, arguments, definition);
             } else {

@@ -58,12 +58,9 @@ abstract class GLSLParsingBase {
         try {
             parsingPreprocessor = true;
             while (getTokenType() == PREPROCESSOR_BEGIN) {
-                try {
-                    b.allowRedefinitions = false;
-                    parsePreprocessor();
-                } finally {
-                    b.allowRedefinitions = true;
-                }
+                b.setAllowRedefinitions(false);
+                parsePreprocessor();
+                b.setAllowRedefinitions(true);
             }
         } finally {
             parsingPreprocessor = false;
