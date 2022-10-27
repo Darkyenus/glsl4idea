@@ -50,7 +50,7 @@ import static glslplugin.lang.elements.GLSLElementTypes.DEFAULT_STATEMENT;
 import static glslplugin.lang.elements.GLSLElementTypes.DISCARD_STATEMENT;
 import static glslplugin.lang.elements.GLSLElementTypes.DO_STATEMENT;
 import static glslplugin.lang.elements.GLSLElementTypes.EQUALITY_EXPRESSION;
-import static glslplugin.lang.elements.GLSLElementTypes.EXPRESSION;
+import static glslplugin.lang.elements.GLSLElementTypes.SEQUENCE_EXPRESSION;
 import static glslplugin.lang.elements.GLSLElementTypes.EXPRESSION_STATEMENT;
 import static glslplugin.lang.elements.GLSLElementTypes.FIELD_SELECTION_EXPRESSION;
 import static glslplugin.lang.elements.GLSLElementTypes.FLOW_ATTRIBUTE;
@@ -1177,16 +1177,18 @@ public final class GLSLParsing extends GLSLParsingBase {
             mark.error("Expected an expression.");
             return false;
         }
-        while (tryMatch(COMMA)) {
-            if (!parseAssignmentExpression()) {
-                mark.error("Expected an expression.");
-                return false;
-            }
-            mark.done(EXPRESSION);
-            mark = mark.precede();
-        }
 
-        mark.drop();
+        if (tryMatch(COMMA)) {
+            do {
+                if (!parseAssignmentExpression()) {
+                    mark.error("Expected an expression.");
+                    return false;
+                }
+            } while (tryMatch(COMMA));
+            mark.done(SEQUENCE_EXPRESSION);
+        } else {
+            mark.drop();
+        }
         return true;
     }
 

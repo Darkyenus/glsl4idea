@@ -28,7 +28,8 @@ public class GLSLElementTypes {
     public static final IFileElementType FILE = new IFileElementType(Language.findInstance(GLSLLanguage.class));
 
     public static final IElementType VARIABLE_NAME_EXPRESSION = new GLSLElementType("VARIABLE_NAME_EXPRESSION");
-    public static final IElementType EXPRESSION = new GLSLElementType("EXPRESSION");
+    /** Expression made up of multiple, comma separated expressions. */
+    public static final IElementType SEQUENCE_EXPRESSION = new GLSLElementType("EXPRESSION");
     public static final IElementType CONSTANT_EXPRESSION = new GLSLElementType("CONSTANT_EXPRESSION");
     public static final IElementType GROUPED_EXPRESSION = new GLSLElementType("GROUPED_EXPRESSION");
     public static final IElementType SUBSCRIPT_EXPRESSION = new GLSLElementType("SUBSCRIPT_EXPRESSION");

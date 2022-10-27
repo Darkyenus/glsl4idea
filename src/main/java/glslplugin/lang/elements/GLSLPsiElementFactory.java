@@ -51,6 +51,7 @@ import glslplugin.lang.elements.expressions.GLSLGroupedExpression;
 import glslplugin.lang.elements.expressions.GLSLLiteral;
 import glslplugin.lang.elements.expressions.GLSLMethodCallExpression;
 import glslplugin.lang.elements.expressions.GLSLParameterList;
+import glslplugin.lang.elements.expressions.GLSLSequenceExpression;
 import glslplugin.lang.elements.expressions.GLSLSubscriptExpression;
 import glslplugin.lang.elements.expressions.GLSLUnaryOperatorExpression;
 import glslplugin.lang.elements.expressions.GLSLVariableExpression;
@@ -102,6 +103,7 @@ public class GLSLPsiElementFactory {
         if (GLSLTokenTypes.PREPROCESSOR_DIRECTIVES.contains(type)) return new GLSLPreprocessorDirective(node);
 
         // primary expressions
+        if (type == GLSLElementTypes.SEQUENCE_EXPRESSION) return new GLSLSequenceExpression(node);
         if (type == GLSLElementTypes.VARIABLE_NAME_EXPRESSION) return new GLSLVariableExpression(node);
         if (type == GLSLElementTypes.CONSTANT_EXPRESSION) return new GLSLLiteral(node);
         if (type == GLSLElementTypes.GROUPED_EXPRESSION) return new GLSLGroupedExpression(node);
