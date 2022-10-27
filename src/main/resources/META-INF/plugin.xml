@@ -27,17 +27,23 @@
     <vendor>Foundation</vendor>
 
     <!-- https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html -->
-    <!-- Since at least 144 (2016), because we require Java 8, which is bundled since then -->
+    <!-- Since at least 222 (2022.2), because we require Java 17, which is bundled since then -->
     <!-- https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under -->
     <!-- Until build is not set, because we hope it will work. -->
-    <idea-version since-build="203.5981.155"/>
+    <idea-version since-build="222"/>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
 
     <change-notes><![CDATA[
         <ul>
             <li>Don't associate with .shader files by default to prevent conflicts with Unity</li>
+            <li>Massive rewrite of reference handling, fixes known crash and makes it much more reliable</li>
+            <li>Basic support for <code>#include "filename"</code> (notable omissions: no cross-file preprocessor references)</li>
+            <li>Basic support for preprocessor macro functions, e.g. <code>#define MAX(a, b) ((a) > (b) ? (a) : (b))</code></li>
+            <li>Region folding for preprocessor if blocks</li>
+            <li>Minor improvements which you may or may not notice</li>
         </ul>
+        <p>This release took a week of full time work, but it is still likely that there will be bugs. Please <a href="https://github.com/Darkyenus/glsl4idea/issues/new">report them</a>. Support in form of kind reviews or <a href="https://ko-fi.com/darkyen">sponsorships</a> is appreciated.</p>
     ]]></change-notes>
 
     <actions>
