@@ -228,7 +228,7 @@ public class GLSLParsing extends GLSLParsingBase {
                     arguments = new ArrayList<>();
                     parseArguments: while (true) {
                         final IElementType type = getTokenType();
-                        if (type == PREPROCESSOR_END) {
+                        if (type == PREPROCESSOR_END || type == null) {
                             error("Expected argument or )");
                             break;
                         }
@@ -247,7 +247,7 @@ public class GLSLParsing extends GLSLParsingBase {
 
                         while (true) {
                             final IElementType commaType = getTokenType();
-                            if (commaType == PREPROCESSOR_END) {
+                            if (commaType == null || commaType == PREPROCESSOR_END) {
                                 error("Expected , or )");
                                 break parseArguments;
                             } else if (commaType == RIGHT_PAREN) {

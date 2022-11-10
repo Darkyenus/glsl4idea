@@ -62,10 +62,10 @@ public class GLSLIfStatement extends GLSLStatement implements ConditionStatement
 
     public @Nullable GLSLStatement getFalseBranch() {
         PsiElement element = findChildByType(GLSLTokenTypes.ELSE_KEYWORD);
-        while (true) {
-            if (element == null) return null;
+        while (element != null) {
             element = element.getNextSibling();
             if (element instanceof GLSLStatement stat) return stat;
         }
+        return null;
     }
 }

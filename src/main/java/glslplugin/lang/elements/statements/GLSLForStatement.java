@@ -67,7 +67,7 @@ public class GLSLForStatement extends GLSLStatement implements LoopStatement {
         // Get to the opening brace
         PsiElement current = findChildByType(GLSLTokenTypes.LEFT_PAREN);
 
-        lookingForRightParen: do {
+        lookingForRightParen: {
             // Skip it and any whitespace and comments
             while (current != null) {
                 current = current.getNextSibling();
@@ -117,8 +117,7 @@ public class GLSLForStatement extends GLSLStatement implements LoopStatement {
                     break lookingForRightParen;
                 }
             }
-
-        } while(true);
+        }
 
         // current is null or right paren
         while (current != null) {
