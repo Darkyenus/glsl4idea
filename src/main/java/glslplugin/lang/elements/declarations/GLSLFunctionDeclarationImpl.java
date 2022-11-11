@@ -129,16 +129,6 @@ public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSL
             }
             return true;// Continue
         }
-
-        @Override
-        public Object @NotNull [] getVariants() {
-            try {
-                PsiTreeUtil.treeWalkUp(this, getElement(), null, ResolveState.initial());
-                return functionDefinitions.toArray();
-            } finally {
-                functionDefinitions.clear();
-            }
-        }
     }
 
     @Override

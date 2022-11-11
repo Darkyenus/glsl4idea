@@ -88,25 +88,15 @@ public class GLSLRedefinedToken extends LeafPsiElement implements GLSLReferencin
 
             return null;
         }
-
-        @Override
-        public Object @NotNull [] getVariants() {
-            final ArrayList<GLSLDefineDirective> results = new ArrayList<>();
-
-            GLSLDefineDirective prev = TreeIterator.previous(element, GLSLDefineDirective.class);
-            while (prev != null) {
-                results.add(prev);
-                prev = TreeIterator.previous(prev, GLSLDefineDirective.class);
-            }
-            return results.toArray();
-        }
     }
+
+    private final RedefinedTokenReference reference = new RedefinedTokenReference(this);
 
     /**
      * @return reference to the #define which caused the redefinition of this token
      */
     @Override
     public RedefinedTokenReference getReference() {
-        return new RedefinedTokenReference(this);
+        return reference;
     }
 }

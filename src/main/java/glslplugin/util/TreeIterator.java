@@ -2,6 +2,7 @@ package glslplugin.util;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +59,7 @@ public class TreeIterator {
 
             // Then we have to go up and to the right
             origin = origin.getParent();
-            if (origin == null) {
+            if (origin == null || origin instanceof PsiFile) {
                 // Can't go on
                 return null;
             }
@@ -83,7 +84,7 @@ public class TreeIterator {
 
             // Then we have to go up and to the right
             origin = origin.getParent();
-            if (origin == null) {
+            if (origin == null || origin instanceof PsiFile) {
                 // Can't go on
                 return null;
             }

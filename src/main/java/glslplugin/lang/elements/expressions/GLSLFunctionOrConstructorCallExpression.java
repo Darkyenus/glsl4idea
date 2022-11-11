@@ -291,35 +291,6 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
                 return ResolveResult.EMPTY_ARRAY;
             }
         }
-
-
-
-        @Override
-        public Object @NotNull [] getVariants() {
-            final WalkResult walk = WalkResult.walkPossibleReferences(element, null);
-
-            final ArrayList<Object> variants = new ArrayList<>();
-
-            for (GLSLScalarType scalar : GLSLScalarType.SCALARS) {
-                variants.add(scalar.getTypename());
-            }
-            for (GLSLVectorType[] sharedBaseType : GLSLVectorType.VECTOR_TYPES.values()) {
-                for (GLSLVectorType type : sharedBaseType) {
-                    variants.add(type.getTypename());
-                }
-            }
-            for (GLSLMatrixType[][] sharedBaseType : GLSLMatrixType.MATRIX_TYPES.values()) {
-                for (GLSLMatrixType[] column : sharedBaseType) {
-                    for (GLSLMatrixType type : column) {
-                        variants.add(type.getTypename());
-                    }
-                }
-            }
-            variants.addAll(walk.functionDeclarations.values());
-            variants.addAll(walk.structDefinitions);
-
-            return variants.toArray();
-        }
     }
 
     public static final class WalkResult implements PsiScopeProcessor {

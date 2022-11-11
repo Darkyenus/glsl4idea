@@ -27,30 +27,35 @@ import com.intellij.codeInsight.completion.DefaultCompletionContributor;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
-import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.codeInsight.lookup.LookupElementRenderer;
 import com.intellij.patterns.ElementPattern;
-import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import glslplugin.lang.GLSLFileType;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
+import glslplugin.lang.elements.declarations.GLSLParameterDeclaration;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
-import glslplugin.lang.elements.expressions.GLSLAssignmentExpression;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
-import glslplugin.lang.elements.expressions.GLSLFunctionOrConstructorCallExpression;
-import glslplugin.lang.elements.expressions.GLSLVariableExpression;
-import glslplugin.lang.elements.types.GLSLScalarType;
+import glslplugin.lang.elements.preprocessor.GLSLDefineDirective;
+import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
+import glslplugin.lang.elements.statements.GLSLCompoundStatement;
+import glslplugin.lang.elements.types.GLSLArrayType;
+import glslplugin.lang.elements.types.GLSLMatrixType;
 import glslplugin.lang.elements.types.GLSLStructType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLVectorType;
+import glslplugin.util.TreeIterator;
 import glslplugin.util.VectorComponents;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
@@ -59,114 +64,158 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  * Provides more advanced contextual autocompletion
  *
  * @author Wyozi
+ * @author Jan Polák
  */
 public class GLSLCompletionContributor extends DefaultCompletionContributor {
     private static final ElementPattern<PsiElement> FIELD_SELECTION = psiElement(GLSLTokenTypes.IDENTIFIER).withParent(GLSLFieldSelectionExpression.class);
 
-    private static final ElementPattern<PsiElement> VARIABLE_REFERENCE = psiElement(GLSLTokenTypes.IDENTIFIER).withParent(GLSLVariableExpression.class);
+    private static final ElementPattern<PsiElement> GENERIC_REFERENCE = psiElement(GLSLTokenTypes.IDENTIFIER);
 
     public GLSLCompletionContributor() {
         // Add field selection completion
         extend(CompletionType.BASIC, FIELD_SELECTION, new CompletionProvider<>() {
             @Override
             protected void addCompletions(@NotNull CompletionParameters completionParameters, @NotNull ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
-                GLSLFieldSelectionExpression fieldSelection = (GLSLFieldSelectionExpression) completionParameters.getPosition().getParent().getParent();
+                final PsiElement position = completionParameters.getPosition();
+                GLSLFieldSelectionExpression fieldSelection = (GLSLFieldSelectionExpression) position.getParent();
 
                 GLSLExpression leftHandExpression = fieldSelection.getLeftHandExpression();
                 if (leftHandExpression == null) return;
 
                 // Struct member completion
                 GLSLType type = leftHandExpression.getType();
-                if (type instanceof GLSLStructType) {
-                    completeStructTypes(((GLSLStructType) type), completionResultSet);
-                }
 
-                // Vector completion that infers component count from the context
-                if (type instanceof GLSLVectorType) {
-                    // if it's a declaration (eg. `vec3 v3 = v4.`) the context type is inferred from declarator type (here vec3)
-                    GLSLDeclarator declarator = PsiTreeUtil.getParentOfType(fieldSelection, GLSLDeclarator.class);
-                    if (declarator != null) {
-                        completeVectorTypes(((GLSLVectorType) type), declarator.getType(), completionResultSet);
+                if (type instanceof GLSLVectorType vec) {
+                    completionResultSet.addElement(LookupElementBuilder.create("length()").withTypeText("int"));
+
+                    final int textStart = position.getTextOffset();
+                    final int textEnd = completionParameters.getOffset();
+                    if (textStart < textEnd) {
+                        String prefix = position.getText().substring(0, textEnd - textStart);
+                        if (prefix.length() > 0 && prefix.length() < 4) {
+                            final String newType = GLSLVectorType.getType(vec.getBaseType(), prefix.length() + 1).getTypename();
+
+                            final char firstComponent = prefix.charAt(0);
+                            for (String set : VectorComponents.SETS) {
+                                if (set.indexOf(firstComponent) == -1) {
+                                    continue;
+                                }
+                                for (int i = 0; i < Math.min(vec.getNumComponents(), set.length()); i++) {
+                                    completionResultSet.addElement(LookupElementBuilder.create(prefix + set.charAt(i)).withTypeText(newType));
+                                }
+                                break;
+                            }
+                        }
+
+                    } else {
+                        String baseType = vec.getBaseType().getTypename();
+                        for (String set : VectorComponents.SETS) {
+                            for (int i = 0; i < Math.min(vec.getNumComponents(), set.length()); i++) {
+                                completionResultSet.addElement(LookupElementBuilder.create(set.charAt(i)).withTypeText(baseType));
+                            }
+                        }
                     }
-
-                    // if it's an assignment (eg. `vec3 v3; v3 = v4.`) the context type is inferred from variable type (if known)
-                    GLSLAssignmentExpression assignment = PsiTreeUtil.getParentOfType(fieldSelection, GLSLAssignmentExpression.class);
-                    if (assignment != null) {
-                        completeVectorTypes(((GLSLVectorType) type), assignment.getType(), completionResultSet);
+                } else if (type instanceof GLSLMatrixType || type instanceof GLSLArrayType) {
+                    completionResultSet.addElement(LookupElementBuilder.create("length()").withTypeText("int"));
+                } else if (type instanceof GLSLStructType struct) {
+                    for (Map.Entry<String, GLSLType> entry : struct.getMembers().entrySet()) {
+                        completionResultSet.addElement(LookupElementBuilder.create(entry.getKey()).withTypeText(entry.getValue().getTypename()));
                     }
                 }
             }
         });
 
-        // Functions often start like this
-        extend(CompletionType.BASIC, VARIABLE_REFERENCE, new CompletionProvider<CompletionParameters>() {
+        // This can be anything, types, tokens...
+        extend(CompletionType.BASIC, GENERIC_REFERENCE, new CompletionProvider<>() {
             @Override
             protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
-                final GLSLFunctionOrConstructorCallExpression.WalkResult walk = GLSLFunctionOrConstructorCallExpression.WalkResult.walkPossibleReferences(parameters.getOriginalPosition(), null);
-                for (GLSLFunctionDeclaration value : walk.functionDeclarations.values()) {
-                    result.addElement(LookupElementBuilder.create(value));
+                final PsiElement element = parameters.getOriginalPosition();
+                if (element == null) return;
+
+                final PsiElement prevLeaf = PsiTreeUtil.prevLeaf(parameters.getPosition());
+                if (prevLeaf != null) {
+                    final IElementType prevToken = prevLeaf.getNode().getElementType();
+                    if (prevToken == GLSLTokenTypes.DOT) {
+                        // Field selection handles this
+                        return;
+                    }
+                    if (GLSLTokenTypes.CONSTANT_TOKENS.contains(prevToken)) {
+                        // No complete right after a number, it is confusing and annoying
+                        return;
+                    }
                 }
-                for (GLSLStructDefinition value : walk.structDefinitions) {
-                    result.addElement(LookupElementBuilder.create(value));
+
+                // Walk declarations
+                boolean includeFunctions = PsiTreeUtil.getParentOfType(element, GLSLCompoundStatement.class) != null;
+                final DeclarationWalk walk = new DeclarationWalk(result, includeFunctions);
+                PsiTreeUtil.treeWalkUp(walk, element, null, ResolveState.initial());
+
+                // Walk preprocessor tokens
+                {
+                    GLSLDefineDirective prev = TreeIterator.previous(element, GLSLDefineDirective.class);
+                    while (prev != null) {
+                        System.out.println("Got one: "+prev);
+                        result.addElement(LookupElementBuilder.create(prev));
+                        prev = TreeIterator.previous(prev, GLSLDefineDirective.class);
+                    }
                 }
+
+                // Add all built-ins
+                final GLSLBuiltInPsiUtilService bipus = element.getProject().getService(GLSLBuiltInPsiUtilService.class);
+                result.addAllElements(bipus.builtinTypeLookup);
             }
         });
     }
 
-    private void completeStructTypes(GLSLStructType type, CompletionResultSet completionResultSet) {
-        for (Map.Entry<String, GLSLType> entry : type.getMembers().entrySet()) {
-            completionResultSet.addElement(new GLSLLookupElement(entry.getKey(), entry.getValue()));
-        }
-        completionResultSet.stopHere();
-    }
+    /** Combination of all reference walks into one, for efficiency. */
+    private static final class DeclarationWalk implements PsiScopeProcessor {
 
-    /**
-     * Vector type completion implementation. Uses values from {@link VectorComponents} in order.
-     *
-     * @param type the vector type we're completing
-     * @param contextNumComponents how many components does the context expect
-     */
-    private void completeVectorTypes(GLSLVectorType type, int contextNumComponents, CompletionResultSet completionResultSet) {
-        int componentCount = Math.min(contextNumComponents, type.getNumComponents());
+        public final @NotNull CompletionResultSet result;
+        public final boolean includeFunctions;
 
-        for (VectorComponents components : VectorComponents.values()) {
-            completionResultSet.addElement(new GLSLLookupElement(components.getComponentRange(componentCount), type));
+        private DeclarationWalk(@NotNull CompletionResultSet result, boolean includeFunctions) {
+            this.result = result;
+            this.includeFunctions = includeFunctions;
         }
 
-        completionResultSet.stopHere();
-    }
-
-    private void completeVectorTypes(GLSLVectorType type, @Nullable GLSLType contextType, CompletionResultSet completionResultSet) {
-        if (contextType instanceof GLSLScalarType) {
-            completeVectorTypes(type, 1, completionResultSet);
-        } else if (contextType instanceof GLSLVectorType) {
-            completeVectorTypes(type, ((GLSLVectorType) contextType).getNumComponents(), completionResultSet);
-        }
-    }
-
-    public static class GLSLLookupElement extends LookupElement {
-        private final String str;
-        private final GLSLType type;
-
-        public GLSLLookupElement(String str, GLSLType type) {
-            this.str = str;
-            this.type = type;
-        }
+        private final HashMap<String, ArrayList<GLSLFunctionDeclaration>> encounteredFunctions = new HashMap<>();
 
         @Override
-        public void renderElement(LookupElementPresentation presentation) {
-            super.renderElement(presentation);
-            presentation.setIcon(((LanguageFileType) GLSLFileType.INSTANCE).getIcon());
+        public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
+            if (element instanceof final GLSLDeclarator declarator) {
+                result.addElement(LookupElementBuilder.create(declarator).withTypeText(declarator.getType().getTypename()));
+            } else if (element instanceof GLSLStructDefinition def) {
+                result.addElement(LookupElementBuilder.create(def).withTypeText("struct"));
+            } else if (includeFunctions && element instanceof GLSLFunctionDeclaration dec) {
+                final String funcName = dec.getFunctionName();
+                ArrayList<GLSLFunctionDeclaration> all = encounteredFunctions.get(funcName);
+                if (all == null) {
+                    all = new ArrayList<>();
+                    result.addElement(LookupElementBuilder.create(dec).withExpensiveRenderer(new LookupElementRenderer<>() {
+                        @Override
+                        public void renderElement(LookupElement element, LookupElementPresentation presentation) {
+                            presentation.setItemText(dec.getFunctionName());
+                            presentation.appendTailText("(", true);
+                            boolean first = true;
+                            for (GLSLParameterDeclaration parameter : dec.getParameters()) {
+                                if (!first) {
+                                    presentation.appendTailText(", ", true);
+                                } else first = false;
 
-            if (type != null) {
-                presentation.setTypeText(this.type.getTypename());
+                                presentation.appendTailText(parameter.getTypeSpecifierNodeTypeName(), false);
+                            }
+                            presentation.appendTailText(")", true);
+                            presentation.setTypeText(dec.getReturnType().getTypename());
+                        }
+                    }));
+                    all.add(dec);
+                    encounteredFunctions.put(funcName, all);
+                } else {
+                    all.add(dec);
+                }
             }
-        }
 
-        @NotNull
-        @Override
-        public String getLookupString() {
-            return this.str;
+            return true;
         }
     }
 }

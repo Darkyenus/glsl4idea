@@ -73,63 +73,50 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
     /** If this refers to a struct, return its definition. */
     @Nullable
     public GLSLStructDefinition getStructDefinition() {
-        final GLSLType type = getReference().resolveType();
+        final GLSLType type = getType();
         if (type instanceof GLSLStructType) {
             return ((GLSLStructType) type).getDefinition();
         }
         return null;
     }
 
-    @NotNull
-    public GLSLType getType() {
-        return getReference().resolveType();
+    private GLSLType builtinTypeCache = null;
+
+    @Override
+    public void subtreeChanged() {
+        super.subtreeChanged();
+        builtinTypeCache = null;
     }
 
-    public static final class TypeReference extends GLSLAbstractReference<GLSLTypename> implements PsiScopeProcessor {
+    @NotNull
+    public GLSLType getType() {
+        final GLSLType cached = builtinTypeCache;
+        if (cached != null) return cached;
+
+        final String typeName = GLSLElement.text(this);
+
+        GLSLType builtIn = GLSLTypes.getTypeFromName(typeName);
+        if (builtIn != null) {
+            return builtinTypeCache = builtIn;
+        }
+
+        final StructDefinitionWalk result = StructDefinitionWalk.walk(this, typeName);
+        if (!result.definitions.isEmpty()) {
+            return result.definitions.get(0).getType();
+        }
+
+        return GLSLTypes.getUndefinedType(typeName);
+    }
+
+    public static final class TypeReference extends GLSLAbstractReference<GLSLTypename> {
 
         public TypeReference(@NotNull GLSLTypename element) {
             super(element);
         }
 
-        private String onlyNamed = null;
-        private final ArrayList<GLSLStructDefinition> definitions = new ArrayList<>();
-
-        @Override
-        public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
-            if (element instanceof final GLSLStructDefinition def) {
-                if (onlyNamed == null || onlyNamed.equals(def.getStructName())) {
-                    definitions.add(def);
-                    return onlyNamed == null;// Done if we found the one named
-                }
-            }
-            return true;// Continue
-        }
-
-        public @NotNull GLSLType resolveType() {
-            final String typeName = GLSLElement.text(getElement());
-
-            GLSLType builtIn = GLSLTypes.getTypeFromName(typeName);
-            if (builtIn != null) {
-                return builtIn;
-            }
-
-            try {
-                onlyNamed = typeName;
-                PsiTreeUtil.treeWalkUp(this, getElement(), null, ResolveState.initial());
-                if (!definitions.isEmpty()) {
-                    return definitions.get(0).getType();
-                }
-            } finally {
-                definitions.clear();
-            }
-
-            // TODO: Check built-in structures
-            return GLSLTypes.getUndefinedType(typeName);
-        }
-
         @Override
         public @Nullable GLSLStructDefinition resolve() {
-            final GLSLType type = resolveType();
+            final GLSLType type = element.getType();
             if (type instanceof GLSLStructType) {
                 return ((GLSLStructType) type).getDefinition();
             }
@@ -148,6 +135,33 @@ public class GLSLTypename extends GLSLElementImpl implements GLSLTypedElement, G
                 return bipus.getOpaqueDefinition((GLSLOpaqueType) type);
             }
             return null;
+        }
+    }
+
+    public static final class StructDefinitionWalk implements PsiScopeProcessor {
+
+        public static StructDefinitionWalk walk(PsiElement from, @Nullable String onlyNamed) {
+            final StructDefinitionWalk walk = new StructDefinitionWalk(onlyNamed);
+            PsiTreeUtil.treeWalkUp(walk, from, null, ResolveState.initial());
+            return walk;
+        }
+
+        private final String onlyNamed;
+        public final ArrayList<GLSLStructDefinition> definitions = new ArrayList<>();
+
+        private StructDefinitionWalk(String onlyNamed) {
+            this.onlyNamed = onlyNamed;
+        }
+
+        @Override
+        public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
+            if (element instanceof final GLSLStructDefinition def) {
+                if (onlyNamed == null || onlyNamed.equals(def.getStructName())) {
+                    definitions.add(def);
+                    return onlyNamed == null;// Done if we found the one named
+                }
+            }
+            return true;// Continue
         }
     }
 

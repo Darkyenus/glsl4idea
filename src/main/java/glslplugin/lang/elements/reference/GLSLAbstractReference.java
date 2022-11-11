@@ -10,6 +10,7 @@ import com.intellij.psi.PsiPolyVariantReferenceBase;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.preprocessor.GLSLRedefinedToken;
@@ -114,6 +115,15 @@ public abstract class GLSLAbstractReference<T extends GLSLReferencingElement> im
     @Override
     public boolean isReferenceTo(@NotNull PsiElement element) {
         return getElement().getManager().areElementsEquivalent(resolve(), element);
+    }
+
+    /** This is used for autocomplete, but it is meaningless for most of the types,
+     * because the typed text must first resolve to the {@link #element} type before
+     * it is even called. Therefore, we don't ever implement this and instead provide
+     * all completion variants in {@link glslplugin.extensions.GLSLCompletionContributor} */
+    @Override
+    public final Object @NotNull [] getVariants() {
+        return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
     }
 
     @Override

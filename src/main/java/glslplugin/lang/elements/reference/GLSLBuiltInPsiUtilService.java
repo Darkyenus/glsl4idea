@@ -1,5 +1,8 @@
 package glslplugin.lang.elements.reference;
 
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -18,6 +21,7 @@ import glslplugin.lang.elements.types.GLSLMatrixType;
 import glslplugin.lang.elements.types.GLSLOpaqueType;
 import glslplugin.lang.elements.types.GLSLScalarType;
 import glslplugin.lang.elements.types.GLSLType;
+import glslplugin.lang.elements.types.GLSLTypes;
 import glslplugin.lang.elements.types.GLSLVectorType;
 import glslplugin.lang.parser.GLSLFile;
 import glslplugin.util.VectorComponents;
@@ -26,7 +30,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public final class GLSLBuiltInPsiUtilService {
@@ -155,5 +161,22 @@ public final class GLSLBuiltInPsiUtilService {
             return builtinsFile = glslPsiFile;
         }
         return null;
+    }
+
+
+    public final ArrayList<LookupElement> builtinTypeLookup;
+
+    {
+        final List<GLSLType> types = GLSLTypes.builtinTypes();
+        builtinTypeLookup = new ArrayList<>(types.size());
+        for (GLSLType type : types) {
+            LookupElementBuilder lookup = LookupElementBuilder.create(type, type.getTypename());
+
+            if (type instanceof GLSLMatrixType mat && !mat.shortName.equals(mat.fullName)) {
+                lookup = lookup.withLookupString(mat.fullName);
+            }
+
+            builtinTypeLookup.add(lookup);
+        }
     }
 }

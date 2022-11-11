@@ -52,14 +52,6 @@ public class GLSLParameterList extends GLSLElementImpl implements Iterable<GLSLE
         for (PsiElement child : children) {
             if (child instanceof GLSLExpression) {
                 result.add((GLSLExpression) child);
-            } else {
-                final ASTNode node = child.getNode();
-                if (node != null) {
-                    final IElementType type = node.getElementType();
-                    if (!GLSLTokenTypes.COMMENTS.contains(type)) {
-                        Logger.getLogger("GLSLParameterList").warning("Parameter list contains non-comment, non-expression element.");
-                    }
-                }
             }
         }
         return result.toArray(GLSLExpression.EMPTY_ARRAY);

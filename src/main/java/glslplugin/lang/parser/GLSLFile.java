@@ -68,7 +68,7 @@ public class GLSLFile extends PsiFileBase {
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
         for (PsiElement child = getFirstChild(); child != null; child = child.getNextSibling()) {
 
-            if (child == lastParent || PsiTreeUtil.isAncestor(child, place, false)) {
+            if (child == lastParent || (lastParent != null && PsiTreeUtil.isAncestor(child, place, false))) {
                 // Intentionally show even later declarations.
                 // Inspection checks that everything is ok.
                 continue;

@@ -108,12 +108,6 @@ public class GLSLVariableExpression extends GLSLExpression implements GLSLRefere
             }
             return null;
         }
-
-        @Override
-        public synchronized Object @NotNull [] getVariants() {
-            final VariableWalkResult result = VariableWalkResult.walkPossibleReferences(element, null);
-            return result.visitedDeclarations.toArray(PsiElement.EMPTY_ARRAY);
-        }
     }
 
     public static final class VariableWalkResult implements PsiScopeProcessor {

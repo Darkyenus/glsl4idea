@@ -142,15 +142,6 @@ public class GLSLFieldSelectionExpression extends GLSLSelectionExpressionBase im
         }
 
         @Override
-        public Object @NotNull [] getVariants() {
-            final ArrayList<GLSLDeclarator> declarators = new ArrayList<>();
-            for (GLSLStructMemberDeclaration declaration : fieldStruct.getDeclarations()) {
-                Collections.addAll(declarators, declaration.getDeclarators());
-            }
-            return declarators.toArray(GLSLDeclarator.NO_DECLARATORS);
-        }
-
-        @Override
         public @NotNull String getCanonicalText() {
             final GLSLDeclarator resolve = resolve();
             if (resolve != null) {

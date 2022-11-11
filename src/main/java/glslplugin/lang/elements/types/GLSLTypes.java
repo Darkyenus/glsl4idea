@@ -19,9 +19,14 @@
 
 package glslplugin.lang.elements.types;
 
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.lookup.LookupItem;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,19 +40,23 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public class GLSLTypes {
 
-    private static final Map<String, GLSLType> types = new HashMap<>();
+    private static final ArrayList<GLSLType> builtinTypes = new ArrayList<>();
+    private static final Map<String, GLSLType> namesToTypes = new HashMap<>();
+    private static final ArrayList<LookupElement> typeLookupElements = new ArrayList<>();
 
     static {
         // Register all built-in types
 
         // Scalars
         for (GLSLScalarType scalar : GLSLScalarType.SCALARS) {
+            builtinTypes.add(scalar);
             register(scalar);
         }
 
         // Vectors
         for (GLSLVectorType[] byBaseType : GLSLVectorType.VECTOR_TYPES.values()) {
             for (GLSLVectorType vectorType : byBaseType) {
+                builtinTypes.add(vectorType);
                 register(vectorType);
             }
         }
@@ -56,10 +65,9 @@ public class GLSLTypes {
         for (GLSLMatrixType[][] byBaseType : GLSLMatrixType.MATRIX_TYPES.values()) {
             for (GLSLMatrixType[] byFirstDim : byBaseType) {
                 for (GLSLMatrixType matrixType : byFirstDim) {
+                    builtinTypes.add(matrixType);
                     register(matrixType.fullName, matrixType);
-                    // The instance is guaranteed to be actually identical if it is the same
-                    //noinspection StringEquality
-                    if (matrixType.shortName != matrixType.fullName) {
+                    if (!matrixType.shortName.equals(matrixType.fullName)) {
                         register(matrixType.shortName, matrixType);
                     }
                 }
@@ -68,15 +76,19 @@ public class GLSLTypes {
 
         // Opaque types
         for (GLSLOpaqueType opaqueType : GLSLOpaqueType.ALL) {
+            builtinTypes.add(opaqueType);
             register(opaqueType);
         }
         for (GLSLOpaqueType.Sampler opaqueType : GLSLOpaqueType.Sampler.ALL) {
+            builtinTypes.add(opaqueType);
             register(opaqueType);
         }
         for (GLSLOpaqueType.ShadowSampler opaqueType : GLSLOpaqueType.ShadowSampler.ALL) {
+            builtinTypes.add(opaqueType);
             register(opaqueType);
         }
         for (GLSLOpaqueType.Image opaqueType : GLSLOpaqueType.Image.ALL) {
+            builtinTypes.add(opaqueType);
             register(opaqueType);
         }
     }
@@ -126,15 +138,18 @@ public class GLSLTypes {
     }
 
     private static void register(GLSLType type) {
-        register(type.getTypename(), type);
+        namesToTypes.put(type.getTypename(), type);
     }
 
     private static void register(String name, GLSLType type) {
-        types.put(name, type);
+        namesToTypes.put(name, type);
     }
 
     public static GLSLType getTypeFromName(String name) {
-        return types.get(name);
+        return namesToTypes.get(name);
     }
 
+    public static List<GLSLType> builtinTypes() {
+        return builtinTypes;
+    }
 }
