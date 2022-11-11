@@ -36,7 +36,9 @@
 
     <change-notes><![CDATA[
         <ul>
-            <li></li>
+            <li>Improve autocomplete</li>
+            <li>Include a set of built-in GLSL functions for autocomplete</li>
+            <li>Fix bug which could cause working with for loops to freeze the IDE</li>
         </ul>
         <br/>
         <p>Please <a href="https://github.com/Darkyenus/glsl4idea/issues/new">report</a> any bugs you find. Support in form of kind reviews or <a href="https://ko-fi.com/darkyen">sponsorships</a> is appreciated.</p>

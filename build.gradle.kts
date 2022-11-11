@@ -15,7 +15,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.9.0"
 }
 
-val pluginVersion = "1.23-SNAPSHOT"
+val pluginVersion = "1.23"
 
 group = "com.darkyen"
 version = pluginVersion
@@ -33,7 +33,7 @@ intellij {
     updateSinceUntilBuild.set(false)
     instrumentCode.set(false)
 
-    plugins.add("PsiViewer:222-SNAPSHOT")
+    //plugins.add("PsiViewer:222-SNAPSHOT")
 }
 
 tasks {
