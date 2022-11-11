@@ -1,9 +1,9 @@
 package glslplugin.lang.elements.types.constructors;
 
 import glslplugin.lang.elements.types.GLSLFunctionType;
+import glslplugin.lang.elements.types.GLSLScalarType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypeCompatibilityLevel;
-import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,7 +29,7 @@ public class GLSLScalarParamConstructor extends GLSLFunctionType {
     @NotNull
     @Override
     public GLSLTypeCompatibilityLevel getParameterCompatibilityLevel(@NotNull GLSLType[] types) {
-        if (types.length == 1 && GLSLTypes.isScalar(types[0])){
+        if (types.length == 1 && types[0] instanceof GLSLScalarType){
             return GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE;
         } else return GLSLTypeCompatibilityLevel.INCOMPATIBLE;
     }

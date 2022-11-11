@@ -75,7 +75,7 @@ public class GLSLVariableExpression extends GLSLExpression implements GLSLRefere
 
     @Override
     public String toString() {
-        return "Identifier Expression: " + getVariableName();
+        return "Variable Expression: " + getVariableName();
     }
 
     @NotNull
@@ -90,17 +90,47 @@ public class GLSLVariableExpression extends GLSLExpression implements GLSLRefere
 
     public static final class VariableReference
             extends GLSLAbstractReference<GLSLVariableExpression>
-            implements PsiScopeProcessor
     {
 
         public VariableReference(@NotNull GLSLVariableExpression element) {
             super(element);
         }
 
-        private final ArrayList<GLSLDeclarator> visitedDeclarations = new ArrayList<>();
-        private String onlyNamed = null;
+        @Override
+        public synchronized @Nullable GLSLDeclarator resolve() {
+            String onlyNamed = getElement().getVariableName();
+            if (onlyNamed == null || onlyNamed.isEmpty()) {
+                return null;
+            }
+            final VariableWalkResult result = VariableWalkResult.walkPossibleReferences(element, onlyNamed);
+            if (!result.visitedDeclarations.isEmpty()) {
+                return result.visitedDeclarations.get(0);
+            }
+            return null;
+        }
 
-        // PSI Scope processor
+        @Override
+        public synchronized Object @NotNull [] getVariants() {
+            final VariableWalkResult result = VariableWalkResult.walkPossibleReferences(element, null);
+            return result.visitedDeclarations.toArray(PsiElement.EMPTY_ARRAY);
+        }
+    }
+
+    public static final class VariableWalkResult implements PsiScopeProcessor {
+
+        public static VariableWalkResult walkPossibleReferences(PsiElement from, String onlyNamed) {
+            final VariableWalkResult result = new VariableWalkResult(onlyNamed);
+            PsiTreeUtil.treeWalkUp(result, from, null, ResolveState.initial());
+            return result;
+        }
+
+        private final String onlyNamed;
+        public final ArrayList<GLSLDeclarator> visitedDeclarations = new ArrayList<>();
+
+        public VariableWalkResult(String onlyNamed) {
+            this.onlyNamed = onlyNamed;
+        }
+
         @Override
         public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
             if (!(element instanceof final GLSLDeclarator declarator)) {
@@ -119,29 +149,6 @@ public class GLSLVariableExpression extends GLSLExpression implements GLSLRefere
             return true;// Continue, keep looking
         }
 
-        @Override
-        public synchronized @Nullable GLSLDeclarator resolve() {
-            String onlyNamed = this.onlyNamed = getElement().getVariableName();
-            if (onlyNamed == null || onlyNamed.isEmpty()) {
-                return null;
-            }
-            PsiTreeUtil.treeWalkUp(this, getElement(), null, ResolveState.initial());
-            if (!visitedDeclarations.isEmpty()) {
-                final GLSLDeclarator declaration = visitedDeclarations.get(0);
-                visitedDeclarations.clear();
-                return declaration;
-            }
-            return null;
-        }
-
-        @Override
-        public synchronized Object @NotNull [] getVariants() {
-            onlyNamed = null;
-            PsiTreeUtil.treeWalkUp(this, getElement(), null, ResolveState.initial());
-            final PsiElement[] result = visitedDeclarations.toArray(PsiElement.EMPTY_ARRAY);
-            visitedDeclarations.clear();
-            return result;
-        }
     }
 
     @NotNull

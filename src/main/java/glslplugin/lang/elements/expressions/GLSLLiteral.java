@@ -23,6 +23,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
+import glslplugin.lang.elements.types.GLSLScalarType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
@@ -40,13 +41,13 @@ import java.util.logging.Logger;
  */
 public class GLSLLiteral extends GLSLPrimaryExpression {
     public enum Type {
-        BOOL("Bool", GLSLTypes.BOOL),
-        FLOAT("Float", GLSLTypes.FLOAT),
-        DOUBLE("Double", GLSLTypes.DOUBLE),
-        INT("Integer", GLSLTypes.INT),
-        UINT("Unsigned integer", GLSLTypes.UINT),
-        INT64("64-bit Integer", GLSLTypes.INT),
-        UINT64("Unsigned 64-bit integer", GLSLTypes.UINT),
+        BOOL("Bool", GLSLScalarType.BOOL),
+        FLOAT("Float", GLSLScalarType.FLOAT),
+        DOUBLE("Double", GLSLScalarType.DOUBLE),
+        INT("Integer", GLSLScalarType.INT),
+        UINT("Unsigned integer", GLSLScalarType.UINT),
+        INT64("64-bit Integer", GLSLScalarType.INT),
+        UINT64("Unsigned 64-bit integer", GLSLScalarType.UINT),
         // https://github.com/KhronosGroup/GLSL/blob/master/extensions/ext/GLSL_EXT_debug_printf.txt
         // does not define any GLSL type, just the literal.
         STRING("String", null),

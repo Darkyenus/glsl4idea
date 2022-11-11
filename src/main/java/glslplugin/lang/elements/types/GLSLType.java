@@ -26,12 +26,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Map;
 
+import static glslplugin.lang.elements.types.GLSLTypes.UNKNOWN_TYPE;
+
 /**
- * NewType is ...
- *
- * @author Yngve Devik Hammersland
- *         Date: Feb 6, 2009
- *         Time: 10:37:29 PM
+ * Represents a type in GLSL language.
+ * All built-in instances are instantiated only once in {@link GLSLTypes}
  */
 public abstract class GLSLType {
     public static final GLSLType[] EMPTY_ARRAY = {};
@@ -174,6 +173,15 @@ public abstract class GLSLType {
     }
 
     //endregion
+
+    @NotNull
+    public static GLSLType unifyTypes(GLSLType t1, GLSLType t2) {
+        if (t1 == t2) return t1;//Shortcut
+        if (t1 == UNKNOWN_TYPE || t2 == UNKNOWN_TYPE) return UNKNOWN_TYPE;
+        if (t1.isConvertibleTo(t2)) return t2;
+        if (t2.isConvertibleTo(t1)) return t1;
+        return UNKNOWN_TYPE;
+    }
 
     @Override
     public String toString() {

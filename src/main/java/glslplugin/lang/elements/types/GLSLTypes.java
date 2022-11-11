@@ -34,71 +34,52 @@ import java.util.Map;
  */
 @SuppressWarnings("unused")
 public class GLSLTypes {
-    // Scalars
-    public static final GLSLScalarType INT = register(GLSLScalarType.INT);
-    public static final GLSLScalarType UINT = register(GLSLScalarType.UINT);
-    public static final GLSLScalarType FLOAT = register(GLSLScalarType.FLOAT);
-    public static final GLSLScalarType DOUBLE = register(GLSLScalarType.DOUBLE);
-    public static final GLSLScalarType BOOL = register(GLSLScalarType.BOOL);
 
-    // Vectors
-    public static final GLSLVectorType VEC2 =  register(GLSLVectorType.getType(FLOAT,  2));
-    public static final GLSLVectorType VEC3 =  register(GLSLVectorType.getType(FLOAT,  3));
-    public static final GLSLVectorType VEC4 =  register(GLSLVectorType.getType(FLOAT,  4));
-    public static final GLSLVectorType DVEC2 = register(GLSLVectorType.getType(DOUBLE, 2));
-    public static final GLSLVectorType DVEC3 = register(GLSLVectorType.getType(DOUBLE, 3));
-    public static final GLSLVectorType DVEC4 = register(GLSLVectorType.getType(DOUBLE, 4));
-    public static final GLSLVectorType IVEC2 = register(GLSLVectorType.getType(INT,    2));
-    public static final GLSLVectorType IVEC3 = register(GLSLVectorType.getType(INT,    3));
-    public static final GLSLVectorType IVEC4 = register(GLSLVectorType.getType(INT,    4));
-    public static final GLSLVectorType UVEC2 = register(GLSLVectorType.getType(UINT,   2));
-    public static final GLSLVectorType UVEC3 = register(GLSLVectorType.getType(UINT,   3));
-    public static final GLSLVectorType UVEC4 = register(GLSLVectorType.getType(UINT,   4));
-    public static final GLSLVectorType BVEC2 = register(GLSLVectorType.getType(BOOL,   2));
-    public static final GLSLVectorType BVEC3 = register(GLSLVectorType.getType(BOOL,   3));
-    public static final GLSLVectorType BVEC4 = register(GLSLVectorType.getType(BOOL,   4));
+    private static final Map<String, GLSLType> types = new HashMap<>();
 
-    // Matrices
-    public static final GLSLMatrixType MAT2x2 =  register(GLSLMatrixType.getType(FLOAT,  2, 2));
-    public static final GLSLMatrixType MAT2x3 =  register(GLSLMatrixType.getType(FLOAT,  2, 3));
-    public static final GLSLMatrixType MAT2x4 =  register(GLSLMatrixType.getType(FLOAT,  2, 4));
-    public static final GLSLMatrixType MAT3x2 =  register(GLSLMatrixType.getType(FLOAT,  3, 2));
-    public static final GLSLMatrixType MAT3x3 =  register(GLSLMatrixType.getType(FLOAT,  3, 3));
-    public static final GLSLMatrixType MAT3x4 =  register(GLSLMatrixType.getType(FLOAT,  3, 4));
-    public static final GLSLMatrixType MAT4x2 =  register(GLSLMatrixType.getType(FLOAT,  4, 2));
-    public static final GLSLMatrixType MAT4x3 =  register(GLSLMatrixType.getType(FLOAT,  4, 3));
-    public static final GLSLMatrixType MAT4x4 =  register(GLSLMatrixType.getType(FLOAT,  4, 4));
-    public static final GLSLMatrixType DMAT2x2 = register(GLSLMatrixType.getType(DOUBLE, 2, 2));
-    public static final GLSLMatrixType DMAT2x3 = register(GLSLMatrixType.getType(DOUBLE, 2, 3));
-    public static final GLSLMatrixType DMAT2x4 = register(GLSLMatrixType.getType(DOUBLE, 2, 4));
-    public static final GLSLMatrixType DMAT3x2 = register(GLSLMatrixType.getType(DOUBLE, 3, 2));
-    public static final GLSLMatrixType DMAT3x3 = register(GLSLMatrixType.getType(DOUBLE, 3, 3));
-    public static final GLSLMatrixType DMAT3x4 = register(GLSLMatrixType.getType(DOUBLE, 3, 4));
-    public static final GLSLMatrixType DMAT4x2 = register(GLSLMatrixType.getType(DOUBLE, 4, 2));
-    public static final GLSLMatrixType DMAT4x3 = register(GLSLMatrixType.getType(DOUBLE, 4, 3));
-    public static final GLSLMatrixType DMAT4x4 = register(GLSLMatrixType.getType(DOUBLE, 4, 4));
+    static {
+        // Register all built-in types
 
-    // For convenience
-    public static final GLSLMatrixType MAT2 = register("mat2", MAT2x2);
-    public static final GLSLMatrixType MAT3 = register("mat3", MAT3x3);
-    public static final GLSLMatrixType MAT4 = register("mat4", MAT4x4);
-    public static final GLSLMatrixType DMAT2 = register("dmat2", DMAT2x2);
-    public static final GLSLMatrixType DMAT3 = register("dmat3", DMAT3x3);
-    public static final GLSLMatrixType DMAT4 = register("dmat4", DMAT4x4);
+        // Scalars
+        for (GLSLScalarType scalar : GLSLScalarType.SCALARS) {
+            register(scalar);
+        }
 
-    // https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_gpu_shader_int64.txt
-    public static final GLSLScalarType INT64 = register(GLSLScalarType.INT64);
-    public static final GLSLVectorType I64VEC2 = register(GLSLVectorType.getType(INT64,   2));
-    public static final GLSLVectorType I64VEC3 = register(GLSLVectorType.getType(INT64,   3));
-    public static final GLSLVectorType I64VEC4 = register(GLSLVectorType.getType(INT64,   4));
-    public static final GLSLScalarType UINT64 = register(GLSLScalarType.UINT64);
-    public static final GLSLVectorType U64VEC2 = register(GLSLVectorType.getType(UINT64,   2));
-    public static final GLSLVectorType U64VEC3 = register(GLSLVectorType.getType(UINT64,   3));
-    public static final GLSLVectorType U64VEC4 = register(GLSLVectorType.getType(UINT64,   4));
+        // Vectors
+        for (GLSLVectorType[] byBaseType : GLSLVectorType.VECTOR_TYPES.values()) {
+            for (GLSLVectorType vectorType : byBaseType) {
+                register(vectorType);
+            }
+        }
 
+        // Matrices
+        for (GLSLMatrixType[][] byBaseType : GLSLMatrixType.MATRIX_TYPES.values()) {
+            for (GLSLMatrixType[] byFirstDim : byBaseType) {
+                for (GLSLMatrixType matrixType : byFirstDim) {
+                    register(matrixType.fullName, matrixType);
+                    // The instance is guaranteed to be actually identical if it is the same
+                    //noinspection StringEquality
+                    if (matrixType.shortName != matrixType.fullName) {
+                        register(matrixType.shortName, matrixType);
+                    }
+                }
+            }
+        }
 
-    // Specials
-    public static final GLSLOpaqueType VOID = GLSLOpaqueType.VOID;
+        // Opaque types
+        for (GLSLOpaqueType opaqueType : GLSLOpaqueType.ALL) {
+            register(opaqueType);
+        }
+        for (GLSLOpaqueType.Sampler opaqueType : GLSLOpaqueType.Sampler.ALL) {
+            register(opaqueType);
+        }
+        for (GLSLOpaqueType.ShadowSampler opaqueType : GLSLOpaqueType.ShadowSampler.ALL) {
+            register(opaqueType);
+        }
+        for (GLSLOpaqueType.Image opaqueType : GLSLOpaqueType.Image.ALL) {
+            register(opaqueType);
+        }
+    }
 
     public static final GLSLType UNKNOWN_TYPE = new GLSLType(null) {
         @NotNull
@@ -144,32 +125,16 @@ public class GLSLTypes {
         return undefinedTypes.get(text);
     }
 
-    @NotNull
-    public static GLSLType unifyTypes(GLSLType t1, GLSLType t2) {
-        if (t1 == t2) return t1;//Shortcut
-        if (t1 == UNKNOWN_TYPE || t2 == UNKNOWN_TYPE) return UNKNOWN_TYPE;
-        if (t1.isConvertibleTo(t2)) return t2;
-        if (t2.isConvertibleTo(t1)) return t1;
-        return UNKNOWN_TYPE;
+    private static void register(GLSLType type) {
+        register(type.getTypename(), type);
     }
 
-    public static boolean isScalar(GLSLType type) {
-        return type == INT || type == FLOAT || type == BOOL || type == DOUBLE || type == UINT || type == UINT64 || type == INT64;
-    }
-
-    private static Map<String, GLSLType> types;
-
-    static <T extends GLSLType> T register(T type) {
-        return register(type.getTypename(), type);
-    }
-
-    static <T extends GLSLType> T register(String name, T type) {
-        if (types == null) types = new HashMap<>();
+    private static void register(String name, GLSLType type) {
         types.put(name, type);
-        return type;
     }
 
     public static GLSLType getTypeFromName(String name) {
         return types.get(name);
     }
+
 }

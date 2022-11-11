@@ -25,18 +25,24 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.DefaultCompletionContributor;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.patterns.ElementPattern;
+import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import glslplugin.lang.GLSLFileType;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
+import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
+import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.expressions.GLSLAssignmentExpression;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.expressions.GLSLFieldSelectionExpression;
+import glslplugin.lang.elements.expressions.GLSLFunctionOrConstructorCallExpression;
+import glslplugin.lang.elements.expressions.GLSLVariableExpression;
 import glslplugin.lang.elements.types.GLSLScalarType;
 import glslplugin.lang.elements.types.GLSLStructType;
 import glslplugin.lang.elements.types.GLSLType;
@@ -55,8 +61,9 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  * @author Wyozi
  */
 public class GLSLCompletionContributor extends DefaultCompletionContributor {
-    private static final ElementPattern<PsiElement> FIELD_SELECTION =
-            psiElement().withParent(psiElement(GLSLTokenTypes.IDENTIFIER).withParent(GLSLFieldSelectionExpression.class));
+    private static final ElementPattern<PsiElement> FIELD_SELECTION = psiElement(GLSLTokenTypes.IDENTIFIER).withParent(GLSLFieldSelectionExpression.class);
+
+    private static final ElementPattern<PsiElement> VARIABLE_REFERENCE = psiElement(GLSLTokenTypes.IDENTIFIER).withParent(GLSLVariableExpression.class);
 
     public GLSLCompletionContributor() {
         // Add field selection completion
@@ -87,6 +94,20 @@ public class GLSLCompletionContributor extends DefaultCompletionContributor {
                     if (assignment != null) {
                         completeVectorTypes(((GLSLVectorType) type), assignment.getType(), completionResultSet);
                     }
+                }
+            }
+        });
+
+        // Functions often start like this
+        extend(CompletionType.BASIC, VARIABLE_REFERENCE, new CompletionProvider<CompletionParameters>() {
+            @Override
+            protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
+                final GLSLFunctionOrConstructorCallExpression.WalkResult walk = GLSLFunctionOrConstructorCallExpression.WalkResult.walkPossibleReferences(parameters.getOriginalPosition(), null);
+                for (GLSLFunctionDeclaration value : walk.functionDeclarations.values()) {
+                    result.addElement(LookupElementBuilder.create(value));
+                }
+                for (GLSLStructDefinition value : walk.structDefinitions) {
+                    result.addElement(LookupElementBuilder.create(value));
                 }
             }
         });

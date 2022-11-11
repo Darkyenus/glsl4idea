@@ -40,8 +40,8 @@ public class GLSLMatrixType extends GLSLType {
     //region Static
 
     private enum BaseType {
-        FLOAT(GLSLTypes.FLOAT, "mat"),
-        DOUBLE(GLSLTypes.DOUBLE, "dmat");
+        FLOAT(GLSLScalarType.FLOAT, "mat"),
+        DOUBLE(GLSLScalarType.DOUBLE, "dmat");
 
         final GLSLType type;
         final String name;
@@ -77,21 +77,24 @@ public class GLSLMatrixType extends GLSLType {
     private final GLSLType baseType;
     private final int columns, rows;
     private final GLSLFunctionType[] constructors;
-    private final String typename;
+
+    public final String fullName;
+    public final String shortName;
 
     private GLSLMatrixType(BaseType baseType, int columns, int rows) {
         super(null);
         this.baseType = baseType.type;
         this.columns = columns;
         this.rows = rows;
-        this.typename = baseType.name + columns + "x" + rows;// The other name is registered additionally
+        this.fullName = baseType.name + columns + "x" + rows;
+        this.shortName = columns == rows ? baseType.name + columns : this.fullName;
         this.constructors = new GLSLFunctionType[]{
                 new GLSLScalarParamConstructor(this),
                 new GLSLAggregateParamConstructor(this, false, columns * rows),
-                new GLSLFunctionType(this.typename, this, null) {
+                new GLSLFunctionType(this.shortName, this, null) {
                     @Override
                     protected String generateTypename() {
-                        return typename +"(matrix)";
+                        return shortName +"(matrix)";
                     }
 
                     @NotNull
@@ -107,7 +110,7 @@ public class GLSLMatrixType extends GLSLType {
     @Override
     @NotNull
     public String getTypename() {
-        return typename;
+        return shortName;
     }
 
     /**

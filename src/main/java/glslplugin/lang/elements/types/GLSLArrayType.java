@@ -36,7 +36,7 @@ public class GLSLArrayType extends GLSLType {
 
     public static final int UNDEFINED_SIZE_DIMENSION = Integer.MIN_VALUE;
     public static final int DYNAMIC_SIZE_DIMENSION = Integer.MIN_VALUE+1;
-    public static final Map<String, GLSLFunctionType> ARRAY_LIKE_FUNCTIONS = Collections.singletonMap("length", new GLSLBasicFunctionType("length", GLSLTypes.INT));
+    public static final Map<String, GLSLFunctionType> ARRAY_LIKE_FUNCTIONS = Collections.singletonMap("length", new GLSLBasicFunctionType("length", GLSLScalarType.INT));
 
     private final GLSLType baseType;
     private final int[] dimensions;
@@ -119,8 +119,7 @@ public class GLSLArrayType extends GLSLType {
 
     @Override
     public boolean typeEquals(GLSLType otherType) {
-        if(otherType instanceof GLSLArrayType){
-            GLSLArrayType other = (GLSLArrayType) otherType;
+        if(otherType instanceof GLSLArrayType other){
             if(dimensions.length == other.dimensions.length){
                 for (int i = 0; i < dimensions.length; i++) {
                     if(!dimensionSizeEquals(dimensions[i], other.dimensions[i])){

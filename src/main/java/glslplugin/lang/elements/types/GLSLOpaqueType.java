@@ -2,8 +2,6 @@ package glslplugin.lang.elements.types;
 
 import org.jetbrains.annotations.NotNull;
 
-import static glslplugin.lang.elements.types.GLSLTypes.*;
-
 /**
  * Opaque type is a common class for types which have no members, functions, etc.
  * That is VOID and samplers.
@@ -16,10 +14,14 @@ public class GLSLOpaqueType extends GLSLType {
     public static final GLSLOpaqueType VOID = new GLSLOpaqueType("void");
 
     // atomics
-    @SuppressWarnings("unused")// Used by registering in constructor
-    public static final GLSLOpaqueType atomic_uint = new GLSLOpaqueType("atomic_uint");
+    public static final GLSLOpaqueType ATOMIC_UINT = new GLSLOpaqueType("atomic_uint");
 
-    @SuppressWarnings("unused")
+    /** All non-specialized opaque types */
+    public static final GLSLOpaqueType[] ALL = new GLSLOpaqueType[]{
+            VOID,
+            ATOMIC_UINT,
+    };
+
     public static class Sampler extends GLSLOpaqueType {
         public final GLSLType baseType;
 
@@ -28,50 +30,82 @@ public class GLSLOpaqueType extends GLSLType {
             this.baseType = baseType;
         }
 
-        public static final Sampler sampler1D = new Sampler("sampler1D", FLOAT);
-        public static final Sampler sampler2D = new Sampler("sampler2D", FLOAT);
-        public static final Sampler sampler3D = new Sampler("sampler3D", FLOAT);
-        public static final Sampler samplerCube = new Sampler("samplerCube", FLOAT);
-        public static final Sampler sampler2DRect = new Sampler("sampler2DRect", FLOAT);
-        public static final Sampler sampler1DArray = new Sampler("sampler1DArray", FLOAT);
-        public static final Sampler sampler2DArray = new Sampler("sampler2DArray", FLOAT);
-        public static final Sampler samplerBuffer = new Sampler("samplerBuffer", FLOAT);
-        public static final Sampler sampler2DMS = new Sampler("sampler2DMS", FLOAT);
-        public static final Sampler sampler2DMSArray = new Sampler("sampler2DMSArray", FLOAT);
-        public static final Sampler samplerCubeArray = new Sampler("samplerCubeArray", FLOAT);
+        public static final Sampler sampler1D = new Sampler("sampler1D", GLSLScalarType.FLOAT);
+        public static final Sampler sampler2D = new Sampler("sampler2D", GLSLScalarType.FLOAT);
+        public static final Sampler sampler3D = new Sampler("sampler3D", GLSLScalarType.FLOAT);
+        public static final Sampler samplerCube = new Sampler("samplerCube", GLSLScalarType.FLOAT);
+        public static final Sampler sampler2DRect = new Sampler("sampler2DRect", GLSLScalarType.FLOAT);
+        public static final Sampler sampler1DArray = new Sampler("sampler1DArray", GLSLScalarType.FLOAT);
+        public static final Sampler sampler2DArray = new Sampler("sampler2DArray", GLSLScalarType.FLOAT);
+        public static final Sampler samplerBuffer = new Sampler("samplerBuffer", GLSLScalarType.FLOAT);
+        public static final Sampler sampler2DMS = new Sampler("sampler2DMS", GLSLScalarType.FLOAT);
+        public static final Sampler sampler2DMSArray = new Sampler("sampler2DMSArray", GLSLScalarType.FLOAT);
+        public static final Sampler samplerCubeArray = new Sampler("samplerCubeArray", GLSLScalarType.FLOAT);
 
-        public static final Sampler isampler1D = new Sampler("isampler1D", INT);
-        public static final Sampler isampler2D = new Sampler("isampler2D", INT);
-        public static final Sampler isampler3D = new Sampler("isampler3D", INT);
-        public static final Sampler isamplerCube = new Sampler("isamplerCube", INT);
-        public static final Sampler isampler2DRect = new Sampler("isampler2DRect", INT);
-        public static final Sampler isampler1DArray = new Sampler("isampler1DArray", INT);
-        public static final Sampler isampler2DArray = new Sampler("isampler2DArray", INT);
-        public static final Sampler isamplerBuffer = new Sampler("isamplerBuffer", INT);
-        public static final Sampler isampler2DMS = new Sampler("isampler2DMS", INT);
-        public static final Sampler isampler2DMSArray = new Sampler("isampler2DMSArray", INT);
-        public static final Sampler isamplerCubeArray = new Sampler("isamplerCubeArray", INT);
+        public static final Sampler isampler1D = new Sampler("isampler1D", GLSLScalarType.INT);
+        public static final Sampler isampler2D = new Sampler("isampler2D", GLSLScalarType.INT);
+        public static final Sampler isampler3D = new Sampler("isampler3D", GLSLScalarType.INT);
+        public static final Sampler isamplerCube = new Sampler("isamplerCube", GLSLScalarType.INT);
+        public static final Sampler isampler2DRect = new Sampler("isampler2DRect", GLSLScalarType.INT);
+        public static final Sampler isampler1DArray = new Sampler("isampler1DArray", GLSLScalarType.INT);
+        public static final Sampler isampler2DArray = new Sampler("isampler2DArray", GLSLScalarType.INT);
+        public static final Sampler isamplerBuffer = new Sampler("isamplerBuffer", GLSLScalarType.INT);
+        public static final Sampler isampler2DMS = new Sampler("isampler2DMS", GLSLScalarType.INT);
+        public static final Sampler isampler2DMSArray = new Sampler("isampler2DMSArray", GLSLScalarType.INT);
+        public static final Sampler isamplerCubeArray = new Sampler("isamplerCubeArray", GLSLScalarType.INT);
 
-        public static final Sampler usampler1D = new Sampler("usampler1D", UINT);
-        public static final Sampler usampler2D = new Sampler("usampler2D", UINT);
-        public static final Sampler usampler3D = new Sampler("usampler3D", UINT);
-        public static final Sampler usamplerCube = new Sampler("usamplerCube", UINT);
-        public static final Sampler usampler2DRect = new Sampler("usampler2DRect", UINT);
-        public static final Sampler usampler1DArray = new Sampler("usampler1DArray", UINT);
-        public static final Sampler usampler2DArray = new Sampler("usampler2DArray", UINT);
-        public static final Sampler usamplerBuffer = new Sampler("usamplerBuffer", UINT);
-        public static final Sampler usampler2DMS = new Sampler("usampler2DMS", UINT);
-        public static final Sampler usampler2DMSArray = new Sampler("usampler2DMSArray", UINT);
-        public static final Sampler usamplerCubeArray = new Sampler("usamplerCubeArray", UINT);
+        public static final Sampler usampler1D = new Sampler("usampler1D", GLSLScalarType.UINT);
+        public static final Sampler usampler2D = new Sampler("usampler2D", GLSLScalarType.UINT);
+        public static final Sampler usampler3D = new Sampler("usampler3D", GLSLScalarType.UINT);
+        public static final Sampler usamplerCube = new Sampler("usamplerCube", GLSLScalarType.UINT);
+        public static final Sampler usampler2DRect = new Sampler("usampler2DRect", GLSLScalarType.UINT);
+        public static final Sampler usampler1DArray = new Sampler("usampler1DArray", GLSLScalarType.UINT);
+        public static final Sampler usampler2DArray = new Sampler("usampler2DArray", GLSLScalarType.UINT);
+        public static final Sampler usamplerBuffer = new Sampler("usamplerBuffer", GLSLScalarType.UINT);
+        public static final Sampler usampler2DMS = new Sampler("usampler2DMS", GLSLScalarType.UINT);
+        public static final Sampler usampler2DMSArray = new Sampler("usampler2DMSArray", GLSLScalarType.UINT);
+        public static final Sampler usamplerCubeArray = new Sampler("usamplerCubeArray", GLSLScalarType.UINT);
+
+        public static final Sampler[] ALL = new Sampler[]{
+                sampler1D,
+                sampler2D,
+                sampler3D,
+                samplerCube,
+                sampler2DRect,
+                sampler1DArray,
+                sampler2DArray,
+                samplerBuffer,
+                sampler2DMS,
+                sampler2DMSArray,
+                samplerCubeArray,
+                isampler1D,
+                isampler2D,
+                isampler3D,
+                isamplerCube,
+                isampler2DRect,
+                isampler1DArray,
+                isampler2DArray,
+                isamplerBuffer,
+                isampler2DMS,
+                isampler2DMSArray,
+                isamplerCubeArray,
+                usampler1D,
+                usampler2D,
+                usampler3D,
+                usamplerCube,
+                usampler2DRect,
+                usampler1DArray,
+                usampler2DArray,
+                usamplerBuffer,
+                usampler2DMS,
+                usampler2DMSArray,
+                usamplerCubeArray,
+        };
     }
-    static {
-        Sampler.class.getName(); // Force load and registration
-    }
 
-    @SuppressWarnings("unused")
     public static class ShadowSampler extends Sampler {
         private ShadowSampler(String typename) {
-            super(typename, GLSLTypes.FLOAT); // shadow samplers only exist for floats
+            super(typename, GLSLScalarType.FLOAT); // shadow samplers only exist for floats
         }
 
         public static final ShadowSampler sampler1DShadow = new ShadowSampler("sampler1DShadow");
@@ -81,12 +115,18 @@ public class GLSLOpaqueType extends GLSLType {
         public static final ShadowSampler sampler2DArrayShadow = new ShadowSampler("sampler2DArrayShadow");
         public static final ShadowSampler samplerCubeShadow = new ShadowSampler("samplerCubeShadow");
         public static final ShadowSampler samplerCubeArrayShadow = new ShadowSampler("samplerCubeArrayShadow");
-    }
-    static {
-        ShadowSampler.class.getName(); // Force load and registration
+
+        public static final ShadowSampler[] ALL = new ShadowSampler[]{
+                sampler1DShadow,
+                sampler2DShadow,
+                sampler2DRectShadow,
+                sampler1DArrayShadow,
+                sampler2DArrayShadow,
+                samplerCubeShadow,
+                samplerCubeArrayShadow,
+        };
     }
 
-    @SuppressWarnings("unused")
     public static class Image extends GLSLOpaqueType {
         public final GLSLType baseType;
 
@@ -95,44 +135,77 @@ public class GLSLOpaqueType extends GLSLType {
             this.baseType = baseType;
         }
 
-        public static final Image image1D = new Image("image1D", FLOAT);
-        public static final Image image2D = new Image("image2D", FLOAT);
-        public static final Image image3D = new Image("image3D", FLOAT);
-        public static final Image imageCube = new Image("imageCube", FLOAT);
-        public static final Image image2DRect = new Image("image2DRect", FLOAT);
-        public static final Image image1DArray = new Image("image1DArray", FLOAT);
-        public static final Image image2DArray = new Image("image2DArray", FLOAT);
-        public static final Image imageBuffer = new Image("imageBuffer", FLOAT);
-        public static final Image image2DMS = new Image("image2DMS", FLOAT);
-        public static final Image image2DMSArray = new Image("image2DMSArray", FLOAT);
-        public static final Image imageCubeArray = new Image("imageCubeArray", FLOAT);
+        public static final Image image1D = new Image("image1D", GLSLScalarType.FLOAT);
+        public static final Image image2D = new Image("image2D", GLSLScalarType.FLOAT);
+        public static final Image image3D = new Image("image3D", GLSLScalarType.FLOAT);
+        public static final Image imageCube = new Image("imageCube", GLSLScalarType.FLOAT);
+        public static final Image image2DRect = new Image("image2DRect", GLSLScalarType.FLOAT);
+        public static final Image image1DArray = new Image("image1DArray", GLSLScalarType.FLOAT);
+        public static final Image image2DArray = new Image("image2DArray", GLSLScalarType.FLOAT);
+        public static final Image imageBuffer = new Image("imageBuffer", GLSLScalarType.FLOAT);
+        public static final Image image2DMS = new Image("image2DMS", GLSLScalarType.FLOAT);
+        public static final Image image2DMSArray = new Image("image2DMSArray", GLSLScalarType.FLOAT);
+        public static final Image imageCubeArray = new Image("imageCubeArray", GLSLScalarType.FLOAT);
 
-        public static final Image iimage1D = new Image("iimage1D", INT);
-        public static final Image iimage2D = new Image("iimage2D", INT);
-        public static final Image iimage3D = new Image("iimage3D", INT);
-        public static final Image iimageCube = new Image("iimageCube", INT);
-        public static final Image iimage2DRect = new Image("iimage2DRect", INT);
-        public static final Image iimage1DArray = new Image("iimage1DArray", INT);
-        public static final Image iimage2DArray = new Image("iimage2DArray", INT);
-        public static final Image iimageBuffer = new Image("iimageBuffer", INT);
-        public static final Image iimage2DMS = new Image("iimage2DMS", INT);
-        public static final Image iimage2DMSArray = new Image("iimage2DMSArray", INT);
-        public static final Image iimageCubeArray = new Image("iimageCubeArray", INT);
+        public static final Image iimage1D = new Image("iimage1D", GLSLScalarType.INT);
+        public static final Image iimage2D = new Image("iimage2D", GLSLScalarType.INT);
+        public static final Image iimage3D = new Image("iimage3D", GLSLScalarType.INT);
+        public static final Image iimageCube = new Image("iimageCube", GLSLScalarType.INT);
+        public static final Image iimage2DRect = new Image("iimage2DRect", GLSLScalarType.INT);
+        public static final Image iimage1DArray = new Image("iimage1DArray", GLSLScalarType.INT);
+        public static final Image iimage2DArray = new Image("iimage2DArray", GLSLScalarType.INT);
+        public static final Image iimageBuffer = new Image("iimageBuffer", GLSLScalarType.INT);
+        public static final Image iimage2DMS = new Image("iimage2DMS", GLSLScalarType.INT);
+        public static final Image iimage2DMSArray = new Image("iimage2DMSArray", GLSLScalarType.INT);
+        public static final Image iimageCubeArray = new Image("iimageCubeArray", GLSLScalarType.INT);
 
-        public static final Image uimage1D = new Image("uimage1D", UINT);
-        public static final Image uimage2D = new Image("uimage2D", UINT);
-        public static final Image uimage3D = new Image("uimage3D", UINT);
-        public static final Image uimageCube = new Image("uimageCube", UINT);
-        public static final Image uimage2DRect = new Image("uimage2DRect", UINT);
-        public static final Image uimage1DArray = new Image("uimage1DArray", UINT);
-        public static final Image uimage2DArray = new Image("uimage2DArray", UINT);
-        public static final Image uimageBuffer = new Image("uimageBuffer", UINT);
-        public static final Image uimage2DMS = new Image("uimage2DMS", UINT);
-        public static final Image uimage2DMSArray = new Image("uimage2DMSArray", UINT);
-        public static final Image uimageCubeArray = new Image("uimageCubeArray", UINT);
-    }
-    static {
-        Image.class.getName(); // Force load and registration
+        public static final Image uimage1D = new Image("uimage1D", GLSLScalarType.UINT);
+        public static final Image uimage2D = new Image("uimage2D", GLSLScalarType.UINT);
+        public static final Image uimage3D = new Image("uimage3D", GLSLScalarType.UINT);
+        public static final Image uimageCube = new Image("uimageCube", GLSLScalarType.UINT);
+        public static final Image uimage2DRect = new Image("uimage2DRect", GLSLScalarType.UINT);
+        public static final Image uimage1DArray = new Image("uimage1DArray", GLSLScalarType.UINT);
+        public static final Image uimage2DArray = new Image("uimage2DArray", GLSLScalarType.UINT);
+        public static final Image uimageBuffer = new Image("uimageBuffer", GLSLScalarType.UINT);
+        public static final Image uimage2DMS = new Image("uimage2DMS", GLSLScalarType.UINT);
+        public static final Image uimage2DMSArray = new Image("uimage2DMSArray", GLSLScalarType.UINT);
+        public static final Image uimageCubeArray = new Image("uimageCubeArray", GLSLScalarType.UINT);
+
+        public static final Image[] ALL = new Image[]{
+                image1D,
+                image2D,
+                image3D,
+                imageCube,
+                image2DRect,
+                image1DArray,
+                image2DArray,
+                imageBuffer,
+                image2DMS,
+                image2DMSArray,
+                imageCubeArray,
+                iimage1D,
+                iimage2D,
+                iimage3D,
+                iimageCube,
+                iimage2DRect,
+                iimage1DArray,
+                iimage2DArray,
+                iimageBuffer,
+                iimage2DMS,
+                iimage2DMSArray,
+                iimageCubeArray,
+                uimage1D,
+                uimage2D,
+                uimage3D,
+                uimageCube,
+                uimage2DRect,
+                uimage1DArray,
+                uimage2DArray,
+                uimageBuffer,
+                uimage2DMS,
+                uimage2DMSArray,
+                uimageCubeArray,
+        };
     }
 
     private final String typename;
@@ -140,7 +213,6 @@ public class GLSLOpaqueType extends GLSLType {
     private GLSLOpaqueType(String typename) {
         super(null);
         this.typename = typename;
-        GLSLTypes.register(this);
     }
 
     @NotNull

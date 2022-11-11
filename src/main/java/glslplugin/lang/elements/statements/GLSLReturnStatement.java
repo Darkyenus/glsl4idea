@@ -21,8 +21,8 @@ package glslplugin.lang.elements.statements;
 
 import com.intellij.lang.ASTNode;
 import glslplugin.lang.elements.expressions.GLSLExpression;
+import glslplugin.lang.elements.types.GLSLOpaqueType;
 import glslplugin.lang.elements.types.GLSLType;
-import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -49,7 +49,7 @@ public class GLSLReturnStatement extends GLSLStatement {
         if (child != null) {
             return child.getType(); //todo: problem with function calls...
         } else {
-            return GLSLTypes.VOID;
+            return GLSLOpaqueType.VOID;
         }
     }
 }

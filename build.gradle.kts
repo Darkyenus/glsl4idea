@@ -33,7 +33,7 @@ intellij {
     updateSinceUntilBuild.set(false)
     instrumentCode.set(false)
 
-    //plugins.add("PsiViewer:222-SNAPSHOT")
+    plugins.add("PsiViewer:222-SNAPSHOT")
 }
 
 tasks {
@@ -581,7 +581,7 @@ out gl_PerVertex {
 
         println(resultGLSL)
 
-        val outFile = File(rootDir, "src/main/resources/glslBuiltIns/builtin.glsl")
+        val outFile = File(rootDir, "src/main/resources/glsl/builtin.glsl")
         outFile.parentFile.mkdirs()
         outFile.writeText(resultGLSL)
     }

@@ -178,16 +178,11 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
     //endregion
 
     public static class FunctionCallOrConstructorReference
-            extends GLSLAbstractReference.Poly<GLSLFunctionOrConstructorCallExpression>
-            implements PsiScopeProcessor {
+            extends GLSLAbstractReference.Poly<GLSLFunctionOrConstructorCallExpression> {
 
         public FunctionCallOrConstructorReference(@NotNull GLSLFunctionOrConstructorCallExpression source, TextRange range) {
             super(source, range);
         }
-
-        private String onlyNamed = null;
-        private final LinkedHashMap<GLSLBasicFunctionType, GLSLFunctionDeclaration> functionDeclarations = new LinkedHashMap<>();
-        private final ArrayList<GLSLStructDefinition> structDefinitions = new ArrayList<>();
 
         public static class ResolveResult extends PsiElementResolveResult {
 
@@ -204,104 +199,145 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
 
         @Override
         public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-            try {
-                final GLSLFunctionOrConstructorCallExpression element = getElement();
-                final GLSLTypeSpecifier typeSpec = element.getConstructorTypeSpecifier();
-                final String customTypeOrName = element.getFunctionOrConstructedTypeName();
+            final GLSLFunctionOrConstructorCallExpression element = getElement();
+            final GLSLTypeSpecifier typeSpec = element.getConstructorTypeSpecifier();
+            final String customTypeOrName = element.getFunctionOrConstructedTypeName();
 
-                if (typeSpec != null) {
-                    // Built-in type constructor, it does not matter what the array specifiers are
-                    GLSLType type = typeSpec.getType();
+            if (typeSpec != null) {
+                // Built-in type constructor, it does not matter what the array specifiers are
+                GLSLType type = typeSpec.getType();
 
-                    // NOTE: Built-in types have different handling of array sizes, it is a part of their type specifier
-                    // Structs don't have that - their array sizes are separate elements after specifier
-                    GLSLType baseType;
-                    if (type instanceof GLSLArrayType) {
-                        baseType = type.getBaseType();
-                    } else {
-                        baseType = type;
-                    }
-
-                    final GLSLBuiltInPsiUtilService bipus = element.getProject().getService(GLSLBuiltInPsiUtilService.class);
-                    final GLSLStructDefinition builtInType;
-                    if (baseType instanceof GLSLScalarType) {
-                        builtInType = bipus.getScalarDefinition((GLSLScalarType) baseType);
-                    } else if (baseType instanceof GLSLVectorType) {
-                        builtInType = bipus.getVecDefinition((GLSLVectorType) baseType);
-                    } else if (baseType instanceof GLSLMatrixType) {
-                        builtInType = bipus.getMatrixDefinition((GLSLMatrixType) baseType);
-                    } else {
-                        return ResolveResult.EMPTY_ARRAY;
-                    }
-
-                    if (type instanceof GLSLArrayType arrayType) {
-                        // Array may be implicitly sized: if so, clarify it using parameter list
-                        final int[] dimensions = arrayType.getDimensions();
-                        final int[] newDimensions = Arrays.copyOf(dimensions, dimensions.length);
-                        final GLSLParameterList parameterList = element.getParameterList();
-                        clarifyConstructorArrayDimensions(newDimensions, parameterList);
-                        type = new GLSLArrayType(type.getBaseType(), newDimensions);
-                    }
-
-                    return new ResolveResult[]{
-                            new ResolveResult(builtInType, true, type)
-                    };
-                } else if (customTypeOrName != null) {
-                    // Lookup the struct or function
-                    onlyNamed = customTypeOrName;
-                    PsiTreeUtil.treeWalkUp(this, element, null, ResolveState.initial());
-
-                    final ArrayList<ResolveResult> results = new ArrayList<>();
-
-                    final int @NotNull[] constructorArraySpecifiers = element.getConstructorArrayDimensions();
-                    if (!functionDeclarations.isEmpty() && constructorArraySpecifiers.length == 0) {
-                        // Try to match function
-                        boolean gotDirectlyCompatible = false;
-                        final @NotNull GLSLType[] parameterTypes = element.getParameterTypes();
-                        for (Map.Entry<GLSLBasicFunctionType, GLSLFunctionDeclaration> entry : functionDeclarations.entrySet()) {
-                            final GLSLBasicFunctionType functionType = entry.getKey();
-                            final GLSLFunctionDeclaration functionDeclaration = entry.getValue();
-
-                            final GLSLTypeCompatibilityLevel level = functionType.getParameterCompatibilityLevel(parameterTypes);
-                            if (level == GLSLTypeCompatibilityLevel.COMPATIBLE_WITH_IMPLICIT_CONVERSION) {
-                                if (!gotDirectlyCompatible) {
-                                    results.add(new ResolveResult(functionDeclaration, true, functionType.getReturnType()));
-                                }
-                            } else if (level == GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE) {
-                                if (!gotDirectlyCompatible) {
-                                    // Everything up to now was not directly compatible, throw it away
-                                    results.clear();
-                                    gotDirectlyCompatible = true;
-                                }
-                                results.add(new ResolveResult(functionDeclaration, true, functionType.getReturnType()));
-                            }
-                        }
-                    }
-
-                    clarifyConstructorArrayDimensions(constructorArraySpecifiers, element.getParameterList());
-                    for (GLSLStructDefinition definition : structDefinitions) {
-                        final GLSLStructType structType = definition.getType();
-                        final GLSLType resultType;
-                        if (constructorArraySpecifiers.length == 0) {
-                            // This is a direct instantiation
-                            resultType = structType;
-                        } else {
-                            // This is an array instantiation
-                            resultType = new GLSLArrayType(structType, constructorArraySpecifiers);
-                        }
-                        results.add(new ResolveResult(definition, true, resultType));
-                    }
-
-                    return results.toArray(ResolveResult.EMPTY_ARRAY);
+                // NOTE: Built-in types have different handling of array sizes, it is a part of their type specifier
+                // Structs don't have that - their array sizes are separate elements after specifier
+                GLSLType baseType;
+                if (type instanceof GLSLArrayType) {
+                    baseType = type.getBaseType();
                 } else {
-                    // Broken
+                    baseType = type;
+                }
+
+                final GLSLBuiltInPsiUtilService bipus = element.getProject().getService(GLSLBuiltInPsiUtilService.class);
+                final GLSLStructDefinition builtInType;
+                if (baseType instanceof GLSLScalarType) {
+                    builtInType = bipus.getScalarDefinition((GLSLScalarType) baseType);
+                } else if (baseType instanceof GLSLVectorType) {
+                    builtInType = bipus.getVecDefinition((GLSLVectorType) baseType);
+                } else if (baseType instanceof GLSLMatrixType) {
+                    builtInType = bipus.getMatrixDefinition((GLSLMatrixType) baseType);
+                } else {
                     return ResolveResult.EMPTY_ARRAY;
                 }
-            } finally {
-                functionDeclarations.clear();
-                structDefinitions.clear();
+
+                if (type instanceof GLSLArrayType arrayType) {
+                    // Array may be implicitly sized: if so, clarify it using parameter list
+                    final int[] dimensions = arrayType.getDimensions();
+                    final int[] newDimensions = Arrays.copyOf(dimensions, dimensions.length);
+                    final GLSLParameterList parameterList = element.getParameterList();
+                    clarifyConstructorArrayDimensions(newDimensions, parameterList);
+                    type = new GLSLArrayType(type.getBaseType(), newDimensions);
+                }
+
+                return new ResolveResult[]{
+                        new ResolveResult(builtInType, true, type)
+                };
+            } else if (customTypeOrName != null) {
+                // Lookup the struct or function
+                final WalkResult walk = WalkResult.walkPossibleReferences(element, customTypeOrName);
+
+                final ArrayList<ResolveResult> results = new ArrayList<>();
+
+                final int @NotNull[] constructorArraySpecifiers = element.getConstructorArrayDimensions();
+                if (!walk.functionDeclarations.isEmpty() && constructorArraySpecifiers.length == 0) {
+                    // Try to match function
+                    boolean gotDirectlyCompatible = false;
+                    final @NotNull GLSLType[] parameterTypes = element.getParameterTypes();
+                    for (Map.Entry<GLSLBasicFunctionType, GLSLFunctionDeclaration> entry : walk.functionDeclarations.entrySet()) {
+                        final GLSLBasicFunctionType functionType = entry.getKey();
+                        final GLSLFunctionDeclaration functionDeclaration = entry.getValue();
+
+                        final GLSLTypeCompatibilityLevel level = functionType.getParameterCompatibilityLevel(parameterTypes);
+                        if (level == GLSLTypeCompatibilityLevel.COMPATIBLE_WITH_IMPLICIT_CONVERSION) {
+                            if (!gotDirectlyCompatible) {
+                                results.add(new ResolveResult(functionDeclaration, true, functionType.getReturnType()));
+                            }
+                        } else if (level == GLSLTypeCompatibilityLevel.DIRECTLY_COMPATIBLE) {
+                            if (!gotDirectlyCompatible) {
+                                // Everything up to now was not directly compatible, throw it away
+                                results.clear();
+                                gotDirectlyCompatible = true;
+                            }
+                            results.add(new ResolveResult(functionDeclaration, true, functionType.getReturnType()));
+                        }
+                    }
+                }
+
+                clarifyConstructorArrayDimensions(constructorArraySpecifiers, element.getParameterList());
+                for (GLSLStructDefinition definition : walk.structDefinitions) {
+                    final GLSLStructType structType = definition.getType();
+                    final GLSLType resultType;
+                    if (constructorArraySpecifiers.length == 0) {
+                        // This is a direct instantiation
+                        resultType = structType;
+                    } else {
+                        // This is an array instantiation
+                        resultType = new GLSLArrayType(structType, constructorArraySpecifiers);
+                    }
+                    results.add(new ResolveResult(definition, true, resultType));
+                }
+
+                return results.toArray(ResolveResult.EMPTY_ARRAY);
+            } else {
+                // Broken
+                return ResolveResult.EMPTY_ARRAY;
             }
         }
+
+
+
+        @Override
+        public Object @NotNull [] getVariants() {
+            final WalkResult walk = WalkResult.walkPossibleReferences(element, null);
+
+            final ArrayList<Object> variants = new ArrayList<>();
+
+            for (GLSLScalarType scalar : GLSLScalarType.SCALARS) {
+                variants.add(scalar.getTypename());
+            }
+            for (GLSLVectorType[] sharedBaseType : GLSLVectorType.VECTOR_TYPES.values()) {
+                for (GLSLVectorType type : sharedBaseType) {
+                    variants.add(type.getTypename());
+                }
+            }
+            for (GLSLMatrixType[][] sharedBaseType : GLSLMatrixType.MATRIX_TYPES.values()) {
+                for (GLSLMatrixType[] column : sharedBaseType) {
+                    for (GLSLMatrixType type : column) {
+                        variants.add(type.getTypename());
+                    }
+                }
+            }
+            variants.addAll(walk.functionDeclarations.values());
+            variants.addAll(walk.structDefinitions);
+
+            return variants.toArray();
+        }
+    }
+
+    public static final class WalkResult implements PsiScopeProcessor {
+
+        public static WalkResult walkPossibleReferences(PsiElement from, String onlyNamed) {
+            final WalkResult result = new WalkResult(onlyNamed);
+            PsiTreeUtil.treeWalkUp(result, from, null, ResolveState.initial());
+            return result;
+        }
+
+        private final String onlyNamed;
+        public final LinkedHashMap<GLSLBasicFunctionType, GLSLFunctionDeclaration> functionDeclarations = new LinkedHashMap<>();
+        public final ArrayList<GLSLStructDefinition> structDefinitions = new ArrayList<>();
+
+        public WalkResult(String onlyNamed) {
+            this.onlyNamed = onlyNamed;
+        }
+
 
         @Override
         public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
@@ -321,39 +357,6 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
                 }
             }
             return true;// Continue
-        }
-
-        @Override
-        public Object @NotNull [] getVariants() {
-            try {
-                onlyNamed = null;
-                PsiTreeUtil.treeWalkUp(this, getElement(), null, ResolveState.initial());
-
-                final ArrayList<Object> variants = new ArrayList<>();
-
-                for (GLSLScalarType scalar : GLSLScalarType.SCALARS) {
-                    variants.add(scalar.getTypename());
-                }
-                for (GLSLVectorType[] sharedBaseType : GLSLVectorType.VECTOR_TYPES.values()) {
-                    for (GLSLVectorType type : sharedBaseType) {
-                        variants.add(type.getTypename());
-                    }
-                }
-                for (GLSLMatrixType[][] sharedBaseType : GLSLMatrixType.MATRIX_TYPES.values()) {
-                    for (GLSLMatrixType[] column : sharedBaseType) {
-                        for (GLSLMatrixType type : column) {
-                            variants.add(type.getTypename());
-                        }
-                    }
-                }
-                variants.addAll(functionDeclarations.values());
-                variants.addAll(structDefinitions);
-
-                return variants.toArray();
-            } finally {
-                functionDeclarations.clear();
-                structDefinitions.clear();
-            }
         }
     }
 

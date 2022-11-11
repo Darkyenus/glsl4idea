@@ -2,8 +2,14 @@ package glslplugin.lang.elements.reference;
 
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.GLSLFileType;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
@@ -16,8 +22,10 @@ import glslplugin.lang.elements.types.GLSLVectorType;
 import glslplugin.lang.parser.GLSLFile;
 import glslplugin.util.VectorComponents;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 
 @Service
@@ -122,5 +130,30 @@ public final class GLSLBuiltInPsiUtilService {
             }
         }
         return lengthMethod;
+    }
+
+    private GLSLFile builtinsFile;
+    private boolean builtinsFileResolved;
+
+    public @Nullable GLSLFile getBuiltinsFile() {
+        // We have a generated file with builtins in res/glsl/builtin.glsl
+        // and also granular files in res/environment. The granular files are much better
+        // quality and contain documentation, but also contain non-resolved types (genType)
+        // which we don't know how to parse yet.
+        if (builtinsFileResolved) {
+            return builtinsFile;
+        }
+
+        builtinsFileResolved = true;
+        URL builtinUrl = getClass().getClassLoader().getResource("glsl/builtin.glsl");
+        if (builtinUrl == null) return null;
+        final VirtualFile file = VfsUtil.findFileByURL(builtinUrl);
+        if (file == null) return null;
+        final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+        if (psiFile instanceof GLSLFile glslPsiFile) {
+            glslPsiFile.isBuiltinFile = true;
+            return builtinsFile = glslPsiFile;
+        }
+        return null;
     }
 }

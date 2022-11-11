@@ -41,6 +41,6 @@ out gl_PerVertex {
     #if __VERSION__ >= 450
     float gl_CullDistance[];
     #endif
-}
+};
 
 #endif

@@ -142,7 +142,7 @@ public class GLSLOperator {
             if(!firstInput.isValidType() || !secondInput.isValidType()) return UNKNOWN_TYPE;
             //Both types are scalars
             if(firstInput instanceof GLSLScalarType && secondInput instanceof GLSLScalarType){
-                return unifyTypes(firstInput, secondInput);
+                return GLSLType.unifyTypes(firstInput, secondInput);
             }
             //One type is scalar and the other is vector or matrix
             if(firstInput instanceof GLSLScalarType && (secondInput instanceof GLSLVectorType || secondInput instanceof GLSLMatrixType)){
@@ -154,7 +154,7 @@ public class GLSLOperator {
             //Two operands are vectors of same size
             if(firstInput instanceof GLSLVectorType first && secondInput instanceof GLSLVectorType second){
                 if(first.getNumComponents() == second.getNumComponents()){
-                    GLSLType unified = unifyTypes(first.getBaseType(), second.getBaseType());
+                    GLSLType unified = GLSLType.unifyTypes(first.getBaseType(), second.getBaseType());
                     if(unified.isValidType()){
                         return GLSLVectorType.getType(unified, first.getNumComponents());
                     }else{
@@ -167,7 +167,7 @@ public class GLSLOperator {
         }
 
         private GLSLType getResultOfVectorOrMatrixAndScalar(GLSLType vectorMatrixType, GLSLScalarType scalarType){
-            GLSLType unified = unifyTypes(vectorMatrixType.getBaseType(), scalarType);
+            GLSLType unified = GLSLType.unifyTypes(vectorMatrixType.getBaseType(), scalarType);
             if(!unified.isValidType())return UNKNOWN_TYPE;
             else{
                 if(vectorMatrixType instanceof GLSLMatrixType matrixType){
@@ -184,7 +184,7 @@ public class GLSLOperator {
             //Two operands are matrices of exactly same size
             if(firstInput instanceof GLSLMatrixType first && secondInput instanceof GLSLMatrixType second){
                 if(first.getNumColumns() == second.getNumColumns() && first.getNumRows() == second.getNumRows()){
-                    GLSLType unified = unifyTypes(first.getBaseType(), second.getBaseType());
+                    GLSLType unified = GLSLType.unifyTypes(first.getBaseType(), second.getBaseType());
                     if(unified.isValidType()){
                         return GLSLMatrixType.getType(unified, first.getNumColumns(), second.getNumRows());
                     }else{
@@ -269,7 +269,7 @@ public class GLSLOperator {
             if((firstInput instanceof GLSLMatrixType && secondInput instanceof GLSLMatrixType)
                     || (firstInput instanceof GLSLVectorType && secondInput instanceof GLSLMatrixType)
                     || (firstInput instanceof GLSLMatrixType && secondInput instanceof GLSLVectorType)){
-                GLSLType unified = unifyTypes(firstInput.getBaseType(), secondInput.getBaseType());
+                GLSLType unified = GLSLType.unifyTypes(firstInput.getBaseType(), secondInput.getBaseType());
                 if(!unified.isValidType())return UNKNOWN_TYPE;
                 int columnsLeft = getColumns(firstInput, true);
                 int rowsRight = getRows(secondInput, true);
@@ -308,9 +308,9 @@ public class GLSLOperator {
         @Override
         public GLSLType getResultType(GLSLType firstInput, GLSLType secondInput) {
             if(!firstInput.isValidType() || !secondInput.isValidType())return UNKNOWN_TYPE;
-            GLSLType unified = unifyTypes(firstInput.getBaseType(), secondInput.getBaseType());
+            GLSLType unified = GLSLType.unifyTypes(firstInput.getBaseType(), secondInput.getBaseType());
             //Operates only on integers
-            if(unified != INT && unified != UINT)return UNKNOWN_TYPE;
+            if(unified != GLSLScalarType.INT && unified != GLSLScalarType.UINT)return UNKNOWN_TYPE;
 
             //Two vectors
             if(firstInput instanceof GLSLVectorType && secondInput instanceof GLSLVectorType){
@@ -361,7 +361,7 @@ public class GLSLOperator {
         public boolean isValidInput(GLSLType type) {
             if(!type.isValidType())return true;
             //Those operators work on integer/float scalars, vectors and matrices
-            return type.getBaseType() instanceof GLSLScalarType && type.getBaseType() != BOOL;
+            return type.getBaseType() instanceof GLSLScalarType && type.getBaseType() != GLSLScalarType.BOOL;
         }
 
         @NotNull
@@ -423,14 +423,14 @@ public class GLSLOperator {
             if(!firstType.isValidType() || !secondType.isValidType())return true;
             //Operates only on integer/float scalars
             return firstType instanceof GLSLScalarType && secondType instanceof GLSLScalarType &&
-                    firstType != BOOL && secondType != BOOL;
+                    firstType != GLSLScalarType.BOOL && secondType != GLSLScalarType.BOOL;
         }
 
         @NotNull
         @Override
         public GLSLType getResultType(GLSLType firstInput, GLSLType secondInput) {
             //Relational operators always result in bool
-            return BOOL;
+            return GLSLScalarType.BOOL;
         }
 
         @Nullable
@@ -468,7 +468,7 @@ public class GLSLOperator {
         @NotNull
         @Override
         public GLSLType getResultType(GLSLType firstInput, GLSLType secondInput) {
-            return BOOL;
+            return GLSLScalarType.BOOL;
         }
 
         @Nullable
@@ -500,13 +500,13 @@ public class GLSLOperator {
             if(!firstType.isValidType() || !secondType.isValidType())return true;
 
             //operates only on two booleans
-            return firstType == BOOL && secondType == BOOL;
+            return firstType == GLSLScalarType.BOOL && secondType == GLSLScalarType.BOOL;
         }
 
         @NotNull
         @Override
         public GLSLType getResultType(GLSLType firstInput, GLSLType secondInput) {
-            return BOOL;
+            return GLSLScalarType.BOOL;
         }
 
         @Nullable
@@ -538,13 +538,13 @@ public class GLSLOperator {
 
         @Override
         public boolean isValidInput(GLSLType type) {
-            return !type.isValidType() || type == BOOL;
+            return !type.isValidType() || type == GLSLScalarType.BOOL;
         }
 
         @NotNull
         @Override
         public GLSLType getResultType(GLSLType input) {
-            return BOOL;
+            return GLSLScalarType.BOOL;
         }
 
         @Nullable
@@ -576,7 +576,7 @@ public class GLSLOperator {
             if(type instanceof GLSLMatrixType)return false;
             //Operates on integer scalars and vectors
             GLSLType baseType = type.getBaseType();
-            return baseType == INT || baseType == UINT;
+            return baseType == GLSLScalarType.INT || baseType == GLSLScalarType.UINT;
         }
 
         @NotNull

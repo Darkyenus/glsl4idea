@@ -31,6 +31,11 @@ public class GLSLPreprocessorInclude extends GLSLPreprocessorDirective {
     }
 
     public @Nullable GLSLFile includedFile() {
+        PsiDirectory dir = this.getContainingFile().getContainingDirectory();
+        if (dir == null) {
+            return null;
+        }
+
         final String pathStringRaw = GLSLElement.text(this.<PsiElement>findChildByType(GLSLTokenTypes.PREPROCESSOR_STRING));
         final String pathString = pathStringRaw == null
                 || !pathStringRaw.startsWith("\"")
@@ -39,30 +44,43 @@ public class GLSLPreprocessorInclude extends GLSLPreprocessorDirective {
                 ? null : pathStringRaw.substring(1, pathStringRaw.length() - 1);
         if (pathString == null) return null;
 
-        final String[] parts = pathString.split("[\\\\/]");
+        // Split into / or \ separated parts.
+        // String.split() is too slow for this.
+        int partBegin = 0;
+        final int pathLength = pathString.length();
+        for (int partEnd = 0; partEnd < pathLength; partEnd++) {
+            final char c = pathString.charAt(partEnd);
+            if (c == '/' || c == '\\') {
+                // Got a part
 
-        PsiDirectory dir = this.getContainingFile().getContainingDirectory();
-        for (int i = 0; i < parts.length - 1; i++) {
-            String s = parts[i];
-            if (s.isEmpty() || ".".equals(s)) {
-                continue;// Nothing to do
-            }
-            if ("..".equals(s)) {
-                dir = dir.getParentDirectory();
-            } else {
-                dir = dir.findSubdirectory(s);
-            }
-            if (dir == null) {
-                return null;
+                final int partLength = partEnd - partBegin;
+
+                // /./ or //
+                boolean skipPart = partLength == 0 || (partLength == 1 && pathString.charAt(partBegin) == '.');
+
+                if (!skipPart) {
+                    if (partLength == 2 && pathString.charAt(partBegin) == '.' && pathString.charAt(partBegin + 1) == '.') {
+                        // /../
+                        dir = dir.getParentDirectory();
+                    } else {
+                        dir = dir.findSubdirectory(pathString.substring(partBegin, partEnd));
+                    }
+                    if (dir == null) {
+                        return null;
+                    }
+                }
+
+                partBegin = partEnd + 1;
             }
         }
+        final String lastPart = pathString.substring(partBegin);
 
-        final PsiFile includedFile = dir.findFile(parts[parts.length - 1]);
-        if (!(includedFile instanceof GLSLFile glslFile)) {
+        final PsiFile includedFile = dir.findFile(lastPart);
+        if (includedFile instanceof GLSLFile glslFile) {
+            return glslFile;
+        } else {
             return null;
         }
-
-        return glslFile;
     }
 
     @Override

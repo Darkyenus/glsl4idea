@@ -78,6 +78,6 @@ public class GLSLConditionalExpression extends GLSLExpression {
         final GLSLExpression falseBranch = getFalseBranch();
         final GLSLType falseType = falseBranch != null ? falseBranch.getType() : GLSLTypes.UNKNOWN_TYPE;
 
-        return GLSLTypes.unifyTypes(trueType, falseType);
+        return GLSLType.unifyTypes(trueType, falseType);
     }
 }

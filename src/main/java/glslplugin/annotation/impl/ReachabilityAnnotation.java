@@ -40,7 +40,7 @@ import glslplugin.lang.elements.statements.GLSLReturnStatement;
 import glslplugin.lang.elements.statements.GLSLStatement;
 import glslplugin.lang.elements.statements.GLSLSwitchStatement;
 import glslplugin.lang.elements.statements.LoopStatement;
-import glslplugin.lang.elements.types.GLSLTypes;
+import glslplugin.lang.elements.types.GLSLOpaqueType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -61,7 +61,7 @@ public class ReachabilityAnnotation extends Annotator<GLSLFunctionDefinition> {
 
         final Terminate bodyTerminate = annotateStatement(body, holder);
 
-        if (function.getReturnType() == GLSLTypes.VOID
+        if (function.getReturnType() == GLSLOpaqueType.VOID
                 || bodyTerminate == Terminate.RETURN
                 || bodyTerminate == Terminate.DISCARD) return;
 

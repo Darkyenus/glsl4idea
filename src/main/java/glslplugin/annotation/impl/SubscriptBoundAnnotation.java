@@ -20,7 +20,7 @@ public class SubscriptBoundAnnotation extends Annotator<GLSLSubscriptExpression>
         if (!expression.getType().isValidType() || !subscript.getType().isValidType()) return;
 
         GLSLType type = subscript.getType();
-        if (!type.typeEquals(GLSLTypes.INT) && !type.typeEquals(GLSLTypes.UINT)) {
+        if (!type.typeEquals(GLSLScalarType.INT) && !type.typeEquals(GLSLScalarType.UINT)) {
             holder.newAnnotation(HighlightSeverity.ERROR, "Subscript must be of int or uint type, found " + type.getTypename()).create();
             return;
         }

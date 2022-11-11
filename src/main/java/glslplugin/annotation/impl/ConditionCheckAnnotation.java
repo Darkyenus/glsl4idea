@@ -25,8 +25,8 @@ import glslplugin.annotation.Annotator;
 import glslplugin.lang.elements.expressions.GLSLCondition;
 import glslplugin.lang.elements.statements.ConditionStatement;
 import glslplugin.lang.elements.statements.GLSLStatement;
+import glslplugin.lang.elements.types.GLSLScalarType;
 import glslplugin.lang.elements.types.GLSLType;
-import glslplugin.lang.elements.types.GLSLTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class ConditionCheckAnnotation extends Annotator<GLSLStatement> {
@@ -37,7 +37,7 @@ public class ConditionCheckAnnotation extends Annotator<GLSLStatement> {
             if (condition != null) {
                 GLSLType conditionExpressionType = condition.getType();
                 if(!conditionExpressionType.isValidType())return;
-                if(conditionExpressionType != GLSLTypes.BOOL){
+                if(conditionExpressionType != GLSLScalarType.BOOL){
                     holder.newAnnotation(HighlightSeverity.ERROR, "Condition must be a boolean expression.").range(condition).create();
                 }
             }

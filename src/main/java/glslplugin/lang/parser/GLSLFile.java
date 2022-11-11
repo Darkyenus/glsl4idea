@@ -28,6 +28,7 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.GLSLFileType;
 import glslplugin.lang.elements.preprocessor.GLSLVersionDirective;
+import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,6 +62,8 @@ public class GLSLFile extends PsiFileBase {
         return GLSLFileType.INSTANCE;
     }
 
+    public boolean isBuiltinFile = false;
+
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
         for (PsiElement child = getFirstChild(); child != null; child = child.getNextSibling()) {
@@ -73,6 +76,14 @@ public class GLSLFile extends PsiFileBase {
 
 
             if (!child.processDeclarations(processor, state, null, place)) return false;
+        }
+
+        if (!isBuiltinFile) {
+            final GLSLBuiltInPsiUtilService bipus = getProject().getService(GLSLBuiltInPsiUtilService.class);
+            final GLSLFile builtinsFile = bipus.getBuiltinsFile();
+            if (builtinsFile != null) {
+                return builtinsFile.processDeclarations(processor, state, null, place);
+            }
         }
         return true;
     }

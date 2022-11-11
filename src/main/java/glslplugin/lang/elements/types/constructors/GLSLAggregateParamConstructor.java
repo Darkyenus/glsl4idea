@@ -78,7 +78,7 @@ public class GLSLAggregateParamConstructor extends GLSLFunctionType {
         for (int i = 0; i < length; i++) {
             final GLSLType type = types[i];
 
-            if (GLSLTypes.isScalar(type)) {
+            if (type instanceof GLSLScalarType) {
                 numComponents++;
             } else if (type instanceof GLSLVectorType) {
                 numComponents += ((GLSLVectorType) type).getNumComponents();
