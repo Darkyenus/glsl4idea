@@ -15,7 +15,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.9.0"
 }
 
-val pluginVersion = "1.24"
+val pluginVersion = "1.25-SNAPSHOT"
 
 group = "com.darkyen"
 version = pluginVersion
