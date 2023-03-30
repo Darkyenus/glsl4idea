@@ -134,7 +134,13 @@ public class PreprocessorPsiBuilderAdapter {
 
             final List<@NotNull String> arguments = redefinition.arguments;
             if (arguments == null) {
-                result.addAll(redefinition.redefinedTo);
+                if (redefinition.redefinedTo.isEmpty()) {
+                    // This is pointing to an empty redefinition (with no value)
+                    result.add(new ForeignLeafType(GLSLTokenTypes.PREPROCESSOR_REDEFINED, ""));
+                } else {
+                    // This is pointing to non-empty redefinition (has any value)
+                    result.addAll(redefinition.redefinedTo);
+                }
             } else {
                 // This is a function macro
                 if (parent.getTokenType() != GLSLTokenTypes.LEFT_PAREN) {
