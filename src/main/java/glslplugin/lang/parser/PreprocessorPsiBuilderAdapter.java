@@ -132,6 +132,10 @@ public class PreprocessorPsiBuilderAdapter {
             parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_REDEFINED);
             parent.advanceLexer();
 
+            if (redefinition.redefinedTo.isEmpty()) {
+                result.add(new ForeignLeafType(GLSLTokenTypes.PREPROCESSOR_REDEFINED, ""));
+            }
+
             final List<@NotNull String> arguments = redefinition.arguments;
             if (arguments == null) {
                 result.addAll(redefinition.redefinedTo);
