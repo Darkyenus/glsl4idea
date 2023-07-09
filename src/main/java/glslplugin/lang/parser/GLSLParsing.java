@@ -776,12 +776,38 @@ public class GLSLParsing extends GLSLParsingBase {
         return true;
     }
 
+    private void parseCaseStatementList() {
+        // same as parseStatementList() but check for case/default keyword
+
+        while ((STATEMENT_FIRST_SET.contains(getTokenType())
+            && getTokenType() != CASE_KEYWORD
+            && getTokenType() != DEFAULT_KEYWORD || OPERATORS.contains(getTokenType()) || getTokenType() == PRECISION_KEYWORD) && !eof()) {
+            if (!parseStatement()) {
+                return;
+            }
+        }
+    }
+
+    private void parseCaseBlock() {
+        // case_block: ':' '}'
+        //                   | ':' statement_list case keyword
+        //                   | ':' statement_list default keyword
+        Marker mark = mark();
+        match(COLON, "Expected ':'");
+        if (eof(mark)) return;
+        if (getTokenType() != RIGHT_BRACE || getTokenType() != CASE_KEYWORD) {
+            parseCaseStatementList();
+        }
+        if (eof(mark)) return;
+        mark.done(COMPOUND_STATEMENT);
+    }
+
     private boolean parseCaseStatement() {
         // case_statement: 'case' constant_expression ':'
         Marker mark = mark();
         match(CASE_KEYWORD, "Expected 'case'");
         parseConstantExpression();
-        match(COLON, "Expected ':'");
+        parseCaseBlock();
         mark.done(CASE_STATEMENT);
         return true;
     }
