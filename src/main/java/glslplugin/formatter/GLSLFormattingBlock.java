@@ -32,6 +32,7 @@ import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
+import glslplugin.lang.elements.expressions.GLSLParameterList;;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,6 +57,10 @@ public class GLSLFormattingBlock extends AbstractBlock {
         return psiElement instanceof GLSLCompoundStatement || psiElement instanceof GLSLStructMemberDeclaration;
     }
 
+    private static boolean isContinuationBlock(PsiElement psiElement) {
+        return psiElement instanceof GLSLParameterList;
+    }
+
     private static Indent getNodeIndent(ASTNode node) {
         IElementType nodeType = node.getElementType();
         ASTNode parent = node.getTreeParent();
@@ -69,6 +74,8 @@ public class GLSLFormattingBlock extends AbstractBlock {
                 return Indent.getNoneIndent();
             }
             return Indent.getNormalIndent();
+        } else if (isContinuationBlock(parentPsi)) {
+            return Indent.getContinuationIndent();
         }
 
         return Indent.getNoneIndent();
