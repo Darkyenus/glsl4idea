@@ -63,12 +63,20 @@ public class GLSLCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProv
 				    layout(column_major) mat4 modelview;
 				} matrices[3];
 
-				void main() {
-				    func();
-				}
-
 				vec3 addVectors(vec3 a, vec3 b) {
 				    return a + b;
+				}
+
+				void main() {
+				    func();
+				    addVectors(
+				    		vec3(4, 5, 6),
+				    		vec3(
+									1,
+									2,
+									3
+				    		)
+				    );
 				}
 
 				void miscFunc(int t) {
