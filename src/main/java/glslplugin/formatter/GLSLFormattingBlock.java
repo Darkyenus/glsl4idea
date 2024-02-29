@@ -30,6 +30,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLTokenTypes;
+import glslplugin.lang.elements.declarations.GLSLInterfaceBlockMemberDeclaration;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
 import glslplugin.lang.elements.expressions.GLSLParameterList;;
@@ -54,7 +55,9 @@ public class GLSLFormattingBlock extends AbstractBlock {
     }
 
     private static boolean isIndentableBlock(PsiElement psiElement) {
-        return psiElement instanceof GLSLCompoundStatement || psiElement instanceof GLSLStructMemberDeclaration;
+        return psiElement instanceof GLSLCompoundStatement
+            || psiElement instanceof GLSLStructMemberDeclaration
+            || psiElement instanceof GLSLInterfaceBlockMemberDeclaration;
     }
 
     private static boolean isContinuationBlock(PsiElement psiElement) {

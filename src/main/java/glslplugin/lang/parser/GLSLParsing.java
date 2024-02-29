@@ -62,7 +62,7 @@ import static glslplugin.lang.elements.GLSLElementTypes.GROUPED_EXPRESSION;
 import static glslplugin.lang.elements.GLSLElementTypes.IF_STATEMENT;
 import static glslplugin.lang.elements.GLSLElementTypes.INITIALIZER;
 import static glslplugin.lang.elements.GLSLElementTypes.INITIALIZER_LIST;
-import static glslplugin.lang.elements.GLSLElementTypes.INTERFACE_BLOCK;
+import static glslplugin.lang.elements.GLSLElementTypes.UNNAMED_INTERFACE_BLOCK_MEMBER_DECLARATION;
 import static glslplugin.lang.elements.GLSLElementTypes.LAYOUT_QUALIFIER_ID;
 import static glslplugin.lang.elements.GLSLElementTypes.LAYOUT_QUALIFIER_STATEMENT;
 import static glslplugin.lang.elements.GLSLElementTypes.LOGICAL_AND_EXPRESSION;
@@ -89,6 +89,7 @@ import static glslplugin.lang.elements.GLSLElementTypes.TYPE_SPECIFIER;
 import static glslplugin.lang.elements.GLSLElementTypes.TYPE_SPECIFIER_PRIMITIVE;
 import static glslplugin.lang.elements.GLSLElementTypes.TYPE_SPECIFIER_STRUCT;
 import static glslplugin.lang.elements.GLSLElementTypes.TYPE_SPECIFIER_STRUCT_REFERENCE;
+import static glslplugin.lang.elements.GLSLElementTypes.TYPE_SPECIFIER_INTERFACE_BLOCK;
 import static glslplugin.lang.elements.GLSLElementTypes.VARIABLE_DECLARATION;
 import static glslplugin.lang.elements.GLSLElementTypes.VARIABLE_NAME_EXPRESSION;
 import static glslplugin.lang.elements.GLSLElementTypes.WHILE_STATEMENT;
@@ -421,31 +422,8 @@ public class GLSLParsing extends GLSLParsingBase {
         parseQualifierList(true);
 
         if (getTokenType() == IDENTIFIER && lookAhead(1) == LEFT_BRACE) { // interface block
-            //TODO Make sure that this is preceded by storage_qualifier
-            parseIdentifier();
-            match(LEFT_BRACE, "Expected '{'");
-
-            if (getTokenType() == RIGHT_BRACE) {
-                error("Empty interface block is not allowed.");
-            }
-
-            while (!tryMatch(RIGHT_BRACE) && !eof()) {
-                final Marker member = mark();
-                parseQualifierList(true);
-                if (!parseTypeSpecifier()) advanceLexer();
-                parseDeclaratorList();
-                match(SEMICOLON, "Expected ';'");
-                member.done(STRUCT_MEMBER_DECLARATION);//TODO Should we call interface block members struct members?
-            }
-
-            if (getTokenType() == IDENTIFIER) {
-                parseIdentifier();
-                if (getTokenType() == LEFT_BRACKET) {
-                    parseArrayDeclarator();
-                }
-            }
-            match(SEMICOLON, "Expected ';'");
-            mark.done(INTERFACE_BLOCK);
+            mark.drop();
+            parseInterfaceBlock();
             return true;
         }
 
@@ -556,6 +534,82 @@ public class GLSLParsing extends GLSLParsingBase {
 
         mark.rollbackTo();
         return false;
+    }
+
+    private void parseInterfaceBlock() {
+        boolean named = false;
+
+        {
+            Marker beginMark = mark();
+
+            //TODO Make sure that this is preceded by storage_qualifier
+            parseIdentifier();
+            match(LEFT_BRACE, "Expected '{'");
+
+            if (getTokenType() == RIGHT_BRACE) {
+                error("Empty interface block is not allowed.");
+            }
+
+            // First check if it has a name, if so, we pretend it is a struct
+            // Otherwise, we parse each member as a global variable
+            while (!tryMatch(RIGHT_BRACE) && !eof()) {
+                advanceLexer();
+            }
+            if (getTokenType() == IDENTIFIER) {
+                named = true;
+            }
+
+            beginMark.rollbackTo();
+        }
+
+
+        if (named) {
+            final Marker mark = mark();
+
+            Marker typeSpecifier = mark();
+            Marker typeSpecifierInterfaceBlock = mark();
+            parseIdentifier();
+            advanceLexer();
+
+            while (!eof() && getTokenType() != RIGHT_BRACE) {
+                if (!parseStructDeclaration()) {
+                    final Marker invalidTokenSkip = mark();
+                    advanceLexer();
+                    invalidTokenSkip.error("Expected interface block member declaration");
+                }
+            }
+
+            match(RIGHT_BRACE, "Closing '}' for interface block expected.");
+            typeSpecifierInterfaceBlock.done(TYPE_SPECIFIER_INTERFACE_BLOCK);
+
+            if (getTokenType() == LEFT_BRACKET) {
+                parseArrayDeclarator();
+            }
+
+            typeSpecifier.done(TYPE_SPECIFIER);
+
+            Marker declarator = mark();
+            declarator.rollbackTo();
+
+            parseDeclaratorList();
+            match(SEMICOLON, "Missing ';' after interface block declaration");
+            mark.done(VARIABLE_DECLARATION);
+        } else {
+            parseIdentifier();
+            advanceLexer();
+
+            while (!eof() && getTokenType() != RIGHT_BRACE) {
+                final Marker member = mark();
+                parseQualifierList(true);
+                if (!parseTypeSpecifier()) advanceLexer();
+                parseDeclaratorList();
+                match(SEMICOLON, "Expected ';'");
+                member.done(UNNAMED_INTERFACE_BLOCK_MEMBER_DECLARATION);
+            }
+
+            match(RIGHT_BRACE, "Closing '}' for interface block expected.");
+            match(SEMICOLON, "Missing ';' after interface block declaration");
+        }
     }
 
     private boolean parsePrecisionStatement() {
