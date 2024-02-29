@@ -48,9 +48,13 @@ public class GLSLElementTypes {
     public static final IElementType TYPE_SPECIFIER_PRIMITIVE = new GLSLElementType("TYPE_SPECIFIER_PRIMITIVE");
     public static final IElementType TYPE_SPECIFIER_STRUCT = new GLSLElementType("TYPE_SPECIFIER_STRUCT");
     public static final IElementType TYPE_SPECIFIER_STRUCT_REFERENCE = new GLSLElementType("TYPE_SPECIFIER_STRUCT_REFERENCE");
+    public static final IElementType TYPE_SPECIFIER_INTERFACE_BLOCK = new GLSLElementType("TYPE_SPECIFIER_INTERFACE_BLOCK");
 
     public static final IElementType VARIABLE_DECLARATION = new GLSLElementType("VARIABLE_DECLARATION");
-    public static final IElementType INTERFACE_BLOCK = new GLSLElementType("INTERFACE_BLOCK");
+    public static final IElementType UNNAMED_INTERFACE_BLOCK = new GLSLElementType("UNNAMED_INTERFACE_BLOCK");
+    public static final IElementType UNNAMED_INTERFACE_BLOCK_MEMBER_DECLARATION = new GLSLElementType("UNNAMED_INTERFACE_BLOCK_MEMBER_DECLARATION");
+
+
     public static final IElementType FUNCTION_DEFINITION = new GLSLElementType("FUNCTION_DEFINITION");
     public static final IElementType QUALIFIER = new GLSLElementType("QUALIFIER");
     public static final IElementType QUALIFIER_LIST = new GLSLElementType("QUALIFIER_LIST");

@@ -32,3 +32,7 @@ in BlockWithInitializer {
 buffer BlockWithOpaqueType {
     sampler2D sampler;
 };
+
+void main() {
+    colour
+}

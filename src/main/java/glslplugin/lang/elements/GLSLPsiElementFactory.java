@@ -33,6 +33,8 @@ import glslplugin.lang.elements.declarations.GLSLFunctionDeclarationImpl;
 import glslplugin.lang.elements.declarations.GLSLFunctionDefinitionImpl;
 import glslplugin.lang.elements.declarations.GLSLInitializerExpression;
 import glslplugin.lang.elements.declarations.GLSLInitializerList;
+import glslplugin.lang.elements.declarations.GLSLInterfaceBlockDefinition;
+import glslplugin.lang.elements.declarations.GLSLInterfaceBlockMemberDeclaration;
 import glslplugin.lang.elements.declarations.GLSLParameterDeclaration;
 import glslplugin.lang.elements.declarations.GLSLQualifier;
 import glslplugin.lang.elements.declarations.GLSLQualifierList;
@@ -183,6 +185,9 @@ public class GLSLPsiElementFactory {
         if (type == GLSLElementTypes.STRUCT_MEMBER_DECLARATION) return new GLSLStructMemberDeclaration(node);
         if (type == GLSLElementTypes.STRUCT_DECLARATOR_LIST) return new GLSLDeclaratorList(node);
         if (type == GLSLElementTypes.STRUCT_DECLARATOR) return new GLSLDeclarator(node);
+
+        if (type == GLSLElementTypes.TYPE_SPECIFIER_INTERFACE_BLOCK) return new GLSLInterfaceBlockDefinition(node);
+        if (type == GLSLElementTypes.UNNAMED_INTERFACE_BLOCK_MEMBER_DECLARATION) return new GLSLInterfaceBlockMemberDeclaration(node);
 
         return null;
     }

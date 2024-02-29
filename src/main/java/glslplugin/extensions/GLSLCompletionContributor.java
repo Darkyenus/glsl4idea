@@ -38,6 +38,7 @@ import com.intellij.util.ProcessingContext;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
+import glslplugin.lang.elements.declarations.GLSLInterfaceBlockDefinition;
 import glslplugin.lang.elements.declarations.GLSLParameterDeclaration;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.expressions.GLSLExpression;
@@ -46,6 +47,7 @@ import glslplugin.lang.elements.preprocessor.GLSLDefineDirective;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import glslplugin.lang.elements.types.GLSLArrayType;
+import glslplugin.lang.elements.types.GLSLInterfaceBlockType;
 import glslplugin.lang.elements.types.GLSLMatrixType;
 import glslplugin.lang.elements.types.GLSLStructType;
 import glslplugin.lang.elements.types.GLSLType;
@@ -121,6 +123,10 @@ public class GLSLCompletionContributor extends DefaultCompletionContributor {
                     for (Map.Entry<String, GLSLType> entry : struct.getMembers().entrySet()) {
                         completionResultSet.addElement(LookupElementBuilder.create(entry.getKey()).withTypeText(entry.getValue().getTypename()));
                     }
+                } else if (type instanceof GLSLInterfaceBlockType block) {
+                    for (Map.Entry<String, GLSLType> entry : block.getMembers().entrySet()) {
+                        completionResultSet.addElement(LookupElementBuilder.create(entry.getKey()).withTypeText(entry.getValue().getTypename()));
+                    }
                 }
             }
         });
@@ -186,6 +192,8 @@ public class GLSLCompletionContributor extends DefaultCompletionContributor {
                 result.addElement(LookupElementBuilder.create(declarator).withTypeText(declarator.getType().getTypename()));
             } else if (element instanceof GLSLStructDefinition def) {
                 result.addElement(LookupElementBuilder.create(def).withTypeText("struct"));
+            } else if (element instanceof GLSLInterfaceBlockDefinition def) {
+                result.addElement(LookupElementBuilder.create(def).withTypeText("interface block"));
             } else if (includeFunctions && element instanceof GLSLFunctionDeclaration dec) {
                 final String funcName = dec.getFunctionName();
                 ArrayList<GLSLFunctionDeclaration> all = encounteredFunctions.get(funcName);
