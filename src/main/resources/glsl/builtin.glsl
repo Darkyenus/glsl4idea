@@ -1,5 +1,5 @@
 // GLSL Built-ins
-// Generated on 2023-01-24T11:01:44.333017600Z
+// Generated on 2024-02-29T03:48:24.068127300Z
 // Generated from documentation at https://github.com/KhronosGroup/OpenGL-Refpages
 
 out gl_PerVertex {
@@ -8,6 +8,20 @@ out gl_PerVertex {
     float gl_ClipDistance[];
     float gl_CullDistance[];
 };
+
+in gl_PerVertex {
+    vec4  gl_Position;
+    float gl_PointSize;
+    float gl_ClipDistance[];
+    float gl_CullDistance[];
+} gl_in[];
+
+out gl_PerVertex {
+    vec4  gl_Position;
+    float gl_PointSize;
+    float gl_ClipDistance[];
+    float gl_CullDistance[];
+} gl_out[];
 
 vec4 gl_FragCoord;
 
@@ -1622,9 +1636,9 @@ ivec4 texelFetchOffset(isampler2DRect sampler, ivec2 P, ivec2 offset);
 vec4 texelFetchOffset(sampler1DArray sampler, ivec2 P, int lod, ivec2 offset);
 uvec4 texelFetchOffset(usampler1DArray sampler, ivec2 P, int lod, ivec2 offset);
 ivec4 texelFetchOffset(isampler1DArray sampler, ivec2 P, int lod, ivec2 offset);
-vec4 texelFetchOffset(sampler2DArray sampler, ivec3 P, int lod, ivec3 offset);
-uvec4 texelFetchOffset(usampler2DArray sampler, ivec3 P, int lod, ivec3 offset);
-ivec4 texelFetchOffset(isampler2DArray sampler, ivec3 P, int lod, ivec3 offset);
+vec4 texelFetchOffset(sampler2DArray sampler, ivec3 P, int lod, ivec2 offset);
+uvec4 texelFetchOffset(usampler2DArray sampler, ivec3 P, int lod, ivec2 offset);
+ivec4 texelFetchOffset(isampler2DArray sampler, ivec3 P, int lod, ivec2 offset);
 
 vec4 texture(sampler1D sampler, float P, float bias);
 uvec4 texture(usampler1D sampler, float P, float bias);

@@ -550,6 +550,20 @@ out gl_PerVertex {
     float gl_CullDistance[];
 };
 
+in gl_PerVertex {
+    vec4  gl_Position;
+    float gl_PointSize;
+    float gl_ClipDistance[];
+    float gl_CullDistance[];
+} gl_in[];
+
+out gl_PerVertex {
+    vec4  gl_Position;
+    float gl_PointSize;
+    float gl_ClipDistance[];
+    float gl_CullDistance[];
+} gl_out[];
+
             """.trimIndent()).append("\n")
 
             for (fieldDefinition in fieldDefinitions.values) {
