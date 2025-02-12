@@ -1,7 +1,9 @@
 package glslplugin.lang.elements.preprocessor;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -21,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * When the directive is in the top-level and contains a string literal (surrounded by whatever),
  * and that string can be evaluated to a valid GLSL file, declarations from that file will be included.
- *
+ * <p>
  * Preprocessor redefinitions can't be included in this way.
  * Syntactical correctness of the file inclusion is not checked.
  */
@@ -31,18 +33,27 @@ public class GLSLPreprocessorInclude extends GLSLPreprocessorDirective {
     }
 
     public @Nullable GLSLFile includedFile() {
+        final String pathStringRaw = GLSLElement.text(this.<PsiElement>findChildByType(GLSLTokenTypes.PREPROCESSOR_STRING));
+        final String pathString = pathStringRaw == null
+            || !pathStringRaw.startsWith("\"")
+            || !pathStringRaw.endsWith("\"")
+            || pathStringRaw.length() <= 2
+            ? null : pathStringRaw.substring(1, pathStringRaw.length() - 1);
+        if (pathString == null) return null;
+
         PsiDirectory dir = this.getContainingFile().getContainingDirectory();
+        if (pathString.startsWith("/")) {
+            VirtualFile thisVirtualFile = getContainingFile().getVirtualFile();
+            VirtualFile sourceRoot = ProjectRootManager.getInstance(getProject())
+                .getFileIndex().getSourceRootForFile(thisVirtualFile);
+            if (sourceRoot != null) {
+                dir = getManager().findDirectory(sourceRoot);
+            }
+        }
+
         if (dir == null) {
             return null;
         }
-
-        final String pathStringRaw = GLSLElement.text(this.<PsiElement>findChildByType(GLSLTokenTypes.PREPROCESSOR_STRING));
-        final String pathString = pathStringRaw == null
-                || !pathStringRaw.startsWith("\"")
-                || !pathStringRaw.endsWith("\"")
-                || pathStringRaw.length() <= 2
-                ? null : pathStringRaw.substring(1, pathStringRaw.length() - 1);
-        if (pathString == null) return null;
 
         // Split into / or \ separated parts.
         // String.split() is too slow for this.
@@ -84,7 +95,12 @@ public class GLSLPreprocessorInclude extends GLSLPreprocessorDirective {
     }
 
     @Override
-    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place) {
+    public boolean processDeclarations(
+        @NotNull PsiScopeProcessor processor,
+        @NotNull ResolveState state,
+        PsiElement lastParent,
+        @NotNull PsiElement place
+    ) {
         final GLSLFile glslFile = includedFile();
         if (glslFile == null) return true;
 
@@ -110,11 +126,14 @@ public class GLSLPreprocessorInclude extends GLSLPreprocessorDirective {
                 final GLSLPreprocessorInclude element = getElement();
                 final PsiElement string = element.findChildByType(GLSLTokenTypes.PREPROCESSOR_STRING);
                 if (string == null) {
-                    throw new IncorrectOperationException(element+" can't be renamed");
+                    throw new IncorrectOperationException(element + " can't be renamed");
                 }
 
                 GLSLReferencableDeclaration.replacePreprocessorString(string, newElementName);
-                setRangeInElement(GLSLReferenceUtil.rangeOfIn(element.findChildByType(GLSLTokenTypes.PREPROCESSOR_STRING), element));
+                setRangeInElement(GLSLReferenceUtil.rangeOfIn(
+                    element.findChildByType(GLSLTokenTypes.PREPROCESSOR_STRING),
+                    element
+                ));
                 return element;
             }
         };
