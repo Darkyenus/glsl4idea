@@ -1,6 +1,7 @@
 package glslplugin.lang.elements.preprocessor;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -44,8 +45,13 @@ public class GLSLPreprocessorInclude extends GLSLPreprocessorDirective {
         PsiDirectory dir = this.getContainingFile().getContainingDirectory();
         if (pathString.startsWith("/")) {
             VirtualFile thisVirtualFile = getContainingFile().getVirtualFile();
-            VirtualFile sourceRoot = ProjectRootManager.getInstance(getProject())
-                .getFileIndex().getSourceRootForFile(thisVirtualFile);
+            ProjectFileIndex fileIndex = ProjectRootManager.getInstance(getProject()).getFileIndex();
+            VirtualFile sourceRoot = fileIndex.getSourceRootForFile(thisVirtualFile);
+
+            if (sourceRoot == null) {
+                sourceRoot = fileIndex.getContentRootForFile(thisVirtualFile);
+            }
+
             if (sourceRoot != null) {
                 dir = getManager().findDirectory(sourceRoot);
             }
