@@ -40,11 +40,17 @@ public class GLSLPreprocessorInclude extends GLSLPreprocessorDirective {
             || !pathStringRaw.endsWith("\"")
             || pathStringRaw.length() <= 2
             ? null : pathStringRaw.substring(1, pathStringRaw.length() - 1);
-        if (pathString == null) return null;
+        if (pathString == null) {
+            return null;
+        }
 
-        PsiDirectory dir = this.getContainingFile().getContainingDirectory();
+        PsiFile thisFile = this.getContainingFile();
+        while (thisFile.getOriginalFile() != thisFile) {
+            thisFile = thisFile.getOriginalFile();
+        }
+        PsiDirectory dir = thisFile.getContainingFile().getContainingDirectory();
         if (pathString.startsWith("/")) {
-            VirtualFile thisVirtualFile = getContainingFile().getVirtualFile();
+            VirtualFile thisVirtualFile = thisFile.getContainingFile().getVirtualFile();
             ProjectFileIndex fileIndex = ProjectRootManager.getInstance(getProject()).getFileIndex();
             VirtualFile sourceRoot = fileIndex.getSourceRootForFile(thisVirtualFile);
 
@@ -108,6 +114,7 @@ public class GLSLPreprocessorInclude extends GLSLPreprocessorDirective {
         @NotNull PsiElement place
     ) {
         final GLSLFile glslFile = includedFile();
+        System.out.println(glslFile);
         if (glslFile == null) return true;
 
         return glslFile.processDeclarations(processor, state, lastParent, place);
