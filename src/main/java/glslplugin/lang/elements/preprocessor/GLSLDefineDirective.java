@@ -2,6 +2,8 @@ package glslplugin.lang.elements.preprocessor;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
@@ -35,6 +37,16 @@ public class GLSLDefineDirective extends GLSLPreprocessorDirective implements GL
     public int getTextOffset() {
         final PsiElement identifier = getNameIdentifier();
         return identifier != null ? identifier.getTextOffset() : super.getTextOffset();
+    }
+
+    @Override
+    public boolean processDeclarations(
+        @NotNull PsiScopeProcessor processor,
+        @NotNull ResolveState state,
+        PsiElement lastParent,
+        @NotNull PsiElement place
+    ) {
+        return processor.execute(this, state);
     }
 
     /**

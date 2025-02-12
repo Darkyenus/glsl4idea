@@ -52,7 +52,6 @@ import glslplugin.lang.elements.types.GLSLMatrixType;
 import glslplugin.lang.elements.types.GLSLStructType;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLVectorType;
-import glslplugin.util.TreeIterator;
 import glslplugin.util.VectorComponents;
 import org.jetbrains.annotations.NotNull;
 
@@ -175,16 +174,6 @@ public class GLSLCompletionContributor extends DefaultCompletionContributor {
                     final DeclarationWalk walk = new DeclarationWalk(result, includeFunctions);
                     PsiTreeUtil.treeWalkUp(walk, element, null, ResolveState.initial());
 
-                    // Walk preprocessor tokens
-                    {
-                        GLSLDefineDirective prev = TreeIterator.previous(element, GLSLDefineDirective.class);
-                        while (prev != null) {
-                            System.out.println("Got one: " + prev);
-                            result.addElement(LookupElementBuilder.create(prev));
-                            prev = TreeIterator.previous(prev, GLSLDefineDirective.class);
-                        }
-                    }
-
                     // Add all built-ins
                     final GLSLBuiltInPsiUtilService bipus = element.getProject()
                         .getService(GLSLBuiltInPsiUtilService.class);
@@ -210,12 +199,16 @@ public class GLSLCompletionContributor extends DefaultCompletionContributor {
         @Override
         public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
             if (element instanceof final GLSLDeclarator declarator) {
-                result.addElement(LookupElementBuilder.create(declarator)
-                                      .withTypeText(declarator.getType().getTypename()));
+                result.addElement(
+                    LookupElementBuilder.create(declarator)
+                        .withTypeText(declarator.getType().getTypename())
+                );
             } else if (element instanceof GLSLStructDefinition def) {
                 result.addElement(LookupElementBuilder.create(def).withTypeText("struct"));
             } else if (element instanceof GLSLInterfaceBlockDefinition def) {
                 result.addElement(LookupElementBuilder.create(def).withTypeText("interface block"));
+            } else if (element instanceof GLSLDefineDirective def) {
+                result.addElement(LookupElementBuilder.create(def));
             } else if (includeFunctions && element instanceof GLSLFunctionDeclaration dec) {
                 result.addElement(LookupElementBuilder.create(dec).withExpensiveRenderer(new LookupElementRenderer<>() {
                     @Override
