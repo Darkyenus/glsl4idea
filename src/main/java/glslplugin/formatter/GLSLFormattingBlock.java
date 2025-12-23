@@ -121,6 +121,16 @@ public class GLSLFormattingBlock extends AbstractBlock {
     @Nullable
     @Override
     public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
+        // Preserve spacing for comments - return null to keep original formatting
+        if (child2 instanceof GLSLFormattingBlock) {
+            ASTNode rightNode = ((GLSLFormattingBlock) child2).getNode();
+            IElementType rightType = rightNode.getElementType();
+
+            if (rightType == GLSLTokenTypes.COMMENT_LINE || rightType == GLSLTokenTypes.COMMENT_BLOCK) {
+                return null;
+            }
+        }
+
         // Check if child1's node is a unary operator within a PREFIX_OPERATOR_EXPRESSION
         if (child1 instanceof GLSLFormattingBlock) {
             ASTNode leftNode = ((GLSLFormattingBlock) child1).getNode();
