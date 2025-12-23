@@ -33,12 +33,20 @@ import glslplugin.lang.GLSLLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static glslplugin.lang.elements.GLSLTokenTypes.ADDITIVE_OPERATORS;
+import static glslplugin.lang.elements.GLSLTokenTypes.ASSIGNMENT_OPERATORS;
+import static glslplugin.lang.elements.GLSLTokenTypes.BIT_SHIFT_OPERATORS;
+import static glslplugin.lang.elements.GLSLTokenTypes.BIT_WISE_OPERATORS;
 import static glslplugin.lang.elements.GLSLTokenTypes.COMMA;
 import static glslplugin.lang.elements.GLSLTokenTypes.COMMENT_LINE;
+import static glslplugin.lang.elements.GLSLTokenTypes.EQUALITY_OPERATORS;
 import static glslplugin.lang.elements.GLSLTokenTypes.FLOW_KEYWORDS;
 import static glslplugin.lang.elements.GLSLTokenTypes.LEFT_BRACE;
 import static glslplugin.lang.elements.GLSLTokenTypes.LEFT_BRACKET;
 import static glslplugin.lang.elements.GLSLTokenTypes.LEFT_PAREN;
+import static glslplugin.lang.elements.GLSLTokenTypes.LOGICAL_OPERATORS;
+import static glslplugin.lang.elements.GLSLTokenTypes.MULTIPLICATIVE_OPERATORS;
+import static glslplugin.lang.elements.GLSLTokenTypes.RELATIONAL_OPERATORS;
 import static glslplugin.lang.elements.GLSLTokenTypes.RIGHT_BRACE;
 import static glslplugin.lang.elements.GLSLTokenTypes.RIGHT_BRACKET;
 import static glslplugin.lang.elements.GLSLTokenTypes.RIGHT_PAREN;
@@ -77,6 +85,16 @@ public class GLSLFormattingModelBuilder implements FormattingModelBuilder {
                 .around(FLOW_KEYWORDS).spaces(1)
 
                 .before(COMMENT_LINE).spaceIf(commonSettings.LINE_COMMENT_ADD_SPACE)
+
+                // Operator spacing
+                .around(ASSIGNMENT_OPERATORS).spaceIf(commonSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS)
+                .around(LOGICAL_OPERATORS).spaceIf(commonSettings.SPACE_AROUND_LOGICAL_OPERATORS)
+                .around(EQUALITY_OPERATORS).spaceIf(commonSettings.SPACE_AROUND_EQUALITY_OPERATORS)
+                .around(RELATIONAL_OPERATORS).spaceIf(commonSettings.SPACE_AROUND_RELATIONAL_OPERATORS)
+                .around(BIT_WISE_OPERATORS).spaceIf(commonSettings.SPACE_AROUND_BITWISE_OPERATORS)
+                .around(ADDITIVE_OPERATORS).spaceIf(commonSettings.SPACE_AROUND_ADDITIVE_OPERATORS)
+                .around(MULTIPLICATIVE_OPERATORS).spaceIf(commonSettings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS)
+                .around(BIT_SHIFT_OPERATORS).spaceIf(commonSettings.SPACE_AROUND_SHIFT_OPERATORS)
                 ;
     }
 
