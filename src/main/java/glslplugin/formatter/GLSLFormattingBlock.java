@@ -38,6 +38,8 @@ import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static glslplugin.lang.elements.GLSLElementTypes.PREFIX_OPERATOR_EXPRESSION;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,8 +120,22 @@ public class GLSLFormattingBlock extends AbstractBlock {
 
     @Nullable
     @Override
-    public Spacing getSpacing(@Nullable Block block, @NotNull Block block1) {
-        return spacingBuilder.getSpacing(this, block, block1);
+    public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
+        // Check if child1's node is a unary operator within a PREFIX_OPERATOR_EXPRESSION
+        if (child1 instanceof GLSLFormattingBlock) {
+            ASTNode leftNode = ((GLSLFormattingBlock) child1).getNode();
+            IElementType leftType = leftNode.getElementType();
+
+            // If the left token is a unary operator and it's part of a prefix expression, no space
+            if (GLSLTokenTypes.UNARY_OPERATORS.contains(leftType)) {
+                ASTNode parent = leftNode.getTreeParent();
+                if (parent != null && parent.getElementType() == PREFIX_OPERATOR_EXPRESSION) {
+                    return Spacing.createSpacing(0, 0, 0, false, 0);
+                }
+            }
+        }
+
+        return spacingBuilder.getSpacing(this, child1, child2);
     }
 
     @Override
