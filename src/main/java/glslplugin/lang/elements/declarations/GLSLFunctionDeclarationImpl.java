@@ -58,7 +58,9 @@ public class GLSLFunctionDeclarationImpl extends GLSLElementImpl implements GLSL
 
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
-        final boolean lookingFromInside = lastParent != null || PsiTreeUtil.isAncestor(this, place, false);
+        // These checks seems unnecessary
+        // final boolean lookingFromInside = lastParent != null || PsiTreeUtil.isAncestor(this, place, false);
+        final boolean lookingFromInside = lastParent != null;
 
         // Can't see the function from inside
         if (lookingFromInside) {
