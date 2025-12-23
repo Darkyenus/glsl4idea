@@ -35,6 +35,8 @@ import glslplugin.lang.parser.GLSLParser;
 import glslplugin.lang.scanner.GLSLFlexAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import static glslplugin.lang.elements.GLSLElementTypes.PREFIX_OPERATOR_EXPRESSION;
+
 public class GLSLParserDefinition implements ParserDefinition {
     private static final GLSLPsiElementFactory psiFactory = new GLSLPsiElementFactory();
 
@@ -87,6 +89,14 @@ public class GLSLParserDefinition implements ParserDefinition {
     @NotNull
     @Override
     public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
+        // Don't add space after unary operators (-, +, !, ~)
+        if (GLSLTokenTypes.UNARY_OPERATORS.contains(left.getElementType())) {
+            // Check if this is a prefix operator by looking at the parent
+            ASTNode parent = left.getTreeParent();
+            if (parent != null && parent.getElementType() == PREFIX_OPERATOR_EXPRESSION) {
+                return SpaceRequirements.MUST_NOT;
+            }
+        }
         return SpaceRequirements.MAY;
     }
 }
