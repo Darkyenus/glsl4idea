@@ -202,10 +202,22 @@ public class GLSLPsiElementFactory {
     }
 
     public static ASTNode createPreprocessorString(Project project, String name) throws IncorrectOperationException {
-        PsiElement element = PsiFileFactory.getInstance(project).createFileFromText("dummy.glsl", GLSLFileType.INSTANCE, "# "+name);
-        final ASTNode node = element.getNode().getLastChildNode();
-        if (node != null && node.getElementType() == GLSLTokenTypes.PREPROCESSOR_STRING) {
-            return node;
+        PsiElement element = PsiFileFactory.getInstance(project).createFileFromText("dummy.glsl", GLSLFileType.INSTANCE, "#include "+name);
+        // Search for the PREPROCESSOR_STRING token in the tree
+        ASTNode current = element.getNode().getFirstChildNode();
+        while (current != null) {
+            if (current.getElementType() == GLSLTokenTypes.PREPROCESSOR_STRING) {
+                return current;
+            }
+            // Search in children
+            ASTNode child = current.getFirstChildNode();
+            while (child != null) {
+                if (child.getElementType() == GLSLTokenTypes.PREPROCESSOR_STRING) {
+                    return child;
+                }
+                child = child.getTreeNext();
+            }
+            current = current.getTreeNext();
         }
         throw new IncorrectOperationException("'"+name+"' is not a valid preprocessor string");
     }
