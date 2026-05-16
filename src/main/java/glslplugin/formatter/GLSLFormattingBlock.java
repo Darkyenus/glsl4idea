@@ -21,6 +21,7 @@ package glslplugin.formatter;
 
 import com.intellij.formatting.Alignment;
 import com.intellij.formatting.Block;
+import com.intellij.formatting.ChildAttributes;
 import com.intellij.formatting.Indent;
 import com.intellij.formatting.Spacing;
 import com.intellij.formatting.SpacingBuilder;
@@ -30,15 +31,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLTokenTypes;
+import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLInterfaceBlockMemberDeclaration;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.declarations.GLSLStructMemberDeclaration;
-import glslplugin.lang.elements.expressions.GLSLParameterList;;
+import glslplugin.lang.elements.expressions.GLSLParameterList;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static glslplugin.lang.elements.GLSLElementTypes.PREFIX_OPERATOR_EXPRESSION;
+import static glslplugin.lang.elements.GLSLElementTypes.PARAMETER_DECLARATION;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +69,34 @@ public class GLSLFormattingBlock extends AbstractBlock {
         return psiElement instanceof GLSLParameterList;
     }
 
+    private static boolean isFunctionDeclarationParameter(ASTNode node, PsiElement parentPsi) {
+        return parentPsi instanceof GLSLFunctionDeclaration && node.getElementType() == PARAMETER_DECLARATION;
+    }
+
+    private static boolean isFunctionDeclarationParameterPosition(ASTNode node, int newChildIndex) {
+        if (!(node.getPsi() instanceof GLSLFunctionDeclaration)) {
+            return false;
+        }
+
+        boolean afterLeftParen = false;
+        int childIndex = 0;
+        ASTNode child = node.getFirstChildNode();
+        while (child != null && childIndex < newChildIndex) {
+            IElementType childType = child.getElementType();
+            if (childType == GLSLTokenTypes.LEFT_PAREN) {
+                afterLeftParen = true;
+            } else if (childType == GLSLTokenTypes.RIGHT_PAREN) {
+                return false;
+            }
+
+            if (child.getText().trim().length() > 0) {
+                childIndex++;
+            }
+            child = child.getTreeNext();
+        }
+        return afterLeftParen;
+    }
+
     private static Indent getNodeIndent(ASTNode node) {
         IElementType nodeType = node.getElementType();
         ASTNode parent = node.getTreeParent();
@@ -79,7 +110,7 @@ public class GLSLFormattingBlock extends AbstractBlock {
                 return Indent.getNoneIndent();
             }
             return Indent.getNormalIndent();
-        } else if (isContinuationBlock(parentPsi)) {
+        } else if (isContinuationBlock(parentPsi) || isFunctionDeclarationParameter(node, parentPsi)) {
             return Indent.getContinuationIndent();
         }
 
@@ -107,6 +138,15 @@ public class GLSLFormattingBlock extends AbstractBlock {
         // Note: this cannot use isIndentableBlock because when pressing enter after a right brace, the psiElement in question is
         //       a GLSLTypeDefinition instead of a GLSLStructDeclaration
         return (psiElement instanceof GLSLCompoundStatement || psiElement instanceof GLSLStructDefinition) ? Indent.getNormalIndent() : Indent.getNoneIndent();
+    }
+
+    @NotNull
+    @Override
+    public ChildAttributes getChildAttributes(int newChildIndex) {
+        if (isFunctionDeclarationParameterPosition(myNode, newChildIndex)) {
+            return new ChildAttributes(Indent.getContinuationIndent(), null);
+        }
+        return super.getChildAttributes(newChildIndex);
     }
 
     private boolean canBeCorrectBlock(ASTNode child) {
