@@ -1,13 +1,16 @@
 package glslplugin.lang;
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction;
+import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import glslplugin.GLSLHighlighter;
 import glslplugin.LightGLSLTestCase;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.preprocessor.GLSLDefineDirective;
 import glslplugin.lang.elements.preprocessor.GLSLRedefinedToken;
+import glslplugin.lang.parser.GLSLFile;
 
 public class MacroReferenceTest extends LightGLSLTestCase {
 
@@ -15,10 +18,18 @@ public class MacroReferenceTest extends LightGLSLTestCase {
         int caretOffset = textWithCaret.indexOf("<caret>");
         assertTrue(caretOffset >= 0);
 
-        PsiFile file = myFixture.addFileToProject(path, textWithCaret.replace("<caret>", ""));
+        PsiFile file = addProjectShaderFile(path, textWithCaret.replace("<caret>", ""));
         assertNotNull(file.getVirtualFile());
         myFixture.openFileInEditor(file.getVirtualFile());
         myFixture.getEditor().getCaretModel().moveToOffset(caretOffset);
+    }
+
+    private PsiFile addProjectShaderFile(String path, String text) {
+        PsiFile file = myFixture.addFileToProject(path, text);
+        if (file instanceof GLSLFile glslFile) {
+            glslFile.isBuiltinFile = true;
+        }
+        return file;
     }
 
     private GLSLDefineDirective assertGotoDefine(String expectedName) {
@@ -32,6 +43,23 @@ public class MacroReferenceTest extends LightGLSLTestCase {
         GLSLDefineDirective define = (GLSLDefineDirective) target;
         assertEquals(expectedName, define.getName());
         return define;
+    }
+
+    private void assertRedefinedTokenHighlight(String text) {
+        final String documentText = myFixture.getEditor().getDocument().getText();
+        final int startOffset = documentText.indexOf(text);
+        assertTrue(startOffset >= 0);
+        final int endOffset = startOffset + text.length();
+
+        for (HighlightInfo info : myFixture.doHighlighting()) {
+            if (info.startOffset == startOffset
+                && info.endOffset == endOffset
+                && info.forcedTextAttributesKey == GLSLHighlighter.GLSL_REDEFINED_TOKEN[0]) {
+                return;
+            }
+        }
+
+        fail("Expected macro highlight for " + text);
     }
 
     public void testObjectLikeMacroReferenceResolvesToDefineDirective() {
@@ -90,7 +118,7 @@ public class MacroReferenceTest extends LightGLSLTestCase {
     }
 
     public void testIncludedObjectLikeMacroIsGotoDeclarationTarget() {
-        myFixture.addFileToProject("shaders/common.glsl", "#define INCLUDED_VALUE 7\n");
+        addProjectShaderFile("shaders/common.glsl", "#define INCLUDED_VALUE 7\n");
         configureProjectShaderFile("shaders/main.glsl", """
             #include "common.glsl"
 
@@ -103,8 +131,21 @@ public class MacroReferenceTest extends LightGLSLTestCase {
         assertEquals("common.glsl", define.getContainingFile().getName());
     }
 
+    public void testIncludedObjectLikeMacroIsHighlighted() {
+        addProjectShaderFile("shaders/common.glsl", "#define INCLUDED_VALUE 7\n");
+        configureProjectShaderFile("shaders/main.glsl", """
+            #include "common.glsl"
+
+            void main() {
+                int x = INCLUDED_<caret>VALUE;
+            }
+            """);
+
+        assertRedefinedTokenHighlight("INCLUDED_VALUE");
+    }
+
     public void testIncludedFunctionLikeMacroIsGotoDeclarationTarget() {
-        myFixture.addFileToProject("shaders/common.glsl", "#define SCALE(x) ((x) * 2.0)\n");
+        addProjectShaderFile("shaders/common.glsl", "#define SCALE(x) ((x) * 2.0)\n");
         configureProjectShaderFile("shaders/main.glsl", """
             #include "common.glsl"
 
@@ -117,8 +158,21 @@ public class MacroReferenceTest extends LightGLSLTestCase {
         assertEquals("common.glsl", define.getContainingFile().getName());
     }
 
+    public void testIncludedFunctionLikeMacroIsHighlighted() {
+        addProjectShaderFile("shaders/common.glsl", "#define SCALE(x) ((x) * 2.0)\n");
+        configureProjectShaderFile("shaders/main.glsl", """
+            #include "common.glsl"
+
+            void main() {
+                float x = SCA<caret>LE(1.0);
+            }
+            """);
+
+        assertRedefinedTokenHighlight("SCALE");
+    }
+
     public void testIncludedMacroInPreprocessorDirectiveIsGotoDeclarationTarget() {
-        myFixture.addFileToProject("shaders/common.glsl", "#define FEATURE 1\n");
+        addProjectShaderFile("shaders/common.glsl", "#define FEATURE 1\n");
         configureProjectShaderFile("shaders/main.glsl", """
             #include "common.glsl"
             #ifdef FEA<caret>TURE
@@ -129,9 +183,20 @@ public class MacroReferenceTest extends LightGLSLTestCase {
         assertEquals("common.glsl", define.getContainingFile().getName());
     }
 
+    public void testIncludedMacroInPreprocessorDirectiveIsHighlighted() {
+        addProjectShaderFile("shaders/common.glsl", "#define FEATURE 1\n");
+        configureProjectShaderFile("shaders/main.glsl", """
+            #include "common.glsl"
+            #ifdef FEA<caret>TURE
+            #endif
+            """);
+
+        assertRedefinedTokenHighlight("FEATURE");
+    }
+
     public void testNestedIncludedMacroIsGotoDeclarationTarget() {
-        myFixture.addFileToProject("shaders/defs.glsl", "#define NESTED_FEATURE 1\n");
-        myFixture.addFileToProject("shaders/common.glsl", "#include \"defs.glsl\"\n");
+        addProjectShaderFile("shaders/defs.glsl", "#define NESTED_FEATURE 1\n");
+        addProjectShaderFile("shaders/common.glsl", "#include \"defs.glsl\"\n");
         configureProjectShaderFile("shaders/main.glsl", """
             #include "common.glsl"
             #ifdef NESTED_<caret>FEATURE
@@ -143,8 +208,8 @@ public class MacroReferenceTest extends LightGLSLTestCase {
     }
 
     public void testCyclicIncludeDoesNotBreakMissingMacroLookup() {
-        myFixture.addFileToProject("shaders/a.glsl", "#include \"b.glsl\"\n");
-        myFixture.addFileToProject("shaders/b.glsl", "#include \"a.glsl\"\n");
+        addProjectShaderFile("shaders/a.glsl", "#include \"b.glsl\"\n");
+        addProjectShaderFile("shaders/b.glsl", "#include \"a.glsl\"\n");
         configureProjectShaderFile("shaders/main.glsl", """
             #include "a.glsl"
             #ifdef MISS<caret>ING_FEATURE
@@ -161,7 +226,7 @@ public class MacroReferenceTest extends LightGLSLTestCase {
     }
 
     public void testIncludedUndefStopsIncludedMacroNavigation() {
-        myFixture.addFileToProject("shaders/common.glsl", """
+        addProjectShaderFile("shaders/common.glsl", """
             #define FEATURE 1
             #undef FEATURE
             """);
@@ -181,7 +246,7 @@ public class MacroReferenceTest extends LightGLSLTestCase {
     }
 
     public void testLocalMacroOverrideWinsOverIncludedMacro() {
-        myFixture.addFileToProject("shaders/common.glsl", "#define FEATURE 1\n");
+        addProjectShaderFile("shaders/common.glsl", "#define FEATURE 1\n");
         configureProjectShaderFile("shaders/main.glsl", """
             #include "common.glsl"
             #define FEATURE 2
