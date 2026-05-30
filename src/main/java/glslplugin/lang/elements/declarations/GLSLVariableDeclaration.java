@@ -49,12 +49,11 @@ public class GLSLVariableDeclaration extends GLSLElementImpl implements GLSLQual
 
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
-        for (GLSLDeclarator declarator : getDeclarators()) {
-            if (PsiTreeUtil.isAncestor(lastParent, declarator, false))
-                break;// Can't see later-defined stuff
-
-            if (!declarator.processDeclarations(processor, state, null, place))
+        final GLSLDeclaratorList list = findChildByClass(GLSLDeclaratorList.class);
+        if (list != null) {
+            if (!list.processDeclarators(processor, state, lastParent, place)) {
                 return false;
+            }
         }
 
         GLSLTypeSpecifier specifier = getTypeSpecifierNode();

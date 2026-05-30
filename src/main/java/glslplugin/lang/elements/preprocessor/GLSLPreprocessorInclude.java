@@ -12,6 +12,9 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
@@ -34,6 +37,15 @@ public class GLSLPreprocessorInclude extends GLSLPreprocessorDirective {
     }
 
     public @Nullable GLSLFile includedFile() {
+        return CachedValuesManager.getCachedValue(this, () -> CachedValueProvider.Result.create(
+            resolveIncludedFile(),
+            this,
+            PsiModificationTracker.MODIFICATION_COUNT,
+            ProjectRootManager.getInstance(getProject())
+        ));
+    }
+
+    private @Nullable GLSLFile resolveIncludedFile() {
         final String pathStringRaw = GLSLElement.text(this.<PsiElement>findChildByType(GLSLTokenTypes.PREPROCESSOR_STRING));
         final String pathString = pathStringRaw == null
             || !pathStringRaw.startsWith("\"")
@@ -48,9 +60,12 @@ public class GLSLPreprocessorInclude extends GLSLPreprocessorDirective {
         while (thisFile.getOriginalFile() != thisFile) {
             thisFile = thisFile.getOriginalFile();
         }
-        PsiDirectory dir = thisFile.getContainingFile().getContainingDirectory();
+        PsiDirectory dir = thisFile.getContainingDirectory();
         if (pathString.startsWith("/")) {
-            VirtualFile thisVirtualFile = thisFile.getContainingFile().getVirtualFile();
+            VirtualFile thisVirtualFile = thisFile.getVirtualFile();
+            if (thisVirtualFile == null) {
+                return null;
+            }
             ProjectFileIndex fileIndex = ProjectRootManager.getInstance(getProject()).getFileIndex();
             VirtualFile sourceRoot = fileIndex.getSourceRootForFile(thisVirtualFile);
 
@@ -114,7 +129,6 @@ public class GLSLPreprocessorInclude extends GLSLPreprocessorDirective {
         @NotNull PsiElement place
     ) {
         final GLSLFile glslFile = includedFile();
-        System.out.println(glslFile);
         if (glslFile == null) return true;
 
         return glslFile.processDeclarations(processor, state, lastParent, place);

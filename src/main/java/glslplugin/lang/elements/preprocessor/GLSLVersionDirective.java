@@ -28,9 +28,38 @@ public class GLSLVersionDirective extends GLSLPreprocessorDirective {
      */
     public int getVersionLiteralNumber() {
         String versionLiteral = GLSLElement.text(getVersionLiteral());
+        if (versionLiteral == null) {
+            PsiElement child = getFirstChild();
+            while (child != null) {
+                if (child.getNode().getElementType() == GLSLTokenTypes.PREPROCESSOR_RAW) {
+                    versionLiteral = firstIntegerIn(child.getText());
+                    break;
+                }
+                child = child.getNextSibling();
+            }
+        }
+
         if (versionLiteral == null) return -1;
 
         return Integer.parseInt(versionLiteral);
+    }
+
+    private static String firstIntegerIn(String text) {
+        final int length = text.length();
+        int start = -1;
+        for (int i = 0; i < length; i++) {
+            if (Character.isDigit(text.charAt(i))) {
+                start = i;
+                break;
+            }
+        }
+        if (start == -1) return null;
+
+        int end = start + 1;
+        while (end < length && Character.isDigit(text.charAt(end))) {
+            end++;
+        }
+        return text.substring(start, end);
     }
 
     @Override
