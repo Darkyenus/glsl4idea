@@ -54,9 +54,13 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
             new AttributesDescriptor("Brackets", GLSLHighlighter.GLSL_BRACKETS[0]),
             new AttributesDescriptor("Operators", GLSLHighlighter.GLSL_OPERATOR[0]),
             new AttributesDescriptor("Identifiers",GLSLHighlighter.GLSL_IDENTIFIER[0]),
+            new AttributesDescriptor("Identifiers of `in` declarations",GLSLHighlighter.GLSL_IDENTIFIER_IN[0]),
+            new AttributesDescriptor("Identifiers of `out` declarations",GLSLHighlighter.GLSL_IDENTIFIER_OUT[0]),
             new AttributesDescriptor("Identifiers of Uniforms",GLSLHighlighter.GLSL_IDENTIFIER_UNIFORM[0]),
             new AttributesDescriptor("Identifiers of Varyings",GLSLHighlighter.GLSL_IDENTIFIER_VARYING[0]),
             new AttributesDescriptor("Identifiers of Attributes",GLSLHighlighter.GLSL_IDENTIFIER_ATTRIBUTE[0]),
+            new AttributesDescriptor("Struct fields",GLSLHighlighter.GLSL_IDENTIFIER_STRUCT_FIELD[0]),
+            new AttributesDescriptor("Interface block members",GLSLHighlighter.GLSL_IDENTIFIER_INTERFACE_BLOCK[0]),
             new AttributesDescriptor("Text",GLSLHighlighter.GLSL_TEXT[0]),
             new AttributesDescriptor("Directives",GLSLHighlighter.GLSL_PREPROCESSOR_DIRECTIVE[0]),
             new AttributesDescriptor("Preprocessor Strings",GLSLHighlighter.GLSL_STRING[0])
@@ -95,6 +99,8 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
                 #version 120
                 precision lowp int;
                 uniform vec3 normal; // surface normal
+                in vec3 position;
+                out vec4 fragColor;
                 const vec3 light = vec3(5.0, 0.5, 1.0);
 
                 void shade(in vec3 light, in vec3 normal, out vec4 color);
@@ -103,6 +109,10 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
                     vec3 position;
                     float intensity;
                 };
+
+                uniform Camera {
+                    mat4 projection;
+                } camera;
 
                 /* Fragment shader */
                 void main() {
@@ -113,7 +123,7 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
                     if(diffuse < 0) {
                         diffuse = -diffuse;
                     }
-                    gl_FragColor = vec4(diffuse, diffuse, diffuse, 1.0);
+                    fragColor = vec4(diffuse, diffuse, diffuse, 1.0);
                 }""";
     }
 
