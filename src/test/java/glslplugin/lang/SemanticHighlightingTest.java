@@ -4,8 +4,9 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import glslplugin.GLSLHighlighter;
 import glslplugin.LightGLSLTestCase;
+import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
+import com.intellij.psi.util.PsiTreeUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SemanticHighlightingTest extends LightGLSLTestCase {
@@ -78,12 +79,40 @@ public class SemanticHighlightingTest extends LightGLSLTestCase {
     }
 
     public void testSemanticIdentifierFallbacksUseIDEDefaults() {
-        assertSame(DefaultLanguageHighlighterColors.GLOBAL_VARIABLE, GLSLHighlighter.GLSL_IDENTIFIER_UNIFORM[0].getFallbackAttributeKey());
-        assertSame(DefaultLanguageHighlighterColors.GLOBAL_VARIABLE, GLSLHighlighter.GLSL_IDENTIFIER_IN[0].getFallbackAttributeKey());
-        assertSame(DefaultLanguageHighlighterColors.GLOBAL_VARIABLE, GLSLHighlighter.GLSL_IDENTIFIER_OUT[0].getFallbackAttributeKey());
-        assertSame(DefaultLanguageHighlighterColors.GLOBAL_VARIABLE, GLSLHighlighter.GLSL_IDENTIFIER_VARYING[0].getFallbackAttributeKey());
-        assertSame(DefaultLanguageHighlighterColors.GLOBAL_VARIABLE, GLSLHighlighter.GLSL_IDENTIFIER_ATTRIBUTE[0].getFallbackAttributeKey());
+        assertSame(DefaultLanguageHighlighterColors.CONSTANT, GLSLHighlighter.GLSL_IDENTIFIER_UNIFORM[0].getFallbackAttributeKey());
+        assertSame(DefaultLanguageHighlighterColors.CONSTANT, GLSLHighlighter.GLSL_IDENTIFIER_IN[0].getFallbackAttributeKey());
+        assertSame(DefaultLanguageHighlighterColors.CONSTANT, GLSLHighlighter.GLSL_IDENTIFIER_OUT[0].getFallbackAttributeKey());
+        assertSame(DefaultLanguageHighlighterColors.CONSTANT, GLSLHighlighter.GLSL_IDENTIFIER_VARYING[0].getFallbackAttributeKey());
+        assertSame(DefaultLanguageHighlighterColors.CONSTANT, GLSLHighlighter.GLSL_IDENTIFIER_ATTRIBUTE[0].getFallbackAttributeKey());
         assertSame(DefaultLanguageHighlighterColors.INSTANCE_FIELD, GLSLHighlighter.GLSL_IDENTIFIER_STRUCT_FIELD[0].getFallbackAttributeKey());
         assertSame(DefaultLanguageHighlighterColors.INSTANCE_FIELD, GLSLHighlighter.GLSL_IDENTIFIER_INTERFACE_BLOCK[0].getFallbackAttributeKey());
+    }
+
+    public void testFunctionDeclarationHighlights() {
+        final String shader = """
+                #version 140
+
+                float computeValue(float input);
+
+                void main() {
+                }
+
+                float computeValue(float input) {
+                    return input;
+                }
+                """;
+        myFixture.configureByText(GLSLFileType.INSTANCE, shader);
+        assertFalse(PsiTreeUtil.findChildrenOfType(myFixture.getFile(), GLSLFunctionDeclaration.class).isEmpty());
+        assertNotNull(PsiTreeUtil.findChildrenOfType(myFixture.getFile(), GLSLFunctionDeclaration.class).iterator().next().getNameIdentifier());
+        final List<HighlightInfo> highlights = myFixture.doHighlighting();
+        boolean found = false;
+        for (HighlightInfo info : highlights) {
+            if (GLSLHighlighter.GLSL_FUNCTION_DECLARATION[0].equals(info.forcedTextAttributesKey)) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Missing function declaration highlight", found);
+        assertSame(DefaultLanguageHighlighterColors.FUNCTION_DECLARATION, GLSLHighlighter.GLSL_FUNCTION_DECLARATION[0].getFallbackAttributeKey());
     }
 }

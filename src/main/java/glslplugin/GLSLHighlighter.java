@@ -60,6 +60,8 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
             { TextAttributesKey.createTextAttributesKey("GLSL.BRACKETS", DefaultLanguageHighlighterColors.BRACKETS) };
     static final TextAttributesKey[] GLSL_IDENTIFIER =
             { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER) };
+    public static final TextAttributesKey[] GLSL_FUNCTION_DECLARATION =
+            { TextAttributesKey.createTextAttributesKey("GLSL.FUNCTION_DECLARATION", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION) };
     public static final TextAttributesKey[] GLSL_IDENTIFIER_UNIFORM =
             { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.UNIFORM", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE) };
     public static final TextAttributesKey[] GLSL_IDENTIFIER_IN =
