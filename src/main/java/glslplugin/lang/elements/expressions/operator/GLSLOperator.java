@@ -1,10 +1,13 @@
 package glslplugin.lang.elements.expressions.operator;
 
-import glslplugin.lang.elements.types.*;
+import glslplugin.lang.elements.types.GLSLMatrixType;
+import glslplugin.lang.elements.types.GLSLScalarType;
+import glslplugin.lang.elements.types.GLSLType;
+import glslplugin.lang.elements.types.GLSLVectorType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static glslplugin.lang.elements.types.GLSLTypes.*;
+import static glslplugin.lang.elements.types.GLSLTypes.UNKNOWN_TYPE;
 
 /**
  * Base class for all operators.
@@ -310,7 +313,7 @@ public class GLSLOperator {
             if(!firstInput.isValidType() || !secondInput.isValidType())return UNKNOWN_TYPE;
             GLSLType unified = GLSLType.unifyTypes(firstInput.getBaseType(), secondInput.getBaseType());
             //Operates only on integers
-            if(unified != GLSLScalarType.INT && unified != GLSLScalarType.UINT)return UNKNOWN_TYPE;
+            if (!GLSLScalarType.isIntegerScalar(unified)) return UNKNOWN_TYPE;
 
             //Two vectors
             if(firstInput instanceof GLSLVectorType && secondInput instanceof GLSLVectorType){
@@ -576,7 +579,7 @@ public class GLSLOperator {
             if(type instanceof GLSLMatrixType)return false;
             //Operates on integer scalars and vectors
             GLSLType baseType = type.getBaseType();
-            return baseType == GLSLScalarType.INT || baseType == GLSLScalarType.UINT;
+            return GLSLScalarType.isIntegerScalar(baseType);
         }
 
         @NotNull

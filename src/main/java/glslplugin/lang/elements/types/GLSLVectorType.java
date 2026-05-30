@@ -41,13 +41,18 @@ public class GLSLVectorType extends GLSLType {
     //region Static
 
     private enum BaseType {
+        INT8(GLSLScalarType.INT8, "i8vec"),
+        INT16(GLSLScalarType.INT16, "i16vec"),
         INT(GLSLScalarType.INT, "ivec"),
+        INT64(GLSLScalarType.INT64, "i64vec"),
+        UINT8(GLSLScalarType.UINT8, "u8vec"),
+        UINT16(GLSLScalarType.UINT16, "u16vec"),
         UINT(GLSLScalarType.UINT, "uvec"),
+        UINT64(GLSLScalarType.UINT64, "u64vec"),
         BOOL(GLSLScalarType.BOOL, "bvec"),
         FLOAT(GLSLScalarType.FLOAT, "vec"),
+        FLOAT16(GLSLScalarType.FLOAT16, "f16vec"),
         DOUBLE(GLSLScalarType.DOUBLE, "dvec"),
-        INT64(GLSLScalarType.INT64, "i64vec"),
-        UINT64(GLSLScalarType.UINT64, "u64vec"),
         ;
 
         final GLSLType type;

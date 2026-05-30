@@ -23,6 +23,9 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class GLSLTokenTypes {
     public static final IElementType IDENTIFIER = new GLSLElementType("IDENTIFIER");
 
@@ -39,10 +42,15 @@ public class GLSLTokenTypes {
     public static final IElementType VOID_TYPE = new GLSLElementType("VOID_TYPE");
     public static final IElementType FLOAT_TYPE = new GLSLElementType("FLOAT_TYPE");
     public static final IElementType DOUBLE_TYPE = new GLSLElementType("DOUBLE_TYPE");
+    public static final IElementType FLOAT16_TYPE = new GLSLElementType("FLOAT16_TYPE");
     public static final IElementType INT_TYPE = new GLSLElementType("INT_TYPE");
     public static final IElementType UINT_TYPE = new GLSLElementType("UINT_TYPE");
+    public static final IElementType INT8_TYPE = new GLSLElementType("INT8_TYPE");
+    public static final IElementType INT16_TYPE = new GLSLElementType("INT16_TYPE");
     public static final IElementType INT64_TYPE = new GLSLElementType("INT64_TYPE");
     public static final IElementType UINT64_TYPE = new GLSLElementType("UINT64_TYPE");
+    public static final IElementType UINT8_TYPE = new GLSLElementType("UINT8_TYPE");
+    public static final IElementType UINT16_TYPE = new GLSLElementType("UINT16_TYPE");
     public static final IElementType BOOL_TYPE = new GLSLElementType("BOOL_TYPE");
     public static final IElementType VEC2_TYPE = new GLSLElementType("VEC2_TYPE");
     public static final IElementType VEC3_TYPE = new GLSLElementType("VEC3_TYPE");
@@ -50,12 +58,27 @@ public class GLSLTokenTypes {
     public static final IElementType DVEC2_TYPE = new GLSLElementType("DVEC2_TYPE");
     public static final IElementType DVEC3_TYPE = new GLSLElementType("DVEC3_TYPE");
     public static final IElementType DVEC4_TYPE = new GLSLElementType("DVEC4_TYPE");
+    public static final IElementType F16VEC2_TYPE = new GLSLElementType("F16VEC2_TYPE");
+    public static final IElementType F16VEC3_TYPE = new GLSLElementType("F16VEC3_TYPE");
+    public static final IElementType F16VEC4_TYPE = new GLSLElementType("F16VEC4_TYPE");
     public static final IElementType IVEC2_TYPE = new GLSLElementType("IVEC2_TYPE");
     public static final IElementType IVEC3_TYPE = new GLSLElementType("IVEC3_TYPE");
     public static final IElementType IVEC4_TYPE = new GLSLElementType("IVEC4_TYPE");
+    public static final IElementType I8VEC2_TYPE = new GLSLElementType("I8VEC2_TYPE");
+    public static final IElementType I8VEC3_TYPE = new GLSLElementType("I8VEC3_TYPE");
+    public static final IElementType I8VEC4_TYPE = new GLSLElementType("I8VEC4_TYPE");
+    public static final IElementType I16VEC2_TYPE = new GLSLElementType("I16VEC2_TYPE");
+    public static final IElementType I16VEC3_TYPE = new GLSLElementType("I16VEC3_TYPE");
+    public static final IElementType I16VEC4_TYPE = new GLSLElementType("I16VEC4_TYPE");
     public static final IElementType UVEC2_TYPE = new GLSLElementType("UVEC2_TYPE");
     public static final IElementType UVEC3_TYPE = new GLSLElementType("UVEC3_TYPE");
     public static final IElementType UVEC4_TYPE = new GLSLElementType("UVEC4_TYPE");
+    public static final IElementType U8VEC2_TYPE = new GLSLElementType("U8VEC2_TYPE");
+    public static final IElementType U8VEC3_TYPE = new GLSLElementType("U8VEC3_TYPE");
+    public static final IElementType U8VEC4_TYPE = new GLSLElementType("U8VEC4_TYPE");
+    public static final IElementType U16VEC2_TYPE = new GLSLElementType("U16VEC2_TYPE");
+    public static final IElementType U16VEC3_TYPE = new GLSLElementType("U16VEC3_TYPE");
+    public static final IElementType U16VEC4_TYPE = new GLSLElementType("U16VEC4_TYPE");
     public static final IElementType I64VEC2_TYPE = new GLSLElementType("I64VEC2_TYPE");
     public static final IElementType I64VEC3_TYPE = new GLSLElementType("I64VEC3_TYPE");
     public static final IElementType I64VEC4_TYPE = new GLSLElementType("I64VEC4_TYPE");
@@ -234,6 +257,21 @@ public class GLSLTokenTypes {
     public static final IElementType PREPROCESSOR_MACRO_ARGUMENT = new GLSLElementType("PREPROCESSOR_MACRO_ARGUMENT");
 
     public static final IElementType RESERVED_KEYWORD = new GLSLElementType("RESERVED_KEYWORD");
+    // Type specifiers
+    public static final TokenSet FLOAT_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
+            FLOAT_TYPE, FLOAT16_TYPE, VEC2_TYPE, VEC3_TYPE, VEC4_TYPE,
+            F16VEC2_TYPE, F16VEC3_TYPE, F16VEC4_TYPE,
+            DOUBLE_TYPE, DVEC2_TYPE, DVEC3_TYPE, DVEC4_TYPE);
+    public static final TokenSet INTEGER_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
+            INT8_TYPE, I8VEC2_TYPE, I8VEC3_TYPE, I8VEC4_TYPE,
+            INT16_TYPE, I16VEC2_TYPE, I16VEC3_TYPE, I16VEC4_TYPE,
+            INT_TYPE, IVEC2_TYPE, IVEC3_TYPE, IVEC4_TYPE,
+            UINT8_TYPE, U8VEC2_TYPE, U8VEC3_TYPE, U8VEC4_TYPE,
+            UINT16_TYPE, U16VEC2_TYPE, U16VEC3_TYPE, U16VEC4_TYPE,
+            UINT_TYPE, UVEC2_TYPE, UVEC3_TYPE, UVEC4_TYPE,
+            INT64_TYPE, I64VEC2_TYPE, I64VEC3_TYPE, I64VEC4_TYPE,
+            UINT64_TYPE, U64VEC2_TYPE, U64VEC3_TYPE, U64VEC4_TYPE);
+    private static final Map<String, IElementType> BUILTIN_TYPE_TOKENS = new HashMap<>();
 
     public static final TokenSet PREPROCESSOR_DIRECTIVES = TokenSet.create(
             PREPROCESSOR_BEGIN,
@@ -256,16 +294,32 @@ public class GLSLTokenTypes {
             PREPROCESSOR_INCLUDE,
             PREPROCESSOR_OTHER);
 
-    // Type specifiers
-    public static final TokenSet FLOAT_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
-            FLOAT_TYPE, VEC2_TYPE, VEC3_TYPE, VEC4_TYPE,
-            DOUBLE_TYPE, DVEC2_TYPE, DVEC3_TYPE, DVEC4_TYPE);
+    static {
+        BUILTIN_TYPE_TOKENS.put("int8_t", INT8_TYPE);
+        BUILTIN_TYPE_TOKENS.put("int16_t", INT16_TYPE);
+        BUILTIN_TYPE_TOKENS.put("uint8_t", UINT8_TYPE);
+        BUILTIN_TYPE_TOKENS.put("uint16_t", UINT16_TYPE);
+        BUILTIN_TYPE_TOKENS.put("float16_t", FLOAT16_TYPE);
+        BUILTIN_TYPE_TOKENS.put("i8vec2", I8VEC2_TYPE);
+        BUILTIN_TYPE_TOKENS.put("i8vec3", I8VEC3_TYPE);
+        BUILTIN_TYPE_TOKENS.put("i8vec4", I8VEC4_TYPE);
+        BUILTIN_TYPE_TOKENS.put("i16vec2", I16VEC2_TYPE);
+        BUILTIN_TYPE_TOKENS.put("i16vec3", I16VEC3_TYPE);
+        BUILTIN_TYPE_TOKENS.put("i16vec4", I16VEC4_TYPE);
+        BUILTIN_TYPE_TOKENS.put("u8vec2", U8VEC2_TYPE);
+        BUILTIN_TYPE_TOKENS.put("u8vec3", U8VEC3_TYPE);
+        BUILTIN_TYPE_TOKENS.put("u8vec4", U8VEC4_TYPE);
+        BUILTIN_TYPE_TOKENS.put("u16vec2", U16VEC2_TYPE);
+        BUILTIN_TYPE_TOKENS.put("u16vec3", U16VEC3_TYPE);
+        BUILTIN_TYPE_TOKENS.put("u16vec4", U16VEC4_TYPE);
+        BUILTIN_TYPE_TOKENS.put("f16vec2", F16VEC2_TYPE);
+        BUILTIN_TYPE_TOKENS.put("f16vec3", F16VEC3_TYPE);
+        BUILTIN_TYPE_TOKENS.put("f16vec4", F16VEC4_TYPE);
+    }
 
-    public static final TokenSet INTEGER_TYPE_SPECIFIER_NONARRAY = TokenSet.create(
-            INT_TYPE, IVEC2_TYPE, IVEC3_TYPE, IVEC4_TYPE,
-            UINT_TYPE, UVEC2_TYPE, UVEC3_TYPE, UVEC4_TYPE,
-            INT64_TYPE, I64VEC2_TYPE, I64VEC3_TYPE, I64VEC4_TYPE,
-            UINT64_TYPE, U64VEC2_TYPE, U64VEC3_TYPE, U64VEC4_TYPE);
+    public static IElementType getBuiltinTypeToken(String name) {
+        return BUILTIN_TYPE_TOKENS.get(name);
+    }
 
     public static final TokenSet BOOL_TYPE_SPECIFIER_NONARRAY = TokenSet.create(BOOL_TYPE, BVEC2_TYPE, BVEC3_TYPE, BVEC4_TYPE);
 

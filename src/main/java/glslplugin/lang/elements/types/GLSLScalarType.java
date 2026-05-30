@@ -40,24 +40,38 @@ public class GLSLScalarType extends GLSLType {
     public static final GLSLScalarType BOOL = new GLSLScalarType("bool", Boolean.class);
     public static final GLSLScalarType DOUBLE = new GLSLScalarType("double", Double.class);
     public static final GLSLScalarType FLOAT = new GLSLScalarType("float", Double.class);
+    public static final GLSLScalarType FLOAT16 = new GLSLScalarType("float16_t", Double.class);
     public static final GLSLScalarType UINT = new GLSLScalarType("uint", Long.class);
     public static final GLSLScalarType INT = new GLSLScalarType("int", Long.class);
-    // https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_gpu_shader_int64.txt
     public static final GLSLScalarType UINT64 = new GLSLScalarType("uint64_t", Long.class);
     public static final GLSLScalarType INT64 = new GLSLScalarType("int64_t", Long.class);
+    public static final GLSLScalarType UINT16 = new GLSLScalarType("uint16_t", Long.class);
+    public static final GLSLScalarType INT16 = new GLSLScalarType("int16_t", Long.class);
+    public static final GLSLScalarType UINT8 = new GLSLScalarType("uint8_t", Long.class);
+    public static final GLSLScalarType INT8 = new GLSLScalarType("int8_t", Long.class);
+    // https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_gpu_shader_int64.txt
+    public static final GLSLScalarType[] SCALARS = {
+            BOOL, DOUBLE, FLOAT, FLOAT16,
+            UINT, INT, UINT64, INT64,
+            UINT16, INT16, UINT8, INT8
+    };
 
     static {
-        INT.implicitConversions = Arrays.asList(UINT, INT64, UINT64, FLOAT, DOUBLE);
-        UINT.implicitConversions = Arrays.asList(UINT64, FLOAT, DOUBLE);
-        INT64.implicitConversions = Arrays.asList(UINT64, DOUBLE);
-        UINT64.implicitConversions = List.of(DOUBLE);
+        INT.implicitConversions = Arrays.asList(UINT, INT64, UINT64, FLOAT16, FLOAT, DOUBLE);
+        INT8.implicitConversions = Arrays.asList(INT16, INT, INT64, UINT, UINT64, FLOAT16, FLOAT, DOUBLE);
+        INT16.implicitConversions = Arrays.asList(INT, INT64, UINT, UINT64, FLOAT16, FLOAT, DOUBLE);
+        UINT.implicitConversions = Arrays.asList(UINT64, FLOAT16, FLOAT, DOUBLE);
+        UINT8.implicitConversions = Arrays.asList(UINT16, UINT, UINT64, FLOAT16, FLOAT, DOUBLE);
+        UINT16.implicitConversions = Arrays.asList(UINT, UINT64, FLOAT16, FLOAT, DOUBLE);
+        INT64.implicitConversions = Arrays.asList(UINT64, FLOAT16, FLOAT, DOUBLE);
+        UINT64.implicitConversions = Arrays.asList(FLOAT16, FLOAT, DOUBLE);
+        FLOAT16.implicitConversions = Arrays.asList(FLOAT, DOUBLE);
         FLOAT.implicitConversions = List.of(DOUBLE);
     }
 
-    public static final GLSLScalarType[] SCALARS = {BOOL, DOUBLE, FLOAT, UINT, INT, UINT64, INT64};
-
     public static boolean isIntegerScalar(GLSLType type){
-        return type == INT || type == UINT || type == INT64 || type == UINT64;
+        return type == INT8 || type == INT16 || type == INT || type == INT64
+                || type == UINT8 || type == UINT16 || type == UINT || type == UINT64;
     }
     //endregion
 
