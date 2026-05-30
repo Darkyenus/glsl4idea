@@ -22,6 +22,7 @@ package glslplugin.lang.scanner;
 import com.intellij.lexer.LexerBase;
 import com.intellij.lexer.LexerPosition;
 import com.intellij.psi.tree.IElementType;
+import glslplugin.lang.elements.GLSLTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -87,11 +88,19 @@ public final class GLSLFlexAdapter extends LexerBase {
         return myEnd;
     }
 
+    private static IElementType remapBuiltinType(IElementType tokenType, CharSequence text) {
+        if (tokenType != GLSLTokenTypes.IDENTIFIER || text == null) {
+            return tokenType;
+        }
+        final IElementType builtinType = GLSLTokenTypes.getBuiltinTypeToken(text.toString());
+        return builtinType != null ? builtinType : tokenType;
+    }
+
     private void locateToken() {
         if (myTokenType != null) return;
         try {
             myState = myFlex.yystate();
-            myTokenType = myFlex.advance();
+            myTokenType = remapBuiltinType(myFlex.advance(), myFlex.yytext());
         }
         catch (IOException e) { /*Can't happen*/ }
         catch (Error e) {
