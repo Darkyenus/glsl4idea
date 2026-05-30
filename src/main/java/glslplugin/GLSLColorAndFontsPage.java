@@ -54,6 +54,7 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
             new AttributesDescriptor("Brackets", GLSLHighlighter.GLSL_BRACKETS[0]),
             new AttributesDescriptor("Operators", GLSLHighlighter.GLSL_OPERATOR[0]),
             new AttributesDescriptor("Identifiers",GLSLHighlighter.GLSL_IDENTIFIER[0]),
+            new AttributesDescriptor("Function declarations",GLSLHighlighter.GLSL_FUNCTION_DECLARATION[0]),
             new AttributesDescriptor("Identifiers of `in` declarations",GLSLHighlighter.GLSL_IDENTIFIER_IN[0]),
             new AttributesDescriptor("Identifiers of `out` declarations",GLSLHighlighter.GLSL_IDENTIFIER_OUT[0]),
             new AttributesDescriptor("Identifiers of Uniforms",GLSLHighlighter.GLSL_IDENTIFIER_UNIFORM[0]),
