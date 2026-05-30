@@ -7,10 +7,14 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
+import glslplugin.lang.parser.GLSLFile;
 import glslplugin.util.TreeIterator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -41,18 +45,77 @@ public class GLSLDefineDirective extends GLSLPreprocessorDirective implements GL
     }
 
     public static @Nullable GLSLDefineDirective findActiveDefinitionBefore(@NotNull PsiElement origin, @NotNull String tokenName) {
+        return findActiveDefinitionBefore(origin, tokenName, Collections.newSetFromMap(new IdentityHashMap<>())).definition;
+    }
+
+    private static @NotNull MacroLookupResult findActiveDefinitionBefore(
+        @NotNull PsiElement origin,
+        @NotNull String tokenName,
+        @NotNull Set<GLSLFile> visitedIncludedFiles
+    ) {
         GLSLPreprocessorDirective prev = TreeIterator.previous(origin, GLSLPreprocessorDirective.class);
         while (prev != null) {
             if (prev instanceof GLSLDefineDirective defineDirective && tokenName.equals(defineDirective.getName())) {
-                return defineDirective;
+                return MacroLookupResult.defined(defineDirective);
             }
             if (prev.isUndefDirectiveFor(tokenName)) {
-                return null;
+                return MacroLookupResult.undefined();
+            }
+            if (prev instanceof GLSLPreprocessorInclude include) {
+                MacroLookupResult includedResult = findActiveDefinitionAtEnd(
+                    include.includedFile(),
+                    tokenName,
+                    visitedIncludedFiles
+                );
+                if (includedResult.isTerminal()) {
+                    return includedResult;
+                }
             }
             prev = TreeIterator.previous(prev, GLSLPreprocessorDirective.class);
         }
 
-        return null;
+        return MacroLookupResult.notFound();
+    }
+
+    private static @NotNull MacroLookupResult findActiveDefinitionAtEnd(
+        @Nullable GLSLFile file,
+        @NotNull String tokenName,
+        @NotNull Set<GLSLFile> visitedIncludedFiles
+    ) {
+        if (file == null || !visitedIncludedFiles.add(file)) {
+            return MacroLookupResult.notFound();
+        }
+
+        return findActiveDefinitionBefore(file, tokenName, visitedIncludedFiles);
+    }
+
+    private static final class MacroLookupResult {
+        private static final MacroLookupResult NOT_FOUND = new MacroLookupResult(null, false);
+        private static final MacroLookupResult UNDEFINED = new MacroLookupResult(null, true);
+
+        private final @Nullable GLSLDefineDirective definition;
+        private final boolean undefined;
+
+        private MacroLookupResult(@Nullable GLSLDefineDirective definition, boolean undefined) {
+            this.definition = definition;
+            this.undefined = undefined;
+        }
+
+        private static @NotNull MacroLookupResult defined(@NotNull GLSLDefineDirective definition) {
+            return new MacroLookupResult(definition, false);
+        }
+
+        private static @NotNull MacroLookupResult undefined() {
+            return UNDEFINED;
+        }
+
+        private static @NotNull MacroLookupResult notFound() {
+            return NOT_FOUND;
+        }
+
+        private boolean isTerminal() {
+            return definition != null || undefined;
+        }
     }
 
     @Override
