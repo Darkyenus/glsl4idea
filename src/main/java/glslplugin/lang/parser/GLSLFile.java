@@ -22,6 +22,7 @@ package glslplugin.lang.parser;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
@@ -31,6 +32,10 @@ import glslplugin.lang.elements.preprocessor.GLSLVersionDirective;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
 
 public class GLSLFile extends PsiFileBase {
     /**
@@ -64,28 +69,53 @@ public class GLSLFile extends PsiFileBase {
 
     public boolean isBuiltinFile = false;
 
+    private static final Key<Set<GLSLFile>> PROCESSED_DECLARATION_FILES =
+        Key.create("glslplugin.processedDeclarationFiles");
+
     @Override
     public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
+        Set<GLSLFile> processedFiles = state.get(PROCESSED_DECLARATION_FILES);
+        ResolveState declarationState = state;
+        if (processedFiles == null) {
+            processedFiles = Collections.newSetFromMap(new IdentityHashMap<>());
+            declarationState = state.put(PROCESSED_DECLARATION_FILES, processedFiles);
+        }
+        if (!processedFiles.add(this)) {
+            return true;
+        }
+
+        final PsiElement childToSkip = lastParent == null ? null : findDirectChildContaining(place);
         for (PsiElement child = getFirstChild(); child != null; child = child.getNextSibling()) {
 
-            if (child == lastParent || (lastParent != null && PsiTreeUtil.isAncestor(child, place, false))) {
+            if (child == childToSkip) {
                 // Intentionally show even later declarations.
                 // Inspection checks that everything is ok.
                 continue;
             }
 
 
-            if (!child.processDeclarations(processor, state, null, place)) return false;
+            if (!child.processDeclarations(processor, declarationState, null, place)) return false;
         }
 
         if (!isBuiltinFile) {
             final GLSLBuiltInPsiUtilService bipus = getProject().getService(GLSLBuiltInPsiUtilService.class);
             final GLSLFile builtinsFile = bipus.getBuiltinsFile();
             if (builtinsFile != null) {
-                return builtinsFile.processDeclarations(processor, state, null, place);
+                return builtinsFile.processDeclarations(processor, declarationState, null, place);
             }
         }
         return true;
+    }
+
+    private @Nullable PsiElement findDirectChildContaining(@NotNull PsiElement element) {
+        PsiElement child = element;
+        while (child != null) {
+            if (child.getParent() == this) {
+                return child;
+            }
+            child = child.getParent();
+        }
+        return null;
     }
 
     @Override

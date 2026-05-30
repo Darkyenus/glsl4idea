@@ -20,8 +20,13 @@
 package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 
@@ -40,6 +45,26 @@ public class GLSLDeclaratorList extends GLSLElementImpl implements Iterable<GLSL
     @NotNull
     public GLSLDeclarator[] getDeclarators() {
         return findChildrenByClass(GLSLDeclarator.class);
+    }
+
+    public boolean processDeclarators(
+        @NotNull PsiScopeProcessor processor,
+        @NotNull ResolveState state,
+        @Nullable PsiElement lastParent,
+        @NotNull PsiElement place
+    ) {
+        for (PsiElement child = getFirstChild(); child != null; child = child.getNextSibling()) {
+            if (!(child instanceof GLSLDeclarator declarator)) {
+                continue;
+            }
+            if (lastParent != null && PsiTreeUtil.isAncestor(lastParent, declarator, false)) {
+                break;
+            }
+            if (!declarator.processDeclarations(processor, state, null, place)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
