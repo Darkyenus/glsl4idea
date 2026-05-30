@@ -12,8 +12,6 @@ import glslplugin.util.TreeIterator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-
 /**
  * A token that has been redefined by preprocessor.
  */
@@ -78,15 +76,7 @@ public class GLSLRedefinedToken extends LeafPsiElement implements GLSLReferencin
             final String tokenName = element.getRedefinedTokenName();
             if (tokenName == null) return null;
 
-            GLSLDefineDirective prev = TreeIterator.previous(element, GLSLDefineDirective.class);
-            while (prev != null) {
-                if (tokenName.equals(prev.getName())) {
-                    return prev;
-                }
-                prev = TreeIterator.previous(prev, GLSLDefineDirective.class);
-            }
-
-            return null;
+            return GLSLDefineDirective.findActiveDefinitionBefore(element, tokenName);
         }
     }
 

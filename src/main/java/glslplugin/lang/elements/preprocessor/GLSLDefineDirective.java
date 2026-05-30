@@ -7,6 +7,7 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.reference.GLSLReferencableDeclaration;
+import glslplugin.util.TreeIterator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,6 +38,21 @@ public class GLSLDefineDirective extends GLSLPreprocessorDirective implements GL
     public int getTextOffset() {
         final PsiElement identifier = getNameIdentifier();
         return identifier != null ? identifier.getTextOffset() : super.getTextOffset();
+    }
+
+    public static @Nullable GLSLDefineDirective findActiveDefinitionBefore(@NotNull PsiElement origin, @NotNull String tokenName) {
+        GLSLPreprocessorDirective prev = TreeIterator.previous(origin, GLSLPreprocessorDirective.class);
+        while (prev != null) {
+            if (prev instanceof GLSLDefineDirective defineDirective && tokenName.equals(defineDirective.getName())) {
+                return defineDirective;
+            }
+            if (prev.isUndefDirectiveFor(tokenName)) {
+                return null;
+            }
+            prev = TreeIterator.previous(prev, GLSLPreprocessorDirective.class);
+        }
+
+        return null;
     }
 
     @Override
