@@ -2,12 +2,8 @@ package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
-import glslplugin.GLSLHighlighter;
 import glslplugin.annotation.Annotator;
-import glslplugin.lang.elements.declarations.GLSLDeclarator;
-import glslplugin.lang.elements.declarations.GLSLQualifier;
 import glslplugin.lang.elements.expressions.GLSLVariableExpression;
-import glslplugin.lang.elements.types.GLSLQualifiedType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,15 +14,12 @@ public class VariableTypeHighlightAnnotation extends Annotator<GLSLVariableExpre
 
     @Override
     public void annotate(GLSLVariableExpression expr, AnnotationHolder holder) {
-        final GLSLDeclarator declarator = expr.getReference().resolve();
+        final var declarator = expr.getReference().resolve();
         if (declarator == null) return;
-        final GLSLQualifiedType qualifiedType = declarator.getQualifiedType();
-        if (qualifiedType.hasQualifier(GLSLQualifier.Qualifier.UNIFORM)) {
-            holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(GLSLHighlighter.GLSL_IDENTIFIER_UNIFORM[0]).create();
-        } else if (qualifiedType.hasQualifier(GLSLQualifier.Qualifier.VARYING)) {
-            holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(GLSLHighlighter.GLSL_IDENTIFIER_VARYING[0]).create();
-        } else if (qualifiedType.hasQualifier(GLSLQualifier.Qualifier.ATTRIBUTE)) {
-            holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(GLSLHighlighter.GLSL_IDENTIFIER_ATTRIBUTE[0]).create();
+        final GLSLHighlightClassifier.HighlightKind kind = GLSLHighlightClassifier.classify(declarator);
+        final var key = GLSLHighlightClassifier.keyFor(kind);
+        if (key != null) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(key).create();
         }
     }
 
