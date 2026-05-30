@@ -22,6 +22,9 @@ package glslplugin.annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiElement;
 import glslplugin.annotation.impl.*;
+import glslplugin.lang.elements.expressions.GLSLFunctionOrConstructorCallExpression;
+import glslplugin.lang.elements.expressions.GLSLVariableExpression;
+import glslplugin.lang.elements.preprocessor.GLSLPreprocessorDirective;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -63,6 +66,9 @@ public class GLSLAnnotator implements com.intellij.lang.annotation.Annotator {
         add(new ReservedIdentifierAnnotation());
         add(new InitializerListEmptyAnnotation());
         add(new RedefinedTokenAnnotation());
+        add(new MacroReferenceHighlightAnnotation<>(GLSLVariableExpression.class));
+        add(new MacroReferenceHighlightAnnotation<>(GLSLFunctionOrConstructorCallExpression.class));
+        add(new MacroReferenceHighlightAnnotation<>(GLSLPreprocessorDirective.class));
         add(new StatementParentAnnotation());
         add(new SubscriptBoundAnnotation());
         add(new ConstModificationAnnotation());
