@@ -34,6 +34,7 @@ import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLFunctionDefinition;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
 import glslplugin.lang.elements.declarations.GLSLTypeSpecifier;
+import glslplugin.lang.elements.preprocessor.GLSLDefineDirective;
 import glslplugin.lang.elements.reference.GLSLAbstractReference;
 import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
 import glslplugin.lang.elements.reference.GLSLReferenceUtil;
@@ -291,6 +292,34 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
                 return ResolveResult.EMPTY_ARRAY;
             }
         }
+
+        @Override
+        public @Nullable PsiElement resolve() {
+            final GLSLFunctionOrConstructorCallExpression element = getElement();
+            if (element.getConstructorTypeSpecifier() == null) {
+                final String macroName = element.getFunctionOrConstructedTypeName();
+                if (macroName != null) {
+                    final GLSLDefineDirective defineDirective = GLSLDefineDirective.findActiveDefinitionBefore(element, macroName);
+                    if (defineDirective != null) {
+                        return defineDirective;
+                    }
+                }
+            }
+
+            final com.intellij.psi.ResolveResult[] resolveResults = multiResolve(false);
+            if (resolveResults.length == 1) {
+                return resolveResults[0].getElement();
+            }
+            return null;
+        }
+
+        @Override
+        public boolean isReferenceTo(@NotNull PsiElement element) {
+            if (super.isReferenceTo(element)) {
+                return true;
+            }
+            return getElement().getManager().areElementsEquivalent(resolve(), element);
+        }
     }
 
     public static final class WalkResult implements PsiScopeProcessor {
@@ -350,7 +379,8 @@ public class GLSLFunctionOrConstructorCallExpression extends GLSLExpression impl
 
     @Override
     public PsiReference @NotNull [] getReferences() {
-        return super.getReferences();
+        final FunctionCallOrConstructorReference reference = getReference();
+        return reference == null ? PsiReference.EMPTY_ARRAY : new PsiReference[]{reference};
     }
 
     @Override

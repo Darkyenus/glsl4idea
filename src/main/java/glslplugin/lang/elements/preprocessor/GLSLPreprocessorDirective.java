@@ -3,13 +3,10 @@ package glslplugin.lang.elements.preprocessor;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ArrayUtilRt;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLElementImpl;
 import glslplugin.lang.elements.GLSLTokenTypes;
-import glslplugin.lang.elements.reference.GLSLReferenceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,7 +60,7 @@ public class GLSLPreprocessorDirective extends GLSLElementImpl {
 
         final PsiReference[] references = new PsiReference[identifiers.size()];
         for (int i = 0; i < identifiers.size(); i++) {
-            references[i] = new MacroReference(this, identifiers.get(i));
+            references[i] = new GLSLMacroReference(this, identifiers.get(i));
         }
         return references;
     }
@@ -72,24 +69,5 @@ public class GLSLPreprocessorDirective extends GLSLElementImpl {
     public @Nullable PsiReference getReference() {
         final PsiReference[] references = getReferences();
         return references.length == 1 ? references[0] : null;
-    }
-
-    private static final class MacroReference extends PsiReferenceBase<GLSLPreprocessorDirective> {
-        private final @NotNull String tokenName;
-
-        private MacroReference(@NotNull GLSLPreprocessorDirective directive, @NotNull PsiElement identifier) {
-            super(directive, GLSLReferenceUtil.rangeOfIn(identifier, directive), false);
-            tokenName = GLSLElement.text(identifier);
-        }
-
-        @Override
-        public @Nullable GLSLDefineDirective resolve() {
-            return GLSLDefineDirective.findActiveDefinitionBefore(getElement(), tokenName);
-        }
-
-        @Override
-        public Object @NotNull [] getVariants() {
-            return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
-        }
     }
 }

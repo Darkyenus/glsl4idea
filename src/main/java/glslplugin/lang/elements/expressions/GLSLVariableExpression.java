@@ -21,12 +21,15 @@ package glslplugin.lang.elements.expressions;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
+import glslplugin.lang.elements.preprocessor.GLSLDefineDirective;
+import glslplugin.lang.elements.preprocessor.GLSLMacroReference;
 import glslplugin.lang.elements.reference.GLSLAbstractReference;
 import glslplugin.lang.elements.reference.GLSLReferencingElement;
 import glslplugin.lang.elements.types.GLSLType;
@@ -102,6 +105,9 @@ public class GLSLVariableExpression extends GLSLExpression implements GLSLRefere
             if (onlyNamed == null || onlyNamed.isEmpty()) {
                 return null;
             }
+            if (GLSLDefineDirective.findActiveDefinitionBefore(element, onlyNamed) != null) {
+                return null;
+            }
             final VariableWalkResult result = VariableWalkResult.walkPossibleReferences(element, onlyNamed);
             if (!result.visitedDeclarations.isEmpty()) {
                 return result.visitedDeclarations.get(0);
@@ -149,5 +155,14 @@ public class GLSLVariableExpression extends GLSLExpression implements GLSLRefere
     @Override
     public GLSLVariableExpression.VariableReference getReference() {
         return new VariableReference(this);
+    }
+
+    @Override
+    public PsiReference @NotNull [] getReferences() {
+        final PsiElement identifier = getVariableNameIdentifier();
+        if (identifier == null) {
+            return new PsiReference[]{getReference()};
+        }
+        return new PsiReference[]{getReference(), new GLSLMacroReference(this, identifier)};
     }
 }
