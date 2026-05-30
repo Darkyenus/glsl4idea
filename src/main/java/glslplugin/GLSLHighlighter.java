@@ -35,7 +35,7 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
     static final TextAttributesKey[] GLSL_NUMBER =
             { TextAttributesKey.createTextAttributesKey("GLSL.NUMBER", DefaultLanguageHighlighterColors.NUMBER) };
     static final TextAttributesKey[] GLSL_TYPE_SPECIFIER =
-            { TextAttributesKey.createTextAttributesKey("GLSL.TYPE_SPECIFIER", DefaultLanguageHighlighterColors.CLASS_REFERENCE) };
+            { TextAttributesKey.createTextAttributesKey("GLSL.TYPE_SPECIFIER", DefaultLanguageHighlighterColors.KEYWORD) };
     static final TextAttributesKey[] GLSL_TYPE_QUALIFIERS =
             { TextAttributesKey.createTextAttributesKey("GLSL.QUALIFIER_TOKENS", DefaultLanguageHighlighterColors.KEYWORD) };
     static final TextAttributesKey[] GLSL_FLOW_KEYWORDS =
@@ -61,19 +61,19 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
     static final TextAttributesKey[] GLSL_IDENTIFIER =
             { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER) };
     public static final TextAttributesKey[] GLSL_IDENTIFIER_UNIFORM =
-            { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.UNIFORM", GLSL_IDENTIFIER[0]) };
+            { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.UNIFORM", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE) };
     public static final TextAttributesKey[] GLSL_IDENTIFIER_IN =
-            { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.IN", GLSL_IDENTIFIER[0]) };
+            { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.IN", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE) };
     public static final TextAttributesKey[] GLSL_IDENTIFIER_OUT =
-            { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.OUT", GLSL_IDENTIFIER[0]) };
+            { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.OUT", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE) };
     public static final TextAttributesKey[] GLSL_IDENTIFIER_VARYING =
-            { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.VARYING", GLSL_IDENTIFIER[0]) };
+            { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.VARYING", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE) };
     public static final TextAttributesKey[] GLSL_IDENTIFIER_ATTRIBUTE =
-            { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.ATTRIBUTE", GLSL_IDENTIFIER[0]) };
+            { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.ATTRIBUTE", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE) };
     public static final TextAttributesKey[] GLSL_IDENTIFIER_STRUCT_FIELD =
-            { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.STRUCT_FIELD", GLSL_IDENTIFIER[0]) };
+            { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.STRUCT_FIELD", DefaultLanguageHighlighterColors.INSTANCE_FIELD) };
     public static final TextAttributesKey[] GLSL_IDENTIFIER_INTERFACE_BLOCK =
-            { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.INTERFACE_BLOCK", GLSL_IDENTIFIER[0]) };
+            { TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER.INTERFACE_BLOCK", DefaultLanguageHighlighterColors.INSTANCE_FIELD) };
     public static final TextAttributesKey[] GLSL_PREPROCESSOR_DIRECTIVE =
             { TextAttributesKey.createTextAttributesKey("GLSL.PREPROCESSOR_DIRECTIVE", DefaultLanguageHighlighterColors.METADATA) };
     static final TextAttributesKey[] GLSL_PREPROCESSOR_RAW =
