@@ -1,9 +1,12 @@
 package glslplugin.lang;
 
+import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import glslplugin.lang.GLSLFileType;
 import glslplugin.LightGLSLTestCase;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.preprocessor.GLSLPreprocessorInclude;
@@ -14,6 +17,41 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class IncludeResolutionTest extends LightGLSLTestCase {
+
+    private void configureProjectShaderFile(String path, String textWithCaret) {
+        int caretOffset = textWithCaret.indexOf("<caret>");
+        assertTrue(caretOffset >= 0);
+
+        PsiFile file = addShaderFile(path, textWithCaret.replace("<caret>", ""));
+        assertNotNull(file.getVirtualFile());
+        myFixture.openFileInEditor(file.getVirtualFile());
+        myFixture.getEditor().getCaretModel().moveToOffset(caretOffset);
+    }
+
+    public void testIncludeStringReferenceResolvesToIncludedFile() {
+        addShaderFile("shaders/common.glsl", "float includedValue;\n");
+        configureProjectShaderFile("shaders/main.glsl", "#include \"common<caret>.glsl\"\n");
+
+        PsiReference reference = myFixture.getReferenceAtCaretPositionWithAssertion();
+        PsiElement resolved = reference.resolve();
+
+        assertTrue(resolved instanceof GLSLFile);
+        assertEquals("common.glsl", ((GLSLFile) resolved).getName());
+    }
+
+    public void testIncludeStringIsGotoDeclarationTarget() {
+        addShaderFile("shaders/common.glsl", "float includedValue;\n");
+        configureProjectShaderFile("shaders/main.glsl", "#include \"common<caret>.glsl\"\n");
+
+        PsiElement target = GotoDeclarationAction.findTargetElement(
+            getProject(),
+            myFixture.getEditor(),
+            myFixture.getCaretOffset()
+        );
+
+        assertTrue("Expected GLSLFile, got " + target, target instanceof GLSLFile);
+        assertEquals("common.glsl", ((GLSLFile) target).getName());
+    }
 
     public void testCyclicIncludesDoNotReenterFilesDuringDeclarationWalk() {
         GLSLFile a = addShaderFile("shaders/a.glsl", "#include \"b.glsl\"\nfloat a;\n");

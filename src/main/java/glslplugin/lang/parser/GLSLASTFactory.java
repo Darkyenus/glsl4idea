@@ -8,6 +8,7 @@ import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.preprocessor.GLSLRedefinedToken;
+import glslplugin.lang.elements.preprocessor.GLSLPreprocessorString;
 import org.jetbrains.annotations.NotNull;
 
 public class GLSLASTFactory extends DefaultASTFactoryImpl {
@@ -16,6 +17,9 @@ public class GLSLASTFactory extends DefaultASTFactoryImpl {
     public @NotNull LeafElement createLeaf(@NotNull IElementType type, @NotNull CharSequence text) {
         if (type == GLSLTokenTypes.PREPROCESSOR_REDEFINED) {
             return new GLSLRedefinedToken(text);
+        }
+        if (type == GLSLTokenTypes.PREPROCESSOR_STRING) {
+            return new GLSLPreprocessorString(text);
         }
         return super.createLeaf(type, text);
     }
