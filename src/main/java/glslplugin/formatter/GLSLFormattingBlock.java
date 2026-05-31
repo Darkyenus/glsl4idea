@@ -31,6 +31,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLTokenTypes;
+import glslplugin.lang.elements.expressions.GLSLCondition;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLInterfaceBlockMemberDeclaration;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
@@ -39,6 +40,7 @@ import glslplugin.lang.elements.expressions.GLSLParameterList;
 import glslplugin.lang.elements.statements.GLSLCompoundStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.util.PsiTreeUtil;
 
 import static glslplugin.lang.elements.GLSLElementTypes.PREFIX_OPERATOR_EXPRESSION;
 import static glslplugin.lang.elements.GLSLElementTypes.PARAMETER_DECLARATION;
@@ -111,6 +113,8 @@ public class GLSLFormattingBlock extends AbstractBlock {
             }
             return Indent.getNormalIndent();
         } else if (isContinuationBlock(parentPsi) || isFunctionDeclarationParameter(node, parentPsi)) {
+            return Indent.getContinuationIndent();
+        } else if (PsiTreeUtil.getParentOfType(parentPsi, GLSLCondition.class, false) != null) {
             return Indent.getContinuationIndent();
         }
 
