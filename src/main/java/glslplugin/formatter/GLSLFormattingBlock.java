@@ -32,6 +32,7 @@ import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.expressions.GLSLCondition;
+import glslplugin.lang.elements.expressions.GLSLBinaryOperatorExpression;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLInterfaceBlockMemberDeclaration;
 import glslplugin.lang.elements.declarations.GLSLStructDefinition;
@@ -99,6 +100,16 @@ public class GLSLFormattingBlock extends AbstractBlock {
         return afterLeftParen;
     }
 
+    private static boolean isInsideCondition(PsiElement psiElement) {
+        return psiElement != null && PsiTreeUtil.getParentOfType(psiElement, GLSLCondition.class, false) != null;
+    }
+
+    private static boolean isNestedBinaryExpressionInCondition(ASTNode node, PsiElement parentPsi) {
+        return node.getPsi() instanceof GLSLBinaryOperatorExpression
+            && parentPsi instanceof GLSLBinaryOperatorExpression
+            && isInsideCondition(parentPsi);
+    }
+
     private static Indent getNodeIndent(ASTNode node) {
         IElementType nodeType = node.getElementType();
         ASTNode parent = node.getTreeParent();
@@ -114,8 +125,18 @@ public class GLSLFormattingBlock extends AbstractBlock {
             return Indent.getNormalIndent();
         } else if (isContinuationBlock(parentPsi) || isFunctionDeclarationParameter(node, parentPsi)) {
             return Indent.getContinuationIndent();
-        } else if (PsiTreeUtil.getParentOfType(parentPsi, GLSLCondition.class, false) != null) {
-            return Indent.getContinuationIndent();
+        } else if (parentPsi instanceof GLSLCondition) {
+            return node.getPsi() instanceof GLSLBinaryOperatorExpression
+                ? Indent.getNoneIndent()
+                : Indent.getNormalIndent();
+        } else if (parentPsi instanceof GLSLBinaryOperatorExpression && isInsideCondition(parentPsi)) {
+            return isNestedBinaryExpressionInCondition(node, parentPsi)
+                ? Indent.getNoneIndent()
+                : Indent.getNormalIndent();
+        } else if (isNestedBinaryExpressionInCondition(node, parentPsi)) {
+            return Indent.getNoneIndent();
+        } else if (isInsideCondition(parentPsi)) {
+            return Indent.getNoneIndent();
         }
 
         return Indent.getNoneIndent();
