@@ -49,7 +49,7 @@ public class GLSLInterfaceBlockDefinition extends GLSLElementImpl implements GLS
     /** @return the element that holds the interface block name */
     @Nullable
     private PsiElement getInterfaceBlockNameIdentifier() {
-        return findLastChildByType(GLSLTokenTypes.IDENTIFIER);
+        return findChildByType(GLSLTokenTypes.IDENTIFIER);
     }
 
     public @Nullable String getInterfaceBlockName() {

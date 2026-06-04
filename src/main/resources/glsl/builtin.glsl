@@ -1,5 +1,4 @@
 // GLSL Built-ins
-// Generated on 2024-02-29T03:48:24.068127300Z
 // Generated from documentation at https://github.com/KhronosGroup/OpenGL-Refpages
 
 out gl_PerVertex {

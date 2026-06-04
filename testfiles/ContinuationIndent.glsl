@@ -1,10 +1,10 @@
 vec2 foo = vec2(
-    1.0, // Should gets indented
+    1.0, // Should be indented
     2.0
 );
 
 float arr[5] = float[](
-    1.0, // Should gets indented
+    1.0, // Should be indented
     2.0, 3.0,
     4.0, 5.0
 );
@@ -18,7 +18,7 @@ void main() {
 
     sum(
         vec4(
-            1.0, // Should gets double indented
+            1.0, // Should be double indented
             2.0,
             3.0,
             4.0

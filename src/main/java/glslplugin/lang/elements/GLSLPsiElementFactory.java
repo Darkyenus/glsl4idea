@@ -203,22 +203,23 @@ public class GLSLPsiElementFactory {
 
     public static ASTNode createPreprocessorString(Project project, String name) throws IncorrectOperationException {
         PsiElement element = PsiFileFactory.getInstance(project).createFileFromText("dummy.glsl", GLSLFileType.INSTANCE, "#include "+name);
-        // Search for the PREPROCESSOR_STRING token in the tree
-        ASTNode current = element.getNode().getFirstChildNode();
-        while (current != null) {
-            if (current.getElementType() == GLSLTokenTypes.PREPROCESSOR_STRING) {
-                return current;
-            }
-            // Search in children
-            ASTNode child = current.getFirstChildNode();
-            while (child != null) {
-                if (child.getElementType() == GLSLTokenTypes.PREPROCESSOR_STRING) {
-                    return child;
-                }
-                child = child.getTreeNext();
-            }
-            current = current.getTreeNext();
+        final ASTNode node = findChildNode(element.getNode(), GLSLTokenTypes.PREPROCESSOR_STRING);
+        if (node != null) {
+            return node;
         }
         throw new IncorrectOperationException("'"+name+"' is not a valid preprocessor string");
+    }
+
+    private static ASTNode findChildNode(ASTNode node, IElementType type) {
+        if (node.getElementType() == type) {
+            return node;
+        }
+        for (ASTNode child = node.getFirstChildNode(); child != null; child = child.getTreeNext()) {
+            final ASTNode found = findChildNode(child, type);
+            if (found != null) {
+                return found;
+            }
+        }
+        return null;
     }
 }
