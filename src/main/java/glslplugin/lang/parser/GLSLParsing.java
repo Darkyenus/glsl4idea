@@ -588,9 +588,6 @@ public class GLSLParsing extends GLSLParsingBase {
 
             typeSpecifier.done(TYPE_SPECIFIER);
 
-            Marker declarator = mark();
-            declarator.rollbackTo();
-
             parseDeclaratorList();
             match(SEMICOLON, "Missing ';' after interface block declaration");
             mark.done(VARIABLE_DECLARATION);
@@ -849,7 +846,7 @@ public class GLSLParsing extends GLSLParsingBase {
         Marker mark = mark();
         match(COLON, "Expected ':'");
         if (eof(mark)) return;
-        if (getTokenType() != RIGHT_BRACE || getTokenType() != CASE_KEYWORD) {
+        if (getTokenType() != RIGHT_BRACE && getTokenType() != CASE_KEYWORD && getTokenType() != DEFAULT_KEYWORD) {
             parseCaseStatementList();
         }
         if (eof(mark)) return;
@@ -870,7 +867,7 @@ public class GLSLParsing extends GLSLParsingBase {
         // default_statement: 'default' ':'
         Marker mark = mark();
         match(DEFAULT_KEYWORD, "Expected 'case'");
-        match(COLON, "Expected ':'");
+        parseCaseBlock();
         mark.done(DEFAULT_STATEMENT);
         return true;
     }

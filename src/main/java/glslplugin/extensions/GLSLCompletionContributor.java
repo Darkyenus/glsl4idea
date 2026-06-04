@@ -55,6 +55,8 @@ import glslplugin.lang.elements.types.GLSLVectorType;
 import glslplugin.util.VectorComponents;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
@@ -66,126 +68,101 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  * @author Jan Polák
  */
 public class GLSLCompletionContributor extends DefaultCompletionContributor {
-    private static final ElementPattern<PsiElement> FIELD_SELECTION = psiElement(GLSLTokenTypes.IDENTIFIER).withParent(
-        GLSLFieldSelectionExpression.class);
+    private static final ElementPattern<PsiElement> FIELD_SELECTION = psiElement(GLSLTokenTypes.IDENTIFIER).withParent(GLSLFieldSelectionExpression.class);
 
     private static final ElementPattern<PsiElement> GENERIC_REFERENCE = psiElement(GLSLTokenTypes.IDENTIFIER);
 
     public GLSLCompletionContributor() {
         // Add field selection completion
-        extend(
-            CompletionType.BASIC, FIELD_SELECTION, new CompletionProvider<>() {
-                @Override
-                protected void addCompletions(
-                    @NotNull CompletionParameters completionParameters,
-                    @NotNull ProcessingContext processingContext,
-                    @NotNull CompletionResultSet completionResultSet
-                ) {
-                    final PsiElement position = completionParameters.getPosition();
-                    GLSLFieldSelectionExpression fieldSelection = (GLSLFieldSelectionExpression) position.getParent();
+        extend(CompletionType.BASIC, FIELD_SELECTION, new CompletionProvider<>() {
+            @Override
+            protected void addCompletions(@NotNull CompletionParameters completionParameters, @NotNull ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
+                final PsiElement position = completionParameters.getPosition();
+                GLSLFieldSelectionExpression fieldSelection = (GLSLFieldSelectionExpression) position.getParent();
 
-                    GLSLExpression leftHandExpression = fieldSelection.getLeftHandExpression();
-                    if (leftHandExpression == null) return;
+                GLSLExpression leftHandExpression = fieldSelection.getLeftHandExpression();
+                if (leftHandExpression == null) return;
 
-                    // Struct member completion
-                    GLSLType type = leftHandExpression.getType();
+                // Struct member completion
+                GLSLType type = leftHandExpression.getType();
 
-                    if (type instanceof GLSLVectorType vec) {
-                        completionResultSet.addElement(LookupElementBuilder.create("length()").withTypeText("int"));
+                if (type instanceof GLSLVectorType vec) {
+                    completionResultSet.addElement(LookupElementBuilder.create("length()").withTypeText("int"));
 
-                        final int textStart = position.getTextOffset();
-                        final int textEnd = completionParameters.getOffset();
-                        if (textStart < textEnd) {
-                            String prefix = position.getText().substring(0, textEnd - textStart);
-                            if (prefix.length() > 0 && prefix.length() < 4) {
-                                final String newType = GLSLVectorType.getType(vec.getBaseType(), prefix.length() + 1)
-                                    .getTypename();
+                    final int textStart = position.getTextOffset();
+                    final int textEnd = completionParameters.getOffset();
+                    if (textStart < textEnd) {
+                        String prefix = position.getText().substring(0, textEnd - textStart);
+                        if (prefix.length() > 0 && prefix.length() < 4) {
+                            final String newType = GLSLVectorType.getType(vec.getBaseType(), prefix.length() + 1).getTypename();
 
-                                final char firstComponent = prefix.charAt(0);
-                                for (String set : VectorComponents.SETS) {
-                                    if (set.indexOf(firstComponent) == -1) {
-                                        continue;
-                                    }
-                                    for (int i = 0; i < Math.min(vec.getNumComponents(), set.length()); i++) {
-                                        completionResultSet.addElement(LookupElementBuilder
-                                                                           .create(prefix + set.charAt(i))
-                                                                           .withTypeText(newType));
-                                    }
-                                    break;
-                                }
-                            }
-
-                        } else {
-                            String baseType = vec.getBaseType().getTypename();
+                            final char firstComponent = prefix.charAt(0);
                             for (String set : VectorComponents.SETS) {
-                                for (int i = 0; i < Math.min(vec.getNumComponents(), set.length()); i++) {
-                                    completionResultSet.addElement(LookupElementBuilder.create(set.charAt(i))
-                                                                       .withTypeText(baseType));
+                                if (set.indexOf(firstComponent) == -1) {
+                                    continue;
                                 }
+                                for (int i = 0; i < Math.min(vec.getNumComponents(), set.length()); i++) {
+                                    completionResultSet.addElement(LookupElementBuilder.create(prefix + set.charAt(i)).withTypeText(newType));
+                                }
+                                break;
                             }
                         }
-                    } else if (type instanceof GLSLMatrixType || type instanceof GLSLArrayType) {
-                        completionResultSet.addElement(LookupElementBuilder.create("length()").withTypeText("int"));
-                    } else if (type instanceof GLSLStructType struct) {
-                        for (Map.Entry<String, GLSLType> entry : struct.getMembers().entrySet()) {
-                            completionResultSet.addElement(LookupElementBuilder.create(entry.getKey())
-                                                               .withTypeText(entry.getValue().getTypename()));
+
+                    } else {
+                        String baseType = vec.getBaseType().getTypename();
+                        for (String set : VectorComponents.SETS) {
+                            for (int i = 0; i < Math.min(vec.getNumComponents(), set.length()); i++) {
+                                completionResultSet.addElement(LookupElementBuilder.create(set.charAt(i)).withTypeText(baseType));
+                            }
                         }
-                    } else if (type instanceof GLSLInterfaceBlockType block) {
-                        for (Map.Entry<String, GLSLType> entry : block.getMembers().entrySet()) {
-                            completionResultSet.addElement(LookupElementBuilder.create(entry.getKey())
-                                                               .withTypeText(entry.getValue().getTypename()));
-                        }
+                    }
+                } else if (type instanceof GLSLMatrixType || type instanceof GLSLArrayType) {
+                    completionResultSet.addElement(LookupElementBuilder.create("length()").withTypeText("int"));
+                } else if (type instanceof GLSLStructType struct) {
+                    for (Map.Entry<String, GLSLType> entry : struct.getMembers().entrySet()) {
+                        completionResultSet.addElement(LookupElementBuilder.create(entry.getKey()).withTypeText(entry.getValue().getTypename()));
+                    }
+                } else if (type instanceof GLSLInterfaceBlockType block) {
+                    for (Map.Entry<String, GLSLType> entry : block.getMembers().entrySet()) {
+                        completionResultSet.addElement(LookupElementBuilder.create(entry.getKey()).withTypeText(entry.getValue().getTypename()));
                     }
                 }
             }
-        );
+        });
 
         // This can be anything, types, tokens...
-        extend(
-            CompletionType.BASIC, GENERIC_REFERENCE, new CompletionProvider<>() {
-                @Override
-                protected void addCompletions(
-                    @NotNull CompletionParameters parameters,
-                    @NotNull ProcessingContext context,
-                    @NotNull CompletionResultSet result
-                ) {
-                    final PsiElement element = parameters.getOriginalPosition();
-                    if (element == null) return;
+        extend(CompletionType.BASIC, GENERIC_REFERENCE, new CompletionProvider<>() {
+            @Override
+            protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
+                final PsiElement element = parameters.getOriginalPosition();
+                if (element == null) return;
 
-                    final PsiElement prevLeaf = PsiTreeUtil.prevLeaf(parameters.getPosition());
-                    if (prevLeaf != null) {
-                        final IElementType prevToken = prevLeaf.getNode().getElementType();
-                        if (prevToken == GLSLTokenTypes.DOT) {
-                            // Field selection handles this
-                            return;
-                        }
-                        if (GLSLTokenTypes.CONSTANT_TOKENS.contains(prevToken)) {
-                            // No complete right after a number, it is confusing and annoying
-                            return;
-                        }
+                final PsiElement prevLeaf = PsiTreeUtil.prevLeaf(parameters.getPosition());
+                if (prevLeaf != null) {
+                    final IElementType prevToken = prevLeaf.getNode().getElementType();
+                    if (prevToken == GLSLTokenTypes.DOT) {
+                        // Field selection handles this
+                        return;
                     }
-
-                    // Walk declarations
-                    boolean includeFunctions = PsiTreeUtil.getParentOfType(
-                        element,
-                        GLSLCompoundStatement.class
-                    ) != null;
-                    final DeclarationWalk walk = new DeclarationWalk(result, includeFunctions);
-                    PsiTreeUtil.treeWalkUp(walk, element, null, ResolveState.initial());
-
-                    // Add all built-ins
-                    final GLSLBuiltInPsiUtilService bipus = element.getProject()
-                        .getService(GLSLBuiltInPsiUtilService.class);
-                    result.addAllElements(bipus.builtinTypeLookup);
+                    if (GLSLTokenTypes.CONSTANT_TOKENS.contains(prevToken)) {
+                        // No complete right after a number, it is confusing and annoying
+                        return;
+                    }
                 }
+
+                // Walk declarations
+                boolean includeFunctions = PsiTreeUtil.getParentOfType(element, GLSLCompoundStatement.class) != null;
+                final DeclarationWalk walk = new DeclarationWalk(result, includeFunctions);
+                PsiTreeUtil.treeWalkUp(walk, element, null, ResolveState.initial());
+
+                // Add all built-ins
+                final GLSLBuiltInPsiUtilService bipus = element.getProject().getService(GLSLBuiltInPsiUtilService.class);
+                result.addAllElements(bipus.builtinTypeLookup);
             }
-        );
+        });
     }
 
-    /**
-     * Combination of all reference walks into one, for efficiency.
-     */
+    /** Combination of all reference walks into one, for efficiency. */
     private static final class DeclarationWalk implements PsiScopeProcessor {
 
         public final @NotNull CompletionResultSet result;
@@ -196,13 +173,12 @@ public class GLSLCompletionContributor extends DefaultCompletionContributor {
             this.includeFunctions = includeFunctions;
         }
 
+        private final HashMap<String, ArrayList<GLSLFunctionDeclaration>> encounteredFunctions = new HashMap<>();
+
         @Override
         public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
             if (element instanceof final GLSLDeclarator declarator) {
-                result.addElement(
-                    LookupElementBuilder.create(declarator)
-                        .withTypeText(declarator.getType().getTypename())
-                );
+                result.addElement(LookupElementBuilder.create(declarator).withTypeText(declarator.getType().getTypename()));
             } else if (element instanceof GLSLStructDefinition def) {
                 result.addElement(LookupElementBuilder.create(def).withTypeText("struct"));
             } else if (element instanceof GLSLInterfaceBlockDefinition def) {
@@ -210,23 +186,32 @@ public class GLSLCompletionContributor extends DefaultCompletionContributor {
             } else if (element instanceof GLSLDefineDirective def) {
                 result.addElement(LookupElementBuilder.create(def));
             } else if (includeFunctions && element instanceof GLSLFunctionDeclaration dec) {
-                result.addElement(LookupElementBuilder.create(dec).withExpensiveRenderer(new LookupElementRenderer<>() {
-                    @Override
-                    public void renderElement(LookupElement element, LookupElementPresentation presentation) {
-                        presentation.setItemText(dec.getFunctionName());
-                        presentation.appendTailText("(", true);
-                        boolean first = true;
-                        for (GLSLParameterDeclaration parameter : dec.getParameters()) {
-                            if (!first) {
-                                presentation.appendTailText(", ", true);
-                            } else {first = false;}
+                final String funcName = dec.getFunctionName();
+                ArrayList<GLSLFunctionDeclaration> all = encounteredFunctions.get(funcName);
+                if (all == null) {
+                    all = new ArrayList<>();
+                    result.addElement(LookupElementBuilder.create(dec).withExpensiveRenderer(new LookupElementRenderer<>() {
+                        @Override
+                        public void renderElement(LookupElement element, LookupElementPresentation presentation) {
+                            presentation.setItemText(dec.getFunctionName());
+                            presentation.appendTailText("(", true);
+                            boolean first = true;
+                            for (GLSLParameterDeclaration parameter : dec.getParameters()) {
+                                if (!first) {
+                                    presentation.appendTailText(", ", true);
+                                } else first = false;
 
-                            presentation.appendTailText(parameter.getTypeSpecifierNodeTypeName(), false);
+                                presentation.appendTailText(parameter.getTypeSpecifierNodeTypeName(), false);
+                            }
+                            presentation.appendTailText(")", true);
+                            presentation.setTypeText(dec.getReturnType().getTypename());
                         }
-                        presentation.appendTailText(")", true);
-                        presentation.setTypeText(dec.getReturnType().getTypename());
-                    }
-                }));
+                    }));
+                    all.add(dec);
+                    encounteredFunctions.put(funcName, all);
+                } else {
+                    all.add(dec);
+                }
             }
 
             return true;

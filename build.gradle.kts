@@ -4,7 +4,6 @@ import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
 import java.io.FileFilter
 import java.util.regex.Pattern
-import java.time.Instant
 
 plugins {
     // Java support
@@ -537,7 +536,6 @@ tasks.register("generateGLSLHeaders", Exec::class.java) {
 
         val resultGLSL = buildString {
             append("// GLSL Built-ins\n")
-            append("// Generated on ").append(Instant.now()).append("\n")
             append("// Generated from documentation at ").append(docUrl).append("\n")
 
             // Documentation of these is not 100% consistent, so just do it manually

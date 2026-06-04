@@ -7,11 +7,11 @@ out vec4 fragColor;
 void main() {
     switch (someValue) {
         case 0:
-            // Should be indented acoording to setting
+            // Should be indented according to setting
             fragColor = vec4(1.0, 0.0, 0.0, 1.0);
             break;
         case 1:
-            // Should be indented acoording to setting
+            // Should be indented according to setting
             vec4 a = vec4(1.0, 0.0, 0.0, 1.0);
             vec4 b = vec4(0.0, 1.0, 0.0, 1.0);
             fragColor = a + b;

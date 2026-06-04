@@ -2,10 +2,11 @@ package glslplugin.lang;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
+import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.GLSLHighlighter;
 import glslplugin.LightGLSLTestCase;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
-import com.intellij.psi.util.PsiTreeUtil;
+import glslplugin.lang.elements.declarations.GLSLInterfaceBlockDefinition;
 
 import java.util.List;
 
@@ -79,13 +80,26 @@ public class SemanticHighlightingTest extends LightGLSLTestCase {
     }
 
     public void testSemanticIdentifierFallbacksUseIDEDefaults() {
-        assertSame(DefaultLanguageHighlighterColors.CONSTANT, GLSLHighlighter.GLSL_IDENTIFIER_UNIFORM[0].getFallbackAttributeKey());
-        assertSame(DefaultLanguageHighlighterColors.CONSTANT, GLSLHighlighter.GLSL_IDENTIFIER_IN[0].getFallbackAttributeKey());
-        assertSame(DefaultLanguageHighlighterColors.CONSTANT, GLSLHighlighter.GLSL_IDENTIFIER_OUT[0].getFallbackAttributeKey());
-        assertSame(DefaultLanguageHighlighterColors.CONSTANT, GLSLHighlighter.GLSL_IDENTIFIER_VARYING[0].getFallbackAttributeKey());
-        assertSame(DefaultLanguageHighlighterColors.CONSTANT, GLSLHighlighter.GLSL_IDENTIFIER_ATTRIBUTE[0].getFallbackAttributeKey());
+        assertSame(DefaultLanguageHighlighterColors.GLOBAL_VARIABLE, GLSLHighlighter.GLSL_IDENTIFIER_UNIFORM[0].getFallbackAttributeKey());
+        assertSame(DefaultLanguageHighlighterColors.GLOBAL_VARIABLE, GLSLHighlighter.GLSL_IDENTIFIER_IN[0].getFallbackAttributeKey());
+        assertSame(DefaultLanguageHighlighterColors.GLOBAL_VARIABLE, GLSLHighlighter.GLSL_IDENTIFIER_OUT[0].getFallbackAttributeKey());
+        assertSame(DefaultLanguageHighlighterColors.GLOBAL_VARIABLE, GLSLHighlighter.GLSL_IDENTIFIER_VARYING[0].getFallbackAttributeKey());
+        assertSame(DefaultLanguageHighlighterColors.GLOBAL_VARIABLE, GLSLHighlighter.GLSL_IDENTIFIER_ATTRIBUTE[0].getFallbackAttributeKey());
         assertSame(DefaultLanguageHighlighterColors.INSTANCE_FIELD, GLSLHighlighter.GLSL_IDENTIFIER_STRUCT_FIELD[0].getFallbackAttributeKey());
         assertSame(DefaultLanguageHighlighterColors.INSTANCE_FIELD, GLSLHighlighter.GLSL_IDENTIFIER_INTERFACE_BLOCK[0].getFallbackAttributeKey());
+    }
+
+    public void testInterfaceBlockNameUsesBlockIdentifier() {
+        myFixture.configureByText(GLSLFileType.INSTANCE, """
+                uniform Camera {
+                    mat4 projection;
+                } camera;
+                """);
+
+        final GLSLInterfaceBlockDefinition definition = PsiTreeUtil.findChildOfType(myFixture.getFile(), GLSLInterfaceBlockDefinition.class);
+        assertNotNull(definition);
+        assertEquals("Camera", definition.getName());
+        assertEquals("Camera", definition.getType().getTypename());
     }
 
     public void testFunctionDeclarationHighlights() {

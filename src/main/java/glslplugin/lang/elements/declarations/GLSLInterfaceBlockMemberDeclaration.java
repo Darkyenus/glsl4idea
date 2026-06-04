@@ -20,13 +20,7 @@
 package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.ResolveState;
-import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.psi.util.PsiTreeUtil;
-import glslplugin.lang.elements.GLSLElementImpl;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class GLSLInterfaceBlockMemberDeclaration extends GLSLVariableDeclaration {
     public GLSLInterfaceBlockMemberDeclaration(@NotNull ASTNode astNode) {
