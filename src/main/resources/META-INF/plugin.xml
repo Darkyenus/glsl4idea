@@ -1,6 +1,6 @@
 <!--
   ~ Copyright 2010 Jean-Paul Balabanian and Yngve Devik Hammersland
-  ~ Copyright 2021-2022 Jan Polák
+  ~ Copyright 2021-2026 Jan Polák
   ~
   ~     This file is part of glsl4idea.
   ~
@@ -30,18 +30,8 @@
     <depends>com.intellij.modules.lang</depends>
 
     <change-notes><![CDATA[
-        <i>Many thanks to Luna5ama for contributing almost all of these great features and improvements!</i>
         <ul>
-            <li>Better semantic highlighting (function declarations and calls, variable declarations, field selections, additional GLSL identifier categories, uniform / in / out / varying / attribute declarations, additional GLSL scalar and integer types)</li>
-            <li>Improved macros – goto declaration, global macro resolution, better highlighting and bugfixes</li>
-            <li>Improved #include support, now respects IDE source roots, among other improvements</li>
-            <li>Fixes to completion for overloaded functions and defines and interface blocks from included files</li>
-            <li>Support for gl_PerVertex</li>
-            <li>Support for interface blocks</li>
-            <li>Support for more integer and float types</li>
-            <li>Improved code formatter</li>
-            <li>For more details, please see the <a href="https://github.com/Darkyenus/glsl4idea/pull/192">relevant pull request</a></li>
-            <li>Fixed handling of empty defines</li>
+            <li></li>
         </ul>
         <br/>
         <p>Please <a href="https://github.com/Darkyenus/glsl4idea/issues/new">report</a> any bugs you find. Support in the form of kind reviews is appreciated.</p>
