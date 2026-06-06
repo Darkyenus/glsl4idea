@@ -1,3 +1,4 @@
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
@@ -32,7 +33,11 @@ dependencies {
         intellijIdea("2026.1.2")
 
         //plugin("PsiViewer", "222-SNAPSHOT")
+
+        testFramework(TestFrameworkType.Platform)
     }
+
+    testImplementation("junit:junit:4.13.2")
 }
 
 

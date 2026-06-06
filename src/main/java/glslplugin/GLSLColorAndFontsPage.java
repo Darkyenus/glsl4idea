@@ -54,6 +54,8 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
             new AttributesDescriptor("Brackets", GLSLHighlighter.GLSL_BRACKETS[0]),
             new AttributesDescriptor("Operators", GLSLHighlighter.GLSL_OPERATOR[0]),
             new AttributesDescriptor("Identifiers",GLSLHighlighter.GLSL_IDENTIFIER[0]),
+            new AttributesDescriptor("Constructor calls",GLSLHighlighter.GLSL_CONSTRUCTOR_CALL[0]),
+            new AttributesDescriptor("Function calls",GLSLHighlighter.GLSL_FUNCTION_CALL[0]),
             new AttributesDescriptor("Function declarations",GLSLHighlighter.GLSL_FUNCTION_DECLARATION[0]),
             new AttributesDescriptor("Identifiers of `in` declarations",GLSLHighlighter.GLSL_IDENTIFIER_IN[0]),
             new AttributesDescriptor("Identifiers of `out` declarations",GLSLHighlighter.GLSL_IDENTIFIER_OUT[0]),
@@ -64,7 +66,7 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
             new AttributesDescriptor("Interface block members",GLSLHighlighter.GLSL_IDENTIFIER_INTERFACE_BLOCK[0]),
             new AttributesDescriptor("Text",GLSLHighlighter.GLSL_TEXT[0]),
             new AttributesDescriptor("Directives",GLSLHighlighter.GLSL_PREPROCESSOR_DIRECTIVE[0]),
-            new AttributesDescriptor("Preprocessor Strings",GLSLHighlighter.GLSL_STRING[0])
+            new AttributesDescriptor("Preprocessor strings",GLSLHighlighter.GLSL_STRING[0])
         };
     }
 

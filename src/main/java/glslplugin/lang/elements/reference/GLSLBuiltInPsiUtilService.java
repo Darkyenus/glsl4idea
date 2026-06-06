@@ -2,13 +2,10 @@ package glslplugin.lang.elements.reference;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
@@ -34,7 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@Service
+@Service(Service.Level.PROJECT)
 public final class GLSLBuiltInPsiUtilService {
 
     private final Project project;

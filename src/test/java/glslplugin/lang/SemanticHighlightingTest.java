@@ -2,12 +2,17 @@ package glslplugin.lang;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.GLSLHighlighter;
 import glslplugin.LightGLSLTestCase;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLInterfaceBlockDefinition;
+import glslplugin.lang.elements.expressions.GLSLFunctionOrConstructorCallExpression;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 public class SemanticHighlightingTest extends LightGLSLTestCase {
@@ -128,5 +133,85 @@ public class SemanticHighlightingTest extends LightGLSLTestCase {
         }
         assertTrue("Missing function declaration highlight", found);
         assertSame(DefaultLanguageHighlighterColors.FUNCTION_DECLARATION, GLSLHighlighter.GLSL_FUNCTION_DECLARATION[0].getFallbackAttributeKey());
+    }
+
+    public void testFunctionCallHighlights() {
+        final String shader = """
+                #version 140
+
+                float computeValue(float input) {
+                    return input;
+                }
+
+                void main() {
+                    computeValue(1);
+                }
+
+                """;
+        myFixture.configureByText(GLSLFileType.INSTANCE, shader);
+        assertFalse(PsiTreeUtil.findChildrenOfType(myFixture.getFile(), GLSLFunctionOrConstructorCallExpression.class).isEmpty());
+        PsiElement callIdentifier = PsiTreeUtil.findChildrenOfType(myFixture.getFile(), GLSLFunctionOrConstructorCallExpression.class).iterator().next().getFunctionOrConstructedTypeNameIdentifier();
+        assertNotNull(callIdentifier);
+        final List<HighlightInfo> highlights = myFixture.doHighlighting();
+        boolean found = false;
+        for (HighlightInfo info : highlights) {
+            if (GLSLHighlighter.GLSL_FUNCTION_CALL[0].equals(info.forcedTextAttributesKey)) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Missing function call highlight", found);
+        assertSame(DefaultLanguageHighlighterColors.FUNCTION_CALL, GLSLHighlighter.GLSL_FUNCTION_CALL[0].getFallbackAttributeKey());
+    }
+
+    public void testConstructorCallHighlights() {
+        final String shader = """
+                #version 140
+
+                struct MyStruct {
+                    int value;
+                };
+
+                void main() {
+                    MyStruct value = MyStruct(1);
+                }
+
+                """;
+        myFixture.configureByText(GLSLFileType.INSTANCE, shader);
+        assertFalse(PsiTreeUtil.findChildrenOfType(myFixture.getFile(), GLSLFunctionOrConstructorCallExpression.class).isEmpty());
+        PsiElement callIdentifier = PsiTreeUtil.findChildrenOfType(myFixture.getFile(), GLSLFunctionOrConstructorCallExpression.class).iterator().next().getFunctionOrConstructedTypeNameIdentifier();
+        assertNotNull(callIdentifier);
+        final List<HighlightInfo> highlights = myFixture.doHighlighting();
+        boolean found = false;
+        for (HighlightInfo info : highlights) {
+            if (GLSLHighlighter.GLSL_CONSTRUCTOR_CALL[0].equals(info.forcedTextAttributesKey)) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Missing function call highlight", found);
+        assertSame(DefaultLanguageHighlighterColors.FUNCTION_CALL, GLSLHighlighter.GLSL_CONSTRUCTOR_CALL[0].getFallbackAttributeKey());
+    }
+
+    static {
+        // Workaround when running tests on systems that symlink the home directory (such as Fedora Atomic).
+        // The plugin needs to access files in its own jar, which is in the home directory, which is allowed.
+        // But only the symlinked variant is added, but we are accessing it at its real path, so it breaks.
+        try {
+            Path home = Path.of(System.getProperty("user.home"));
+            Path realHome = home.toRealPath();
+            if (!home.equals(realHome)) {
+                String roots = System.getProperty("vfs.additional-allowed-roots");
+                if (roots == null || roots.isEmpty()) {
+                    roots = realHome.toString();
+                } else {
+                    roots = roots + File.pathSeparator + realHome;
+                }
+                System.setProperty("vfs.additional-allowed-roots", roots);
+            }
+        } catch (IOException e) {
+            System.err.println("Failed to add fallback allowed roots");
+            e.printStackTrace(System.err);
+        }
     }
 }
