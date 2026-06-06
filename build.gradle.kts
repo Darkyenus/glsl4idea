@@ -98,7 +98,6 @@ tasks.register("generateGLSLHeaders", Exec::class.java) {
 
     doLast {
         val glslDocFiles: Array<File> = File(refDir, "gl4").listFiles(object : FileFilter {
-            val nameRegex = Pattern.compile("")
             val ignoreFiles = setOf("removedTypes.xml",// Does not contain anything, but uses misleading xml root
                 // All part of gl_PerVertex with non-consistent xml structure
                 "gl_PointSize.xml", "gl_Position.xml", "gl_ClipDistance.xml", "gl_CullDistance.xml"
@@ -119,7 +118,7 @@ tasks.register("generateGLSLHeaders", Exec::class.java) {
 
         glslDocFiles.sortBy { it.name }
 
-        data class TypeName constructor(
+        data class TypeName (
             /** Type of the function/parameter/variable */
             val type: String,
             /** -1 = not an array, 0 = unsized array, >0 = array of this size */
@@ -147,30 +146,6 @@ tasks.register("generateGLSLHeaders", Exec::class.java) {
             }
         }
         val validModifiers = setOf("in", "out", "inout", "const")
-
-        fun literalType(type: String): Pair<String, List<String>> {
-            return type to listOf(type)
-        }
-        fun genericVecSize(base: String): Pair<String, List<String>> {
-            return base to ArrayList<String>().apply {
-                for (d in 2..4) {
-                    add(base+d)
-                }
-            }
-        }
-        fun genericMatSize(base: String): Pair<String, List<String>> {
-            return base to ArrayList<String>().apply {
-                for (a in 2..4) {
-                    for (b in 2..4) {
-                        if (a == b) {
-                            add(base+a)
-                        } else {
-                            add(base+a+"x"+b)
-                        }
-                    }
-                }
-            }
-        }
 
         /**
          * When key type is encountered, it means the type(s) on the right
@@ -215,7 +190,7 @@ tasks.register("generateGLSLHeaders", Exec::class.java) {
                     for (b in 2..4) {
                         val full = prefix + "mat" + a + "x" + b
                         val canon = if (a == b) prefix + "mat" + a else full
-                        if (full !== canon) {
+                        if (full != canon) {
                             typeAliases[full] = canon
                         }
                         matType["${a}x$b"] = (canon)
