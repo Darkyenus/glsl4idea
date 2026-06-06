@@ -125,70 +125,77 @@ public class PreprocessorPsiBuilderAdapter {
         // We must put something in
         final String text = parent.getTokenText();
         final Redefinition redefinition = allowRedefinitions ? redefinitions.get(text) : null;
-        final @Nullable Replacements result;
+        @Nullable Replacements result;
         if (redefinition != null && redefinition.redefinedTo != null) {
             // The next token is redefined, skip it (mark as redefined) and insert tokens for redefinitions
-            result = new Replacements(parent.mark());
-            parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_REDEFINED);
-            parent.advanceLexer();
-
-            final List<@NotNull String> arguments = redefinition.arguments;
-            if (arguments == null) {
-                result.addAll(redefinition.redefinedTo);
+            if (redefinition.redefinedTo.isEmpty()) {
+                // We just skip it, but there is nothing it redefines to.
+                parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_REDEFINED);
+                parent.advanceLexer();
+                result = null;
             } else {
-                // This is a function macro
-                if (parent.getTokenType() != GLSLTokenTypes.LEFT_PAREN) {
-                    parent.error("Expected macro parameters");
+                result = new Replacements(parent.mark());
+                parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_REDEFINED);
+                parent.advanceLexer();
+
+                final List<@NotNull String> arguments = redefinition.arguments;
+                if (arguments == null) {
+                    result.addAll(redefinition.redefinedTo);
                 } else {
-                    final PsiBuilder.Marker mark = parent.mark();
-                    parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_MACRO_ARGUMENT);
-                    parent.advanceLexer();
-
-                    final var actualArguments = new ArrayList<ForeignLeafType[]>();
-                    final var actualArgument = new ArrayList<ForeignLeafType>();
-                    int parenNesting = 0;
-                    while (true) {
-                        final IElementType type = parent.getTokenType();
-                        if (type == null) {
-                            parent.error("Unexpected end of the file, expected function macro arguments");
-                            return;
-                        }
-
+                    // This is a function macro
+                    if (parent.getTokenType() != GLSLTokenTypes.LEFT_PAREN) {
+                        parent.error("Expected macro parameters");
+                    } else {
+                        final PsiBuilder.Marker mark = parent.mark();
                         parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_MACRO_ARGUMENT);
-                        if (parenNesting == 0 && (type == GLSLTokenTypes.COMMA || type == GLSLTokenTypes.RIGHT_PAREN)) {
-                            actualArguments.add(actualArgument.toArray(EMPTY_FOREIGN_LEAF_TYPE_ARRAY));
-                            actualArgument.clear();
-                            parent.advanceLexer();
-                            if (type == GLSLTokenTypes.RIGHT_PAREN) {
-                                break;
-                            }
-                        } else {
-                            final String tokenText = parent.getTokenText();
-                            parent.advanceLexer();
+                        parent.advanceLexer();
 
-                            actualArgument.add(new ForeignLeafType(type, tokenText == null ? "" : tokenText));
-                            if (type == GLSLTokenTypes.LEFT_PAREN) {
-                                parenNesting++;
-                            } else if (type == GLSLTokenTypes.RIGHT_PAREN) {
-                                parenNesting--;
+                        final var actualArguments = new ArrayList<ForeignLeafType[]>();
+                        final var actualArgument = new ArrayList<ForeignLeafType>();
+                        int parenNesting = 0;
+                        while (true) {
+                            final IElementType type = parent.getTokenType();
+                            if (type == null) {
+                                parent.error("Unexpected end of the file, expected function macro arguments");
+                                return;
+                            }
+
+                            parent.remapCurrentToken(GLSLTokenTypes.PREPROCESSOR_MACRO_ARGUMENT);
+                            if (parenNesting == 0 && (type == GLSLTokenTypes.COMMA || type == GLSLTokenTypes.RIGHT_PAREN)) {
+                                actualArguments.add(actualArgument.toArray(EMPTY_FOREIGN_LEAF_TYPE_ARRAY));
+                                actualArgument.clear();
+                                parent.advanceLexer();
+                                if (type == GLSLTokenTypes.RIGHT_PAREN) {
+                                    break;
+                                }
+                            } else {
+                                final String tokenText = parent.getTokenText();
+                                parent.advanceLexer();
+
+                                actualArgument.add(new ForeignLeafType(type, tokenText == null ? "" : tokenText));
+                                if (type == GLSLTokenTypes.LEFT_PAREN) {
+                                    parenNesting++;
+                                } else if (type == GLSLTokenTypes.RIGHT_PAREN) {
+                                    parenNesting--;
+                                }
                             }
                         }
-                    }
 
-                    mark.done(GLSLElementTypes.PREPROCESSOR_FUNCTION_MACRO_ARGUMENTS);
+                        mark.done(GLSLElementTypes.PREPROCESSOR_FUNCTION_MACRO_ARGUMENTS);
 
-                    if (actualArguments.size() != arguments.size()) {
-                        mark.precede().error("Expected "+arguments.size()+" arguments, but found "+actualArguments.size()+".");
-                    }
+                        if (actualArguments.size() != arguments.size()) {
+                            mark.precede().error("Expected "+arguments.size()+" arguments, but found "+actualArguments.size()+".");
+                        }
 
-                    for (ForeignLeafType type : redefinition.redefinedTo) {
-                        final int argumentIndex = arguments.indexOf(type.getValue());
-                        if (argumentIndex >= 0 && argumentIndex < actualArguments.size()) {
-                            // Insert argument
-                            Collections.addAll(result, actualArguments.get(argumentIndex));
-                        } else {
-                            // Insert the token literally
-                            result.add(type);
+                        for (ForeignLeafType type : redefinition.redefinedTo) {
+                            final int argumentIndex = arguments.indexOf(type.getValue());
+                            if (argumentIndex >= 0 && argumentIndex < actualArguments.size()) {
+                                // Insert argument
+                                Collections.addAll(result, actualArguments.get(argumentIndex));
+                            } else {
+                                // Insert the token literally
+                                result.add(type);
+                            }
                         }
                     }
                 }
