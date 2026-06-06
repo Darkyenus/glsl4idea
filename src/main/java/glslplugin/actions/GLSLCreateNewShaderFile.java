@@ -20,7 +20,7 @@ public class GLSLCreateNewShaderFile extends CreateFileFromTemplateAction {
     @Override
     protected void buildDialog(@NotNull Project project, @NotNull PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
         builder.setTitle("Create new GLSL shader file");
-        builder.addKind("GLSL Shader", null, "GLSL Shader");
+        builder.addKind("GLSL shader", null, "GLSL Shader");
     }
 
     @Override

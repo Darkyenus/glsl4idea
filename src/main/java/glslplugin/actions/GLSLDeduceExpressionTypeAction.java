@@ -19,6 +19,7 @@
 
 package glslplugin.actions;
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -168,5 +169,10 @@ public class GLSLDeduceExpressionTypeAction extends AnAction {
             psiElement = psiElement.getParent();
         }
         return psiElement;
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
     }
 }

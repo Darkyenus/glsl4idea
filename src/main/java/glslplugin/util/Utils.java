@@ -1,5 +1,7 @@
 package glslplugin.util;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Various utility functions.
  */
@@ -15,7 +17,10 @@ public class Utils {
 	}
 
 	/** Escapes given text to be used directly inside HTML. */
-	public static String escapeHtml(String text){
+	@Nullable
+	public static String escapeHtml(@Nullable String text) {
+		if (text == null) return null;
+
 		// https://www.w3.org/International/questions/qa-escapes
 		StringBuilder escaped = null;
 		for (int i = 0; i < text.length(); i++) {
