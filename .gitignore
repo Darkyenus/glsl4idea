@@ -12,3 +12,4 @@ GLSLFlexLexer.java~
 .gradle
 .qodana
 build
+/.intellijPlatform/

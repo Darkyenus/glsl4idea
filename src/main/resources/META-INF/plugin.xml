@@ -26,11 +26,6 @@
     <category>Custom Languages</category>
     <vendor>Foundation</vendor>
 
-    <!-- https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html -->
-    <!-- Since at least 222 (2022.2), because we require Java 17, which is bundled since then -->
-    <!-- https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under -->
-    <!-- Until build is not set, because we hope it will work. -->
-    <idea-version since-build="222"/>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
 

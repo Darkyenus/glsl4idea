@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
@@ -9,9 +8,9 @@ plugins {
     // Java support
     id("java")
     // Kotlin support
-    id("org.jetbrains.kotlin.jvm") version "1.7.20"
+    kotlin("jvm") version "2.4.0"
     // Gradle IntelliJ Plugin
-    id("org.jetbrains.intellij") version "1.9.0"
+    id("org.jetbrains.intellij.platform") version "2.16.0"
 }
 
 val pluginVersion = "1.25-SNAPSHOT"
@@ -22,44 +21,59 @@ version = pluginVersion
 // Configure project's dependencies
 repositories {
     mavenCentral()
+
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
-// Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
-intellij {
-    type.set("IC")
-    version.set("2022.2.3")
-    //version.set("IC-212.4746.92")
-    updateSinceUntilBuild.set(false)
-    instrumentCode.set(false)
+dependencies {
+    intellijPlatform {
+        intellijIdea("2026.1.2")
 
-    //plugins.add("PsiViewer:222-SNAPSHOT")
+        //plugin("PsiViewer", "222-SNAPSHOT")
+    }
+}
+
+
+// Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
+intellijPlatform {
+    pluginConfiguration {
+        version = pluginVersion
+
+        // https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html
+        // Since at least 222 (2022.2), because we require Java 17, which is bundled since then
+        // https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under
+        // Until build is not set, because we hope it will work.
+        ideaVersion.sinceBuild = "222"
+    }
+
+    instrumentCode = false
+
+    // Because it is broken and crashes the build (TODO: Maybe not anymore?)
+    buildSearchableOptions = false
+}
+
+kotlin {
+    // Set the JVM compatibility versions
+    // Java language level used to compile sources and to generate the files for - Java 11 is required since 2020.3
+    jvmToolchain(21)
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.isDeprecation = true
+    options.release = 17
 }
 
 tasks {
-    // Set the JVM compatibility versions
-    // Java language level used to compile sources and to generate the files for - Java 11 is required since 2020.3
-    val javaVersion = "17"
-    withType<JavaCompile> {
-        sourceCompatibility = javaVersion
-        targetCompatibility = javaVersion
-    }
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = javaVersion
-    }
-
-    patchPluginXml {
-        version.set(pluginVersion)
-    }
-
-    // Because it is broken and crashes the build
-    buildSearchableOptions.get().enabled = false
-
     runIde.configure {
-        jvmArgs!!.add("-Didea.ProcessCanceledException=disabled")
+        jvmArgs("-Didea.ProcessCanceledException=disabled")
     }
 }
 
 tasks.register("generateGLSLHeaders", Exec::class.java) {
+    description = "Generates GLSL headers from the official GLSL documentation"
+
     val workDir = File(rootDir, "build/generate_glsl_headers").apply {
         mkdirs()
     }
@@ -72,7 +86,7 @@ tasks.register("generateGLSLHeaders", Exec::class.java) {
         commandLine = listOf("git", "pull")
     } else {
         workingDir = workDir
-        commandLine = listOf("git", "clone", "--depth=1", docUrl+".git", refDir.name)
+        commandLine = listOf("git", "clone", "--depth=1", "$docUrl.git", refDir.name)
     }
 
     outputs.upToDateWhen { false }
@@ -170,7 +184,7 @@ tasks.register("generateGLSLHeaders", Exec::class.java) {
         for ((prefix, baseType) in primitiveTypeByPrefix) {
             // gen type
             val genType = HashMap<String, String>()// Primitive and vectors of the primitive
-            genericTypes["gen"+prefix.toUpperCase()+"Type"] = genType
+            genericTypes["gen"+prefix.uppercase()+"Type"] = genType
 
             // Primitive
             validTypes.add(baseType)
@@ -400,8 +414,12 @@ tasks.register("generateGLSLHeaders", Exec::class.java) {
                 text = text.substring(0, begin)
             }
 
+            fun isValidIdentifier(identifier: String): Boolean {
+                return Character.isJavaIdentifierStart(identifier[0]) && identifier.substring(1).all { Character.isJavaIdentifierPart(it) }
+            }
+
             val parts = text.split(TypeNameSplitPattern)
-            if (parts.size !in 2..3 || parts.any { !it.isValidES5Identifier() }) {
+            if (parts.size !in 2..3 || parts.any { !isValidIdentifier(it) }) {
                 throw IllegalArgumentException("Invalid type/name:\n"+element.parent()?.outerHtml())
             }
             var modifier = if (parts.size == 3) parts.firstOrNull() else null
