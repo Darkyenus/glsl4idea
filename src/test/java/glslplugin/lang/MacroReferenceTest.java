@@ -47,19 +47,27 @@ public class MacroReferenceTest extends LightGLSLTestCase {
 
     private void assertRedefinedTokenHighlight(String text) {
         final String documentText = myFixture.getEditor().getDocument().getText();
-        final int startOffset = documentText.indexOf(text);
-        assertTrue(startOffset >= 0);
-        final int endOffset = startOffset + text.length();
 
         for (HighlightInfo info : myFixture.doHighlighting()) {
-            if (info.startOffset == startOffset
-                && info.endOffset == endOffset
+            if (info.endOffset <= documentText.length()
+                && info.startOffset >= 0
+                && documentText.substring(info.startOffset, info.endOffset).equals(text)
                 && info.forcedTextAttributesKey == GLSLHighlighter.GLSL_REDEFINED_TOKEN[0]) {
                 return;
             }
         }
 
         fail("Expected macro highlight for " + text);
+    }
+
+    private void openFileAtLastText(PsiFile file, String text) {
+        assertNotNull(file.getVirtualFile());
+        myFixture.openFileInEditor(file.getVirtualFile());
+
+        final String documentText = myFixture.getEditor().getDocument().getText();
+        final int offset = documentText.lastIndexOf(text);
+        assertTrue(offset >= 0);
+        myFixture.getEditor().getCaretModel().moveToOffset(offset);
     }
 
     public void testObjectLikeMacroReferenceResolvesToDefineDirective() {
@@ -443,6 +451,7 @@ public class MacroReferenceTest extends LightGLSLTestCase {
                 float x = BAR;
             }
             """);
+        assertRedefinedTokenHighlight("BAR");
     }
 
     public void testRenameIncludedObjectLikeMacroUpdatesAllReferences() {
@@ -493,5 +502,48 @@ public class MacroReferenceTest extends LightGLSLTestCase {
                 float x = DOUBLE(1.0);
             }
             """, mainFile.getText());
+    }
+
+    public void testRepeatedRenameKeepsSameFileMacroReferencesActive() {
+        configureProjectShaderFile("shaders/common.glsl", """
+            #define F<caret>OO 123.0
+
+            void common() {
+                float y = FOO;
+            }
+            """);
+        PsiFile commonFile = myFixture.getFile();
+        PsiFile mainFile = addProjectShaderFile("shaders/main.glsl", """
+            #include "common.glsl"
+
+            void main() {
+                float x = FOO;
+            }
+            """);
+
+        myFixture.renameElementAtCaret("BAR");
+
+        myFixture.checkResult("""
+            #define BAR 123.0
+
+            void common() {
+                float y = BAR;
+            }
+            """);
+        assertRedefinedTokenHighlight("BAR");
+
+        openFileAtLastText(mainFile, "BAR");
+        myFixture.renameElementAtCaret("BAZ");
+
+        assertEquals("""
+            #define BAZ 123.0
+
+            void common() {
+                float y = BAZ;
+            }
+            """, commonFile.getText());
+
+        openFileAtLastText(commonFile, "BAZ");
+        assertRedefinedTokenHighlight("BAZ");
     }
 }
