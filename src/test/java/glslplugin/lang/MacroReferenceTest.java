@@ -424,4 +424,74 @@ public class MacroReferenceTest extends LightGLSLTestCase {
         assertEquals(GLSLTokenTypes.IDENTIFIER, nameIdentifier.getNode().getElementType());
         assertEquals("LIGHT_COUNT", nameIdentifier.getText());
     }
+
+    public void testRenameObjectLikeMacroInSameFile() {
+        myFixture.configureByText(GLSLFileType.INSTANCE, """
+            #define FOO 123.0
+
+            void main() {
+                float x = F<caret>OO;
+            }
+            """);
+
+        myFixture.renameElementAtCaret("BAR");
+
+        myFixture.checkResult("""
+            #define BAR 123.0
+
+            void main() {
+                float x = BAR;
+            }
+            """);
+    }
+
+    public void testRenameIncludedObjectLikeMacroUpdatesAllReferences() {
+        PsiFile commonFile = addProjectShaderFile("shaders/common.glsl", "#define FOO 123.0\n");
+        configureProjectShaderFile("shaders/main.glsl", """
+            #include "common.glsl"
+
+            void main() {
+                float x = F<caret>OO;
+            }
+
+            #ifdef FOO
+            #endif
+            """);
+
+        myFixture.renameElementAtCaret("BAR");
+
+        assertEquals("#define BAR 123.0\n", commonFile.getText());
+        myFixture.checkResult("""
+            #include "common.glsl"
+
+            void main() {
+                float x = BAR;
+            }
+
+            #ifdef BAR
+            #endif
+            """);
+    }
+
+    public void testRenameIncludedFunctionLikeMacroUpdatesInvocation() {
+        configureProjectShaderFile("shaders/common.glsl", "#define SCA<caret>LE(x) ((x) * 2.0)\n");
+        PsiFile mainFile = addProjectShaderFile("shaders/main.glsl", """
+            #include "common.glsl"
+
+            void main() {
+                float x = SCALE(1.0);
+            }
+            """);
+
+        myFixture.renameElementAtCaret("DOUBLE");
+
+        myFixture.checkResult("#define DOUBLE(x) ((x) * 2.0)\n");
+        assertEquals("""
+            #include "common.glsl"
+
+            void main() {
+                float x = DOUBLE(1.0);
+            }
+            """, mainFile.getText());
+    }
 }
