@@ -1,14 +1,21 @@
 package glslplugin.lang;
 
+import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import glslplugin.GLSLHighlighter;
 import glslplugin.LightGLSLTestCase;
+import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.declarations.GLSLFunctionDeclaration;
 import glslplugin.lang.elements.declarations.GLSLInterfaceBlockDefinition;
 import glslplugin.lang.elements.expressions.GLSLFunctionOrConstructorCallExpression;
+import glslplugin.lang.elements.reference.GLSLBuiltInPsiUtilService;
+import glslplugin.lang.parser.GLSLFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -191,6 +198,56 @@ public class SemanticHighlightingTest extends LightGLSLTestCase {
         }
         assertTrue("Missing function call highlight", found);
         assertSame(DefaultLanguageHighlighterColors.FUNCTION_CALL, GLSLHighlighter.GLSL_CONSTRUCTOR_CALL[0].getFallbackAttributeKey());
+    }
+
+    public void testBuiltinsFilePreservesResourceName() {
+        GLSLFile builtinsFile = getProject().getService(GLSLBuiltInPsiUtilService.class).getBuiltinsFile();
+
+        assertNotNull(builtinsFile);
+        assertEquals("builtin.glsl", builtinsFile.getName());
+        assertFalse(builtinsFile.getViewProvider().getVirtualFile().isWritable());
+        assertNotLightVirtualFile(builtinsFile.getViewProvider().getVirtualFile());
+    }
+
+    public void testBuiltinVariableIsGotoDeclarationTarget() {
+        myFixture.configureByText(GLSLFileType.INSTANCE, """
+                #version 140
+
+                void main() {
+                    vec4 color = gl_Frag<caret>Coord;
+                }
+                """);
+
+        PsiElement target = findGotoTargetAtCaret();
+
+        assertTrue("Expected GLSLDeclarator, got " + target, target instanceof GLSLDeclarator);
+        assertEquals("gl_FragCoord", ((GLSLDeclarator) target).getName());
+        assertNavigableBuiltinTarget(target);
+    }
+
+    private PsiElement findGotoTargetAtCaret() {
+        return GotoDeclarationAction.findTargetElement(
+                getProject(),
+                myFixture.getEditor(),
+                myFixture.getCaretOffset()
+        );
+    }
+
+    private void assertNavigableBuiltinTarget(PsiElement target) {
+        assertNotNull(target);
+        assertTrue("Expected navigable target, got " + target, target instanceof NavigatablePsiElement);
+        assertTrue("Expected target to be navigable: " + target, ((NavigatablePsiElement) target).canNavigate());
+
+        final PsiFile containingFile = target.getContainingFile();
+        assertNotNull(containingFile);
+        assertEquals("builtin.glsl", containingFile.getName());
+        assertNotNull(containingFile.getVirtualFile());
+        assertNotLightVirtualFile(containingFile.getVirtualFile());
+    }
+
+    private void assertNotLightVirtualFile(VirtualFile file) {
+        assertFalse("Expected real VFS builtin resource, got " + file.getClass().getName(),
+                file.getClass().getName().contains("LightVirtualFile"));
     }
 
     static {

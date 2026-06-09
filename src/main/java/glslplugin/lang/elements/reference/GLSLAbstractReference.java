@@ -10,6 +10,7 @@ import com.intellij.psi.PsiPolyVariantReferenceBase;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.lang.elements.GLSLElement;
@@ -92,17 +93,17 @@ public abstract class GLSLAbstractReference<T extends GLSLReferencingElement> im
         final TextRange newRange = new TextRange(renameRange.getStartOffset(), renameRange.getStartOffset() + newCombinedName.length());
 
         if (identifier instanceof GLSLRedefinedToken) {
-            // Special case for GLSLRedefinedToken
             assert identifier == element;
             final GLSLRedefinedToken token = new GLSLRedefinedToken(newCombinedName);
+            CodeEditUtil.setNodeGenerated(token, true);
             final ASTNode identifierNode = identifier.getNode();
             identifierNode.getTreeParent().replaceChild(identifierNode, token);
             return token;
-        } else {
-            GLSLReferencableDeclaration.replaceIdentifier(identifier, newCombinedName);
-            rangeInElement = newRange;
-            return element;
         }
+
+        GLSLReferencableDeclaration.replaceIdentifier(identifier, newCombinedName);
+        rangeInElement = newRange;
+        return element;
     }
 
     @Override

@@ -43,11 +43,12 @@ public interface GLSLReferencableDeclaration extends GLSLElement, PsiNameIdentif
     @NotNull
     String declaredNoun();
 
-    static void replaceIdentifier(PsiElement oldIdentifier, @NotNull String name) throws IncorrectOperationException {
+    static @NotNull PsiElement replaceIdentifier(PsiElement oldIdentifier, @NotNull String name) throws IncorrectOperationException {
         if (oldIdentifier == null) throw new IncorrectOperationException("No name to rename");
         ASTNode newNameNode = GLSLPsiElementFactory.createIdentifier(oldIdentifier.getProject(), name);
         final ASTNode oldIdentifierNode = oldIdentifier.getNode();
         oldIdentifierNode.getTreeParent().replaceChild(oldIdentifierNode, newNameNode);
+        return newNameNode.getPsi();
     }
 
     static void replacePreprocessorString(PsiElement oldPreprocessorString, @NotNull String name) throws IncorrectOperationException {
